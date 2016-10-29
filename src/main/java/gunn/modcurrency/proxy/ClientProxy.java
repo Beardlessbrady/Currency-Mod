@@ -1,7 +1,6 @@
 package gunn.modcurrency.proxy;
 
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
+import gunn.modcurrency.items.ModItems;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 /**
@@ -13,19 +12,10 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
  *
  * File Created on 2016-10-28.
  */
-public class ClientProxy extends CommonProxy{
+public class ClientProxy extends CommonProxy {
     @Override
-    public void preInit(FMLPreInitializationEvent e){
+    public void preInit(FMLPreInitializationEvent e) {
         super.preInit(e);
-    }
-
-    @Override
-    public void Init(FMLInitializationEvent e) {
-        super.Init(e);
-    }
-
-    @Override
-    public void postInit(FMLPostInitializationEvent e) {
-        super.postInit(e);
+        ModItems.initItemModels();
     }
 }
