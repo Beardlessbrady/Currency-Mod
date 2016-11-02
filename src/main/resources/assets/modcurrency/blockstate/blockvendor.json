@@ -1,0 +1,21 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "cube_all",
+    "textures": {
+      "all": "modcurrency:blocks/vendor_open"
+    }
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}],
+    "edit": {
+      "false": {},
+      "true": {
+        "textures": {
+          "all": "modcurrency:blocks/vendor_closed"
+        }
+      }
+    }
+  }
+}
