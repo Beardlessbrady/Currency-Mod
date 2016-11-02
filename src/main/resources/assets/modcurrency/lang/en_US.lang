@@ -4,3 +4,6 @@ item.modcurrency:banknote_2.name=Ten-Dollar Banknote
 item.modcurrency:banknote_3.name=Twenty-Dollar Banknote
 item.modcurrency:banknote_4.name=Fifty-Dollar Banknote
 item.modcurrency:banknote_5.name=One Hundred-Dollar Banknote
+
+containers.vendor.name=Vending Machine
+containers.inventory.name= Inventory

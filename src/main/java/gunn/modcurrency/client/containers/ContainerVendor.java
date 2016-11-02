@@ -23,22 +23,30 @@ public class ContainerVendor extends Container{
 
     //0-8 = Player Hot bar
     //9-35 = Player Inventory's
-    //36-67 = Tile Slots
+    //36 = Money Slot
+    //37-67 = Vend Slots
     private final int HOTBAR_SLOT_COUNT = 9;
     private final int PLAYER_INV_ROW_COUNT = 3;
     private final int PLAYER_INV_COLUMN_COUNT = 9;
     private final int PLAYER_INV_TOTAL_COUNT = PLAYER_INV_COLUMN_COUNT + PLAYER_INV_ROW_COUNT;
     private final int PLAYER_TOTAL_COUNT = HOTBAR_SLOT_COUNT + PLAYER_INV_TOTAL_COUNT;
 
-    private final int PLAYER_FIRST_SLOT_INDEX = 0;
-    private final int TE_MONEY_FIRST_SLOT_INDEX = PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT;
+    private final int TE_MONEY_FIRST_SLOT_INDEX = 0;
     private final int TE_VEND_FIRST_SLOT_INDEX = TE_MONEY_FIRST_SLOT_INDEX + 1;
     private final int TE_VEND_TOTAL_SLOT_COUNT = TE_VEND_FIRST_SLOT_INDEX + 30;
+    private final int TE_VEND_COLUMN_COUNT = 6;
+    private final int TE_VEND_ROW_COUNT = 5;
 
     public ContainerVendor(InventoryPlayer invPlayer, TileVendor tilevendor){
         this.tilevendor = tilevendor;
 
-        //Players Inv Specs
+        setupPlayerInv(invPlayer);
+        setupTeInv();
+
+
+    }
+
+    public void setupPlayerInv(InventoryPlayer invPlayer){
         final int SLOT_X_SPACING = 18;
         final int SLOT_Y_SPACING = 18;
         final int HOTBAR_XPOS = 8;
@@ -60,7 +68,40 @@ public class ContainerVendor extends Container{
             }
         }
 
-        //TE Inv Specs
+    }
+
+    public void setupTeInv(){
+        final int TE_MONEY_XPOS = 152;
+        final int TE_MONEY_YPOS = 9;
+        addSlotToContainer(new Slot(tilevendor, TE_MONEY_FIRST_SLOT_INDEX, TE_MONEY_XPOS, TE_MONEY_YPOS));
+
+        final int SLOT_X_SPACING = 18;
+        final int SLOT_Y_SPACING = 18;
+        final int TE_INV_XPOS = 44;
+        final int TE_INV_YPOS = 32;
+
+        for(int y = 0; y < TE_VEND_COLUMN_COUNT; y++){
+            for(int x = 0; x < TE_VEND_ROW_COUNT; x++){
+                int slotNum = TE_VEND_FIRST_SLOT_INDEX + y * TE_VEND_ROW_COUNT + x;
+                int xpos = TE_INV_XPOS + x * SLOT_X_SPACING;
+                int ypos = TE_INV_YPOS + y * SLOT_Y_SPACING;
+                addSlotToContainer(new Slot(tilevendor,slotNum,xpos,ypos));
+            }
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     }

@@ -38,7 +38,14 @@ public class ModCurrency {
     public void preInit(FMLPreInitializationEvent event){
         logger = event.getModLog();
         proxy.preInit(event);
+        for(int y = 0; y < 6; y++) {
+            for (int x = 0; x < 5; x++) {
+                int slotNum = 0 + y * 5 + x;
+                System.out.println("OVUM " + slotNum);
+            }
+        }
     }
+
 
     @Mod.EventHandler
     public void init(FMLInitializationEvent event){
