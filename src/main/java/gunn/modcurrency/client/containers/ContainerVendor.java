@@ -5,6 +5,7 @@ import gunn.modcurrency.tiles.TileVendor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -40,6 +41,8 @@ public class ContainerVendor extends Container{
     private final int TE_VEND_TOTAL_SLOT_COUNT = TE_VEND_FIRST_SLOT_INDEX + 30;
     private final int TE_VEND_COLUMN_COUNT = 6;
     private final int TE_VEND_ROW_COUNT = 5;
+
+    private int[] cachedFields;
 
     public ContainerVendor(InventoryPlayer invPlayer, TileVendor tilevendor){
         this.tilevendor = tilevendor;
@@ -111,7 +114,30 @@ public class ContainerVendor extends Container{
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
+        boolean fieldChanged[] = new boolean[tilevendor.getFieldCount()];
 
+        if (cachedFields == null) {
+            cachedFields = new int[tilevendor.getFieldCount()];
+        }
+        for (int i = 0; i < cachedFields.length; i++) {
+            if (cachedFields[i] != tilevendor.getField(i)) {
+                cachedFields[i] = tilevendor.getField(i);
+                fieldChanged[i] = true;
+            }
+        }
+
+        for (IContainerListener listener : this.listeners) {
+            for (int field = 0; field < tilevendor.getFieldCount(); ++field) {
+                if (fieldChanged[field]) {
+                    listener.sendProgressBarUpdate(this, field, cachedFields[field]);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void updateProgressBar(int id, int data) {
+        tilevendor.setField(id, data);
     }
 }
 

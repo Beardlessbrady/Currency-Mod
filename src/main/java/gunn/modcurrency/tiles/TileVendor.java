@@ -82,4 +82,21 @@ public class TileVendor extends TileEntity{
         bank = bank + num;
         System.out.println(bank);
     }
+
+    public int getFieldCount(){
+        return 1;
+    }
+
+    public void setField(int id, int value){
+        if(id == 0){
+            bank = value;
+        }
+    }
+
+    public int getField(int id){
+        if(id == 0){
+            return bank;
+        }
+        return -1;
+    }
 }
