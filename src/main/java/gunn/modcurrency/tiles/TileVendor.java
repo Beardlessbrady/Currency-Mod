@@ -1,12 +1,12 @@
 package gunn.modcurrency.tiles;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
-import scala.actors.threadpool.Arrays;
+import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 
 /**
  * This class was created by <Brady Gunn>.
@@ -17,165 +17,69 @@ import scala.actors.threadpool.Arrays;
  *
  * File Created on 2016-10-30.
  */
-public class TileVendor extends TileEntity implements IInventory{
+public class TileVendor extends TileEntity{
 
     public static final int MONEY_SLOT_COUNT = 1;
     public static final int VEND_SLOT_COUNT = 30;
     public static final int TOTAL_SLOTS_COUNT = MONEY_SLOT_COUNT + VEND_SLOT_COUNT;
 
-    public static final int FIRST_MONEY_SLOT = 0;
-    public static final int FIRST_VEND_SLOT = FIRST_MONEY_SLOT + VEND_SLOT_COUNT;
+    private int bank;
 
-    private ItemStack[] vendorStacks = new ItemStack[TOTAL_SLOTS_COUNT];
-
-
-    @Override
-    public int getSizeInventory() {
-        return vendorStacks.length;
+    public TileVendor(){
+        bank = 0;
     }
 
-    @Override
-    public ItemStack getStackInSlot(int index) {
-        return vendorStacks[index];
-    }
+    private ItemStackHandler itemStackHandler = new ItemStackHandler(TOTAL_SLOTS_COUNT) {
+        @Override
+        protected void onContentsChanged(int slot) { markDirty(); }
+    };
 
     @Override
-    public ItemStack decrStackSize(int index, int count) {
-        ItemStack currentStack = getStackInSlot(index);
-        if(currentStack == null) return null;
-
-        ItemStack removedStack;
-        if(currentStack.stackSize <= count){
-            removedStack = currentStack;
-            setInventorySlotContents(index,null);
-        }else{
-            removedStack = currentStack.splitStack(count);
-            if(currentStack.stackSize == 0){
-                setInventorySlotContents(index,null);
-            }
-        }
-        markDirty();
-        return removedStack;
-    }
-
-    @Override
-    public ItemStack removeStackFromSlot(int index) {
-        ItemStack currentStack = getStackInSlot(index);
-        if(currentStack != null) setInventorySlotContents(index, null);
-        return currentStack;
-    }
-
-    @Override
-    public void setInventorySlotContents(int index, ItemStack stack) {
-        vendorStacks[index] = stack;
-        if(stack != null && stack.stackSize > getInventoryStackLimit()){
-            stack.stackSize = getInventoryStackLimit();
-        }
-        markDirty();
-    }
-
-    @Override
-    public int getInventoryStackLimit() {
-        return 64;
-    }
-
-    @Override
-    public boolean isUseableByPlayer(EntityPlayer player) {
-        if(this.worldObj.getTileEntity(getPos()) != this) return false;
-        final double X_OFFSET = 0.5;
-        final double Y_OFFSET = 0.5;
-        final double Z_OFFSET = 0.5;
-        final double MAX_DISTANCE_SQ = 8.0 * 8.0;
-        return player.getDistanceSq(pos.getX() + X_OFFSET, pos.getY() + Y_OFFSET, pos.getZ() + Z_OFFSET) < MAX_DISTANCE_SQ;
-    }
-
-    @Override
-    public void openInventory(EntityPlayer player) {}
-
-    @Override
-    public void closeInventory(EntityPlayer player) {}
-
-    @Override
-    public boolean isItemValidForSlot(int index, ItemStack stack) {
-        return true;
-    }
-
-    @Override
-    public int getField(int id) { return 0; }
-
-    @Override
-    public void setField(int id, int value) {}
-
-    @Override
-    public int getFieldCount() {
-        return 0;
-    }
-
-    @Override
-    public void clear() {
-        Arrays.fill(vendorStacks,null);
-    }
-
-    @Override
-    public String getName() {
-        return "containers.vendor.name";
-    }
-
-    @Override
-    public boolean hasCustomName() {
-        return false;
+    public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
+        if(compound.hasKey("items")) itemStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("items"));
+        if(compound.hasKey("bank")) bank = compound.getByte("bank");
     }
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
-
-        NBTTagList dataForAllSlots = new NBTTagList();
-        for(int i = 0; i < this.vendorStacks.length; i++){
-            if(this.vendorStacks[i] != null){
-                NBTTagCompound dataForThisSlot = new NBTTagCompound();
-                dataForThisSlot.setByte("Slot", (byte) i);
-                this.vendorStacks[i].writeToNBT(dataForThisSlot);
-                dataForAllSlots.appendTag(dataForThisSlot);
-            }
-        }
-        compound.setTag("Items", dataForAllSlots);
+        compound.setTag("items", itemStackHandler.serializeNBT());
+        compound.setByte("bank", (byte)bank);
         return compound;
     }
 
+    public boolean canInteractWith(EntityPlayer playerIn){
+        return !isInvalid() && playerIn.getDistanceSq(pos.add(0.5D, 0.5D, 0.5D)) <= 64D;
+    }
+
     @Override
-    public void readFromNBT(NBTTagCompound compound) {
-        super.readFromNBT(compound);
-        final byte NBT_TYPE_COMPOUND = 10; //see NBTBase.createNewByType()
-        NBTTagList dataForAllSlots = compound.getTagList("Items", NBT_TYPE_COMPOUND);
-
-        Arrays.fill(vendorStacks, null); //Sets all to empty before inserting whats saved
-        for(int i = 0; i < dataForAllSlots.tagCount(); ++i){
-            NBTTagCompound dataForOneSlot = dataForAllSlots.getCompoundTagAt(i);
-            int index = dataForOneSlot.getByte("Slot") & 255;
-
-            if(index >= 0 && index < this.vendorStacks.length){
-                this.vendorStacks[index] = ItemStack.loadItemStackFromNBT(dataForOneSlot);
-            }
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
+            return true;
         }
+        return super.hasCapability(capability, facing);
+    }
+
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
+            return (T) itemStackHandler;
+        }
+        return super.getCapability(capability, facing);
+    }
+
+    public int getBank(){
+        System.out.println(bank);
+        return bank;
+    }
+
+    public void setBank(int num){
+        bank= num;
+    }
+
+    public void addBank(int num){
+        bank = bank + num;
+        System.out.println(bank);
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

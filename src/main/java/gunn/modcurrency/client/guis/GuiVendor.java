@@ -41,7 +41,10 @@ public class GuiVendor extends GuiContainer{
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-        fontRendererObj.drawString(I18n.format(tilevendor.getName()),5,5, Color.darkGray.getRGB());
-        fontRendererObj.drawString(I18n.format("containers.inventory.name"),4,142, Color.darkGray.getRGB());
+        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+
+        fontRendererObj.drawString(I18n.format("container.vendor.name"),5,5, Color.darkGray.getRGB());
+        fontRendererObj.drawString(I18n.format("container.vendor_dollarAmount.name") + ": $" + tilevendor.getBank(),5,14, Color.darkGray.getRGB());
+        fontRendererObj.drawString(I18n.format("container.vendor_playerInv.name"),4,142, Color.darkGray.getRGB());
     }
 }

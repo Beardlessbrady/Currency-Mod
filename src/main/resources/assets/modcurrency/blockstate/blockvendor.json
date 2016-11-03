@@ -8,14 +8,6 @@
   },
   "variants": {
     "normal": [{}],
-    "inventory": [{}],
-    "edit": {
-      "false": {},
-      "true": {
-        "textures": {
-          "all": "modcurrency:blocks/vendor_closed"
-        }
-      }
-    }
+    "inventory": [{}]
   }
 }

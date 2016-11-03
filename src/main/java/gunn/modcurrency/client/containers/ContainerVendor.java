@@ -1,11 +1,15 @@
 package gunn.modcurrency.client.containers;
 
+import gunn.modcurrency.items.ModItems;
 import gunn.modcurrency.tiles.TileVendor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nullable;
 
@@ -42,8 +46,6 @@ public class ContainerVendor extends Container{
 
         setupPlayerInv(invPlayer);
         setupTeInv();
-
-
     }
 
     public void setupPlayerInv(InventoryPlayer invPlayer){
@@ -67,13 +69,13 @@ public class ContainerVendor extends Container{
                 addSlotToContainer(new Slot(invPlayer, slotNum, xpos, ypos));
             }
         }
-
     }
 
     public void setupTeInv(){
+        IItemHandler itemHandler = this.tilevendor.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,null);
         final int TE_MONEY_XPOS = 152;
         final int TE_MONEY_YPOS = 9;
-        addSlotToContainer(new Slot(tilevendor, TE_MONEY_FIRST_SLOT_INDEX, TE_MONEY_XPOS, TE_MONEY_YPOS));
+        addSlotToContainer(new SlotBank(itemHandler, TE_MONEY_FIRST_SLOT_INDEX,TE_MONEY_XPOS,TE_MONEY_YPOS));
 
         final int SLOT_X_SPACING = 18;
         final int SLOT_Y_SPACING = 18;
@@ -85,41 +87,45 @@ public class ContainerVendor extends Container{
                 int slotNum = TE_VEND_FIRST_SLOT_INDEX + y * TE_VEND_ROW_COUNT + x;
                 int xpos = TE_INV_XPOS + x * SLOT_X_SPACING;
                 int ypos = TE_INV_YPOS + y * SLOT_Y_SPACING;
-                addSlotToContainer(new Slot(tilevendor,slotNum,xpos,ypos));
+                addSlotToContainer(new SlotItemHandler(itemHandler,slotNum,xpos,ypos));
             }
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     }
 
     @Override
     public boolean canInteractWith(EntityPlayer playerIn) {
-        return tilevendor.isUseableByPlayer(playerIn);
+        return tilevendor.canInteractWith(playerIn);
     }
 
     @Nullable
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer player, int index) {
-        return null;
-    }
+    public ItemStack transferStackInSlot(EntityPlayer player, int index) {return null;}
+
 
     @Override
     public void onContainerClosed(EntityPlayer player) {
         super.onContainerClosed(player);
-        this.tilevendor.closeInventory(player);
+        //this.tilevendor.closeInventory(player);
+    }
+
+    @Override
+    public void detectAndSendChanges() {
+        super.detectAndSendChanges();
+
+    }
+}
+
+
+
+
+class SlotBank extends SlotItemHandler{
+
+    public SlotBank(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
+        super(itemHandler, index, xPosition, yPosition);
+    }
+
+    @Override
+    public boolean isItemValid(ItemStack stack) {
+        return stack.getItem() == ModItems.itembanknote;
     }
 }

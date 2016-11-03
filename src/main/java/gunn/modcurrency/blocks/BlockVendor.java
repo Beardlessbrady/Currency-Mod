@@ -2,6 +2,7 @@ package gunn.modcurrency.blocks;
 
 import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.handler.GuiHandler;
+import gunn.modcurrency.items.ModItems;
 import gunn.modcurrency.tiles.TileVendor;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
@@ -36,8 +37,9 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider{
     public BlockVendor() {
         super(Material.ROCK, "blockvendor");
 
+        GameRegistry.register(this);
         GameRegistry.register(new ItemBlock(this), getRegistryName());
-        //GameRegistry.registerTileEntity(TileVendor.class, ModCurrency.MODID + "_tevendor");
+        GameRegistry.registerTileEntity(TileVendor.class, ModCurrency.MODID + "_tevendor");
     }
 
     @Override
@@ -48,8 +50,18 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider{
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if(world.isRemote) return true;
-        //INSERT GUIHANDLER
-        player.openGui(ModCurrency.instance, GuiHandler.getGuiID(getDefaultState().getBlock()), world, pos.getX(), pos.getY(), pos.getZ());
-        return true;
+        if(heldItem != null){
+            getTile(world, pos).addBank(100);
+            return true;
+        }else {
+            player.openGui(ModCurrency.instance, GuiHandler.getGuiID(getDefaultState().getBlock()), world, pos.getX(), pos.getY(), pos.getZ());
+            return true;
+        }
     }
+
+    public TileVendor getTile(World world, BlockPos pos){
+        return (TileVendor) world.getTileEntity(pos);
+    }
+
+
 }
