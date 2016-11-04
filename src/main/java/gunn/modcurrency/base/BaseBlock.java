@@ -1,4 +1,4 @@
-package gunn.modcurrency.blocks;
+package gunn.modcurrency.base;
 
 import gunn.modcurrency.ModCurrency;
 import net.minecraft.block.Block;
