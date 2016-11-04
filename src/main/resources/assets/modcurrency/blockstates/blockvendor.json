@@ -3,7 +3,7 @@
   "defaults": {
     "model": "cube_all",
     "textures": {
-      "all": "modcurrency:blocks/vendor_open"
+      "all": "modcurrency:blocks/vendor"
     }
   },
   "variants": {

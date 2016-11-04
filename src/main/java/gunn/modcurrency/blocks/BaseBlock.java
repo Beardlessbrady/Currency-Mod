@@ -1,4 +1,4 @@
-package gunn.modcurrency.base;
+package gunn.modcurrency.blocks;
 
 import gunn.modcurrency.ModCurrency;
 import net.minecraft.block.Block;
@@ -26,7 +26,7 @@ public class BaseBlock extends Block{
         setUnlocalizedName(this.getRegistryName().toString());
         GameRegistry.register(this);
     }
-
+    
     public void initModel(){
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
     }
