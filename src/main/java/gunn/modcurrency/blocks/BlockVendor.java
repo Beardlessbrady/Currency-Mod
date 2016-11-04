@@ -51,7 +51,7 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider{
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if(world.isRemote) return true;
         if(heldItem != null){
-            getTile(world, pos).addBank(100);
+            getTile(world, pos).setField(0,getTile(world,pos).getField(0) + 100);
             return true;
         }else {
             player.openGui(ModCurrency.instance, GuiHandler.getGuiID(getDefaultState().getBlock()), world, pos.getX(), pos.getY(), pos.getZ());
