@@ -1,6 +1,10 @@
 package gunn.modcurrency.tiles;
 
+import gunn.modcurrency.items.ModItems;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -76,8 +80,39 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         }
     }
     
+    public void outChange(){
+        /*
+        int amount = bank;
+        int[] out = new int[5];
+
+        out[0] = Math.round(amount / 100);
+        amount = amount - (out[0] * 100);
+
+        out[1] =  Math.round(amount / 50);
+        amount = amount - (out[1] * 50);
+
+        out[2] = Math.round(amount / 20);
+        amount = amount - (out[2] * 20);
+
+        out[3] = Math.round(amount / 10);
+        amount = amount - (out[3] * 10);
+
+        out[4] = Math.round(amount / 5);
+        amount = amount - (out[4] * 5);
+
+        out[5] = Math.round(amount);
+        amount = amount - out[5];
+
+        if(amount != 0) System.err.print("Calculating Change messed up somewhere....");
+        bank = 0;
+        */
+
+        if(!worldObj.isRemote) {
+            worldObj.spawnEntityInWorld(new EntityItem(worldObj, getPos().getX(), getPos().getY()+1, getPos().getZ(), new ItemStack(ModItems.itembanknote)));
+        }
+    }
     
-    
+
     
     
     //<editor-fold desc="Item Handler Methods">
