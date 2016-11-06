@@ -1,6 +1,8 @@
 package gunn.modcurrency.client.guis;
 
 import gunn.modcurrency.client.containers.ContainerVendor;
+import gunn.modcurrency.handler.PacketHandler;
+import gunn.modcurrency.network.PacketSendItem;
 import gunn.modcurrency.tiles.TileVendor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -66,7 +68,7 @@ public class GuiVendor extends GuiContainer{
     protected void actionPerformed(GuiButton button) throws IOException {
         switch(button.id){
             case 0:         //Change Button
-                //
+                PacketHandler.INSTANCE.sendToServer(new PacketSendItem("This is a test"));
                 break;
         }
     }
