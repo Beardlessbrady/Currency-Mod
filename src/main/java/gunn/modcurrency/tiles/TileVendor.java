@@ -80,35 +80,41 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         }
     }
     
+    //Outputs change in least amount of bills
     public void outChange(){
-        /*
         int amount = bank;
-        int[] out = new int[5];
+        int[] out = new int[6];
 
-        out[0] = Math.round(amount / 100);
-        amount = amount - (out[0] * 100);
+        out[5] = Math.round(amount / 100);
+        amount = amount - (out[5] * 100);
 
-        out[1] =  Math.round(amount / 50);
-        amount = amount - (out[1] * 50);
+        out[4] =  Math.round(amount / 50);
+        amount = amount - (out[4] * 50);
 
-        out[2] = Math.round(amount / 20);
-        amount = amount - (out[2] * 20);
+        out[3] = Math.round(amount / 20);
+        amount = amount - (out[3] * 20);
 
-        out[3] = Math.round(amount / 10);
-        amount = amount - (out[3] * 10);
+        out[2] = Math.round(amount / 10);
+        amount = amount - (out[2] * 10);
 
-        out[4] = Math.round(amount / 5);
-        amount = amount - (out[4] * 5);
+        out[1] = Math.round(amount / 5);
+        amount = amount - (out[1] * 5);
 
-        out[5] = Math.round(amount);
-        amount = amount - out[5];
+        out[0] = Math.round(amount);
+        amount = amount - out[0];
 
         if(amount != 0) System.err.print("Calculating Change messed up somewhere....");
         bank = 0;
-        */
 
         if(!worldObj.isRemote) {
-            worldObj.spawnEntityInWorld(new EntityItem(worldObj, getPos().getX(), getPos().getY()+1, getPos().getZ(), new ItemStack(ModItems.itembanknote)));
+            for(int i = 0; i < out.length; i++) {
+                if(out[i] != 0) {
+                    ItemStack item = new ItemStack(ModItems.itembanknote);
+                    item.setItemDamage(i);
+                    item.stackSize = out[i];
+                    worldObj.spawnEntityInWorld(new EntityItem(worldObj, getPos().getX(), getPos().getY(), getPos().getZ(), item));
+                }
+            }
         }
     }
     

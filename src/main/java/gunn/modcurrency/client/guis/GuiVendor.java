@@ -11,8 +11,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import java.awt.*;
 import java.io.IOException;
@@ -68,7 +66,9 @@ public class GuiVendor extends GuiContainer{
     protected void actionPerformed(GuiButton button) throws IOException {
         switch(button.id){
             case 0:         //Change Button
-                PacketHandler.INSTANCE.sendToServer(new PacketSendItem("This is a test"));
+                PacketSendItem pack = new PacketSendItem();
+                pack.setBlockPos(tilevendor.getPos());
+                PacketHandler.INSTANCE.sendToServer(pack);
                 break;
         }
     }
