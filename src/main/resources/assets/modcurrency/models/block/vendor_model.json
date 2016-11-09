@@ -1,0 +1,150 @@
+{
+	"__comment": "Designed by Beardlessbrady with Cubik Studio - https://cubik.studio",
+	"textures": {
+		"atlas": "modcurrency:blocks/vendor"
+	},
+	"elements": [
+		{
+			"__comment": "PlaneY1",
+			"from": [ 4, 26, 2 ],
+			"to": [ 15, 26.001, 15 ],
+			"faces": {
+				"down": { "uv": [ 0, 12.75, 2.75, 16 ], "texture": "#atlas", "cullface": "up" },
+				"up": { "uv": [ 0, 12.75, 2.75, 16 ], "texture": "#atlas", "cullface": "up" }
+			}
+		},
+		{
+			"__comment": "PlaneY1",
+			"from": [ 4, 22, 2 ],
+			"to": [ 15, 22.001, 15 ],
+			"faces": {
+				"down": { "uv": [ 0, 12.75, 2.75, 16 ], "texture": "#atlas", "cullface": "up" },
+				"up": { "uv": [ 0, 12.75, 2.75, 16 ], "texture": "#atlas", "cullface": "up" }
+			}
+		},
+		{
+			"__comment": "PlaneY1",
+			"from": [ 4, 18, 2 ],
+			"to": [ 15, 18.001, 15 ],
+			"faces": {
+				"down": { "uv": [ 0, 12.75, 2.75, 16 ], "texture": "#atlas", "cullface": "up" },
+				"up": { "uv": [ 0, 12.75, 2.75, 16 ], "texture": "#atlas", "cullface": "up" }
+			}
+		},
+		{
+			"__comment": "PlaneY1",
+			"from": [ 4, 14, 2 ],
+			"to": [ 15, 14.001, 15 ],
+			"faces": {
+				"down": { "uv": [ 0, 12.75, 2.75, 16 ], "texture": "#atlas" },
+				"up": { "uv": [ 0, 12.75, 2.75, 16 ], "texture": "#atlas" }
+			}
+		},
+		{
+			"__comment": "PlaneY1",
+			"from": [ 4, 10, 2 ],
+			"to": [ 15, 10.001, 15 ],
+			"faces": {
+				"down": { "uv": [ 0, 12.75, 2.75, 16 ], "texture": "#atlas" },
+				"up": { "uv": [ 0, 12.75, 2.75, 16 ], "texture": "#atlas" }
+			}
+		},
+		{
+			"__comment": "Door Frame [Bottom]",
+			"from": [ 4, 7, 1 ],
+			"to": [ 15, 8, 2 ],
+			"faces": {
+				"down": { "uv": [ 0, 1, 2.75, 1.25 ], "texture": "#atlas" },
+				"up": { "uv": [ 0, 7, 2.75, 7.25 ], "texture": "#atlas" },
+				"south": { "uv": [ 0, 7, 2.75, 7.25 ], "texture": "#atlas" }
+			}
+		},
+		{
+			"__comment": "Door Frame [Right]",
+			"from": [ 0, 7, 1 ],
+			"to": [ 4, 30, 2 ],
+			"faces": {
+				"down": { "uv": [ 3, 7, 4, 7.25 ], "texture": "#atlas", "cullface": "up" },
+				"south": { "uv": [ 3, 7, 4, 12.75 ], "texture": "#atlas", "cullface": "up" },
+				"west": { "uv": [ 4, 7, 4.25, 12.75 ], "texture": "#atlas", "cullface": "up" },
+				"east": { "uv": [ 2, 7, 2.25, 12.75 ], "texture": "#atlas", "cullface": "up" }
+			}
+		},
+		{
+			"__comment": "Door Frame [Top]",
+			"from": [ 0, 30, 1 ],
+			"to": [ 16, 31, 2 ],
+			"faces": {
+				"down": { "uv": [ 3, 15.75, 7, 16 ], "texture": "#atlas", "cullface": "up" },
+				"up": { "uv": [ 3, 15.75, 7, 16 ], "texture": "#atlas", "cullface": "up" },
+				"south": { "uv": [ 3, 15.75, 7, 16 ], "texture": "#atlas", "cullface": "up" },
+				"west": { "uv": [ 3, 15.75, 3.25, 16 ], "texture": "#atlas", "cullface": "up" },
+				"east": { "uv": [ 3, 15.75, 3.25, 16 ], "texture": "#atlas", "cullface": "up" }
+			}
+		},
+		{
+			"__comment": "Door Frame [Left]",
+			"from": [ 15, 7, 1 ],
+			"to": [ 16, 30, 2 ],
+			"faces": {
+				"down": { "uv": [ 4, 7, 4.25, 7.25 ], "texture": "#atlas", "cullface": "up" },
+				"south": { "uv": [ 4, 7, 4.25, 12.75 ], "texture": "#atlas", "cullface": "up" },
+				"west": { "uv": [ 4, 7, 4.25, 12.75 ], "texture": "#atlas", "cullface": "up" },
+				"east": { "uv": [ 4, 7, 4.25, 12.75 ], "texture": "#atlas", "cullface": "up" }
+			}
+		},
+		{
+			"__comment": "Door [Left]",
+			"from": [ 15, 7, 0 ],
+			"to": [ 16, 30, 1 ],
+			"faces": {
+				"down": { "uv": [ 4, 8, 4.25, 8.25 ], "texture": "#atlas", "cullface": "up" },
+				"north": { "uv": [ 4, 7, 4.25, 12.75 ], "texture": "#atlas", "cullface": "up" },
+				"west": { "uv": [ 4, 7, 4.25, 12.75 ], "texture": "#atlas", "cullface": "up" },
+				"east": { "uv": [ 4, 7, 4.25, 12.75 ], "texture": "#atlas", "cullface": "up" }
+			}
+		},
+		{
+			"__comment": "Door [Bottom]",
+			"from": [ 4, 7, 0 ],
+			"to": [ 15, 8, 1 ],
+			"faces": {
+				"down": { "uv": [ 0, 7, 2.75, 7.25 ], "texture": "#atlas" },
+				"up": { "uv": [ 0, 7, 2.75, 7.25 ], "texture": "#atlas" },
+				"north": { "uv": [ 0, 7, 2.75, 7.25 ], "texture": "#atlas", "cullface": "north" }
+			}
+		},
+		{
+			"__comment": "Door [Top]",
+			"from": [ 0, 30, 0 ],
+			"to": [ 16, 31, 1 ],
+			"faces": {
+				"down": { "uv": [ 3, 15.75, 7, 16 ], "texture": "#atlas", "cullface": "up" },
+				"up": { "uv": [ 3, 15.75, 7, 16 ], "texture": "#atlas", "cullface": "up" },
+				"north": { "uv": [ 3, 15.75, 7, 16 ], "texture": "#atlas", "cullface": "up" },
+				"west": { "uv": [ 3, 15.75, 3.25, 16 ], "texture": "#atlas", "cullface": "up" },
+				"east": { "uv": [ 3, 15.75, 3.25, 16 ], "texture": "#atlas", "cullface": "up" }
+			}
+		},
+		{
+			"__comment": "Door [Right]",
+			"from": [ 0, 7, 0 ],
+			"to": [ 4, 30, 1 ],
+			"faces": {
+				"down": { "uv": [ 1, 7, 2, 7.25 ], "texture": "#atlas", "cullface": "up" },
+				"north": { "uv": [ 1, 7, 2, 12.75 ], "texture": "#atlas", "cullface": "up" },
+				"west": { "uv": [ 2, 7, 2.25, 12.75 ], "texture": "#atlas", "cullface": "up" },
+				"east": { "uv": [ 2, 7, 2.25, 12.75 ], "texture": "#atlas", "cullface": "up" }
+			}
+		},
+		{
+			"__comment": "PlaneX15",
+			"from": [ -2, 0, -2 ],
+			"to": [ -1.999, 1, -1 ],
+			"faces": {
+				"west": { "uv": [ 0, 15, 0, 16 ], "texture": "#atlas" },
+				"east": { "uv": [ 16, 15, 16, 16 ], "texture": "#atlas" }
+			}
+		}
+	]
+}

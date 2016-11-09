@@ -21,9 +21,9 @@ import javax.annotation.Nullable;
 
 /**
  * This class was created by <Brady Gunn>.
- * Distributed with the Currency Mod for Minecraft.
+ * Distributed with the Currency-Mod for Minecraft.
  *
- * The Currency Mod is open source and distributed
+ * The Currency-Mod is open source and distributed
  * under the General Public License
  *
  * File Created on 2016-10-30.
@@ -35,6 +35,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     public static final int TOTAL_SLOTS_COUNT = MONEY_SLOT_COUNT + VEND_SLOT_COUNT;
 
     private int bank;
+    private boolean locked;
     private ItemStackHandler itemStackHandler = new ItemStackHandler(TOTAL_SLOTS_COUNT) {
         @Override
         protected void onContentsChanged(int slot) { markDirty(); }
@@ -42,6 +43,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
 
     public TileVendor(){
         bank = 0;
+        locked = false;
     }
 
     @Override
@@ -149,6 +151,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         super.readFromNBT(compound);
         if(compound.hasKey("items")) itemStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("items"));
         if(compound.hasKey("bank")) bank = compound.getInteger("bank");
+        if(compound.hasKey("locked")) locked = compound.getBoolean("locked");
     }
 
     @Override
@@ -156,6 +159,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         super.writeToNBT(compound);
         compound.setTag("items", itemStackHandler.serializeNBT());
         compound.setInteger("bank", bank);
+        compound.setBoolean("locked", locked);
         return compound;
     }
 
@@ -169,6 +173,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setInteger("bank", bank);
+        tag.setBoolean("locked", locked);
         return new SPacketUpdateTileEntity(pos, 1, tag);
     }
 
@@ -176,21 +181,27 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         super.onDataPacket(net, pkt);
         bank = getUpdatePacket().getNbtCompound().getInteger("bank");
+        locked = getUpdatePacket().getNbtCompound().getBoolean("locked");
     }
 
     public int getFieldCount(){
-        return 1;
+        return 2;
     }
 
     public void setField(int id, int value){
-        if(id == 0){
-            bank = value;
+        switch(id){
+            case 0: bank = value;
+                break;
+            case 1: locked = (value == 1);
+                break;
         }
+        
     }
 
     public int getField(int id){
-        if(id == 0){
-            return bank;
+        switch(id){
+            case 0: return bank;
+            case 1: return (locked) ? 1 : 0;
         }
         return -1;
     }

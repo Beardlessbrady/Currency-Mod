@@ -23,9 +23,9 @@ import javax.annotation.Nullable;
 
 /**
  * This class was created by <Brady Gunn>.
- * Distributed with the Currency Mod for Minecraft.
+ * Distributed with the Currency-Mod for Minecraft.
  *
- * The Currency Mod is open source and distributed
+ * The Currency-Mod is open source and distributed
  * under the General Public License
  *
  * File Created on 2016-10-30.
@@ -47,6 +47,15 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider{
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if(world.isRemote) return true;
+        if(heldItem != null){
+            if(getTile(world,pos).getField(1) == 1){ //is True
+                getTile(world,pos).setField(1, 0);  //Make False
+            }else{ // is False
+                getTile(world,pos).setField(1, 1); // Make True
+            }
+            System.out.println("CHANGED LOCK =" + getTile(world,pos).getField(1));
+            return true;
+        }
         player.openGui(ModCurrency.instance, GuiHandler.getGuiID(getDefaultState().getBlock()), world, pos.getX(), pos.getY(), pos.getZ());
         return true;
     }

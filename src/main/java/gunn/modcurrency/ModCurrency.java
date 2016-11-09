@@ -11,9 +11,9 @@ import org.apache.logging.log4j.Logger;
 
 /**
  * This class was created by <Brady Gunn>.
- * Distributed with the Currency Mod for Minecraft.
+ * Distributed with the Currency-Mod for Minecraft.
  *
- * The Currency Mod is open source and distributed
+ * The Currency-Mod is open source and distributed
  * under the General Public License
  *
  * File Created on 2016-10-28.
@@ -39,8 +39,7 @@ public class ModCurrency {
         logger = event.getModLog();
         proxy.preInit(event);
     }
-
-
+    
     @Mod.EventHandler
     public void init(FMLInitializationEvent event){
         proxy.Init(event);
@@ -50,23 +49,4 @@ public class ModCurrency {
     public void postInit(FMLPostInitializationEvent event){
         proxy.postInit(event);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
