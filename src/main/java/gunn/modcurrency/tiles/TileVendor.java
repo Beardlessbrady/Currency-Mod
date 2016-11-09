@@ -180,8 +180,8 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         super.onDataPacket(net, pkt);
-        bank = getUpdatePacket().getNbtCompound().getInteger("bank");
-        locked = getUpdatePacket().getNbtCompound().getBoolean("locked");
+        bank = pkt.getNbtCompound().getInteger("bank");
+        locked = pkt.getNbtCompound().getBoolean("locked");
     }
 
     public int getFieldCount(){
