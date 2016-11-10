@@ -2,10 +2,14 @@ package gunn.modcurrency.client.guis;
 
 import gunn.modcurrency.client.containers.ContainerVendor;
 import gunn.modcurrency.handler.PacketHandler;
+import gunn.modcurrency.network.PacketSendData;
 import gunn.modcurrency.network.PacketSendItem;
 import gunn.modcurrency.tiles.TileVendor;
+import gunn.modcurrency.util.CustomButton;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
@@ -26,15 +30,13 @@ import java.io.IOException;
  */
 public class GuiVendor extends GuiContainer{
 
-    protected static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/vendor_gui.png");
-    
+    protected static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/GuiVendorTexture.png");
+    protected static final ResourceLocation TAB_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/GuiVendorTabTexture.png");
     private TileVendor tilevendor;
-    private GuiTab_Lock lockTab;
 
     public GuiVendor(InventoryPlayer invPlayer, TileVendor tilevendor){
         super(new ContainerVendor(invPlayer, tilevendor));
         this.tilevendor = tilevendor;
-        this.lockTab = new GuiTab_Lock(tilevendor);
         
         xSize = 176;
         ySize = 235;
@@ -45,8 +47,6 @@ public class GuiVendor extends GuiContainer{
         Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
-        
-        lockTab.drawBackgroundLayer();
     }
 
     @Override
@@ -56,25 +56,49 @@ public class GuiVendor extends GuiContainer{
         fontRendererObj.drawString(I18n.format("container.vendor.name"),5,7, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("container.vendor_dollarAmount.name") + ": $" + tilevendor.getField(0),5,16, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("container.vendor_playerInv.name"),4,142, Color.darkGray.getRGB());
+        
+        drawLock();
     }
 
     @Override
     public void initGui() {
-        super.initGui();
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
+        super.initGui();
         
         this.buttonList.add(new GuiButton(0, i + 103, j + 7, 45, 20, "Change"));
-        
+        this.buttonList.add(new CustomButton( 1, i + 176, j + 49, 0, 50, 26, 32, "", TAB_TEXTURE));
+    }
+    
+    public void drawLock(){
+        Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        if (tilevendor.getField(1) == 1) {
+            //Lock [Locked] 
+            drawTexturedModalRect(181 , 57, 241, 1, 14, 19);
+        } else {
+            //Lock [UnLocked]
+            drawTexturedModalRect(181 , 52, 241, 24, 14, 24);
+        }
     }
 
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
-        switch(button.id){
+        switch(button.id) {
             case 0:         //Change Button
-                PacketSendItem pack = new PacketSendItem();
-                pack.setBlockPos(tilevendor.getPos());
-                PacketHandler.INSTANCE.sendToServer(pack);
+                PacketSendItem pack0 = new PacketSendItem();
+                pack0.setBlockPos(tilevendor.getPos());
+                PacketHandler.INSTANCE.sendToServer(pack0);
+                break;
+            case 1:         //Lock Button
+                PacketSendData pack1 = new PacketSendData();
+                if (tilevendor.getField(1) == 1) { //is True
+                    pack1.setData(0,tilevendor.getPos(),0);
+                } else { // is False
+                    pack1.setData(1,tilevendor.getPos(),0);
+                }
+                PacketHandler.INSTANCE.sendToServer(pack1);
+                tilevendor.getWorld().notifyBlockUpdate(tilevendor.getPos(), tilevendor.getBlockType().getDefaultState(), tilevendor.getBlockType().getDefaultState(), 3);
                 break;
         }
     }

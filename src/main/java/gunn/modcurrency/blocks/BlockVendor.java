@@ -46,16 +46,8 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider{
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+        if(!world.isRemote) System.out.println(getTile(world,pos).getField(1));
         if(world.isRemote) return true;
-        if(heldItem != null){
-            if(getTile(world,pos).getField(1) == 1){ //is True
-                getTile(world,pos).setField(1, 0);  //Make False
-            }else{ // is False
-                getTile(world,pos).setField(1, 1); // Make True
-            }
-            System.out.println("CHANGED LOCK =" + getTile(world,pos).getField(1));
-            return true;
-        }
         player.openGui(ModCurrency.instance, GuiHandler.getGuiID(getDefaultState().getBlock()), world, pos.getX(), pos.getY(), pos.getZ());
         return true;
     }
