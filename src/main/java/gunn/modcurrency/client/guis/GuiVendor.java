@@ -33,6 +33,7 @@ public class GuiVendor extends GuiContainer{
     protected static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/GuiVendorTexture.png");
     protected static final ResourceLocation TAB_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/GuiVendorTabTexture.png");
     private TileVendor tilevendor;
+    private boolean gearExtended = false;
 
     public GuiVendor(InventoryPlayer invPlayer, TileVendor tilevendor){
         super(new ContainerVendor(invPlayer, tilevendor));
@@ -57,7 +58,8 @@ public class GuiVendor extends GuiContainer{
         fontRendererObj.drawString(I18n.format("container.vendor_dollarAmount.name") + ": $" + tilevendor.getField(0),5,16, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("container.vendor_playerInv.name"),4,142, Color.darkGray.getRGB());
         
-        drawLock();
+        drawLockIcon();
+        drawGearIcon();
     }
 
     @Override
@@ -67,19 +69,27 @@ public class GuiVendor extends GuiContainer{
         super.initGui();
         
         this.buttonList.add(new GuiButton(0, i + 103, j + 7, 45, 20, "Change"));
-        this.buttonList.add(new CustomButton( 1, i + 176, j + 49, 0, 50, 26, 32, "", TAB_TEXTURE));
+        this.buttonList.add(new CustomButton( 1, i+ 176, j+ 20, 0, 50, 26, 32, "", TAB_TEXTURE));
+        this.buttonList.add(new CustomButton(2, i + 176, j + 54, 0, 0, 26, 32, "", TAB_TEXTURE));
     }
     
-    public void drawLock(){
+    public void drawLockIcon(){
         Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         if (tilevendor.getField(1) == 1) {
             //Lock [Locked] 
-            drawTexturedModalRect(181 , 57, 241, 1, 14, 19);
+            drawTexturedModalRect(180 , 25, 240, 0, 16, 23);
         } else {
             //Lock [UnLocked]
-            drawTexturedModalRect(181 , 52, 241, 24, 14, 24);
+            drawTexturedModalRect(180 , 22, 240, 24, 16, 26);
         }
+    }
+    
+    public void drawGearIcon(){
+        Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        //0
+        drawTexturedModalRect(176 , 58, 233, 51, 23, 24);
     }
 
     @Override
@@ -99,6 +109,13 @@ public class GuiVendor extends GuiContainer{
                 }
                 PacketHandler.INSTANCE.sendToServer(pack1);
                 tilevendor.getWorld().notifyBlockUpdate(tilevendor.getPos(), tilevendor.getBlockType().getDefaultState(), tilevendor.getBlockType().getDefaultState(), 3);
+                break;
+            case 2:
+                if(gearExtended == true){
+                    gearExtended = false;
+                }else{
+                    gearExtended = true;
+                }
                 break;
         }
     }
