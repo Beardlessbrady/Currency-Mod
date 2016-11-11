@@ -61,8 +61,8 @@ public class PacketSendData implements IMessage{
             
             switch(message.mode){
                 case 0:     //BlockVendor set Lock
-                    BlockVendor block = (BlockVendor)world.getBlockState(message.blockPos).getBlock();
-                    block.getTile(world,message.blockPos).setField(1,message.data);
+                    BlockVendor block0 = (BlockVendor)world.getBlockState(message.blockPos).getBlock();
+                    block0.getTile(world,message.blockPos).setField(1,message.data);
                     break;
             }
         }

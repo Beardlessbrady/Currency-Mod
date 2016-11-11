@@ -1,8 +1,8 @@
 package gunn.modcurrency.handler;
 
 import gunn.modcurrency.blocks.BlockVendor;
-import gunn.modcurrency.client.containers.ContainerVendor;
-import gunn.modcurrency.client.guis.GuiVendor;
+import gunn.modcurrency.containers.ContainerVendor;
+import gunn.modcurrency.guis.GuiVendor;
 import gunn.modcurrency.tiles.TileVendor;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -21,20 +21,13 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
  * File Created on 2016-11-02.
  */
 public class GuiHandler implements IGuiHandler{
-    private static final int GUIID_VENDOR = 30;
-    public static int getGuiID(Block block){
-        if(block instanceof BlockVendor){
-            return GUIID_VENDOR;
-        }else{
-            return -1;
-        }
-    }
+    //Id 30 = BlockVendor [Closed]
 
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         BlockPos xyz = new BlockPos(x,y,z);
         TileEntity tileEntity = world.getTileEntity(xyz);
-        if(tileEntity instanceof TileVendor){
+        if(tileEntity instanceof TileVendor && ID == 30){
             TileVendor tilevendor = (TileVendor) tileEntity;
             return new ContainerVendor(player.inventory, tilevendor);
         }
@@ -45,7 +38,7 @@ public class GuiHandler implements IGuiHandler{
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         BlockPos xyz = new BlockPos(x,y,z);
         TileEntity tileEntity = world.getTileEntity(xyz);
-        if(tileEntity instanceof TileVendor){
+        if(tileEntity instanceof TileVendor && ID == 30){
             TileVendor tilevendor = (TileVendor) tileEntity;
             return new GuiVendor(player.inventory, tilevendor);
         }

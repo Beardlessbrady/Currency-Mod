@@ -1,13 +1,13 @@
-package gunn.modcurrency.client.containers;
+package gunn.modcurrency.containers;
 
 import gunn.modcurrency.items.ModItems;
 import gunn.modcurrency.tiles.TileVendor;
+import gunn.modcurrency.util.SlotBank;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -176,14 +176,3 @@ public class ContainerVendor extends Container{
     }
 }
 
-class SlotBank extends SlotItemHandler{
-
-    public SlotBank(IItemHandler itemHandler, int index, int xPosition, int yPosition) {
-        super(itemHandler, index, xPosition, yPosition);
-    }
-
-    @Override
-    public boolean isItemValid(ItemStack stack) {
-        return stack.getItem() == ModItems.itembanknote;
-    }
-}

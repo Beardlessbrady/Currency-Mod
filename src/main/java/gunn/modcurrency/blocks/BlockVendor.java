@@ -18,6 +18,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nullable;
 
@@ -47,7 +48,16 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider{
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if(world.isRemote) return true;
-        player.openGui(ModCurrency.instance, GuiHandler.getGuiID(getDefaultState().getBlock()), world, pos.getX(), pos.getY(), pos.getZ());
+        if(player.isSneaking()){
+            if(getTile(world,pos).getField(2) == 1){   //If True
+                getTile(world,pos).setField(2, 0);
+            }else{
+                getTile(world,pos).setField(2,1);
+            }
+            getTile(world,pos).getWorld().notifyBlockUpdate(getTile(world,pos).getPos(), getTile(world,pos).getBlockType().getDefaultState(), getTile(world,pos).getBlockType().getDefaultState(), 3);
+            return true;
+        }
+        player.openGui(ModCurrency.instance, 30, world, pos.getX(), pos.getY(), pos.getZ());
         return true;
     }
 

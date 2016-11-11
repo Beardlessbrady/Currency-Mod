@@ -19,10 +19,10 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  *
  * File Created on 2016-11-06.
  */
-public class PacketSendItem implements IMessage{
+public class PacketSendItemToServer implements IMessage{
     private BlockPos blockPos;
     
-    public PacketSendItem(){}
+    public PacketSendItemToServer(){}
     
     public void setBlockPos(BlockPos blockpos) {
         this.blockPos = blockpos;
@@ -40,15 +40,15 @@ public class PacketSendItem implements IMessage{
         buf.writeInt(blockPos.getZ());
     }
     
-    public static class Handler implements IMessageHandler<PacketSendItem, IMessage>{
+    public static class Handler implements IMessageHandler<PacketSendItemToServer, IMessage>{
 
         @Override
-        public IMessage onMessage(final PacketSendItem message, MessageContext ctx) {
+        public IMessage onMessage(final PacketSendItemToServer message, MessageContext ctx) {
             FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message,ctx));
             return null;
         }
         
-        private void handle(PacketSendItem message, MessageContext ctx){
+        private void handle(PacketSendItemToServer message, MessageContext ctx){
             EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
             World world = playerEntity.worldObj;
             BlockVendor block = (BlockVendor)world.getBlockState(message.blockPos).getBlock();

@@ -35,7 +35,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     public static final int TOTAL_SLOTS_COUNT = MONEY_SLOT_COUNT + VEND_SLOT_COUNT;
 
     private int bank;
-    private boolean locked;
+    private boolean locked, openMode;
     private ItemStackHandler itemStackHandler = new ItemStackHandler(TOTAL_SLOTS_COUNT) {
         @Override
         protected void onContentsChanged(int slot) { markDirty(); }
@@ -44,6 +44,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     public TileVendor(){
         bank = 0;
         locked = false;
+        openMode = false;
     }
 
     @Override
@@ -152,6 +153,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         if(compound.hasKey("items")) itemStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("items"));
         if(compound.hasKey("bank")) bank = compound.getInteger("bank");
         if(compound.hasKey("locked")) locked = compound.getBoolean("locked");
+        if(compound.hasKey("openMode")) openMode = compound.getBoolean("openMode");
     }
 
     @Override
@@ -160,6 +162,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         compound.setTag("items", itemStackHandler.serializeNBT());
         compound.setInteger("bank", bank);
         compound.setBoolean("locked", locked);
+        compound.setBoolean("openMode", openMode);
         return compound;
     }
 
@@ -174,6 +177,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         NBTTagCompound tag = new NBTTagCompound();
         tag.setInteger("bank", bank);
         tag.setBoolean("locked", locked);
+        tag.setBoolean("openMode", openMode);
         return new SPacketUpdateTileEntity(pos, 1, tag);
     }
 
@@ -182,10 +186,11 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         super.onDataPacket(net, pkt);
         bank = pkt.getNbtCompound().getInteger("bank");
         locked = pkt.getNbtCompound().getBoolean("locked");
+        openMode = pkt.getNbtCompound().getBoolean("openMode");
     }
 
     public int getFieldCount(){
-        return 2;
+        return 3;
     }
 
     public void setField(int id, int value){
@@ -193,6 +198,8 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
             case 0: bank = value;
                 break;
             case 1: locked = (value == 1);
+                break;
+            case 2: openMode = (value == 1);
                 break;
         }
         
@@ -202,6 +209,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         switch(id){
             case 0: return bank;
             case 1: return (locked) ? 1 : 0;
+            case 2: return (openMode) ? 1 : 0;
         }
         return -1;
     }
