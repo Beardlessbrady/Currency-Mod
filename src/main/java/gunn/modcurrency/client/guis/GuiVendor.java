@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.IOException;
@@ -57,9 +58,26 @@ public class GuiVendor extends GuiContainer{
         fontRendererObj.drawString(I18n.format("container.vendor.name"),5,7, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("container.vendor_dollarAmount.name") + ": $" + tilevendor.getField(0),5,16, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("container.vendor_playerInv.name"),4,142, Color.darkGray.getRGB());
-        
+
         drawLockIcon();
         drawGearIcon();
+        
+        if(gearExtended == true){
+            fontRendererObj.drawString(I18n.format("Slot Settings"),197,51, Integer.parseInt("42401c", 16));
+            fontRendererObj.drawString(I18n.format("Slot Settings"),196,50, Integer.parseInt("fff200", 16));
+            GL11.glScaled(0.8,0.8,0.8);
+            fontRendererObj.drawString(I18n.format("[Diamond Block]"),231,80, Integer.parseInt("001f33", 16));
+            fontRendererObj.drawString(I18n.format("[Diamond Block]"),230,79, Integer.parseInt("0099ff", 16));
+            
+            fontRendererObj.drawString(I18n.format("Cost:"),239,90, Integer.parseInt("211d1b", 16));
+            fontRendererObj.drawString(I18n.format("Cost:"),238,89, Color.lightGray.getRGB());
+            fontRendererObj.drawString(I18n.format("Supply:"),239,100, Integer.parseInt("211d1b", 16));
+            fontRendererObj.drawString(I18n.format("Supply:"),238,99, Color.lightGray.getRGB());
+
+            fontRendererObj.drawString(I18n.format("$" + "50"),265,90, Integer.parseInt("0099ff", 16));
+            fontRendererObj.drawString(I18n.format("64"),276,100, Integer.parseInt("0099ff", 16));
+            
+        }
     }
 
     @Override
@@ -68,28 +86,28 @@ public class GuiVendor extends GuiContainer{
         int j = (this.height - this.ySize) / 2;
         super.initGui();
         
-        this.buttonList.add(new GuiButton(0, i + 103, j + 7, 45, 20, "Change"));
-        this.buttonList.add(new CustomButton( 1, i+ 176, j+ 20, 0, 50, 26, 32, "", TAB_TEXTURE));
-        this.buttonList.add(new CustomButton(2, i + 176, j + 54, 0, 0, 26, 32, "", TAB_TEXTURE));
+        this.buttonList.add(new GuiButton(0, i + 103, j + 7, 45, 20, "Change"));                    //Change Button
+        this.buttonList.add(new CustomButton( 1, i+ 176, j+ 20, 0, 21, 21, 22, "", TAB_TEXTURE));   //Lock Tab
+        this.buttonList.add(new CustomButton(2, i+ 176, j+ 43, 0, 0, 21, 22, "", TAB_TEXTURE));   //Gear Tab
     }
     
     public void drawLockIcon(){
         Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         if (tilevendor.getField(1) == 1) {
-            //Lock [Locked] 
-            drawTexturedModalRect(180 , 25, 240, 0, 16, 23);
+            //Lock [Locked]
+            drawTexturedModalRect(179 , 23, 245, 15, 11, 16);
         } else {
-            //Lock [UnLocked]
-            drawTexturedModalRect(180 , 22, 240, 24, 16, 26);
+            //Lock [Unlocked]
+            drawTexturedModalRect(179 , 25, 245, 0, 11, 14);
         }
     }
     
     public void drawGearIcon(){
         Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        //0
-        drawTexturedModalRect(176 , 58, 233, 51, 23, 24);
+        if(gearExtended == true)drawTexturedModalRect(176, 43, 27, 0, 91, 54);
+        drawTexturedModalRect(174 , 46, 237, 32, 19, 15);
     }
 
     @Override
@@ -111,10 +129,10 @@ public class GuiVendor extends GuiContainer{
                 tilevendor.getWorld().notifyBlockUpdate(tilevendor.getPos(), tilevendor.getBlockType().getDefaultState(), tilevendor.getBlockType().getDefaultState(), 3);
                 break;
             case 2:
-                if(gearExtended == true){
-                    gearExtended = false;
-                }else{
+                if(gearExtended == false) {
                     gearExtended = true;
+                }else{
+                    gearExtended = false;
                 }
                 break;
         }
