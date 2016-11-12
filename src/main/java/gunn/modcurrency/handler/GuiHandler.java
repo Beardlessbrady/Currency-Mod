@@ -1,5 +1,6 @@
 package gunn.modcurrency.handler;
 
+import gunn.modcurrency.containers.ContainerVendor;
 import gunn.modcurrency.guis.GuiVendor;
 import gunn.modcurrency.tiles.TileVendor;
 import net.minecraft.entity.player.EntityPlayer;

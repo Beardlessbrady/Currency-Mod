@@ -5,6 +5,7 @@ import gunn.modcurrency.tiles.TileVendor;
 import gunn.modcurrency.util.SlotBank;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
@@ -103,6 +104,42 @@ public class ContainerVendor extends Container{
     public boolean canInteractWith(EntityPlayer playerIn) {
         return tilevendor.canInteractWith(playerIn);
     }
+
+    @Nullable
+    @Override
+    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
+        if(slotId >= 0 && slotId <= 36) {           //Is Players Inv or Money Slot
+            return super.slotClick(slotId, dragType, clickTypeIn, player);
+        }else if(slotId >= 37 && slotId <= 67){     //Is Tile Inv (and not money)
+            if(clickTypeIn == ClickType.CLONE){
+                tilevendor.setField(3, slotId);
+                tilevendor.getWorld().notifyBlockUpdate(tilevendor.getPos(), tilevendor.getBlockType().getDefaultState(), tilevendor.getBlockType().getDefaultState(), 3);
+                return null;
+            }
+            
+            return super.slotClick(slotId, dragType, clickTypeIn, player);
+        }
+        return null;
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
     @Nullable
     @Override

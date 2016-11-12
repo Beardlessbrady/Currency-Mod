@@ -1,5 +1,6 @@
 package gunn.modcurrency.guis;
 
+import gunn.modcurrency.containers.ContainerVendor;
 import gunn.modcurrency.handler.PacketHandler;
 import gunn.modcurrency.network.PacketSendData;
 import gunn.modcurrency.network.PacketSendItemToServer;
@@ -57,6 +58,7 @@ public class GuiVendor extends GuiContainer{
         fontRendererObj.drawString(I18n.format("container.vendor_playerInv.name"),4,142, Color.darkGray.getRGB());
 
         if(tilevendor.getField(2) == 1) {
+            drawSelectOverlay();
             drawLockIcon();
             drawGearIcon();
 
@@ -109,6 +111,36 @@ public class GuiVendor extends GuiContainer{
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         if(gearExtended == true)drawTexturedModalRect(176, 43, 27, 0, 91, 54);
         drawTexturedModalRect(174 , 46, 237, 32, 19, 15);
+    }
+    
+    public void drawSelectOverlay(){
+        int slotId = tilevendor.getField(3) - 37;
+        //System.out.println(slotId);
+        int slotColumn;
+        int slotRow;
+        if(slotId >= 0 && slotId <=  4){
+            slotColumn = 0;
+            slotRow = slotId + 1;
+        }else if(slotId >= 5 && slotId <=  9){
+            slotColumn = 1;
+            slotRow = (slotId + 1) -5;
+        }else if(slotId >= 10 && slotId <=  14){
+            slotColumn = 2;
+            slotRow = (slotId + 1) -10;
+        }else if(slotId >= 15 && slotId <=  19){
+            slotColumn = 3;
+            slotRow = (slotId + 1) -15;
+        }else if(slotId >= 20 && slotId <=  24){
+            slotColumn = 4;
+            slotRow = (slotId + 1) -20;
+        }else{
+            slotColumn = 5;
+            slotRow = (slotId + 1) -25;
+        }
+
+        Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        drawTexturedModalRect(24 + (18 * slotRow), 30 + (18 * slotColumn), 177, 0, 20, 20);
     }
 
     @Override
