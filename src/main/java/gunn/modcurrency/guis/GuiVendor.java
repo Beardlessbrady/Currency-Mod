@@ -1,6 +1,5 @@
 package gunn.modcurrency.guis;
 
-import gunn.modcurrency.containers.ContainerVendor;
 import gunn.modcurrency.handler.PacketHandler;
 import gunn.modcurrency.network.PacketSendData;
 import gunn.modcurrency.network.PacketSendItemToServer;
