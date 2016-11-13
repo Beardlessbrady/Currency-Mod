@@ -34,8 +34,9 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     public static final int VEND_SLOT_COUNT = 30;
     public static final int TOTAL_SLOTS_COUNT = MONEY_SLOT_COUNT + VEND_SLOT_COUNT;
 
-    private int bank, selectedSlot;
+    private int bank, selectedSlot, selectedStackSize;
     private boolean locked, mode;
+    private String selectedName;
     //Mode 0 == Sell, 1 == Edit
     private ItemStackHandler itemStackHandler = new ItemStackHandler(TOTAL_SLOTS_COUNT) {
         @Override
@@ -51,6 +52,8 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         locked = false;
         mode = false;
         selectedSlot = 37;
+        selectedName = "";
+        selectedStackSize = -1;
     }
 
     @Override
@@ -156,8 +159,10 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         if(compound.hasKey("items")) itemStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("items"));
         if(compound.hasKey("bank")) bank = compound.getInteger("bank");
         if(compound.hasKey("locked")) locked = compound.getBoolean("locked");
-        if(compound.hasKey("mode")) mode = compound.getBoolean("openMode");
+        if(compound.hasKey("mode")) mode = compound.getBoolean("mode");
         if(compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
+        if(compound.hasKey("selectedStackSize")) selectedStackSize = compound.getInteger("selectedStackSize");
+        if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
     }
 
     @Override
@@ -168,6 +173,8 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         compound.setBoolean("locked", locked);
         compound.setBoolean("mode", mode);
         compound.setInteger("selectedSlot", selectedSlot);
+        compound.setInteger("selectedStackSize", selectedStackSize);
+        compound.setString("selectedName", selectedName);
         return compound;
     }
 
@@ -184,6 +191,8 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         tag.setBoolean("locked", locked);
         tag.setBoolean("mode", mode);
         tag.setInteger("selectedSlot", selectedSlot);
+        tag.setInteger("selectedStackSize", selectedStackSize);
+        tag.setString("selectedName", selectedName);
         return new SPacketUpdateTileEntity(pos, 1, tag);
     }
 
@@ -194,10 +203,12 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         locked = pkt.getNbtCompound().getBoolean("locked");
         mode = pkt.getNbtCompound().getBoolean("mode");
         selectedSlot = pkt.getNbtCompound().getInteger("selectedSlot");
+        selectedStackSize = pkt.getNbtCompound().getInteger("selectedStackSize");
+        selectedName = pkt.getNbtCompound().getString("selectedName");
     }
 
     public int getFieldCount(){
-        return 4;
+        return 5;
     }
 
     public void setField(int id, int value){
@@ -209,6 +220,9 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
             case 2: mode = (value == 1);
                 break;
             case 3: selectedSlot = value;
+                break;
+            case 4: selectedStackSize = value;
+                break;
         }
         
     }
@@ -219,8 +233,18 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
             case 1: return (locked) ? 1 : 0;
             case 2: return (mode) ? 1 : 0;
             case 3: return selectedSlot;
+            case 4: return selectedStackSize;
         }
         return -1;
     }
+    
+    public String getSelectedName(){
+        return selectedName;
+    }
+    
+    public void setSelectedName(String name){
+        selectedName = name;
+    }
+    
     //</editor-fold>
 }

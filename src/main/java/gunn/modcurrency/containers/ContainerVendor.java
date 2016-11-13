@@ -113,6 +113,12 @@ public class ContainerVendor extends Container{
         }else if(slotId >= 37 && slotId <= 67){     //Is Tile Inv (and not money)
             if(clickTypeIn == ClickType.CLONE){
                 tilevendor.setField(3, slotId);
+                if(getSlot(slotId).getHasStack()) {
+                    tilevendor.setSelectedName(getSlot(slotId).getStack().getDisplayName());
+                    tilevendor.setField(4, getSlot(slotId).getStack().stackSize);
+                }else{
+                    tilevendor.setSelectedName("No Item");
+                }
                 tilevendor.getWorld().notifyBlockUpdate(tilevendor.getPos(), tilevendor.getBlockType().getDefaultState(), tilevendor.getBlockType().getDefaultState(), 3);
                 return null;
             }

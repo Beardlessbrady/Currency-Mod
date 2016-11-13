@@ -2,7 +2,7 @@ package gunn.modcurrency.guis;
 
 import gunn.modcurrency.containers.ContainerVendor;
 import gunn.modcurrency.handler.PacketHandler;
-import gunn.modcurrency.network.PacketSendData;
+import gunn.modcurrency.network.PacketSendIntData;
 import gunn.modcurrency.network.PacketSendItemToServer;
 import gunn.modcurrency.tiles.TileVendor;
 import gunn.modcurrency.util.CustomButton;
@@ -63,19 +63,25 @@ public class GuiVendor extends GuiContainer{
             drawGearIcon();
 
             if (gearExtended == true) {
+                int stackSize;
                 fontRendererObj.drawString(I18n.format("Slot Settings"), 197, 51, Integer.parseInt("42401c", 16));
                 fontRendererObj.drawString(I18n.format("Slot Settings"), 196, 50, Integer.parseInt("fff200", 16));
                 GL11.glScaled(0.8, 0.8, 0.8);
-                fontRendererObj.drawString(I18n.format("[Diamond Block]"), 231, 80, Integer.parseInt("001f33", 16));
-                fontRendererObj.drawString(I18n.format("[Diamond Block]"), 230, 79, Integer.parseInt("0099ff", 16));
+                
+                if(tilevendor.getSelectedName() == "No Item"){stackSize = 0;
+                }else{stackSize = tilevendor.getField(4);}
+                
+                fontRendererObj.drawString(I18n.format("[" + tilevendor.getSelectedName() + "]"), 231, 80, Integer.parseInt("001f33", 16));
+                fontRendererObj.drawString(I18n.format("[" + tilevendor.getSelectedName() + "]"), 230, 79, Integer.parseInt("0099ff", 16));
 
+                //System.out.println(tilevendor.getSelectedName());
                 fontRendererObj.drawString(I18n.format("Cost:"), 239, 90, Integer.parseInt("211d1b", 16));
                 fontRendererObj.drawString(I18n.format("Cost:"), 238, 89, Color.lightGray.getRGB());
                 fontRendererObj.drawString(I18n.format("Supply:"), 239, 100, Integer.parseInt("211d1b", 16));
                 fontRendererObj.drawString(I18n.format("Supply:"), 238, 99, Color.lightGray.getRGB());
 
                 fontRendererObj.drawString(I18n.format("$" + "50"), 265, 90, Integer.parseInt("0099ff", 16));
-                fontRendererObj.drawString(I18n.format("64"), 276, 100, Integer.parseInt("0099ff", 16));
+                fontRendererObj.drawString(I18n.format(String.valueOf(stackSize)), 276, 99, Integer.parseInt("0099ff", 16));
             }
         }
     }
@@ -152,7 +158,7 @@ public class GuiVendor extends GuiContainer{
                 PacketHandler.INSTANCE.sendToServer(pack0);
                 break;
             case 1:         //Lock Button
-                PacketSendData pack1 = new PacketSendData();
+                PacketSendIntData pack1 = new PacketSendIntData();
                 if (tilevendor.getField(1) == 1) { //is True
                     pack1.setData(0,tilevendor.getPos(),0);
                 } else { // is False

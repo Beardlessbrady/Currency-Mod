@@ -19,11 +19,11 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  *
  * File Created on 2016-11-06.
  */
-public class PacketSendData implements IMessage{
+public class PacketSendIntData implements IMessage{
     private BlockPos blockPos;
     private int data,mode;
     
-    public PacketSendData(){}
+    public PacketSendIntData(){}
     
     public void setData(int data, BlockPos pos, int mode) {
         this.blockPos = pos;
@@ -47,15 +47,15 @@ public class PacketSendData implements IMessage{
         buf.writeInt(mode);
     }
     
-    public static class Handler implements IMessageHandler<PacketSendData, IMessage>{
+    public static class Handler implements IMessageHandler<PacketSendIntData, IMessage>{
 
         @Override
-        public IMessage onMessage(final PacketSendData message, MessageContext ctx) {
+        public IMessage onMessage(final PacketSendIntData message, MessageContext ctx) {
             FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message,ctx));
             return null;
         }
         
-        private void handle(PacketSendData message, MessageContext ctx){
+        private void handle(PacketSendIntData message, MessageContext ctx){
             EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
             World world = playerEntity.worldObj;
             
