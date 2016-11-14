@@ -37,6 +37,12 @@ public class GuiVendor extends GuiContainer{
     private boolean gearExtended = false;
     private GuiTextField nameField;
 
+
+    @Override
+    public void updateScreen() {
+        
+    }
+
     public GuiVendor(InventoryPlayer invPlayer, TileVendor tilevendor){
         super(new ContainerVendor(invPlayer, tilevendor));
         this.tilevendor = tilevendor;
@@ -85,8 +91,7 @@ public class GuiVendor extends GuiContainer{
                     fontRendererObj.drawString(I18n.format("[" + tilevendor.getSelectedName() + "]"), 257, 91, Integer.parseInt("001f33", 16));
                     fontRendererObj.drawString(I18n.format("[" + tilevendor.getSelectedName() + "]"), 258, 90, Integer.parseInt("0099ff", 16));
                 GL11.glPopMatrix();
-                //TODO: THIS GOING HERE updates when changing selected slots BUT cant be typed in
-                //this.nameField.setText(String.valueOf(tilevendor.getItemCost(tilevendor.getField(3))));
+                
             }
         }
     }
@@ -106,8 +111,9 @@ public class GuiVendor extends GuiContainer{
             this.nameField.setTextColor(Integer.parseInt("0099ff", 16));
             this.nameField.setEnableBackgroundDrawing(false);
             this.nameField.setMaxStringLength(7);
-            this.nameField.setEnabled(true);
+            this.nameField.setText(String.valueOf(tilevendor.getItemCost()));
             
+            this.nameField.setEnabled(true);
         }
     }
     
@@ -132,7 +138,6 @@ public class GuiVendor extends GuiContainer{
     
     public void drawSelectOverlay(){
         int slotId = tilevendor.getField(3) - 37;
-        //System.out.println(slotId);
         int slotColumn;
         int slotRow;
         if(slotId >= 0 && slotId <=  4){
@@ -163,14 +168,24 @@ public class GuiVendor extends GuiContainer{
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         int numChar = Character.getNumericValue(typedChar);
-        System.out.println("YES I TYPE");
-        if((numChar >= 0 && numChar <= 9) || (keyCode == 14) || keyCode == 211 || (keyCode == 203) || (keyCode == 205)){        //Ensures keys input are only numbers or 
-            System.out.println("IN DA BOX");
+        if((numChar >= 0 && numChar <= 9) || (keyCode == 14) || keyCode == 211 || (keyCode == 203) || (keyCode == 205)){        //Ensures keys input are only numbers or
             if (this.nameField.textboxKeyTyped(typedChar, keyCode)){
-                System.out.println("OH HI");
+                setCost();
             }
         }else{
             super.keyTyped(typedChar, keyCode);
+        }
+    }
+    
+    public void setCost(){
+        if(this.nameField.getText().length() > 0){
+            int newCost = Integer.valueOf(this.nameField.getText());
+
+            PacketSendIntData pack = new PacketSendIntData();
+            pack.setData(newCost,tilevendor.getPos(),1);
+
+            PacketHandler.INSTANCE.sendToServer(pack);
+            tilevendor.getWorld().notifyBlockUpdate(tilevendor.getPos(), tilevendor.getBlockType().getDefaultState(), tilevendor.getBlockType().getDefaultState(), 3);
         }
     }
 
@@ -179,10 +194,7 @@ public class GuiVendor extends GuiContainer{
         super.mouseClicked(mouseX, mouseY, mouseButton);
         this.nameField.mouseClicked(mouseX, mouseY, mouseButton);
     }
-
-    private void changeItemCost(){
-        String word = this.nameField.getText();
-    }
+    
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         switch(button.id) {

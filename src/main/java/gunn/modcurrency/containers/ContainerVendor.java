@@ -118,7 +118,6 @@ public class ContainerVendor extends Container{
             if((clickTypeIn == ClickType.CLONE) || (clickTypeIn == ClickType.PICKUP && slotId == tilevendor.getField(3))){
                 if(getSlot(slotId).getHasStack()) {
                     tilevendor.setSelectedName(getSlot(slotId).getStack().getDisplayName());
-                    tilevendor.setField(4, getSlot(slotId).getStack().stackSize);
                 }else{
                     tilevendor.setSelectedName("No Item");
                 }

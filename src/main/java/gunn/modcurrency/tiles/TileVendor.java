@@ -156,17 +156,6 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     }
 
     @Override
-    public void readFromNBT(NBTTagCompound compound) {
-        super.readFromNBT(compound);
-        if(compound.hasKey("items")) itemStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("items"));
-        if(compound.hasKey("bank")) bank = compound.getInteger("bank");
-        if(compound.hasKey("locked")) locked = compound.getBoolean("locked");
-        if(compound.hasKey("mode")) mode = compound.getBoolean("mode");
-        if(compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
-        if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
-    }
-
-    @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
         compound.setTag("items", itemStackHandler.serializeNBT());
@@ -175,7 +164,28 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         compound.setBoolean("mode", mode);
         compound.setInteger("selectedSlot", selectedSlot);
         compound.setString("selectedName", selectedName);
+
+        NBTTagCompound itemCostsNBT = new NBTTagCompound();
+        for(int i = 0; i < itemCosts.length; i++) itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
+        compound.setTag("itemCosts", itemCostsNBT);
+
         return compound;
+    }
+
+    @Override
+    public void readFromNBT(NBTTagCompound compound) {
+        super.readFromNBT(compound);
+        if(compound.hasKey("items")) itemStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("items"));
+        if(compound.hasKey("bank")) bank = compound.getInteger("bank");
+        if(compound.hasKey("locked")) locked = compound.getBoolean("locked");
+        if(compound.hasKey("mode")) mode = compound.getBoolean("mode");
+        if(compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
+        if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
+
+        if(compound.hasKey("itemCosts")){
+            NBTTagCompound itemCostsNBT = compound.getCompoundTag("itemCosts");
+            for(int i = 0; i < itemCosts.length; i++) itemCosts[i] = itemCostsNBT.getInteger("cost" + i);
+        }
     }
 
     @Override
@@ -192,6 +202,11 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         tag.setBoolean("mode", mode);
         tag.setInteger("selectedSlot", selectedSlot);
         tag.setString("selectedName", selectedName);
+
+        NBTTagCompound itemCostsNBT = new NBTTagCompound();
+        for(int i = 0; i < itemCosts.length; i++) itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
+        tag.setTag("itemCosts", itemCostsNBT);
+
         return new SPacketUpdateTileEntity(pos, 1, tag);
     }
 
@@ -203,8 +218,11 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         mode = pkt.getNbtCompound().getBoolean("mode");
         selectedSlot = pkt.getNbtCompound().getInteger("selectedSlot");
         selectedName = pkt.getNbtCompound().getString("selectedName");
-    }
 
+        NBTTagCompound itemCostsNBT = pkt.getNbtCompound().getCompoundTag("itemCosts");
+        for(int i = 0; i < itemCosts.length; i++) itemCosts[i] = itemCostsNBT.getInteger("cost" + i);
+    }
+    
     public int getFieldCount(){
         return 4;
     }
@@ -241,8 +259,12 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         selectedName = name;
     }
     
-    public int getItemCost(int index){
-        return itemCosts[index - 37];       //Note if you are getting this with selected slot, make sure to subtract 37
+    public int getItemCost(){
+        return itemCosts[selectedSlot - 37];       
+    }
+    
+    public void setItemCost(int amount){
+        itemCosts[selectedSlot - 37] = amount;
     }
     
     public boolean isItemStackNull(int index){

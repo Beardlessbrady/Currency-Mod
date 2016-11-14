@@ -60,9 +60,13 @@ public class PacketSendIntData implements IMessage{
             World world = playerEntity.worldObj;
             
             switch(message.mode){
-                case 0:     //BlockVendor set Lock
+                case 0:     //BlockVendor set Lock [to server]
                     BlockVendor block0 = (BlockVendor)world.getBlockState(message.blockPos).getBlock();
                     block0.getTile(world,message.blockPos).setField(1,message.data);
+                    break;
+                case 1:     //Block Vendor set Cost [to server]
+                    BlockVendor block1 = (BlockVendor)world.getBlockState(message.blockPos).getBlock();
+                    block1.getTile(world,message.blockPos).setItemCost(message.data);
                     break;
             }
         }
