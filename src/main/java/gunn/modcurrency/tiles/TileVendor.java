@@ -32,6 +32,8 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     private static final int MONEY_SLOT_COUNT = 1;
     private static final int VEND_SLOT_COUNT = 30;
     private static final int TOTAL_SLOTS_COUNT = MONEY_SLOT_COUNT + VEND_SLOT_COUNT;
+    
+    private int color;
 
     private int bank, selectedSlot;
     private boolean locked, mode;       //Mode 0 == Sell, 1 == Edit
@@ -130,6 +132,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         compound.setBoolean("locked", locked);
         compound.setBoolean("mode", mode);
         compound.setInteger("selectedSlot", selectedSlot);
+        compound.setInteger("color", color);
         compound.setString("selectedName", selectedName);
 
         NBTTagCompound itemCostsNBT = new NBTTagCompound();
@@ -147,6 +150,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         if (compound.hasKey("locked")) locked = compound.getBoolean("locked");
         if (compound.hasKey("mode")) mode = compound.getBoolean("mode");
         if (compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
+        if(compound.hasKey("color")) color = compound.getInteger("color");
         if (compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
 
         if (compound.hasKey("itemCosts")) {
@@ -168,6 +172,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         tag.setBoolean("locked", locked);
         tag.setBoolean("mode", mode);
         tag.setInteger("selectedSlot", selectedSlot);
+        tag.setInteger("color", color);
         tag.setString("selectedName", selectedName);
 
         NBTTagCompound itemCostsNBT = new NBTTagCompound();
@@ -184,6 +189,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         locked = pkt.getNbtCompound().getBoolean("locked");
         mode = pkt.getNbtCompound().getBoolean("mode");
         selectedSlot = pkt.getNbtCompound().getInteger("selectedSlot");
+        color = pkt.getNbtCompound().getInteger("color");
         selectedName = pkt.getNbtCompound().getString("selectedName");
 
         NBTTagCompound itemCostsNBT = pkt.getNbtCompound().getCompoundTag("itemCosts");
@@ -254,6 +260,14 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     
     public ItemStack getStack(int index){
         return itemStackHandler.getStackInSlot(index);
+    }
+    
+    public void setColor(int colorNum){
+        color = colorNum;
+    }
+    
+    public int getColor(){
+        return color;
     }
     //</editor-fold>
 }
