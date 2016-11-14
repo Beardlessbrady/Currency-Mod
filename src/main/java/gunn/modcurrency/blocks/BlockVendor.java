@@ -70,6 +70,11 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
     Render items in model
     When vending machine ON(redstone powered) inside lite up
     
+    FACING, it can only place one way :C
+    Particle Textures
+    how long it takes to break and with what
+    
+    
     TOOLTIPS
     
     SELL MODE 

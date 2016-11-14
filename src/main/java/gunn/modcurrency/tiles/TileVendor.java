@@ -36,7 +36,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     private int bank, selectedSlot;
     private boolean locked, mode;       //Mode 0 == Sell, 1 == Edit
     private String selectedName;
-    private int[] itemCosts = new int[TOTAL_SLOTS_COUNT];
+    private int[] itemCosts = new int[TOTAL_SLOTS_COUNT];       //Always Ignore slot 0
     private ItemStackHandler itemStackHandler = new ItemStackHandler(TOTAL_SLOTS_COUNT) {
         @Override
         protected void onContentsChanged(int slot) {
@@ -226,6 +226,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
             case 3:
                 selectedSlot = value;
                 break;
+            
         }
     }
 
@@ -246,9 +247,13 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     public String getSelectedName() {return selectedName;}
 
     public void setSelectedName (String name){selectedName = name;}
-
-    public int getItemCost() {return itemCosts[selectedSlot - 37];}
+    
+    public int getItemCost(int index) {return itemCosts[index];}
 
     public void setItemCost(int amount) {itemCosts[selectedSlot - 37] = amount;}
+    
+    public ItemStack getStack(int index){
+        return itemStackHandler.getStackInSlot(index);
+    }
     //</editor-fold>
 }

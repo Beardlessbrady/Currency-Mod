@@ -7,17 +7,25 @@ import gunn.modcurrency.network.PacketSendItemToServer;
 import gunn.modcurrency.tiles.TileVendor;
 import gunn.modcurrency.util.CustomButton;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.*;
+import java.util.List;
 
 /**
  * This class was created by <Brady Gunn>.
@@ -58,7 +66,7 @@ public class GuiVendor extends GuiContainer {
 
     //Updates Cost text field
     private void updateTextField() {
-        this.nameField.setText(String.valueOf(tilevendor.getItemCost()));
+        this.nameField.setText(String.valueOf(tilevendor.getItemCost(tilevendor.getField(3) - 37)));
     }
 
     //<editor-fold desc="Drawing Gui Assets--------------------------------------------------------------------------------------------------">
@@ -160,6 +168,41 @@ public class GuiVendor extends GuiContainer {
 
         Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
         drawTexturedModalRect(24 + (18 * slotRow), 30 + (18 * slotColumn), 177, 0, 20, 20);
+    }
+
+    @Override
+    protected void renderToolTip(ItemStack stack, int x, int y) {
+        int i = (x - (this.width - this.xSize) / 2);
+        int j = (y - (this.height - this.ySize) / 2);
+
+        if(j < 140) {
+            IItemHandler itemHandler = this.tilevendor.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+            int startX = 43;
+            int startY = 31;
+
+            int row = ((i - startX) / 18);
+            int column = ((j - startY) / 18);
+
+            int slot = row + (column * 5);
+
+            //int itemStack = itemHandler.getStackInSlot(slot).stackSize;
+
+            ItemStack currStack = tilevendor.getStack(slot + 1);
+
+            List<String> list = new ArrayList<>();
+            list.add(String.valueOf(currStack.getDisplayName()));
+            list.add("$" + (String.valueOf(tilevendor.getItemCost(slot))));
+
+
+            FontRenderer font = stack.getItem().getFontRenderer(stack);
+            net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(stack);
+            this.drawHoveringText(list, x, y, (font == null ? fontRendererObj : font));
+            net.minecraftforge.fml.client.config.GuiUtils.postItemToolTip();
+
+            tilevendor.getWorld().notifyBlockUpdate(tilevendor.getPos(), tilevendor.getBlockType().getDefaultState(), tilevendor.getBlockType().getDefaultState(), 3);
+        }else{
+            super.renderToolTip(stack, x, y);
+        }
     }
     //</editor-fold>
 
