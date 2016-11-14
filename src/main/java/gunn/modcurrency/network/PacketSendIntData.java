@@ -68,6 +68,10 @@ public class PacketSendIntData implements IMessage{
                     BlockVendor block1 = (BlockVendor)world.getBlockState(message.blockPos).getBlock();
                     block1.getTile(world,message.blockPos).setItemCost(message.data);
                     break;
+                case 2:     //Block Vendor, updated cost [to Client]
+                    BlockVendor block2 = (BlockVendor)world.getBlockState(message.blockPos).getBlock();
+                    block2.getTile(world,message.blockPos)
+                            .setItemCost(message.data);
             }
         }
     }

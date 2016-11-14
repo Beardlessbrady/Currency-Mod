@@ -111,9 +111,8 @@ public class GuiVendor extends GuiContainer{
             this.nameField.setTextColor(Integer.parseInt("0099ff", 16));
             this.nameField.setEnableBackgroundDrawing(false);
             this.nameField.setMaxStringLength(7);
-            this.nameField.setText(String.valueOf(tilevendor.getItemCost()));
-            
             this.nameField.setEnabled(true);
+            updateTextField();
         }
     }
     
@@ -188,11 +187,18 @@ public class GuiVendor extends GuiContainer{
             tilevendor.getWorld().notifyBlockUpdate(tilevendor.getPos(), tilevendor.getBlockType().getDefaultState(), tilevendor.getBlockType().getDefaultState(), 3);
         }
     }
+    
+    public void updateTextField(){
+        this.nameField.setText(String.valueOf(tilevendor.getItemCost()));
+    }
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         this.nameField.mouseClicked(mouseX, mouseY, mouseButton);
+        if(mouseButton == 2){
+            updateTextField();
+        }
     }
     
     @Override
