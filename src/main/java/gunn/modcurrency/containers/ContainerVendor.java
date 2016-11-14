@@ -13,7 +13,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
-import org.lwjgl.opencl.CL;
 
 import javax.annotation.Nullable;
 
@@ -26,9 +25,7 @@ import javax.annotation.Nullable;
  *
  * File Created on 2016-11-02.
  */
-public class ContainerVendor extends Container{
-    private TileVendor tilevendor;
-    
+public class ContainerVendor extends Container {
     //Slot Index's
     //0-35 = Player Inventory's
     //36 = Money Slot
@@ -42,36 +39,34 @@ public class ContainerVendor extends Container{
     private final int PLAYER_FIRST_SLOT_INDEX = 0;
     private final int TE_MONEY_FIRST_SLOT_INDEX = PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT;
     private final int TE_VEND_FIRST_SLOT_INDEX = TE_MONEY_FIRST_SLOT_INDEX + 1;
-    
+
     private final int TE_VEND_COLUMN_COUNT = 6;
     private final int TE_VEND_ROW_COUNT = 5;
     private final int TE_VEND_TOTAL_COUNT = TE_VEND_COLUMN_COUNT * TE_VEND_ROW_COUNT;
-    private final int TE_TOTAL= 31;
+    private final int TE_TOTAL = 31;
 
+    private TileVendor tilevendor;
     private int[] cachedFields;
-
-    public ContainerVendor(InventoryPlayer invPlayer, TileVendor tilevendor){
+    public ContainerVendor(InventoryPlayer invPlayer, TileVendor tilevendor) {
         this.tilevendor = tilevendor;
 
         setupPlayerInv(invPlayer);
         setupTeInv();
     }
 
-    public void setupPlayerInv(InventoryPlayer invPlayer){
+    private void setupPlayerInv(InventoryPlayer invPlayer) {
         final int SLOT_X_SPACING = 18;
         final int SLOT_Y_SPACING = 18;
         final int HOTBAR_XPOS = 8;
         final int HOTBAR_YPOS = 211;
-
-        for(int x = 0; x < HOTBAR_SLOT_COUNT; x++){
-            int slotNum = x;
-            addSlotToContainer(new Slot(invPlayer, slotNum, HOTBAR_XPOS + SLOT_X_SPACING * x, HOTBAR_YPOS));
-        }
-
+        
+        for (int x = 0; x < HOTBAR_SLOT_COUNT; x++) addSlotToContainer(new Slot(invPlayer, x, HOTBAR_XPOS + SLOT_X_SPACING * x, HOTBAR_YPOS));
+        
         final int PLAYER_INV_XPOS = 8;
         final int PLAYER_INV_YPOS = 153;
-        for(int y = 0; y < PLAYER_INV_ROW_COUNT; y++){
-            for(int x = 0; x < PLAYER_INV_COLUMN_COUNT; x++){
+        
+        for (int y = 0; y < PLAYER_INV_ROW_COUNT; y++) {
+            for (int x = 0; x < PLAYER_INV_COLUMN_COUNT; x++) {
                 int slotNum = HOTBAR_SLOT_COUNT + y * PLAYER_INV_COLUMN_COUNT + x;
                 int xpos = PLAYER_INV_XPOS + x * SLOT_X_SPACING;
                 int ypos = PLAYER_INV_YPOS + y * SLOT_Y_SPACING;
@@ -80,23 +75,23 @@ public class ContainerVendor extends Container{
         }
     }
 
-    public void setupTeInv(){
-        IItemHandler itemHandler = this.tilevendor.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY,null);
+    private void setupTeInv() {
         final int TE_MONEY_XPOS = 152;
         final int TE_MONEY_YPOS = 9;
-        addSlotToContainer(new SlotBank(itemHandler, 0,TE_MONEY_XPOS,TE_MONEY_YPOS));
+        IItemHandler itemHandler = this.tilevendor.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        addSlotToContainer(new SlotBank(itemHandler, 0, TE_MONEY_XPOS, TE_MONEY_YPOS));
 
         final int SLOT_X_SPACING = 18;
         final int SLOT_Y_SPACING = 18;
         final int TE_INV_XPOS = 44;
         final int TE_INV_YPOS = 32;
 
-        for(int y = 0; y < TE_VEND_COLUMN_COUNT; y++){
-            for(int x = 0; x < TE_VEND_ROW_COUNT; x++){
+        for (int y = 0; y < TE_VEND_COLUMN_COUNT; y++) {
+            for (int x = 0; x < TE_VEND_ROW_COUNT; x++) {
                 int slotNum = 1 + y * TE_VEND_ROW_COUNT + x;
                 int xpos = TE_INV_XPOS + x * SLOT_X_SPACING;
                 int ypos = TE_INV_YPOS + y * SLOT_Y_SPACING;
-                addSlotToContainer(new SlotItemHandler(itemHandler,slotNum,xpos,ypos));
+                addSlotToContainer(new SlotItemHandler(itemHandler, slotNum, xpos, ypos));
             }
         }
     }
@@ -109,47 +104,24 @@ public class ContainerVendor extends Container{
     @Nullable
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-        if(slotId >= 0 && slotId <= 36) {           //Is Players Inv or Money Slot
+        if (slotId >= 0 && slotId <= 36) {           //Is Players Inv or Money Slot
             return super.slotClick(slotId, dragType, clickTypeIn, player);
-        }else if(slotId >= 37 && slotId <= 67){     //Is Tile Inv (and not money)
-            
-            if(clickTypeIn == ClickType.CLONE) tilevendor.setField(3, slotId);
-            
-            if((clickTypeIn == ClickType.CLONE) || (clickTypeIn == ClickType.PICKUP && slotId == tilevendor.getField(3))){
-                if(getSlot(slotId).getHasStack()) {
+        } else if (slotId >= 37 && slotId <= 67) {     //Is Tile Inv (and not money)
+            if (clickTypeIn == ClickType.CLONE) tilevendor.setField(3, slotId);
+            if ((clickTypeIn == ClickType.CLONE) || (clickTypeIn == ClickType.PICKUP && slotId == tilevendor.getField(3))) {
+                if (getSlot(slotId).getHasStack()) {
                     tilevendor.setSelectedName(getSlot(slotId).getStack().getDisplayName());
-                }else{
+                } else {
                     tilevendor.setSelectedName("No Item");
                 }
                 tilevendor.getWorld().notifyBlockUpdate(tilevendor.getPos(), tilevendor.getBlockType().getDefaultState(), tilevendor.getBlockType().getDefaultState(), 3);
                 return null;
             }
-
-            
             return super.slotClick(slotId, dragType, clickTypeIn, player);
         }
         return null;
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
     @Nullable
     @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int index) {
@@ -160,17 +132,17 @@ public class ContainerVendor extends Container{
             ItemStack copyStack = slot.getStack();
             sourceStack = copyStack.copy();
 
-            if (index < PLAYER_TOTAL_COUNT){        //Player Inventory Slots
-                if(inventorySlots.get(index).getStack().getItem() == ModItems.itembanknote){
-                    if (!this.mergeItemStack(copyStack, TE_MONEY_FIRST_SLOT_INDEX,TE_MONEY_FIRST_SLOT_INDEX+1, false)) {
+            if (index < PLAYER_TOTAL_COUNT) {        //Player Inventory Slots
+                if (inventorySlots.get(index).getStack().getItem() == ModItems.itembanknote) {
+                    if (!this.mergeItemStack(copyStack, TE_MONEY_FIRST_SLOT_INDEX, TE_MONEY_FIRST_SLOT_INDEX + 1, false)) {
                         return null;
                     }
-                }else {
+                } else {
                     if (!this.mergeItemStack(copyStack, TE_VEND_FIRST_SLOT_INDEX, TE_VEND_FIRST_SLOT_INDEX + TE_VEND_TOTAL_COUNT, false)) {
                         return null;
                     }
                 }
-            }else if (index >= TE_VEND_FIRST_SLOT_INDEX && index < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_TOTAL_COUNT){  //TE Inventory
+            } else if (index >= TE_VEND_FIRST_SLOT_INDEX && index < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_TOTAL_COUNT) {  //TE Inventory
                 if (!this.mergeItemStack(copyStack, 0, PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT, false)) {
                     return null;
                 }
@@ -184,22 +156,14 @@ public class ContainerVendor extends Container{
         }
         return sourceStack;
     }
-
-
-    @Override
-    public void onContainerClosed(EntityPlayer player) {
-        super.onContainerClosed(player);
-        //this.tilevendor.closeInventory(player);
-    }
-
+    
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
         boolean fieldChanged[] = new boolean[tilevendor.getFieldCount()];
 
-        if (cachedFields == null) {
-            cachedFields = new int[tilevendor.getFieldCount()];
-        }
+        if (cachedFields == null) cachedFields = new int[tilevendor.getFieldCount()];
+        
         for (int i = 0; i < cachedFields.length; i++) {
             if (cachedFields[i] != tilevendor.getField(i)) {
                 cachedFields[i] = tilevendor.getField(i);
@@ -209,9 +173,7 @@ public class ContainerVendor extends Container{
 
         for (IContainerListener listener : this.listeners) {
             for (int field = 0; field < tilevendor.getFieldCount(); ++field) {
-                if (fieldChanged[field]) {
-                    listener.sendProgressBarUpdate(this, field, cachedFields[field]);
-                }
+                if (fieldChanged[field]) listener.sendProgressBarUpdate(this, field, cachedFields[field]);
             }
         }
     }

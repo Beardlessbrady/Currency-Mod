@@ -1,27 +1,19 @@
 package gunn.modcurrency.blocks;
 
 import gunn.modcurrency.ModCurrency;
-import gunn.modcurrency.handler.GuiHandler;
 import gunn.modcurrency.tiles.TileVendor;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nullable;
 
@@ -34,11 +26,10 @@ import javax.annotation.Nullable;
  *
  * File Created on 2016-10-30.
  */
-public class BlockVendor extends BaseBlock implements ITileEntityProvider{
+public class BlockVendor extends BaseBlock implements ITileEntityProvider {
 
     public BlockVendor() {
         super(Material.ROCK, "blockvendor");
-        
         GameRegistry.register(new ItemBlock(this), getRegistryName());
         GameRegistry.registerTileEntity(TileVendor.class, ModCurrency.MODID + "_tevendor");
     }
@@ -50,25 +41,40 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider{
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if(world.isRemote) return true;
-        if(player.isSneaking()){
-            if(getTile(world,pos).getField(2) == 1){   //If True
-                getTile(world,pos).setField(2, 0);
-            }else{
-                getTile(world,pos).setField(2,1);
+        if (world.isRemote) return true;
+        if (player.isSneaking()) {
+            if (getTile(world, pos).getField(2) == 1) {   //If True
+                getTile(world, pos).setField(2, 0);
+            } else {
+                getTile(world, pos).setField(2, 1);
             }
-            getTile(world,pos).getWorld().notifyBlockUpdate(getTile(world,pos).getPos(), getTile(world,pos).getBlockType().getDefaultState(), getTile(world,pos).getBlockType().getDefaultState(), 3);
+            getTile(world, pos).getWorld().notifyBlockUpdate(getTile(world, pos).getPos(), getTile(world, pos).getBlockType().getDefaultState(), getTile(world, pos).getBlockType().getDefaultState(), 3);
             return true;
         }
         player.openGui(ModCurrency.instance, 30, world, pos.getX(), pos.getY(), pos.getZ());
         return true;
     }
-    
-    
 
-    public TileVendor getTile(World world, BlockPos pos){
+
+    public TileVendor getTile(World world, BlockPos pos) {
         return (TileVendor) world.getTileEntity(pos);
     }
 
 
+    /*TODO 
+    Fix Collision Box
+    Add Lock Mode
+    Detect Chests anywhere near block
+    Detect redstone signal (To turn on)
+    Animate Door Opening (Green light on if closed, Red Light on if Open)
+    Render items in model
+    When vending machine ON(redstone powered) inside lite up
+    
+    TOOLTIPS
+    
+    SELL MODE 
+    
+    BUG:changing a cost, exiting gui and then going back in doesnt update the cost changed until middle clicking
+    
+     */
 }

@@ -1,9 +1,10 @@
+
 package gunn.modcurrency.tiles;
 
 import gunn.modcurrency.items.ModItems;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -13,7 +14,6 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -28,84 +28,69 @@ import javax.annotation.Nullable;
  *
  * File Created on 2016-10-30.
  */
-public class TileVendor extends TileEntity implements ICapabilityProvider, ITickable{
-
-    public static final int MONEY_SLOT_COUNT = 1;
-    public static final int VEND_SLOT_COUNT = 30;
-    public static final int TOTAL_SLOTS_COUNT = MONEY_SLOT_COUNT + VEND_SLOT_COUNT;
+public class TileVendor extends TileEntity implements ICapabilityProvider, ITickable {
+    private static final int MONEY_SLOT_COUNT = 1;
+    private static final int VEND_SLOT_COUNT = 30;
+    private static final int TOTAL_SLOTS_COUNT = MONEY_SLOT_COUNT + VEND_SLOT_COUNT;
 
     private int bank, selectedSlot;
-    private boolean locked, mode;
-    //Mode 0 == Sell, 1 == Edit
+    private boolean locked, mode;       //Mode 0 == Sell, 1 == Edit
     private String selectedName;
+    private int[] itemCosts = new int[TOTAL_SLOTS_COUNT];
     private ItemStackHandler itemStackHandler = new ItemStackHandler(TOTAL_SLOTS_COUNT) {
         @Override
-        protected void onContentsChanged(int slot) { markDirty(); }
+        protected void onContentsChanged(int slot) {
+            markDirty();
+        }
     };
     
-    private int[] itemCosts = new int[TOTAL_SLOTS_COUNT];
-    
-    
-
-    public TileVendor(){
-        bank = 0;
+    public TileVendor() {
         locked = false;
         mode = false;
-        selectedSlot = 37;
         selectedName = "No Item";
-        
-        for(int i = 0; i < itemCosts.length; i++){
-            if(i == 1){
-            }
-            itemCosts[i] = 0;
-        }
+        bank = 0;
+        selectedSlot = 37;
+        for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = 0;
     }
-
+    
     @Override
     public void update() {
-        if(!worldObj.isRemote){
-            if(itemStackHandler.getStackInSlot(0) != null){
-                int amnt;
-                switch(itemStackHandler.getStackInSlot(0).getItemDamage()){
-                    case 0:         //One Dollar Bill
-                        amnt = 1;
+        if (!worldObj.isRemote) {
+            if (itemStackHandler.getStackInSlot(0) != null) {
+                int amount;
+                switch (itemStackHandler.getStackInSlot(0).getItemDamage()) {
+                    case 0: amount = 1;
                         break;
-                    case 1:         //Five Dollar Bill
-                        amnt = 5;
+                    case 1: amount = 5;
                         break;
-                    case 2:         //Ten Dollar Bill
-                        amnt = 10;
+                    case 2: amount = 10;
                         break;
-                    case 3:         //Twenty Dollar Bill
-                        amnt = 20;
+                    case 3: amount = 20;
                         break;
-                    case 4:         //Fifty Dollar Bill
-                        amnt = 50;
+                    case 4: amount = 50;
                         break;
-                    case 5:         //One Hundred Dollar Bill
-                        amnt = 100;
+                    case 5: amount = 100;
                         break;
-                    default:
-                        amnt = -1;
+                    default: amount = -1;
                         break;
                 }
-                amnt = amnt * itemStackHandler.getStackInSlot(0).stackSize;
+                amount = amount * itemStackHandler.getStackInSlot(0).stackSize;
                 itemStackHandler.setStackInSlot(0, null);
-                bank = bank + amnt;
+                bank = bank + amount;
                 markDirty();
             }
         }
     }
-    
+
     //Outputs change in least amount of bills
-    public void outChange(){
+    public void outChange() {
         int amount = bank;
         int[] out = new int[6];
 
         out[5] = Math.round(amount / 100);
         amount = amount - (out[5] * 100);
 
-        out[4] =  Math.round(amount / 50);
+        out[4] = Math.round(amount / 50);
         amount = amount - (out[4] * 50);
 
         out[3] = Math.round(amount / 20);
@@ -118,14 +103,10 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         amount = amount - (out[1] * 5);
 
         out[0] = Math.round(amount);
-        amount = amount - out[0];
 
-        if(amount != 0) System.err.print("Calculating Change messed up somewhere....");
-        bank = 0;
-
-        if(!worldObj.isRemote) {
-            for(int i = 0; i < out.length; i++) {
-                if(out[i] != 0) {
+        if (!worldObj.isRemote) {
+            for (int i = 0; i < out.length; i++) {
+                if (out[i] != 0) {
                     ItemStack item = new ItemStack(ModItems.itembanknote);
                     item.setItemDamage(i);
                     item.stackSize = out[i];
@@ -134,27 +115,13 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
             }
         }
     }
-    
-    @Override
-    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
-        if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
-            return true;
-        }
-        return super.hasCapability(capability, facing);
-    }
 
-    @Override
-    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
-        if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
-            return (T) itemStackHandler;
-        }
-        return super.getCapability(capability, facing);
-    }
-    
-    public boolean canInteractWith(EntityPlayer player){
+    //Player must be in certain range to open GUI
+    public boolean canInteractWith(EntityPlayer player) {
         return !isInvalid() && player.getDistanceSq(pos.add(0.5D, 0.5D, 0.5D)) <= 64D;
     }
 
+    //<editor-fold desc="NBT & Packet Stoof--------------------------------------------------------------------------------------------------">
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
@@ -166,7 +133,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         compound.setString("selectedName", selectedName);
 
         NBTTagCompound itemCostsNBT = new NBTTagCompound();
-        for(int i = 0; i < itemCosts.length; i++) itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
+        for (int i = 0; i < itemCosts.length; i++) itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
         compound.setTag("itemCosts", itemCostsNBT);
 
         return compound;
@@ -175,16 +142,16 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        if(compound.hasKey("items")) itemStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("items"));
-        if(compound.hasKey("bank")) bank = compound.getInteger("bank");
-        if(compound.hasKey("locked")) locked = compound.getBoolean("locked");
-        if(compound.hasKey("mode")) mode = compound.getBoolean("mode");
-        if(compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
-        if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
+        if (compound.hasKey("items")) itemStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("items"));
+        if (compound.hasKey("bank")) bank = compound.getInteger("bank");
+        if (compound.hasKey("locked")) locked = compound.getBoolean("locked");
+        if (compound.hasKey("mode")) mode = compound.getBoolean("mode");
+        if (compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
+        if (compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
 
-        if(compound.hasKey("itemCosts")){
+        if (compound.hasKey("itemCosts")) {
             NBTTagCompound itemCostsNBT = compound.getCompoundTag("itemCosts");
-            for(int i = 0; i < itemCosts.length; i++) itemCosts[i] = itemCostsNBT.getInteger("cost" + i);
+            for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = itemCostsNBT.getInteger("cost" + i);
         }
     }
 
@@ -204,7 +171,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         tag.setString("selectedName", selectedName);
 
         NBTTagCompound itemCostsNBT = new NBTTagCompound();
-        for(int i = 0; i < itemCosts.length; i++) itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
+        for (int i = 0; i < itemCosts.length; i++) itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
         tag.setTag("itemCosts", itemCostsNBT);
 
         return new SPacketUpdateTileEntity(pos, 1, tag);
@@ -220,55 +187,68 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         selectedName = pkt.getNbtCompound().getString("selectedName");
 
         NBTTagCompound itemCostsNBT = pkt.getNbtCompound().getCompoundTag("itemCosts");
-        for(int i = 0; i < itemCosts.length; i++) itemCosts[i] = itemCostsNBT.getInteger("cost" + i);
+        for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = itemCostsNBT.getInteger("cost" + i);
     }
-    
-    public int getFieldCount(){
-        return 4;
+    //</editor-fold>--------------------------------
+
+    //<editor-fold desc="ItemStackHandler Methods--------------------------------------------------------------------------------------------">
+    @Override
+    public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return true;
+        }
+        return super.hasCapability(capability, facing);
     }
 
-    public void setField(int id, int value){
-        switch(id){
-            case 0: bank = value;
+    @Override
+    public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
+        if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
+            return (T) itemStackHandler;
+        }
+        return super.getCapability(capability, facing);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Getter & Setter Methods---------------------------------------------------------------------------------------------">
+    public int getFieldCount() {return 4;}
+
+    public void setField(int id, int value) {
+        switch (id) {
+            case 0:
+                bank = value;
                 break;
-            case 1: locked = (value == 1);
+            case 1:
+                locked = (value == 1);
                 break;
-            case 2: mode = (value == 1);
+            case 2:
+                mode = (value == 1);
                 break;
-            case 3: selectedSlot = value;
+            case 3:
+                selectedSlot = value;
                 break;
         }
-        
     }
 
-    public int getField(int id){
-        switch(id){
-            case 0: return bank;
-            case 1: return (locked) ? 1 : 0;
-            case 2: return (mode) ? 1 : 0;
-            case 3: return selectedSlot;
+    public int getField(int id) {
+        switch (id) {
+            case 0:
+                return bank;
+            case 1:
+                return (locked) ? 1 : 0;
+            case 2:
+                return (mode) ? 1 : 0;
+            case 3:
+                return selectedSlot;
         }
         return -1;
     }
-    
-    public String getSelectedName(){
-        return selectedName;
-    }
-    
-    public void setSelectedName(String name){
-        selectedName = name;
-    }
-    
-    public int getItemCost(){
-        return itemCosts[selectedSlot - 37];       
-    }
-    
-    public void setItemCost(int amount){
-        itemCosts[selectedSlot - 37] = amount;
-    }
-    
-    public boolean isItemStackNull(int index){
-        return itemStackHandler.getStackInSlot(index) == null;
-    }
-    
+
+    public String getSelectedName() {return selectedName;}
+
+    public void setSelectedName (String name){selectedName = name;}
+
+    public int getItemCost() {return itemCosts[selectedSlot - 37];}
+
+    public void setItemCost(int amount) {itemCosts[selectedSlot - 37] = amount;}
+    //</editor-fold>
 }
