@@ -8,11 +8,13 @@ import gunn.modcurrency.tiles.TileVendor;
 import gunn.modcurrency.util.CustomButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -33,6 +35,7 @@ public class GuiVendor extends GuiContainer{
     protected static final ResourceLocation TAB_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/GuiVendorTabTexture.png");
     private TileVendor tilevendor;
     private boolean gearExtended = false;
+    private GuiTextField nameField;
 
     public GuiVendor(InventoryPlayer invPlayer, TileVendor tilevendor){
         super(new ContainerVendor(invPlayer, tilevendor));
@@ -40,6 +43,14 @@ public class GuiVendor extends GuiContainer{
         
         xSize = 176;
         ySize = 235;
+    }
+
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        super.drawScreen(mouseX, mouseY, partialTicks);
+        if (gearExtended == true) {
+            this.nameField.drawTextBox();
+        }
     }
 
     @Override
@@ -56,6 +67,7 @@ public class GuiVendor extends GuiContainer{
         fontRendererObj.drawString(I18n.format("container.vendor.name"),5,7, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("container.vendor_dollarAmount.name") + ": $" + tilevendor.getField(0),5,16, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("container.vendor_playerInv.name"),4,142, Color.darkGray.getRGB());
+        
 
         if(tilevendor.getField(2) == 1) {
             drawSelectOverlay();
@@ -63,29 +75,22 @@ public class GuiVendor extends GuiContainer{
             drawGearIcon();
 
             if (gearExtended == true) {
-                int stackSize;
                 fontRendererObj.drawString(I18n.format("Slot Settings"), 197, 51, Integer.parseInt("42401c", 16));
                 fontRendererObj.drawString(I18n.format("Slot Settings"), 196, 50, Integer.parseInt("fff200", 16));
-                GL11.glScaled(0.8, 0.8, 0.8);
-                
-                if(tilevendor.getSelectedName() == "No Item"){stackSize = 0;
-                }else{stackSize = tilevendor.getField(4);}
-                
-                fontRendererObj.drawString(I18n.format("[" + tilevendor.getSelectedName() + "]"), 231, 80, Integer.parseInt("001f33", 16));
-                fontRendererObj.drawString(I18n.format("[" + tilevendor.getSelectedName() + "]"), 230, 79, Integer.parseInt("0099ff", 16));
-
-                //System.out.println(tilevendor.getSelectedName());
-                fontRendererObj.drawString(I18n.format("Cost:"), 239, 90, Integer.parseInt("211d1b", 16));
-                fontRendererObj.drawString(I18n.format("Cost:"), 238, 89, Color.lightGray.getRGB());
-                fontRendererObj.drawString(I18n.format("Supply:"), 239, 100, Integer.parseInt("211d1b", 16));
-                fontRendererObj.drawString(I18n.format("Supply:"), 238, 99, Color.lightGray.getRGB());
-
-                fontRendererObj.drawString(I18n.format("$" + "50"), 265, 90, Integer.parseInt("0099ff", 16));
-                fontRendererObj.drawString(I18n.format(String.valueOf(stackSize)), 276, 99, Integer.parseInt("0099ff", 16));
+                fontRendererObj.drawString(I18n.format("Cost:"), 183, 73, Integer.parseInt("211d1b", 16));
+                fontRendererObj.drawString(I18n.format("Cost:"), 184, 72, Color.lightGray.getRGB());
+                fontRendererObj.drawString(I18n.format("$"), 210, 72, Integer.parseInt("0099ff", 16));
+                GL11.glPushMatrix();
+                    GL11.glScaled(0.7, 0.7, 0.7);
+                    fontRendererObj.drawString(I18n.format("[" + tilevendor.getSelectedName() + "]"), 257, 91, Integer.parseInt("001f33", 16));
+                    fontRendererObj.drawString(I18n.format("[" + tilevendor.getSelectedName() + "]"), 258, 90, Integer.parseInt("0099ff", 16));
+                GL11.glPopMatrix();
+                //TODO: THIS GOING HERE updates when changing selected slots BUT cant be typed in
+                //this.nameField.setText(String.valueOf(tilevendor.getItemCost(tilevendor.getField(3))));
             }
         }
     }
-
+    
     @Override
     public void initGui() {
         int i = (this.width - this.xSize) / 2;
@@ -97,6 +102,12 @@ public class GuiVendor extends GuiContainer{
         if(tilevendor.getField(2) == 1) {
             this.buttonList.add(new CustomButton(1, i + 176, j + 20, 0, 21, 21, 22, "", TAB_TEXTURE));   //Lock Tab
             this.buttonList.add(new CustomButton(2, i + 176, j + 43, 0, 0, 21, 22, "", TAB_TEXTURE));   //Gear Tab
+            this.nameField = new GuiTextField(0, fontRendererObj, i + 217, j+ 72, 45, 10);        //Setting Costs
+            this.nameField.setTextColor(Integer.parseInt("0099ff", 16));
+            this.nameField.setEnableBackgroundDrawing(false);
+            this.nameField.setMaxStringLength(7);
+            this.nameField.setEnabled(true);
+            
         }
     }
     
@@ -149,6 +160,29 @@ public class GuiVendor extends GuiContainer{
         drawTexturedModalRect(24 + (18 * slotRow), 30 + (18 * slotColumn), 177, 0, 20, 20);
     }
 
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        int numChar = Character.getNumericValue(typedChar);
+        System.out.println("YES I TYPE");
+        if((numChar >= 0 && numChar <= 9) || (keyCode == 14) || keyCode == 211 || (keyCode == 203) || (keyCode == 205)){        //Ensures keys input are only numbers or 
+            System.out.println("IN DA BOX");
+            if (this.nameField.textboxKeyTyped(typedChar, keyCode)){
+                System.out.println("OH HI");
+            }
+        }else{
+            super.keyTyped(typedChar, keyCode);
+        }
+    }
+
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+        this.nameField.mouseClicked(mouseX, mouseY, mouseButton);
+    }
+
+    private void changeItemCost(){
+        String word = this.nameField.getText();
+    }
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         switch(button.id) {

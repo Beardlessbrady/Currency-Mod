@@ -34,10 +34,10 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     public static final int VEND_SLOT_COUNT = 30;
     public static final int TOTAL_SLOTS_COUNT = MONEY_SLOT_COUNT + VEND_SLOT_COUNT;
 
-    private int bank, selectedSlot, selectedStackSize;
+    private int bank, selectedSlot;
     private boolean locked, mode;
-    private String selectedName;
     //Mode 0 == Sell, 1 == Edit
+    private String selectedName;
     private ItemStackHandler itemStackHandler = new ItemStackHandler(TOTAL_SLOTS_COUNT) {
         @Override
         protected void onContentsChanged(int slot) { markDirty(); }
@@ -52,8 +52,13 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         locked = false;
         mode = false;
         selectedSlot = 37;
-        selectedName = "";
-        selectedStackSize = -1;
+        selectedName = "No Item";
+        
+        for(int i = 0; i < itemCosts.length; i++){
+            if(i == 1){
+            }
+            itemCosts[i] = 0;
+        }
     }
 
     @Override
@@ -130,7 +135,6 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         }
     }
     
-    //<editor-fold desc="Item Handler Methods">
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
         if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
@@ -150,9 +154,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     public boolean canInteractWith(EntityPlayer player){
         return !isInvalid() && player.getDistanceSq(pos.add(0.5D, 0.5D, 0.5D)) <= 64D;
     }
-    //</editor-fold>
-    
-    //<editor-fold desc="Packet and Server-to-Client Mumbo Jumbo">
+
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
@@ -161,7 +163,6 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         if(compound.hasKey("locked")) locked = compound.getBoolean("locked");
         if(compound.hasKey("mode")) mode = compound.getBoolean("mode");
         if(compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
-        if(compound.hasKey("selectedStackSize")) selectedStackSize = compound.getInteger("selectedStackSize");
         if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
     }
 
@@ -173,7 +174,6 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         compound.setBoolean("locked", locked);
         compound.setBoolean("mode", mode);
         compound.setInteger("selectedSlot", selectedSlot);
-        compound.setInteger("selectedStackSize", selectedStackSize);
         compound.setString("selectedName", selectedName);
         return compound;
     }
@@ -191,7 +191,6 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         tag.setBoolean("locked", locked);
         tag.setBoolean("mode", mode);
         tag.setInteger("selectedSlot", selectedSlot);
-        tag.setInteger("selectedStackSize", selectedStackSize);
         tag.setString("selectedName", selectedName);
         return new SPacketUpdateTileEntity(pos, 1, tag);
     }
@@ -203,12 +202,11 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         locked = pkt.getNbtCompound().getBoolean("locked");
         mode = pkt.getNbtCompound().getBoolean("mode");
         selectedSlot = pkt.getNbtCompound().getInteger("selectedSlot");
-        selectedStackSize = pkt.getNbtCompound().getInteger("selectedStackSize");
         selectedName = pkt.getNbtCompound().getString("selectedName");
     }
 
     public int getFieldCount(){
-        return 5;
+        return 4;
     }
 
     public void setField(int id, int value){
@@ -221,8 +219,6 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
                 break;
             case 3: selectedSlot = value;
                 break;
-            case 4: selectedStackSize = value;
-                break;
         }
         
     }
@@ -233,7 +229,6 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
             case 1: return (locked) ? 1 : 0;
             case 2: return (mode) ? 1 : 0;
             case 3: return selectedSlot;
-            case 4: return selectedStackSize;
         }
         return -1;
     }
@@ -246,5 +241,12 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         selectedName = name;
     }
     
-    //</editor-fold>
+    public int getItemCost(int index){
+        return itemCosts[index - 37];       //Note if you are getting this with selected slot, make sure to subtract 37
+    }
+    
+    public boolean isItemStackNull(int index){
+        return itemStackHandler.getStackInSlot(index) == null;
+    }
+    
 }

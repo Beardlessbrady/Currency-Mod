@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
+import org.lwjgl.opencl.CL;
 
 import javax.annotation.Nullable;
 
@@ -111,8 +112,10 @@ public class ContainerVendor extends Container{
         if(slotId >= 0 && slotId <= 36) {           //Is Players Inv or Money Slot
             return super.slotClick(slotId, dragType, clickTypeIn, player);
         }else if(slotId >= 37 && slotId <= 67){     //Is Tile Inv (and not money)
-            if(clickTypeIn == ClickType.CLONE){
-                tilevendor.setField(3, slotId);
+            
+            if(clickTypeIn == ClickType.CLONE) tilevendor.setField(3, slotId);
+            
+            if((clickTypeIn == ClickType.CLONE) || (clickTypeIn == ClickType.PICKUP && slotId == tilevendor.getField(3))){
                 if(getSlot(slotId).getHasStack()) {
                     tilevendor.setSelectedName(getSlot(slotId).getStack().getDisplayName());
                     tilevendor.setField(4, getSlot(slotId).getStack().stackSize);
@@ -122,6 +125,7 @@ public class ContainerVendor extends Container{
                 tilevendor.getWorld().notifyBlockUpdate(tilevendor.getPos(), tilevendor.getBlockType().getDefaultState(), tilevendor.getBlockType().getDefaultState(), 3);
                 return null;
             }
+
             
             return super.slotClick(slotId, dragType, clickTypeIn, player);
         }

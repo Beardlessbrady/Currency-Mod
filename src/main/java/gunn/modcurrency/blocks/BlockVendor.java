@@ -15,9 +15,12 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nullable;
@@ -60,6 +63,8 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider{
         player.openGui(ModCurrency.instance, 30, world, pos.getX(), pos.getY(), pos.getZ());
         return true;
     }
+    
+    
 
     public TileVendor getTile(World world, BlockPos pos){
         return (TileVendor) world.getTileEntity(pos);
