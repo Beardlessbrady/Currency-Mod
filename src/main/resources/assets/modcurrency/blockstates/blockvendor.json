@@ -4,39 +4,96 @@
     "custom": { "flip-v": true },
     "model": "modcurrency:blockvendor",
     "textures": {
+      "particle": "modcurrency:blocks/vend_GRAY",
       "texture": "modcurrency:blocks/vend_GRAY"
     }
   },
   "variants": {
     "normal": [{}],
     "inventory": [{}],
-    "facing": {
-      "north": {},
-      "south": {"y": 180},
-      "west": {"y": 270},
-      "east": {"y": 90}
-    },
     "color": {
-      "white":{},
-      "orange":{},
-      "magenta":{},
-      "light_blue":{},
-      "yellow":{},
-      "lime":{},
-      "pink":{},
+      "white":{
+        "textures": {
+          "texture": "modcurrency:blocks/vend_WHITE"
+        }
+      },
+      "orange":{
+        "textures": {
+          "texture": "modcurrency:blocks/vend_ORANGE"
+        }
+      },
+      "magenta":{
+        "textures": {
+          "texture": "modcurrency:blocks/vend_MAGENTA"
+        }
+      },
+      "lightblue":{
+        "textures": {
+          "texture": "modcurrency:blocks/vend_LIGHTBLUE"
+        }
+      },
+      "yellow":{
+        "textures": {
+          "texture": "modcurrency:blocks/vend_YELLOW"
+        }
+      },
+      "lime":{
+        "textures": {
+          "texture": "modcurrency:blocks/vend_LIME"
+        }
+      },
+      "pink":{
+        "textures": {
+          "texture": "modcurrency:blocks/vend_PINK"
+        }
+      },
       "gray":{},
-      "silver":{},
-      "cyan":{},
-      "purple":{},
+      "silver":{
+        "textures": {
+          "texture": "modcurrency:blocks/vend_SILVER"
+        }
+      },
+      "cyan":{
+        "textures": {
+          "texture": "modcurrency:blocks/vend_CYAN"
+        }
+      },
+      "purple":{
+        "textures": {
+          "texture": "modcurrency:blocks/vend_PURPLE"
+        }
+      },
       "blue":{
         "textures": {
           "texture": "modcurrency:blocks/vend_BLUE"
         }
       },
-      "brown":{},
-      "green":{},
-      "red":{},
-      "black":{}
+      "brown":{
+        "textures": {
+          "texture": "modcurrency:blocks/vend_BROWN"
+        }
+      },
+      "green":{
+        "textures": {
+          "texture": "modcurrency:blocks/vend_GREEN"
+        }
+      },
+      "red":{
+        "textures": {
+          "texture": "modcurrency:blocks/vend_RED"
+        }
+      },
+      "black":{
+        "textures": {
+          "texture": "modcurrency:blocks/vend_BLACK"
+        }
+      }
+    },
+    "facing": {
+      "north": {},
+      "south": {"y": 180},
+      "west": {"y": 270},
+      "east": {"y": 90}
     }
   }
 }

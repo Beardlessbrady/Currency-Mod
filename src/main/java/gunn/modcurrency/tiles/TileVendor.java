@@ -33,9 +33,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     private static final int VEND_SLOT_COUNT = 30;
     private static final int TOTAL_SLOTS_COUNT = MONEY_SLOT_COUNT + VEND_SLOT_COUNT;
     
-    private int color;
-
-    private int bank, selectedSlot;
+    private int bank, selectedSlot, face;
     private boolean locked, mode;       //Mode 0 == Sell, 1 == Edit
     private String selectedName;
     private int[] itemCosts = new int[TOTAL_SLOTS_COUNT];       //Always Ignore slot 0
@@ -52,6 +50,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         selectedName = "No Item";
         bank = 0;
         selectedSlot = 37;
+        face = 0;
         for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = 0;
     }
     
@@ -129,10 +128,10 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         super.writeToNBT(compound);
         compound.setTag("items", itemStackHandler.serializeNBT());
         compound.setInteger("bank", bank);
+        compound.setInteger("face", face);
         compound.setBoolean("locked", locked);
         compound.setBoolean("mode", mode);
         compound.setInteger("selectedSlot", selectedSlot);
-        compound.setInteger("color", color);
         compound.setString("selectedName", selectedName);
 
         NBTTagCompound itemCostsNBT = new NBTTagCompound();
@@ -147,10 +146,10 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         super.readFromNBT(compound);
         if (compound.hasKey("items")) itemStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("items"));
         if (compound.hasKey("bank")) bank = compound.getInteger("bank");
+        if (compound.hasKey("face")) face = compound.getInteger("face");
         if (compound.hasKey("locked")) locked = compound.getBoolean("locked");
         if (compound.hasKey("mode")) mode = compound.getBoolean("mode");
         if (compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
-        if(compound.hasKey("color")) color = compound.getInteger("color");
         if (compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
 
         if (compound.hasKey("itemCosts")) {
@@ -169,10 +168,10 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setInteger("bank", bank);
+        tag.setInteger("face", face);
         tag.setBoolean("locked", locked);
         tag.setBoolean("mode", mode);
         tag.setInteger("selectedSlot", selectedSlot);
-        tag.setInteger("color", color);
         tag.setString("selectedName", selectedName);
 
         NBTTagCompound itemCostsNBT = new NBTTagCompound();
@@ -186,10 +185,10 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         super.onDataPacket(net, pkt);
         bank = pkt.getNbtCompound().getInteger("bank");
+        face = pkt.getNbtCompound().getInteger("face");
         locked = pkt.getNbtCompound().getBoolean("locked");
         mode = pkt.getNbtCompound().getBoolean("mode");
         selectedSlot = pkt.getNbtCompound().getInteger("selectedSlot");
-        color = pkt.getNbtCompound().getInteger("color");
         selectedName = pkt.getNbtCompound().getString("selectedName");
 
         NBTTagCompound itemCostsNBT = pkt.getNbtCompound().getCompoundTag("itemCosts");
@@ -262,12 +261,12 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         return itemStackHandler.getStackInSlot(index);
     }
     
-    public void setColor(int colorNum){
-        color = colorNum;
-    }
+    public void setFaceData(int num){
+        face = num;
+    }    //0 = North, 1 = East, 2 = South, 3 = West
     
-    public int getColor(){
-        return color;
+    public int getFaceData(){
+        return face;
     }
     //</editor-fold>
 }

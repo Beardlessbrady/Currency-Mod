@@ -33,6 +33,7 @@ public class CommonProxy {
     }
 
     public void Init(FMLInitializationEvent e){
+        ModBlocks.addRecipes();
     }
 
     public void postInit(FMLPostInitializationEvent e){
