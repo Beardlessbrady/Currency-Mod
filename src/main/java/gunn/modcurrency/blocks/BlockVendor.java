@@ -53,7 +53,6 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
         setHardness(3.0F);
         setSoundType(SoundType.METAL);
         
-        this.setDefaultState(this.blockState.getBaseState().withProperty(StateHandler.COLOR, EnumDyeColor.GRAY).withProperty(StateHandler.FACING, EnumFacing.NORTH));
         GameRegistry.register(new ItemVendor(this), getRegistryName());
         GameRegistry.registerTileEntity(TileVendor.class, ModCurrency.MODID + "_tevendor");
     }
@@ -63,6 +62,11 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
         for(int i =0; i < 16; i++){
             ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), i, new ModelResourceLocation(getRegistryName(), "color=" + EnumDyeColor.byMetadata(i) + ",facing=north"));
         }
+    }
+
+    @Override
+    public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list) {
+            list.add(new ItemStack(item, 1, 15));
     }
 
     @Override
