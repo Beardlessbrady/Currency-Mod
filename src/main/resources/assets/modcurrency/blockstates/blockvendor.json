@@ -2,10 +2,10 @@
   "forge_marker": 1,
   "defaults": {
     "custom": { "flip-v": true },
-    "model": "modcurrency:blockvendor",
+    "model": "modcurrency:vendormodel",
     "textures": {
-      "particle": "modcurrency:blocks/vend_GRAY",
-      "texture": "modcurrency:blocks/vend_GRAY"
+      "particle": "modcurrency:blocks/vend_Particle",
+      "texture": "modcurrency:blocks/vend_BLACK"
     }
   },
   "variants": {
@@ -47,7 +47,11 @@
           "texture": "modcurrency:blocks/vend_PINK"
         }
       },
-      "gray":{},
+      "gray":{
+        "textures": {
+          "texture": "modcurrency:blocks/vend_GRAY"
+        }
+      },
       "silver":{
         "textures": {
           "texture": "modcurrency:blocks/vend_SILVER"
@@ -83,11 +87,7 @@
           "texture": "modcurrency:blocks/vend_RED"
         }
       },
-      "black":{
-        "textures": {
-          "texture": "modcurrency:blocks/vend_BLACK"
-        }
-      }
+      "black":{}
     },
     "facing": {
       "north": {},

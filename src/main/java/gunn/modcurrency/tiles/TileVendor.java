@@ -111,6 +111,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
                     ItemStack item = new ItemStack(ModItems.itembanknote);
                     item.setItemDamage(i);
                     item.stackSize = out[i];
+                    bank = 0;
                     worldObj.spawnEntityInWorld(new EntityItem(worldObj, getPos().getX(), getPos().getY(), getPos().getZ(), item));
                 }
             }
@@ -253,6 +254,10 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
 
     public void setSelectedName (String name){selectedName = name;}
     
+    public int[] getAllItemCosts(){return itemCosts.clone();}
+    
+    public void setAllItemCosts(int[] copy){itemCosts = copy.clone();}
+    
     public int getItemCost(int index) {return itemCosts[index];}
 
     public void setItemCost(int amount) {itemCosts[selectedSlot - 37] = amount;}
@@ -268,5 +273,9 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     public int getFaceData(){
         return face;
     }
+    
+    public ItemStackHandler getStackHandler(){ return itemStackHandler; }
+    
+    public void setStackHandler(ItemStackHandler copy){ itemStackHandler = copy; }
     //</editor-fold>
 }

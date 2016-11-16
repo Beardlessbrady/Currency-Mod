@@ -14,7 +14,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
  * File Created on 2016-10-30.
  */
 public class ModBlocks {
-    private static BlockVendor blockvendor;
+    public static BlockVendor blockvendor;
 
     public static void preInit(){
         setupBlocks();
@@ -22,7 +22,6 @@ public class ModBlocks {
 
     private static void setupBlocks(){
         blockvendor = new BlockVendor();
-
     }
 
     public static void initInitModels(){
@@ -34,13 +33,13 @@ public class ModBlocks {
         
         
         for(int i = 0; i < 16; i++) {
-            if(i != 7) {
+            if(i != 15) {
                 ItemStack stack = new ItemStack(blockvendor);
                 ItemStack color = new ItemStack(Items.DYE);
                 ItemStack basic = new ItemStack(blockvendor);
                 stack.setItemDamage(i);
                 color.setItemDamage(15 - i);
-                basic.setItemDamage(7);
+                basic.setItemDamage(15);
 
                 GameRegistry.addShapelessRecipe(stack, color, basic);
                 GameRegistry.addShapelessRecipe(basic, stack);

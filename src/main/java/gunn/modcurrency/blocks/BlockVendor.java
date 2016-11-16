@@ -4,9 +4,8 @@ import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.blocks.items.ItemVendor;
 import gunn.modcurrency.handler.StateHandler;
 import gunn.modcurrency.tiles.TileVendor;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockFlowerPot;
 import net.minecraft.block.ITileEntityProvider;
+import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
@@ -20,16 +19,21 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Random;
 
 /**
  * This class was created by <Brady Gunn>.
@@ -41,13 +45,19 @@ import java.util.List;
  * File Created on 2016-10-30.
  */
 public class BlockVendor extends BaseBlock implements ITileEntityProvider {
+    public static final AxisAlignedBB TWO_HIGH_BLOCK_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 2.0D, 1.0D);
+    
     public BlockVendor() {
         super(Material.ROCK, "blockvendor");
+        
+        setHardness(3.0F);
+        setSoundType(SoundType.METAL);
+        
         this.setDefaultState(this.blockState.getBaseState().withProperty(StateHandler.COLOR, EnumDyeColor.GRAY).withProperty(StateHandler.FACING, EnumFacing.NORTH));
         GameRegistry.register(new ItemVendor(this), getRegistryName());
         GameRegistry.registerTileEntity(TileVendor.class, ModCurrency.MODID + "_tevendor");
     }
-
+    
     @Override
     public void initModel(){
         for(int i =0; i < 16; i++){
@@ -56,28 +66,40 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
     }
 
     @Override
-    public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list) {
-        for(int i = 0; i < 16; i++){
-            list.add(new ItemStack(item, 1, i));
-        }
-    }
-
-    @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
         return new TileVendor();
+    }
+
+    public TileVendor getTile(World world, BlockPos pos) {
+        return (TileVendor) world.getTileEntity(pos);
     }
     
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (world.isRemote) return true;
-        if(heldItem.getItem() == Items.DYE){
-            int face = getTile(world,pos).getFaceData();
-            
-            world.setBlockState(pos, state.withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())),3);
-            getTile(world,pos).setFaceData(face);
-            return true;
+        if(heldItem != null) {
+            if (heldItem.getItem() == Items.DYE) {
+                //Saving tile variables
+                int face = getTile(world, pos).getFaceData();
+                int bank = getTile(world, pos).getField(0);
+                int[] itemCosts = getTile(world, pos).getAllItemCosts();
+                ItemStackHandler stackHandler = getTile(world, pos).getStackHandler();
+
+
+                world.setBlockState(pos, state.withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())), 3);
+
+                //Setting tile variables
+                getTile(world, pos).setFaceData(face);
+                getTile(world, pos).setField(0, bank);
+                getTile(world, pos).setAllItemCosts(itemCosts);
+                getTile(world, pos).setStackHandler(stackHandler);
+
+                if (!player.isCreative()) heldItem.stackSize--;
+                return true;
+            }
         }
-        if (player.isSneaking()) {
+
+        if(player.isSneaking()) {
             if (getTile(world, pos).getField(2) == 1) {   //If True
                 getTile(world, pos).setField(2, 0);
             } else {
@@ -86,9 +108,11 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
             getTile(world, pos).getWorld().notifyBlockUpdate(getTile(world, pos).getPos(), getTile(world, pos).getBlockType().getDefaultState(), getTile(world, pos).getBlockType().getDefaultState(), 3);
             return true;
         }
+
         player.openGui(ModCurrency.instance, 30, world, pos.getX(), pos.getY(), pos.getZ());
         return true;
     }
+
 
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
@@ -103,13 +127,27 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
             case WEST: face = 3;
                 break;
         }
-        
+
         getTile(worldIn, pos).setFaceData(face);
     }
 
-    public TileVendor getTile(World world, BlockPos pos) {
-        return (TileVendor) world.getTileEntity(pos);
+    @Override
+    public int damageDropped(IBlockState state) {
+        return getMetaFromState(state);
     }
+    
+    //<editor-fold desc="Model Methods-------------------------------------------------------------------------------------------------------">
+    @Nullable
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
+        return TWO_HIGH_BLOCK_AABB;
+    }
+
+    @Override
+    public BlockRenderLayer getBlockLayer() {
+        return BlockRenderLayer.TRANSLUCENT;
+    }
+    //</editor-fold>
 
     //<editor-fold desc="Block States--------------------------------------------------------------------------------------------------------">
     @Override
@@ -151,22 +189,19 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
     //</editor-fold>
 
     /*TODO 
-    Fix Collision Box
-    Add Lock Mode
-    Detect Chests anywhere near block
-    Detect redstone signal (To shut off?)
-    Animate Door Opening (Green light on if closed, Red Light on if Open)
-    Render items in model
-    When vending machine ON(redstone powered) inside lite up
-    
-    Particle Textures
-    how long it takes to break and with what
-    
-    Facing
-    
+    //Features
+    -Lock Mode
+    -Hopper/Pipe items in (Works with Lock Mode, obviously 
+    -Animate Door Opening (Green light on if closed, Red Light on if Open)
+    -Render items in model
+    -When vending machine ON(redstone powered) inside lite up
+   
     SELL MODE 
-    
-    BUG:changing a cost, exiting gui and then going back in doesnt update the cost changed until middle clicking
-    
+   
+    //Polishing
+    -Activate block on top part too
+    -uses dye even if the vending machine is already that color (may just leave this)
+    -Do Culling for certain Sides
+    -changing a cost, exiting gui and then going back in doesnt update the cost changed until middle clicking
      */
 }

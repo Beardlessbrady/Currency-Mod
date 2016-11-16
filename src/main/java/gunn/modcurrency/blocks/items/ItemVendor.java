@@ -31,7 +31,7 @@ public class ItemVendor extends ItemBlock{
 
     @Override
     public void addInformation(ItemStack stack, EntityPlayer playerIn, List<String> tooltip, boolean advanced) {
-        if(stack.getItemDamage() != 7) {
+        if(stack.getItemDamage() != 15) {
             tooltip.add(String.valueOf(EnumDyeColor.byMetadata(stack.getItemDamage())));
         }
     }
