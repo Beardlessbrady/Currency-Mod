@@ -27,13 +27,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Random;
 
 /**
  * This class was created by <Brady Gunn>.
@@ -194,18 +192,19 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
 
     /*TODO 
     //Features
-    -Lock Mode
+    -Lock Mode (allow pumping in items = Unlocked)
+    -Visual(or sound) que that you cant afford something
     -Hopper/Pipe items in (Works with Lock Mode, obviously 
-    -Animate Door Opening (Green light on if closed, Red Light on if Open)
     -Render items in model
     -When vending machine ON(redstone powered) inside lite up
-   
-    SELL MODE 
    
     //Polishing
     -Activate block on top part too
     -uses dye even if the vending machine is already that color (may just leave this)
     -Do Culling for certain Sides
     -changing a cost, exiting gui and then going back in doesnt update the cost changed until middle clicking
+    
+    BACK BURNER
+    animate door opening when in edit mode
      */
 }

@@ -5,13 +5,16 @@ import gunn.modcurrency.tiles.TileVendor;
 import gunn.modcurrency.util.SlotBank;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 import javax.annotation.Nullable;
@@ -104,20 +107,73 @@ public class ContainerVendor extends Container {
     @Nullable
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-        if (slotId >= 0 && slotId <= 36) {           //Is Players Inv or Money Slot
-            return super.slotClick(slotId, dragType, clickTypeIn, player);
-        } else if (slotId >= 37 && slotId <= 67) {     //Is Tile Inv (and not money)
-            if (clickTypeIn == ClickType.CLONE) tilevendor.setField(3, slotId);
-            if ((clickTypeIn == ClickType.CLONE) || (clickTypeIn == ClickType.PICKUP && slotId == tilevendor.getField(3))) {
-                if (getSlot(slotId).getHasStack()) {
-                    tilevendor.setSelectedName(getSlot(slotId).getStack().getDisplayName());
-                } else {
-                    tilevendor.setSelectedName("No Item");
+        IItemHandler itemHandler = this.tilevendor.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        
+        if(tilevendor.getField(2) == 1) {                //EDIT MODE
+            if (slotId >= 0 && slotId <= 36) {          
+                return super.slotClick(slotId, dragType, clickTypeIn, player);
+            } else if (slotId >= 37 && slotId <= 67) {   
+                if (clickTypeIn == ClickType.CLONE) tilevendor.setField(3, slotId);
+                if ((clickTypeIn == ClickType.CLONE) || (clickTypeIn == ClickType.PICKUP && slotId == tilevendor.getField(3))) {
+                    if (getSlot(slotId).getHasStack()) {
+                        tilevendor.setSelectedName(getSlot(slotId).getStack().getDisplayName());
+                    } else {
+                        tilevendor.setSelectedName("No Item");
+                    }
+                    tilevendor.getWorld().notifyBlockUpdate(tilevendor.getPos(), tilevendor.getBlockType().getDefaultState(), tilevendor.getBlockType().getDefaultState(), 3);
+                    return null;
                 }
-                tilevendor.getWorld().notifyBlockUpdate(tilevendor.getPos(), tilevendor.getBlockType().getDefaultState(), tilevendor.getBlockType().getDefaultState(), 3);
-                return null;
+                return super.slotClick(slotId, dragType, clickTypeIn, player);
             }
-            return super.slotClick(slotId, dragType, clickTypeIn, player);
+        }else {  //Sell Mode
+            if (slotId >= 0 && slotId <= 36) {           //Is Players Inv or Money Slot
+                return super.slotClick(slotId, dragType, clickTypeIn, player);
+            } else if (slotId >= 37 && slotId <= 67) {  //Is TE Inv
+                if (clickTypeIn == ClickType.PICKUP && dragType == 0) {   //Left Click = 1 item
+                    return checkAfford(slotId, 1, player);
+                }else if (clickTypeIn == ClickType.PICKUP && dragType == 1) {   //Right Click = 10 item
+                    return checkAfford(slotId, 10, player);
+                }else if (clickTypeIn == ClickType.QUICK_MOVE){
+                    return checkAfford(slotId, 64, player);
+                }
+            }
+        }
+        return null;
+    }
+
+    public ItemStack checkAfford(int slotId, int amnt, EntityPlayer player){
+        IItemHandler itemHandler = this.tilevendor.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        ItemStack playStack = player.inventory.getItemStack();
+        ItemStack slotStack = itemHandler.getStackInSlot(slotId - PLAYER_TOTAL_COUNT);
+        ItemStack playBuyStack;
+        int bank = tilevendor.getField(0);
+        int cost = tilevendor.getItemCost(slotId  - PLAYER_TOTAL_COUNT - 1);
+
+        if (slotStack != null) {
+            if (playStack != null) {    
+                if (!((playStack.getDisplayName().equals(slotStack.getDisplayName())) &&
+                        (playStack.getItem().getUnlocalizedName().equals(slotStack.getItem().getUnlocalizedName())))) {
+                    return null; //Checks if player is holding stack, if its different then one being clicked do nothing
+                }
+            }
+            if(slotStack.stackSize < amnt) amnt = slotStack.stackSize;
+            
+            if ((bank >= (cost * amnt))) {   //If has enough money, buy it
+                if (slotStack.stackSize >= amnt) {
+                    slotStack.splitStack(amnt);
+                    playBuyStack = slotStack.copy();
+                    playBuyStack.stackSize = amnt;
+                    
+                    if (player.inventory.getItemStack() != null) {       //Holding Item
+                        playBuyStack.stackSize = amnt + playStack.stackSize;
+                    }
+                    player.inventory.setItemStack(playBuyStack);
+                    tilevendor.setField(0, bank - (cost * amnt));
+                }
+            } else {
+                System.out.println("No Affordo");
+            }
+            return slotStack;
         }
         return null;
     }
@@ -138,7 +194,11 @@ public class ContainerVendor extends Container {
                         return null;
                     }
                 } else {
-                    if (!this.mergeItemStack(copyStack, TE_VEND_FIRST_SLOT_INDEX, TE_VEND_FIRST_SLOT_INDEX + TE_VEND_TOTAL_COUNT, false)) {
+                    if(tilevendor.getField(2) == 1) {     //Only allow shift clicking from player inv in edit mode
+                        if (!this.mergeItemStack(copyStack, TE_VEND_FIRST_SLOT_INDEX, TE_VEND_FIRST_SLOT_INDEX + TE_VEND_TOTAL_COUNT, false)) {
+                            return null;
+                        }
+                    } else {
                         return null;
                     }
                 }

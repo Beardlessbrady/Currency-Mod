@@ -46,7 +46,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     
     public TileVendor() {
         locked = false;
-        mode = false;
+        mode = false;       //1 = Edit, 0 = Sell
         selectedName = "No Item";
         bank = 0;
         selectedSlot = 37;

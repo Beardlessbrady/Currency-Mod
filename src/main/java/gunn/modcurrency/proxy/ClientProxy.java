@@ -4,6 +4,7 @@ import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.blocks.ModBlocks;
 import gunn.modcurrency.items.ModItems;
 import net.minecraftforge.client.model.obj.OBJLoader;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 /**
@@ -21,7 +22,12 @@ public class ClientProxy extends CommonProxy {
         super.preInit(e);
         ModItems.initItemModels();
         ModBlocks.initInitModels();
-
+        
         OBJLoader.INSTANCE.addDomain(ModCurrency.MODID);
+    }
+
+    @Override
+    public void Init(FMLInitializationEvent e){
+        super.Init(e);
     }
 }

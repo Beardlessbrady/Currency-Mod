@@ -175,7 +175,7 @@ public class GuiVendor extends GuiContainer {
         int i = (x - (this.width - this.xSize) / 2);
         int j = (y - (this.height - this.ySize) / 2);
 
-        if(j < 140) {
+        if(j < 140 && j > 30) {
             IItemHandler itemHandler = this.tilevendor.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
             int startX = 43;
             int startY = 31;
@@ -184,8 +184,6 @@ public class GuiVendor extends GuiContainer {
             int column = ((j - startY) / 18);
 
             int slot = row + (column * 5);
-
-            //int itemStack = itemHandler.getStackInSlot(slot).stackSize;
 
             ItemStack currStack = tilevendor.getStack(slot + 1);
 
@@ -219,9 +217,13 @@ public class GuiVendor extends GuiContainer {
     
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        super.mouseClicked(mouseX, mouseY, mouseButton);
-        nameField.mouseClicked(mouseX, mouseY, mouseButton);
-        if (mouseButton == 2) updateTextField();
+        if(tilevendor.getField(2) == 1) {
+            super.mouseClicked(mouseX, mouseY, mouseButton);
+            nameField.mouseClicked(mouseX, mouseY, mouseButton);
+            if (mouseButton == 2) updateTextField();
+        }else{
+            super.mouseClicked(mouseX, mouseY, mouseButton);
+        }
     }
     //</editor-fold>
 
