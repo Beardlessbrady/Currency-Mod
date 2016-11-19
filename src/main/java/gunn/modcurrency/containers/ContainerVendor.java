@@ -156,7 +156,7 @@ public class ContainerVendor extends Container {
                     return null; //Checks if player is holding stack, if its different then one being clicked do nothing
                 }
             }
-            if(slotStack.stackSize < amnt) amnt = slotStack.stackSize;
+            if(slotStack.stackSize < amnt && slotStack.stackSize != 0) amnt = slotStack.stackSize;
             
             if ((bank >= (cost * amnt))) {   //If has enough money, buy it
                 if (slotStack.stackSize >= amnt) {
