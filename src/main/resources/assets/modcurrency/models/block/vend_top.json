@@ -1,0 +1,85 @@
+{
+	"__comment": "Designed by Beardlessbrady with Cubik Studio - https://cubik.studio",
+	"textures": {
+		"VendTextures": "#texture"
+	},
+	"elements": [
+		{
+			"__comment": "Box Back Side b",
+			"from": [ 0, 0, 15 ],
+			"to": [ 16, 15, 16 ],
+			"faces": {
+				"down": { "uv": [ 10, 4.5, 11, 5.5 ], "texture": "#VendTextures" },
+				"north": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" },
+				"south": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" },
+				"west": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" },
+				"east": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" }
+			}
+		},
+		{
+			"__comment": "Box Left Side b",
+			"from": [ 15, 0, 1 ],
+			"to": [ 16, 15, 15 ],
+			"faces": {
+				"down": { "uv": [ 10, 4.5, 11, 5.5 ], "texture": "#VendTextures" },
+				"north": { "uv": [ 2.5, 3, 3, 10.5 ], "texture": "#VendTextures" },
+				"west": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" },
+				"east": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" }
+			}
+		},
+		{
+			"__comment": "Box Right Side b",
+			"from": [ 0, 0, 1 ],
+			"to": [ 4, 15, 15 ],
+			"faces": {
+				"down": { "uv": [ 10, 4.5, 11, 5.5 ], "texture": "#VendTextures" },
+				"north": { "uv": [ 0, 3, 2, 10.5 ], "texture": "#VendTextures" },
+				"west": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" },
+				"east": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" }
+			}
+		},
+		{
+			"__comment": "Top Box Panel",
+			"from": [ 0, 15, 0 ],
+			"to": [ 16, 16, 16 ],
+			"faces": {
+				"down": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" },
+				"up": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" },
+				"north": { "uv": [ 0, 0, 8, 0.5 ], "texture": "#VendTextures" },
+				"south": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" },
+				"west": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" },
+				"east": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" }
+			}
+		},
+		{
+			"__comment": "Shelf 1",
+			"from": [ 4, 10, 2 ],
+			"to": [ 15, 10.25, 15 ],
+			"faces": {
+				"down": { "uv": [ 8.5, 7, 9.5, 8 ], "texture": "#VendTextures" },
+				"up": { "uv": [ 8.5, 7, 9.5, 8 ], "texture": "#VendTextures" },
+				"north": { "uv": [ 8.5, 8, 9.5, 7 ], "texture": "#VendTextures" }
+			}
+		},
+		{
+			"__comment": "Shelf 2",
+			"from": [ 4, 6, 2 ],
+			"to": [ 15, 6.25, 15 ],
+			"faces": {
+				"down": { "uv": [ 8.5, 7, 9.5, 8 ], "texture": "#VendTextures" },
+				"up": { "uv": [ 8.5, 7, 9.5, 8 ], "texture": "#VendTextures" },
+				"north": { "uv": [ 8.5, 8, 9.5, 7 ], "texture": "#VendTextures" }
+			}
+		},
+		{
+			"__comment": "Shelf 3",
+			"from": [ 4, 2, 2 ],
+			"to": [ 15, 2.25, 15 ],
+			"faces": {
+				"down": { "uv": [ 8.5, 7, 9.5, 8 ], "texture": "#VendTextures" },
+				"up": { "uv": [ 8.5, 7, 9.5, 8 ], "texture": "#VendTextures" },
+				"north": { "uv": [ 8.5, 8, 9.5, 7 ], "texture": "#VendTextures" }
+			}
+		}
+	]
+}

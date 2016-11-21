@@ -1,0 +1,190 @@
+{
+	"__comment": "Designed by Beardlessbrady with Cubik Studio - https://cubik.studio",
+	"textures": {
+		"VendTextures": "#texture"
+	},
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [ 0, 178, 0 ],
+			"translation": [ 0.00, 0.75, 0.00 ],
+			"scale": [ 0.28, 0.28, 0.28 ]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [ 0, 178, 0 ],
+			"translation": [ 0.00, 0.75, 0.00 ],
+			"scale": [ 0.28, 0.28, 0.28 ]
+		},
+		"firstperson_righthand": {
+			"rotation": [ 350, 98, 0 ],
+			"translation": [ 3.50, 1.25, 0.00 ],
+			"scale": [ 0.28, 0.28, 0.28 ]
+		},
+		"firstperson_lefthand": {
+			"rotation": [ 350, 98, 0 ],
+			"translation": [ 3.50, 1.25, 0.00 ],
+			"scale": [ 0.28, 0.28, 0.28 ]
+		},
+		"gui": {
+			"rotation": [ 358, 188, 0 ],
+			"translation": [ 0.00, -3.25, 0.00 ],
+			"scale": [ 0.50, 0.50, 0.50 ]
+		},
+		"head": {
+			"rotation": [ 0, 0, 0 ],
+			"translation": [ 0.00, 0.00, 0.00 ],
+			"scale": [ 1.00, 1.00, 1.00 ]
+		},
+		"fixed": {
+			"rotation": [ 0, 0, 0 ],
+			"translation": [ 0.00, 0.00, 0.00 ],
+			"scale": [ 1.00, 1.00, 1.00 ]
+		},
+		"ground": {
+			"rotation": [ 0, 0, 0 ],
+			"translation": [ 0.00, 0.00, 0.00 ],
+			"scale": [ 0.34, 0.34, 0.34 ]
+		}
+	},
+	"elements": [
+		{
+			"__comment": "Bottom Flap",
+			"from": [ 0, 0, 1 ],
+			"to": [ 16, 6, 16 ],
+			"faces": {
+				"down": { "uv": [ 8.5, 7, 9.5, 8 ], "texture": "#VendTextures" },
+				"up": { "uv": [ 8.5, 7, 9.5, 8 ], "texture": "#VendTextures" },
+				"north": { "uv": [ 7.5, 12.5, 15.5, 15.5 ], "texture": "#VendTextures" },
+				"south": { "uv": [ 8.5, 7, 9.5, 8 ], "texture": "#VendTextures" },
+				"west": { "uv": [ 8.5, 7, 9.5, 8 ], "texture": "#VendTextures" },
+				"east": { "uv": [ 8.5, 7, 9.5, 8 ], "texture": "#VendTextures" }
+			}
+		},
+		{
+			"__comment": "Box Right Side a",
+			"from": [ 0, 6, 1 ],
+			"to": [ 4, 31, 15 ],
+			"faces": {
+				"west": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" }
+			}
+		},
+		{
+			"__comment": "Box Left Side a",
+			"from": [ 15, 6, 1 ],
+			"to": [ 16, 31, 15 ],
+			"faces": {
+				"east": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" }
+			}
+		},
+		{
+			"__comment": "Box Back Side a",
+			"from": [ 0, 6, 15 ],
+			"to": [ 16, 31, 16 ],
+			"faces": {
+				"south": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" },
+				"west": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" },
+				"east": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" }
+			}
+		},
+		{
+			"__comment": "Top Box Panel",
+			"from": [ 0, 31, 0 ],
+			"to": [ 16, 32, 16 ],
+			"faces": {
+				"up": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" },
+				"north": { "uv": [ 0, 0, 8, 0.5 ], "texture": "#VendTextures" },
+				"south": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" },
+				"west": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" },
+				"east": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" }
+			}
+		},
+		{
+			"__comment": "Door Right",
+			"from": [ 0, 6, 0 ],
+			"to": [ 4, 31, 1 ],
+			"faces": {
+				"north": { "uv": [ 3.5, 3.5, 5.5, 16 ], "texture": "#VendTextures" },
+				"west": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" },
+				"east": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" }
+			}
+		},
+		{
+			"__comment": "Door Left",
+			"from": [ 15, 6, 0 ],
+			"to": [ 16, 31, 1 ],
+			"faces": {
+				"north": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" },
+				"west": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" },
+				"east": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" }
+			}
+		},
+		{
+			"__comment": "Door Top",
+			"from": [ 4, 30, 0 ],
+			"to": [ 15, 31, 1 ],
+			"faces": {
+				"down": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" },
+				"up": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" },
+				"north": { "uv": [ 0, 1, 5.5, 1.5 ], "texture": "#VendTextures" }
+			}
+		},
+		{
+			"__comment": "Door Bottom",
+			"from": [ 4, 6, 0 ],
+			"to": [ 15, 7, 1 ],
+			"faces": {
+				"up": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" },
+				"north": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" }
+			}
+		},
+		{
+			"__comment": "Door Window",
+			"from": [ 4, 7, 0.5 ],
+			"to": [ 15, 30, 0.75 ],
+			"faces": {
+				"north": { "uv": [ 8.5, 4.5, 9.5, 5.5 ], "texture": "#VendTextures" }
+			}
+		},
+		{
+			"__comment": "Cube19",
+			"from": [ 14, 0, 0 ],
+			"to": [ 16, 6, 1 ],
+			"faces": {
+				"down": { "uv": [ 8.5, 7, 9.5, 8 ], "texture": "#VendTextures" },
+				"north": { "uv": [ 8.5, 7, 9.5, 8 ], "texture": "#VendTextures" },
+				"west": { "uv": [ 8.5, 7, 9.5, 8 ], "texture": "#VendTextures" },
+				"east": { "uv": [ 8.5, 7, 9.5, 8 ], "texture": "#VendTextures" }
+			}
+		},
+		{
+			"__comment": "Cube19",
+			"from": [ 2, 5, 0 ],
+			"to": [ 14, 6, 1 ],
+			"faces": {
+				"down": { "uv": [ 8.5, 7, 9.5, 8 ], "texture": "#VendTextures" },
+				"up": { "uv": [ 8.5, 7, 9.5, 8 ], "texture": "#VendTextures" },
+				"north": { "uv": [ 8.5, 7, 9.5, 8 ], "texture": "#VendTextures" }
+			}
+		},
+		{
+			"__comment": "Cube19",
+			"from": [ 0, 0, 0 ],
+			"to": [ 2, 6, 1 ],
+			"faces": {
+				"down": { "uv": [ 8.5, 7, 9.5, 8 ], "texture": "#VendTextures" },
+				"north": { "uv": [ 8.5, 7, 9.5, 8 ], "texture": "#VendTextures" },
+				"west": { "uv": [ 8.5, 7, 9.5, 8 ], "texture": "#VendTextures" },
+				"east": { "uv": [ 8.5, 7, 9.5, 8 ], "texture": "#VendTextures" }
+			}
+		},
+		{
+			"__comment": "Cube19",
+			"from": [ 2, 0, 0 ],
+			"to": [ 14, 1, 1 ],
+			"faces": {
+				"down": { "uv": [ 8.5, 7, 9.5, 8 ], "texture": "#VendTextures" },
+				"up": { "uv": [ 8.5, 7, 9.5, 8 ], "texture": "#VendTextures" },
+				"north": { "uv": [ 8.5, 15.5, 14.5, 16 ], "texture": "#VendTextures" }
+			}
+		}
+	]
+}

@@ -2,7 +2,7 @@
   "forge_marker": 1,
   "defaults": {
     "custom": { "flip-v": true },
-    "model": "modcurrency:vendormodel",
+    "model": "modcurrency:vend_bottom",
     "textures": {
       "particle": "modcurrency:blocks/vend_Particle",
       "texture": "modcurrency:blocks/vend_BLACK"
