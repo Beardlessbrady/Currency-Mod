@@ -33,6 +33,7 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.List;
+import java.util.Random;
 
 /**
  * This class was created by <Brady Gunn>.
@@ -59,7 +60,7 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
     @Override
     public void initModel(){
         for(int i =0; i < 16; i++){
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), i, new ModelResourceLocation(getRegistryName(), "inventory,color=" + EnumDyeColor.byMetadata(15) + ",facing=north"));
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), i, new ModelResourceLocation(getRegistryName(), "color=" + EnumDyeColor.byMetadata(i) + ",facing=north,item=true"));
         }
     }
 
@@ -155,10 +156,9 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
     //<editor-fold desc="Block States--------------------------------------------------------------------------------------------------------">
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, new IProperty[] {StateHandler.COLOR, StateHandler.FACING});
+        return new BlockStateContainer(this, new IProperty[] {StateHandler.COLOR, StateHandler.FACING, StateHandler.ITEM});
     }
     
-    @SuppressWarnings("depreciation")
     @Override
     public IBlockState getStateFromMeta(int meta) {
         return this.getDefaultState().withProperty(StateHandler.COLOR, EnumDyeColor.byMetadata(meta));
@@ -186,24 +186,25 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
                 break;
         }
         
-        return state.withProperty(StateHandler.FACING, face);
+        return state.withProperty(StateHandler.FACING, face).withProperty(StateHandler.ITEM, false);
     }
 
     //</editor-fold>
 
     /*TODO 
-    //Features
-    -Lock Mode (allow pumping in items = Unlocked)
+    -Add Money Input amount to Edit mode
+    -Automation
+        -Money outputs from back
+        -Items input from bottom back
+    -Lock ON = Allow ^ Money can be pumped out from "cash register", Lock OFF = No Automation Allowed
     -Visual(or sound) que that you cant afford something
-    -Hopper/Pipe items in (Works with Lock Mode, obviously 
     -Render items in model
     -When vending machine ON(redstone powered) inside lite up
-   
-    //Polishing
-    -Activate block on top part too
-    -uses dye even if the vending machine is already that color (may just leave this)
     -Do Culling for certain Sides
     -changing a cost, exiting gui and then going back in doesnt update the cost changed until middle clicking
+    
+    //Polishing
+    When broken drops items inside + Change and money
     
     BACK BURNER
     animate door opening when in edit mode

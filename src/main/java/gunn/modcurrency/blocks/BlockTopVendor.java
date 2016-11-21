@@ -3,12 +3,14 @@ package gunn.modcurrency.blocks;
 import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.handler.StateHandler;
 import gunn.modcurrency.tiles.TileVendor;
+import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,6 +30,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
+import java.util.Random;
 
 /**
  * This class was created by <Brady Gunn>.
@@ -46,13 +49,6 @@ public class BlockTopVendor extends BaseBlock{
         setSoundType(SoundType.METAL);
 
         GameRegistry.register(new ItemBlock(this), getRegistryName());
-    }
-
-    @Override
-    public void initModel(){
-        for(int i =0; i < 16; i++){
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), i, new ModelResourceLocation(getRegistryName(), "color=" + EnumDyeColor.byMetadata(i) + ",facing=north"));
-        }
     }
     
     public boolean isBlockBelow(World world, BlockPos pos){
@@ -113,7 +109,18 @@ public class BlockTopVendor extends BaseBlock{
         super.breakBlock(worldIn, pos, state);
         worldIn.setBlockToAir(pos.down());
     }
-    
+
+    @Nullable
+    @Override
+    public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+        return Item.getItemFromBlock(ModBlocks.blockvendor);
+    }
+
+    @Override
+    public int damageDropped(IBlockState state) {
+        return state.getValue(StateHandler.COLOR).getMetadata();
+    }
+
     //<editor-fold desc="Block States--------------------------------------------------------------------------------------------------------">
     @Override
     protected BlockStateContainer createBlockState() {

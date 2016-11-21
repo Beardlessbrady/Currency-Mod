@@ -1,6 +1,7 @@
 package gunn.modcurrency.handler;
 
 import net.minecraft.block.BlockHorizontal;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.item.EnumDyeColor;
@@ -18,4 +19,5 @@ import net.minecraft.util.EnumFacing;
 public class StateHandler {
     public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
     public static final PropertyEnum<EnumDyeColor> COLOR = PropertyEnum.create("color", EnumDyeColor.class);
+    public static final PropertyBool ITEM = PropertyBool.create("item");
 }

@@ -29,7 +29,6 @@ public class ModBlocks {
 
     public static void initInitModels(){
         blockvendor.initModel();
-        blocktopvendor.initModel();
     }
     
     public static void addRecipes(){
