@@ -4,7 +4,7 @@
     "custom": { "flip-v": true },
     "model": "modcurrency:vend_top",
     "textures": {
-      "particle": "modcurrency:blocks/vend_Particle",
+      "particle": "blocks/coal_block",
       "texture": "modcurrency:blocks/vend_BLACK"
     }
   },
@@ -16,76 +16,91 @@
     "color": {
       "white":{
         "textures": {
+          "particle": "blocks/quartz_block_side",
           "texture": "modcurrency:blocks/vend_WHITE"
         }
       },
       "orange":{
         "textures": {
+          "particle": "blocks/wool_colored_orange",
           "texture": "modcurrency:blocks/vend_ORANGE"
         }
       },
       "magenta":{
         "textures": {
+          "particle": "blocks/wool_colored_magenta",
           "texture": "modcurrency:blocks/vend_MAGENTA"
         }
       },
-      "lightblue":{
+      "lightBlue":{
         "textures": {
+          "particle": "blocks/wool_colored_light_blue",
           "texture": "modcurrency:blocks/vend_LIGHTBLUE"
         }
       },
       "yellow":{
         "textures": {
+          "particle": "blocks/gold_block",
           "texture": "modcurrency:blocks/vend_YELLOW"
         }
       },
       "lime":{
         "textures": {
+          "particle": "blocks/wool_colored_lime",
           "texture": "modcurrency:blocks/vend_LIME"
         }
       },
       "pink":{
         "textures": {
+          "particle": "blocks/wool_colored_pink",
           "texture": "modcurrency:blocks/vend_PINK"
         }
       },
       "gray":{
         "textures": {
+          "particle": "blocks/wool_colored_gray",
           "texture": "modcurrency:blocks/vend_GRAY"
         }
       },
       "silver":{
         "textures": {
+          "particle": "blocks/wool_colored_silver",
           "texture": "modcurrency:blocks/vend_SILVER"
         }
       },
       "cyan":{
         "textures": {
+          "particle": "blocks/wool_colored_cyan",
           "texture": "modcurrency:blocks/vend_CYAN"
         }
       },
       "purple":{
         "textures": {
+          "particle": "blocks/wool_colored_purple",
           "texture": "modcurrency:blocks/vend_PURPLE"
         }
       },
       "blue":{
         "textures": {
+          "particle": "blocks/wool_colored_blue",
           "texture": "modcurrency:blocks/vend_BLUE"
         }
       },
       "brown":{
         "textures": {
+          "particle": "blocks/hardened_clay_stained_brown",
           "texture": "modcurrency:blocks/vend_BROWN"
         }
       },
       "green":{
         "textures": {
+          "particle": "blocks/wool_colored_green",
           "texture": "modcurrency:blocks/vend_GREEN"
         }
       },
       "red":{
         "textures": {
+          "particle": "blocks/hardened_clay_stained_red",
           "texture": "modcurrency:blocks/vend_RED"
         }
       },

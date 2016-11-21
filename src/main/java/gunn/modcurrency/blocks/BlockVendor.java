@@ -192,6 +192,7 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
     //</editor-fold>
 
     /*TODO 
+    -Animate Door
     -Add Money Input amount to Edit mode
     -Automation
         -Money outputs from back
@@ -200,13 +201,9 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
     -Visual(or sound) que that you cant afford something
     -Render items in model
     -When vending machine ON(redstone powered) inside lite up
-    -Do Culling for certain Sides
     -changing a cost, exiting gui and then going back in doesnt update the cost changed until middle clicking
     
     //Polishing
     When broken drops items inside + Change and money
-    
-    BACK BURNER
-    animate door opening when in edit mode
      */
 }
