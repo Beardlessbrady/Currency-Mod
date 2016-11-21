@@ -3,9 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Currency-Mod.iml" filepath="$PROJECT_DIR$/.idea/modules/Currency-Mod.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Currency-Mod_api.iml" filepath="$PROJECT_DIR$/.idea/modules/Currency-Mod_api.iml" group="Currency-Mod" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Currency-Mod_main.iml" filepath="$PROJECT_DIR$/.idea/modules/Currency-Mod_main.iml" group="Currency-Mod" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Currency-Mod_test.iml" filepath="$PROJECT_DIR$/.idea/modules/Currency-Mod_test.iml" group="Currency-Mod" />
     </modules>
   </component>
 </project>

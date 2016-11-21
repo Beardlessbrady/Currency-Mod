@@ -4,6 +4,7 @@ import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.blocks.items.ItemVendor;
 import gunn.modcurrency.handler.StateHandler;
 import gunn.modcurrency.tiles.TileVendor;
+import ibxm.Player;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -43,11 +44,11 @@ import java.util.List;
  * File Created on 2016-10-30.
  */
 public class BlockVendor extends BaseBlock implements ITileEntityProvider {
-    public static final AxisAlignedBB TWO_HIGH_BLOCK_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0D, 2.0D, 1.0D);
     
     public BlockVendor() {
         super(Material.ROCK, "blockvendor");
-        
+
+        setCreativeTab(ModCurrency.tabCurrency);
         setHardness(3.0F);
         setSoundType(SoundType.METAL);
         
@@ -58,7 +59,7 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
     @Override
     public void initModel(){
         for(int i =0; i < 16; i++){
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), i, new ModelResourceLocation(getRegistryName(), "color=" + EnumDyeColor.byMetadata(i) + ",facing=north"));
+            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), i, new ModelResourceLocation(getRegistryName(), "inventory,color=" + EnumDyeColor.byMetadata(15) + ",facing=north"));
         }
     }
 
@@ -89,7 +90,8 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
 
 
                 world.setBlockState(pos, state.withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())), 3);
-
+                world.setBlockState(pos.up(), world.getBlockState(pos.up()).withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())), 3);
+                
                 //Setting tile variables
                 getTile(world, pos).setFaceData(face);
                 getTile(world, pos).setField(0, bank);
@@ -111,11 +113,10 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
             return true;
         }
 
-        player.openGui(ModCurrency.instance, 30, world, pos.getX(), pos.getY(), pos.getZ());
+        getTile(world,pos).openGui(player,world,pos);
         return true;
     }
-
-
+    
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         int face = 0;
@@ -131,25 +132,25 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
         }
 
         getTile(worldIn, pos).setFaceData(face);
+        EnumDyeColor color = state.getValue(StateHandler.COLOR);
+        worldIn.setBlockState(pos.up(),ModBlocks.blocktopvendor.getDefaultState().withProperty(StateHandler.COLOR, color));
+    }
+
+    @Override
+    public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
+        return worldIn.getBlockState(pos.up()).getBlock().isReplaceable(worldIn,pos.up());
+    }
+
+    @Override
+    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+        super.breakBlock(worldIn, pos, state);
+        worldIn.setBlockToAir(pos.up());
     }
 
     @Override
     public int damageDropped(IBlockState state) {
         return getMetaFromState(state);
     }
-    
-    //<editor-fold desc="Model Methods-------------------------------------------------------------------------------------------------------">
-    @Nullable
-    @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
-        return TWO_HIGH_BLOCK_AABB;
-    }
-
-    @Override
-    public BlockRenderLayer getBlockLayer() {
-        return BlockRenderLayer.TRANSLUCENT;
-    }
-    //</editor-fold>
 
     //<editor-fold desc="Block States--------------------------------------------------------------------------------------------------------">
     @Override

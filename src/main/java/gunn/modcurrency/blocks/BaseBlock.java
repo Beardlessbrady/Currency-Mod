@@ -22,7 +22,6 @@ public class BaseBlock extends Block{
     public BaseBlock(Material mat, String name){
         super(mat);
         setRegistryName(name);
-        setCreativeTab(ModCurrency.tabCurrency);
         setUnlocalizedName(this.getRegistryName().toString());
         GameRegistry.register(this);
     }

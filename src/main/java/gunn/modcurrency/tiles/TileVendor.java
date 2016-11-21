@@ -1,6 +1,7 @@
 
 package gunn.modcurrency.tiles;
 
+import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.items.ModItems;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.entity.item.EntityItem;
@@ -12,6 +13,8 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -52,6 +55,10 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         selectedSlot = 37;
         face = 0;
         for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = 0;
+    }
+
+    public void openGui(EntityPlayer player, World world, BlockPos pos){
+        player.openGui(ModCurrency.instance, 30, world, pos.getX(), pos.getY(), pos.getZ());
     }
     
     @Override

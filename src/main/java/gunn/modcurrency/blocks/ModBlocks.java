@@ -15,6 +15,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
  */
 public class ModBlocks {
     public static BlockVendor blockvendor;
+    public static BlockTopVendor blocktopvendor;
 
     public static void preInit(){
         setupBlocks();
@@ -22,15 +23,16 @@ public class ModBlocks {
 
     private static void setupBlocks(){
         blockvendor = new BlockVendor();
+        blocktopvendor = new BlockTopVendor();
+        
     }
 
     public static void initInitModels(){
         blockvendor.initModel();
+        blocktopvendor.initModel();
     }
     
     public static void addRecipes(){
-        
-        
         
         for(int i = 0; i < 16; i++) {
             if(i != 15) {
