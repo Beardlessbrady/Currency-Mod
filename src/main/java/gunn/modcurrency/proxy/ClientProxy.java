@@ -3,7 +3,10 @@ package gunn.modcurrency.proxy;
 import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.blocks.ModBlocks;
 import gunn.modcurrency.items.ModItems;
+import gunn.modcurrency.render.RenderTileVendor;
+import gunn.modcurrency.tiles.TileVendor;
 import net.minecraftforge.client.model.obj.OBJLoader;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
@@ -29,5 +32,6 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void Init(FMLInitializationEvent e){
         super.Init(e);
+        ClientRegistry.bindTileEntitySpecialRenderer(TileVendor.class, new RenderTileVendor());
     }
 }

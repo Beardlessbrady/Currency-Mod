@@ -4,7 +4,6 @@ import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.blocks.items.ItemVendor;
 import gunn.modcurrency.handler.StateHandler;
 import gunn.modcurrency.tiles.TileVendor;
-import ibxm.Player;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -20,10 +19,8 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -33,7 +30,6 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Random;
 
 /**
  * This class was created by <Brady Gunn>.
@@ -192,6 +188,8 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
     //</editor-fold>
 
     /*TODO 
+    RELEASE DOS
+    -Render items in model
     -Animate Door
     -Add Money Input amount to Edit mode
     -Automation
@@ -199,11 +197,12 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
         -Items input from bottom back
     -Lock ON = Allow ^ Money can be pumped out from "cash register", Lock OFF = No Automation Allowed
     -Visual(or sound) que that you cant afford something
-    -Render items in model
     -When vending machine ON(redstone powered) inside lite up
     -changing a cost, exiting gui and then going back in doesnt update the cost changed until middle clicking
+    -Only Player who placed Vending Machine get Open Edit Mode
     
     //Polishing
     When broken drops items inside + Change and money
      */
+    
 }
