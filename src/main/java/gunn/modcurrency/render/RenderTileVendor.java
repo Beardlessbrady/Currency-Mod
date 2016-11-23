@@ -43,17 +43,16 @@ public class RenderTileVendor extends TileEntitySpecialRenderer<TileVendor>{
                 break;
         }
 
-        renderDoor(te,x,y,z,partialTicks,destroyStage);
-        
         //West North == +
         //South East == -
-        renderItems(te,x,y,z,partialTicks,destroyStage);
+        //renderItems(te,x,y,z,partialTicks,destroyStage);
         
         
         GlStateManager.popMatrix();
     }
     
     
+    //Old Renderer, Laggy as fuck 
     public void renderItems(TileVendor te, double x, double y, double z, float partialTicks, int destroyStage) {
         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
@@ -77,7 +76,5 @@ public class RenderTileVendor extends TileEntitySpecialRenderer<TileVendor>{
         */
     }
     
-    public void renderDoor(TileVendor te, double x, double y, double z, float partialTicks, int destroyStage){
-        
-    }
+
 }

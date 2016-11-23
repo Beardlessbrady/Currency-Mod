@@ -68,8 +68,19 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
 
     @Override
     public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
-        return true;
+        return layer == BlockRenderLayer.SOLID || layer == BlockRenderLayer.TRANSLUCENT;
     }
+    
+    @Override
+    public boolean isFullCube(IBlockState state) {
+        return false;
+    }
+
+    @Override
+    public boolean isOpaqueCube(IBlockState state) {
+        return false;
+    }   
+
 
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
