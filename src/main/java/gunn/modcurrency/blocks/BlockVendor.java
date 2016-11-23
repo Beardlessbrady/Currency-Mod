@@ -19,6 +19,7 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -63,6 +64,11 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
     @Override
     public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list) {
             list.add(new ItemStack(item, 1, 15));
+    }
+
+    @Override
+    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
+        return true;
     }
 
     @Override
@@ -140,6 +146,13 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
 
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+        TileVendor te = getTile(worldIn, pos);
+        te.setField(2,1);
+        te.outChange();
+        te.setField(2,0);
+        te.outChange();
+        
+        te.dropItems();
         super.breakBlock(worldIn, pos, state);
         worldIn.setBlockToAir(pos.up());
     }
@@ -184,25 +197,27 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
         
         return state.withProperty(StateHandler.FACING, face).withProperty(StateHandler.ITEM, false);
     }
+    
+    public void renderItems(){
+        
+    }
 
     //</editor-fold>
 
     /*TODO 
     RELEASE DOS
-    -Render items in model
-    -Animate Door
-    -Add Money Input amount to Edit mode
+    -Render Door onto Block
+    -Only Player who placed Vending Machine get Open Edit Mode
     -Automation
         -Money outputs from back
         -Items input from bottom back
-    -Lock ON = Allow ^ Money can be pumped out from "cash register", Lock OFF = No Automation Allowed
-    -Visual(or sound) que that you cant afford something
+        -Lock ON = Allow ^ Money can be pumped out from "cash register", Lock OFF = No Automation Allowed
+
+    //V1.1.0 The Animator
+    -Render items in model
+    -Animate Door
     -When vending machine ON(redstone powered) inside lite up
-    -changing a cost, exiting gui and then going back in doesnt update the cost changed until middle clicking
-    -Only Player who placed Vending Machine get Open Edit Mode
-    
-    //Polishing
-    When broken drops items inside + Change and money
+    -Visual(or sound) que that you cant afford something
      */
     
 }

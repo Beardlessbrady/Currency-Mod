@@ -85,12 +85,13 @@ public class GuiVendor extends GuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        fontRendererObj.drawString(I18n.format("container.vendor.name"), 5, 7, Color.darkGray.getRGB());
-        fontRendererObj.drawString(I18n.format("container.vendor_dollarAmount.name") + ": $" + tilevendor.getField(0), 5, 16, Color.darkGray.getRGB());
-        fontRendererObj.drawString(I18n.format("container.vendor_playerInv.name"), 4, 142, Color.darkGray.getRGB());
-
+        fontRendererObj.drawString(I18n.format("Vending Machine"), 5, 7, Color.darkGray.getRGB());
+        fontRendererObj.drawString(I18n.format("Inventory"), 4, 142, Color.darkGray.getRGB());
+        if(tilevendor.getField(2) == 0) fontRendererObj.drawString(I18n.format("Cash") + ": $" + tilevendor.getField(0), 5, 16, Color.darkGray.getRGB());
+        
         if (tilevendor.getField(2) == 1) {
             drawIcons();
+            fontRendererObj.drawString(I18n.format("Profit") + ": $" + tilevendor.getField(4), 5, 16, Color.darkGray.getRGB());
 
             if (gearExtended) {
                 fontRendererObj.drawString(I18n.format("Slot Settings"), 197, 51, Integer.parseInt("42401c", 16));
@@ -112,8 +113,11 @@ public class GuiVendor extends GuiContainer {
         super.initGui();
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
+        String ChangeButton = "Change";
         
-        this.buttonList.add(new GuiButton(0, i + 103, j + 7, 45, 20, "Change"));        
+        if(tilevendor.getField(2) == 1) ChangeButton = "Profit";
+        
+        this.buttonList.add(new GuiButton(0, i + 103, j + 7, 45, 20, ChangeButton));        
 
         if (tilevendor.getField(2) == 1) {
             this.buttonList.add(new CustomButton(1, i + 176, j + 20, 0, 21, 21, 22, "", TAB_TEXTURE));   //Lock Tab

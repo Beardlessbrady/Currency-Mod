@@ -6,6 +6,3 @@ item.modcurrency:banknote_4.name=Fifty-Dollar Banknote
 item.modcurrency:banknote_5.name=One Hundred-Dollar Banknote
 
 tile.modcurrency:blockvendor.name=Vending Machine
-container.vendor.name=Vending Machine
-container.vendor_playerInv.name=Inventory
-container.vendor_dollarAmount.name=Total

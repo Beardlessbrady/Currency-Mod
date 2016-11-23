@@ -32,6 +32,5 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void Init(FMLInitializationEvent e){
         super.Init(e);
-        ClientRegistry.bindTileEntitySpecialRenderer(TileVendor.class, new RenderTileVendor());
     }
 }

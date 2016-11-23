@@ -4,6 +4,7 @@ package gunn.modcurrency.tiles;
 import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.items.ModItems;
 import mcp.MethodsReturnNonnullByDefault;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -22,6 +23,8 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 
+import static net.minecraft.inventory.InventoryHelper.dropInventoryItems;
+
 /**
  * This class was created by <Brady Gunn>.
  * Distributed with the Currency-Mod for Minecraft.
@@ -36,7 +39,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     private static final int VEND_SLOT_COUNT = 30;
     private static final int TOTAL_SLOTS_COUNT = MONEY_SLOT_COUNT + VEND_SLOT_COUNT;
     
-    private int bank, selectedSlot, face;
+    private int bank, profit, selectedSlot, face;
     private boolean locked, mode;       //Mode 0 == Sell, 1 == Edit
     private String selectedName;
     private int[] itemCosts = new int[TOTAL_SLOTS_COUNT];       //Always Ignore slot 0
@@ -49,9 +52,10 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     
     public TileVendor() {
         locked = false;
-        mode = false;       //1 = Edit, 0 = Sell
+        mode = false;       //true = Edit, false = Sell
         selectedName = "No Item";
         bank = 0;
+        profit = 0;
         selectedSlot = 37;
         face = 0;
         for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = 0;
@@ -93,6 +97,8 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     //Outputs change in least amount of bills
     public void outChange() {
         int amount = bank;
+        if(mode) amount = profit;
+        
         int[] out = new int[6];
 
         out[5] = Math.round(amount / 100);
@@ -118,13 +124,30 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
                     ItemStack item = new ItemStack(ModItems.itembanknote);
                     item.setItemDamage(i);
                     item.stackSize = out[i];
-                    bank = 0;
+                    
+                    if(mode){
+                        profit = 0;
+                    }else {
+                        bank = 0;
+                    }
                     worldObj.spawnEntityInWorld(new EntityItem(worldObj, getPos().getX(), getPos().getY(), getPos().getZ(), item));
                 }
             }
         }
     }
 
+    //Drop Items
+    public void dropItems(){
+        for(int i = 0; i < itemStackHandler.getSlots(); i++){
+            ItemStack item = itemStackHandler.getStackInSlot(i);
+            if(item != null){
+                worldObj.spawnEntityInWorld(new EntityItem(worldObj, getPos().getX(), getPos().getY(), getPos().getZ(), item));
+                itemStackHandler.setStackInSlot(i, null);   //Just in case
+            }
+        }
+    }
+    
+    
     //Player must be in certain range to open GUI
     public boolean canInteractWith(EntityPlayer player) {
         return !isInvalid() && player.getDistanceSq(pos.add(0.5D, 0.5D, 0.5D)) <= 64D;
@@ -136,6 +159,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         super.writeToNBT(compound);
         compound.setTag("items", itemStackHandler.serializeNBT());
         compound.setInteger("bank", bank);
+        compound.setInteger("profit", profit);
         compound.setInteger("face", face);
         compound.setBoolean("locked", locked);
         compound.setBoolean("mode", mode);
@@ -154,6 +178,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         super.readFromNBT(compound);
         if (compound.hasKey("items")) itemStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("items"));
         if (compound.hasKey("bank")) bank = compound.getInteger("bank");
+        if (compound.hasKey("profit")) profit = compound.getInteger("profit");
         if (compound.hasKey("face")) face = compound.getInteger("face");
         if (compound.hasKey("locked")) locked = compound.getBoolean("locked");
         if (compound.hasKey("mode")) mode = compound.getBoolean("mode");
@@ -176,6 +201,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setInteger("bank", bank);
+        tag.setInteger("profit", profit);
         tag.setInteger("face", face);
         tag.setBoolean("locked", locked);
         tag.setBoolean("mode", mode);
@@ -193,6 +219,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         super.onDataPacket(net, pkt);
         bank = pkt.getNbtCompound().getInteger("bank");
+        profit = pkt.getNbtCompound().getInteger("profit");
         face = pkt.getNbtCompound().getInteger("face");
         locked = pkt.getNbtCompound().getBoolean("locked");
         mode = pkt.getNbtCompound().getBoolean("mode");
@@ -223,7 +250,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     //</editor-fold>
 
     //<editor-fold desc="Getter & Setter Methods---------------------------------------------------------------------------------------------">
-    public int getFieldCount() {return 4;}
+    public int getFieldCount() {return 5;}
 
     public void setField(int id, int value) {
         switch (id) {
@@ -239,6 +266,9 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
             case 3:
                 selectedSlot = value;
                 break;
+            case 4:
+                profit = value;
+                break;
             
         }
     }
@@ -253,6 +283,8 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
                 return (mode) ? 1 : 0;
             case 3:
                 return selectedSlot;
+            case 4:
+                return profit;
         }
         return -1;
     }
@@ -285,4 +317,5 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     
     public void setStackHandler(ItemStackHandler copy){ itemStackHandler = copy; }
     //</editor-fold>
+
 }

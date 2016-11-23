@@ -1,17 +1,10 @@
 package gunn.modcurrency.render;
 
-import gunn.modcurrency.blocks.ModBlocks;
-import gunn.modcurrency.items.ModItems;
 import gunn.modcurrency.tiles.TileVendor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 
 /**
  * This class was created by <Brady Gunn>.
@@ -24,6 +17,7 @@ import net.minecraft.item.ItemStack;
  */
 public class RenderTileVendor extends TileEntitySpecialRenderer<TileVendor>{
 
+    //Currently not in use, trying some other methods (that are more efficient, less lag) Due for V1.1.0
     @Override
     public void renderTileEntityAt(TileVendor te, double x, double y, double z, float partialTicks, int destroyStage) {
         GlStateManager.pushMatrix();
@@ -48,6 +42,8 @@ public class RenderTileVendor extends TileEntitySpecialRenderer<TileVendor>{
                 GlStateManager.rotate(90,0,1,0);
                 break;
         }
+
+        renderDoor(te,x,y,z,partialTicks,destroyStage);
         
         //West North == +
         //South East == -
@@ -59,7 +55,6 @@ public class RenderTileVendor extends TileEntitySpecialRenderer<TileVendor>{
     
     
     public void renderItems(TileVendor te, double x, double y, double z, float partialTicks, int destroyStage) {
-        GlStateManager.pushMatrix();
         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
 
         Double xStart = -2.9;
@@ -67,17 +62,22 @@ public class RenderTileVendor extends TileEntitySpecialRenderer<TileVendor>{
         Double xTrans = 0.45;
         Double yTrans = -0.8;
 
-        for (int column = 0; column < 6; column++) {
+      /*  for (int column = 0; column < 6; column++) {
             for (int row = 0; row < 5; row++) {
                 for(int amnt = 0; amnt < 10; amnt++) {
                     GlStateManager.pushMatrix();
                     GlStateManager.scale(0.30, 0.30, 0.30);
-                    GlStateManager.translate(xStart + (xTrans * row), yStart + (yTrans * column), -0.5);
+                    GlStateManager.translate(xStart + (xTrans * row), yStart + (yTrans * column), -0.5 - (0.2 * amnt ));
 
                     Minecraft.getMinecraft().getRenderItem().renderItem(new ItemStack(Items.APPLE), ItemCameraTransforms.TransformType.GROUND);
                     GlStateManager.popMatrix();
                 }
             }
         }
+        */
+    }
+    
+    public void renderDoor(TileVendor te, double x, double y, double z, float partialTicks, int destroyStage){
+        
     }
 }

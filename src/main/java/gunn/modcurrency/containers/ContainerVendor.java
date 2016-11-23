@@ -169,6 +169,7 @@ public class ContainerVendor extends Container {
                     }
                     player.inventory.setItemStack(playBuyStack);
                     tilevendor.setField(0, bank - (cost * amnt));
+                    tilevendor.setField(4, tilevendor.getField(4) + cost * amnt);
                 }
             } else {
                 System.out.println("No Affordo");
