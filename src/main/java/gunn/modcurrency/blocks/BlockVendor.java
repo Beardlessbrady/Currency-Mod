@@ -26,6 +26,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.fml.client.config.GuiConfigEntries;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -94,6 +95,8 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (world.isRemote) return true;
+        System.out.println(EnumDyeColor.byDyeDamage(12));
+        System.out.println(EnumDyeColor.byMetadata(3));
         if(heldItem != null) {
             if (heldItem.getItem() == Items.DYE) {
                 //Saving tile variables
@@ -116,8 +119,8 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
                 return true;
             }
         }
-
-        if(player.isSneaking()) {
+        
+        if(player.isSneaking() && player.getUniqueID().toString().equals(getTile(world,pos).getOwner())) {
             if (getTile(world, pos).getField(2) == 1) {   //If True
                 getTile(world, pos).setField(2, 0);
             } else {
@@ -148,6 +151,12 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
         getTile(worldIn, pos).setFaceData(face);
         EnumDyeColor color = state.getValue(StateHandler.COLOR);
         worldIn.setBlockState(pos.up(),ModBlocks.blocktopvendor.getDefaultState().withProperty(StateHandler.COLOR, color));
+
+        if(placer instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) placer;
+            String playerName = player.getUniqueID().toString();
+            getTile(worldIn, pos).setOwner(playerName);
+        }
     }
 
     @Override
@@ -216,19 +225,17 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
     //</editor-fold>
 
     /*TODO 
-    RELEASE DOS
-    -Render Door onto Block
-    -Only Player who placed Vending Machine get Open Edit Mode
+    
     -Automation
         -Money outputs from back
         -Items input from bottom back
         -Lock ON = Allow ^ Money can be pumped out from "cash register", Lock OFF = No Automation Allowed
 
-    //V1.1.0 The Animator
-    -Render items in model
-    -Animate Door
-    -When vending machine ON(redstone powered) inside lite up
-    -Visual(or sound) que that you cant afford something
+    -Animation
+        -Render items in model
+        -Animate Door
+        -When vending machine ON(redstone powered) inside lite up
+        -Visual(or sound) que that you cant afford something
      */
     
 }

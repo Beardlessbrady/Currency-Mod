@@ -40,6 +40,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     private static final int TOTAL_SLOTS_COUNT = MONEY_SLOT_COUNT + VEND_SLOT_COUNT;
     
     private int bank, profit, selectedSlot, face;
+    private String owner;
     private boolean locked, mode;       //Mode 0 == Sell, 1 == Edit
     private String selectedName;
     private int[] itemCosts = new int[TOTAL_SLOTS_COUNT];       //Always Ignore slot 0
@@ -58,6 +59,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         profit = 0;
         selectedSlot = 37;
         face = 0;
+        owner = "";
         for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = 0;
     }
 
@@ -165,6 +167,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         compound.setBoolean("mode", mode);
         compound.setInteger("selectedSlot", selectedSlot);
         compound.setString("selectedName", selectedName);
+        compound.setString("owner", owner);
 
         NBTTagCompound itemCostsNBT = new NBTTagCompound();
         for (int i = 0; i < itemCosts.length; i++) itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
@@ -184,6 +187,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         if (compound.hasKey("mode")) mode = compound.getBoolean("mode");
         if (compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
         if (compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
+        if (compound.hasKey("owner")) owner = compound.getString("owner");
 
         if (compound.hasKey("itemCosts")) {
             NBTTagCompound itemCostsNBT = compound.getCompoundTag("itemCosts");
@@ -207,6 +211,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         tag.setBoolean("mode", mode);
         tag.setInteger("selectedSlot", selectedSlot);
         tag.setString("selectedName", selectedName);
+        tag.setString("owner", owner);
 
         NBTTagCompound itemCostsNBT = new NBTTagCompound();
         for (int i = 0; i < itemCosts.length; i++) itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
@@ -225,6 +230,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         mode = pkt.getNbtCompound().getBoolean("mode");
         selectedSlot = pkt.getNbtCompound().getInteger("selectedSlot");
         selectedName = pkt.getNbtCompound().getString("selectedName");
+        owner = pkt.getNbtCompound().getString("owner");
 
         NBTTagCompound itemCostsNBT = pkt.getNbtCompound().getCompoundTag("itemCosts");
         for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = itemCostsNBT.getInteger("cost" + i);
@@ -269,7 +275,6 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
             case 4:
                 profit = value;
                 break;
-            
         }
     }
 
@@ -311,6 +316,14 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     
     public int getFaceData(){
         return face;
+    }
+    
+    public void setOwner(String owner){
+        this.owner = owner;
+    }
+    
+    public String getOwner() {
+        return owner; 
     }
     
     public ItemStackHandler getStackHandler(){ return itemStackHandler; }
