@@ -58,7 +58,12 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
     @Override
     public void initModel(){
         for(int i =0; i < 16; i++){
-            ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), i, new ModelResourceLocation(getRegistryName(), "color=" + EnumDyeColor.byMetadata(i) + ",facing=north,item=true"));
+            //Im Lazy and I hate Mojangs EnumDyeColor, BE CONSISTENT (lightBlue, light_blue....)
+            if(i == 3){
+                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 3, new ModelResourceLocation(getRegistryName(), "color=light_blue" + ",facing=north,item=true"));
+            }else {
+                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), i, new ModelResourceLocation(getRegistryName(), "color=" + EnumDyeColor.byMetadata(i) + ",facing=north,item=true"));
+            }
         }
     }
 
@@ -95,8 +100,6 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (world.isRemote) return true;
-        System.out.println(EnumDyeColor.byDyeDamage(12));
-        System.out.println(EnumDyeColor.byMetadata(3));
         if(heldItem != null) {
             if (heldItem.getItem() == Items.DYE) {
                 //Saving tile variables
@@ -106,8 +109,8 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
                 ItemStackHandler stackHandler = getTile(world, pos).getStackHandler();
 
 
-                world.setBlockState(pos, state.withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())), 3);
-                world.setBlockState(pos.up(), world.getBlockState(pos.up()).withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())), 3);
+                world.setBlockState(pos, state.withProperty(StateHandler.COLOR, EnumDyeColor.byMetadata(heldItem.getItemDamage())), 3);
+                world.setBlockState(pos.up(), world.getBlockState(pos.up()).withProperty(StateHandler.COLOR, EnumDyeColor.byMetadata(heldItem.getItemDamage())), 3);
                 
                 //Setting tile variables
                 getTile(world, pos).setFaceData(face);

@@ -32,7 +32,7 @@
           "texture": "modcurrency:blocks/vend_MAGENTA"
         }
       },
-      "lightBlue":{
+      "light_blue":{
         "textures": {
           "particle": "blocks/wool_colored_light_blue",
           "texture": "modcurrency:blocks/vend_LIGHTBLUE"
