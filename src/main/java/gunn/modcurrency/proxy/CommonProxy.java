@@ -28,8 +28,6 @@ public class CommonProxy {
 
         NetworkRegistry.INSTANCE.registerGuiHandler(ModCurrency.instance, new GuiHandler());
         PacketHandler.registerMessages("modcurrency");
-
-        OBJLoader.INSTANCE.addDomain(ModCurrency.MODID);
     }
 
     public void Init(FMLInitializationEvent e){

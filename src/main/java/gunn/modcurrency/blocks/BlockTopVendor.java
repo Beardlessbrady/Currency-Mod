@@ -67,7 +67,7 @@ public class BlockTopVendor extends BaseBlock{
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (world.isRemote) return true;
         if(isBlockBelow(world, pos)) {
-            if (heldItem != null) {
+            if (false){//(heldItem != null){
                 if (heldItem.getItem() == Items.DYE) {
                     //Saving tile variables
                     int face = getTile(world, pos).getFaceData();

@@ -100,7 +100,7 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (world.isRemote) return true;
-        if(heldItem != null) {
+        if(false){//(heldItem != null) {
             if (heldItem.getItem() == Items.DYE) {
                 //Saving tile variables
                 int face = getTile(world, pos).getFaceData();
@@ -239,6 +239,8 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
         -Animate Door
         -When vending machine ON(redstone powered) inside lite up
         -Visual(or sound) que that you cant afford something
+    -Wallet
+    -Items -> Money (Opposite of vendor)
      */
     
 }

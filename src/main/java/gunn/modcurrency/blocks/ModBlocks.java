@@ -1,6 +1,10 @@
 package gunn.modcurrency.blocks;
 
+import gunn.modcurrency.items.ModItems;
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
@@ -32,19 +36,16 @@ public class ModBlocks {
     }
     
     public static void addRecipes(){
-        
-        for(int i = 0; i < 16; i++) {
-            if(i != 15) {
-                ItemStack stack = new ItemStack(blockvendor);
-                ItemStack color = new ItemStack(Items.DYE);
-                ItemStack basic = new ItemStack(blockvendor);
-                stack.setItemDamage(i);
-                color.setItemDamage(15 - i);
-                basic.setItemDamage(15);
+        ItemStack stack = new ItemStack(Item.getItemFromBlock(ModBlocks.blockvendor));
+        stack.setItemDamage(15);
 
-                GameRegistry.addShapelessRecipe(stack, color, basic);
-                GameRegistry.addShapelessRecipe(basic, stack);
-            }
-        }
+        GameRegistry.addRecipe(stack,
+                "ABA",
+                         "ACA",
+                         "ADA",
+                'A', Items.IRON_INGOT,
+                'B', Items.REPEATER,
+                'C', Item.getItemFromBlock(Blocks.CHEST),
+                'D', Items.IRON_DOOR);
     }
 }

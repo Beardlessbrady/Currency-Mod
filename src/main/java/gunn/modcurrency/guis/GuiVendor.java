@@ -120,7 +120,7 @@ public class GuiVendor extends GuiContainer {
         this.buttonList.add(new GuiButton(0, i + 103, j + 7, 45, 20, ChangeButton));        
 
         if (tilevendor.getField(2) == 1) {
-            this.buttonList.add(new CustomButton(1, i + 176, j + 20, 0, 21, 21, 22, "", TAB_TEXTURE));   //Lock Tab
+            //this.buttonList.add(new CustomButton(1, i + 176, j + 20, 0, 21, 21, 22, "", TAB_TEXTURE));   //Lock Tab
             this.buttonList.add(new CustomButton(2, i + 176, j + 43, 0, 0, 21, 22, "", TAB_TEXTURE));   //Gear Tab
             this.nameField = new GuiTextField(0, fontRendererObj, i + 217, j + 72, 45, 10);        //Setting Costs
             this.nameField.setTextColor(Integer.parseInt("0099ff", 16));
@@ -136,11 +136,11 @@ public class GuiVendor extends GuiContainer {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         
         //Draw Lock Icon
-        if (tilevendor.getField(1) == 1) {
-            drawTexturedModalRect(180, 23, 245, 15, 11, 16);    
-        } else {
-            drawTexturedModalRect(180, 25, 245, 0, 11, 14); 
-        }
+       // if (tilevendor.getField(1) == 1) {
+       //     drawTexturedModalRect(180, 23, 245, 15, 11, 16);
+       // } else {
+       //     drawTexturedModalRect(180, 25, 245, 0, 11, 14);
+       // }
         
         //Draw Gear Icon and Extended Background
         if (gearExtended) drawTexturedModalRect(176, 43, 27, 0, 91, 54);
@@ -171,7 +171,7 @@ public class GuiVendor extends GuiContainer {
         }
 
         Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
-        drawTexturedModalRect(24 + (18 * slotRow), 30 + (18 * slotColumn), 177, 0, 20, 20);
+        drawTexturedModalRect(24 + (18 * slotRow), 30 + (18 * slotColumn), 177, 0, 20, 20); //Selection Box
     }
 
     @Override
