@@ -1,13 +1,8 @@
-# CurrencyMod
+# Good Ol' Currency Mod
 
-Welcome to the Currency Mod (Name WIP) github repoistory.
+Welcome to the Good Ol' Currency Mod github repoistory.
 
-I've always wanted some sort of base economy for minecraft servers that is done through mods and not plugins. What I plan to have implemented by version 1.0.0 is the following:
+I've always wanted some sort of base economy for minecraft servers that is done through mods and not plugins. If you want to see my description of the mod (and where to download it) go here -> https://minecraft.curseforge.com/projects/good-ol-currency
 
--Bills (1,5,10,20,50,100)
-
--Vending Machine for trading
-
--Wallet
-         
-Now I know that doesn't sound like too much but much more is in the works after 1.0.0.
+Under a custom license located at:
+ https://github.com/BeardlessBrady/Currency-Mod/blob/master/LICENSE
