@@ -121,7 +121,7 @@
       "east": {"y": 90}
     },
     "base": [{
-      "model": "modcurrency:vend_bottom"
+      "model": "modcurrency:vend_bottom", "textures": { "texture": "#texture" }
     }],
     "window": [{
       "model": "modcurrency:vend_door"

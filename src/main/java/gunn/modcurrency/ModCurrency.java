@@ -1,6 +1,7 @@
 package gunn.modcurrency;
 
-import gunn.modcurrency.proxy.CommonProxy;
+import gunn.modcurrency.common.core.TabCurrency;
+import gunn.modcurrency.common.core.proxy.CommonProxy;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -26,7 +27,7 @@ public class ModCurrency {
     public static final String MODNAME = "Currency Mod";
     public static final String VERSION = "1.10.2-0.0.1";
 
-    @SidedProxy(clientSide = "gunn.modcurrency.proxy.ClientProxy", serverSide = "gunn.modcurrency.proxy.CommonProxy")
+    @SidedProxy(clientSide = "gunn.modcurrency.common.core.proxy.ClientProxy", serverSide = "gunn.modcurrency.common.core.proxy.CommonProxy")
     public static CommonProxy proxy;
 
     @Mod.Instance
