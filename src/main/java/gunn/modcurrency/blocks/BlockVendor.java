@@ -37,8 +37,8 @@ import java.util.List;
  * This class was created by <Brady Gunn>.
  * Distributed with the Currency-Mod for Minecraft.
  *
- * The Currency-Mod is open source and distributed
- * under the General Public License
+ * The Currency-Mod is open source and distributed under a
+ * Custom License: https://github.com/BeardlessBrady/Currency-Mod/blob/master/LICENSE
  *
  * File Created on 2016-10-30.
  */
@@ -226,21 +226,4 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
     }
 
     //</editor-fold>
-
-    /*TODO 
-    
-    -Automation
-        -Money outputs from back
-        -Items input from bottom back
-        -Lock ON = Allow ^ Money can be pumped out from "cash register", Lock OFF = No Automation Allowed
-
-    -Animation
-        -Render items in model
-        -Animate Door
-        -When vending machine ON(redstone powered) inside lite up
-        -Visual(or sound) que that you cant afford something
-    -Wallet
-    -Items -> Money (Opposite of vendor)
-     */
-    
 }
