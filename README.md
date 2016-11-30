@@ -1,4 +1,4 @@
-# CurrencyMod
+# Good Ol' Currency Mod
 
 Welcome to the Good Ol' Currency Mod github repoistory.
 
