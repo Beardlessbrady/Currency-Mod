@@ -66,13 +66,11 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
     }
 
     public void recipe(){
-        ItemStack stack = new ItemStack(Item.getItemFromBlock(blockvendor));
-        ItemStack stack2 = new ItemStack(Item.getItemFromBlock(blockvendor));
         ItemStack basic = new ItemStack(Item.getItemFromBlock(blockvendor));
         ItemStack color = new ItemStack(Items.DYE);
-        stack.setItemDamage(15);
+        basic.setItemDamage(0);
 
-        GameRegistry.addRecipe(stack,
+        GameRegistry.addRecipe(basic,
                 "ABA",
                 "ACA",
                 "ADA",
@@ -81,14 +79,12 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
                 'C', Item.getItemFromBlock(Blocks.CHEST),
                 'D', Items.IRON_DOOR);
 
-        for(int i = 0; i < 16; i++) {
-            if(i != 15) {
-                stack2.setItemDamage(i);
-                color.setItemDamage(15 - i);
-                basic.setItemDamage(15);
-                GameRegistry.addShapelessRecipe(stack2, color, basic);
-                GameRegistry.addShapelessRecipe(basic, stack2);
-            }
+        for(int i = 1; i < 16; i++) {
+            ItemStack stack = new ItemStack(Item.getItemFromBlock(blockvendor));
+            stack.setItemDamage(i);
+            color.setItemDamage(i);
+            GameRegistry.addShapelessRecipe(stack, color, basic);
+            GameRegistry.addShapelessRecipe(basic, stack);
         }
     }
 
@@ -193,17 +189,12 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
     public void initModel(){
         for(int i =0; i < 16; i++){
             //Im Lazy and I hate Mojangs EnumDyeColor, BE CONSISTENT (lightBlue, light_blue....)
-            if(i == 3){
-                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 3, new ModelResourceLocation(getRegistryName(), "color=light_blue" + ",facing=north,item=true"));
+            if(i == 12){
+                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 12, new ModelResourceLocation(getRegistryName(), "color=light_blue" + ",facing=north,item=true"));
             }else {
                 ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), i, new ModelResourceLocation(getRegistryName(), "color=" + EnumDyeColor.byDyeDamage(i) + ",facing=north,item=true"));
             }
         }
-    }
-
-    @Override
-    public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list) {
-        list.add(new ItemStack(item, 1, 15));
     }
     //</editor-fold>
 
@@ -220,7 +211,7 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return ((EnumDyeColor)state.getValue(StateHandler.COLOR)).getMetadata();
+        return ((EnumDyeColor)state.getValue(StateHandler.COLOR)).getDyeDamage();
     }
 
     @Override
