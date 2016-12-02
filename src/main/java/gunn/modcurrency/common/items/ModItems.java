@@ -32,26 +32,10 @@ public class ModItems {
 
     private static void setupItems(){
         itembanknote = new ItemBanknote();
-
     }
 
     @SideOnly(Side.CLIENT)
     public static void initItemModels(){
         itembanknote.initModel();
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }

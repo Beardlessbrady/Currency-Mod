@@ -56,8 +56,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         @Override
         protected void onContentsChanged(int slot) {
             markDirty();
-        }
-    };
+        }};
     
     public TileVendor() {
         locked = false;
@@ -156,7 +155,6 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
             }
         }
     }
-    
     
     //Player must be in certain range to open GUI
     public boolean canInteractWith(EntityPlayer player) {

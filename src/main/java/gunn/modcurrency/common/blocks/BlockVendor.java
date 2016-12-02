@@ -2,8 +2,8 @@ package gunn.modcurrency.common.blocks;
 
 import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.common.blocks.items.ItemVendor;
-import gunn.modcurrency.common.core.handler.StateHandler;
 import gunn.modcurrency.common.blocks.tiles.TileVendor;
+import gunn.modcurrency.common.core.handler.StateHandler;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -58,25 +58,11 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
     
     public BlockVendor() {
         super(Material.ROCK, "blockvendor");
-
         setCreativeTab(ModCurrency.tabCurrency);
         setHardness(3.0F);
         setSoundType(SoundType.METAL);
-        
         GameRegistry.register(new ItemVendor(this), getRegistryName());
         GameRegistry.registerTileEntity(TileVendor.class, ModCurrency.MODID + "_tevendor");
-    }
-    
-    @Override
-    public void initModel(){
-        for(int i =0; i < 16; i++){
-            //Im Lazy and I hate Mojangs EnumDyeColor, BE CONSISTENT (lightBlue, light_blue....)
-            if(i == 3){
-                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 3, new ModelResourceLocation(getRegistryName(), "color=light_blue" + ",facing=north,item=true"));
-            }else {
-                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), i, new ModelResourceLocation(getRegistryName(), "color=" + EnumDyeColor.byDyeDamage(i) + ",facing=north,item=true"));
-            }
-        }
     }
 
     public void recipe(){
@@ -88,8 +74,8 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
 
         GameRegistry.addRecipe(stack,
                 "ABA",
-                         "ACA",
-                         "ADA",
+                "ACA",
+                "ADA",
                 'A', Items.IRON_INGOT,
                 'B', Items.REPEATER,
                 'C', Item.getItemFromBlock(Blocks.CHEST),
@@ -105,27 +91,6 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
             }
         }
     }
-
-    @Override
-    public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list) {
-            list.add(new ItemStack(item, 1, 15));
-    }
-
-    @Override
-    public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
-        return layer == BlockRenderLayer.SOLID || layer == BlockRenderLayer.TRANSLUCENT;
-    }
-    
-    @Override
-    public boolean isFullCube(IBlockState state) {
-        return false;
-    }
-
-    @Override
-    public boolean isOpaqueCube(IBlockState state) {
-        return false;
-    }   
-
 
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
@@ -222,6 +187,25 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
     public int damageDropped(IBlockState state) {
         return getMetaFromState(state);
     }
+
+    //<editor-fold desc="Models & Textures---------------------------------------------------------------------------------------------------">
+    @Override
+    public void initModel(){
+        for(int i =0; i < 16; i++){
+            //Im Lazy and I hate Mojangs EnumDyeColor, BE CONSISTENT (lightBlue, light_blue....)
+            if(i == 3){
+                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 3, new ModelResourceLocation(getRegistryName(), "color=light_blue" + ",facing=north,item=true"));
+            }else {
+                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), i, new ModelResourceLocation(getRegistryName(), "color=" + EnumDyeColor.byDyeDamage(i) + ",facing=north,item=true"));
+            }
+        }
+    }
+
+    @Override
+    public void getSubBlocks(Item item, CreativeTabs tab, List<ItemStack> list) {
+        list.add(new ItemStack(item, 1, 15));
+    }
+    //</editor-fold>
 
     //<editor-fold desc="Block States--------------------------------------------------------------------------------------------------------">
     @Override

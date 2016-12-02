@@ -31,10 +31,8 @@ public class BaseItem extends Item{
     public BaseItem(String name){
         setRegistryName(name);
         setCreativeTab(ModCurrency.tabCurrency);
-        setUnlocalizedName(this.getRegistryName().toString());
         GameRegistry.register(this);
     }
-
 
     public void initModel(){
         ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(getRegistryName(), "inventory"));

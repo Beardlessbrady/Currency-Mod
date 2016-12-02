@@ -1,7 +1,7 @@
 package gunn.modcurrency.common.blocks;
 
-import gunn.modcurrency.common.core.handler.StateHandler;
 import gunn.modcurrency.common.blocks.tiles.TileVendor;
+import gunn.modcurrency.common.core.handler.StateHandler;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -49,10 +49,9 @@ public class BlockTopVendor extends BaseBlock{
         super(Material.ROCK, "blocktopvendor");
         setHardness(3.0F);
         setSoundType(SoundType.METAL);
-
         GameRegistry.register(new ItemBlock(this), getRegistryName());
     }
-    
+
     public boolean isBlockBelow(World world, BlockPos pos){
         return world.getBlockState(pos.down()).getBlock().equals(ModBlocks.blockvendor);
     }

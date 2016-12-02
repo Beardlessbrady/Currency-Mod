@@ -30,7 +30,7 @@ public class CustomButton extends GuiButton {
     int minU, minV, maxU, maxV;
 
 
-    //Allows the fuctionality of a button with a custom texture, yes it is very butchered together
+    //Allows a button with a custom texture, yes it is very butchered together
     public CustomButton(int buttonId, int x, int y, int minU, int minV, int maxU, int maxV, String buttonText, ResourceLocation texture) {
         super(buttonId, x, y, minU - maxU, minV - maxV, buttonText);
         this.CUSTOM_TEXTURES = texture;

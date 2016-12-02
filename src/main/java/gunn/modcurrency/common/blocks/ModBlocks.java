@@ -1,11 +1,5 @@
 package gunn.modcurrency.common.blocks;
 
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.fml.common.registry.GameRegistry;
-
 /**
  * Distributed with the Currency-Mod for Minecraft.
  * Copyright (C) 2016  Brady Gunn
@@ -36,7 +30,6 @@ public class ModBlocks {
     private static void setupBlocks(){
         blockvendor = new BlockVendor();
         blocktopvendor = new BlockTopVendor();
-        
     }
 
     public static void initInitModels(){

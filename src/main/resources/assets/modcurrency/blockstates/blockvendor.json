@@ -1,15 +1,11 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "model": "forge:multi-layer",
+    "custom": { "flip-v": true },
+    "model": "modcurrency:vend_bottom",
     "textures": {
       "particle": "blocks/coal_block",
       "texture": "modcurrency:blocks/vend_BLACK"
-    },
-    "custom": {
-      "base": "modcurrency:blockvendor#base",
-      "Solid": "modcurrency:blockvendor#base",
-      "Translucent": "modcurrency:blockvendor#window"
     }
   },
   "variants": {
@@ -21,6 +17,10 @@
       },
       "false": {}
     },
+    "normal": [{}],
+    "inventory": [{
+      "model": "modcurrency:vend_item"
+    }],
     "color": {
       "white":{
         "textures": {
@@ -40,7 +40,7 @@
           "texture": "modcurrency:blocks/vend_MAGENTA"
         }
       },
-      "light_blue": {
+      "light_blue":{
         "textures": {
           "particle": "blocks/wool_colored_light_blue",
           "texture": "modcurrency:blocks/vend_LIGHTBLUE"
@@ -119,12 +119,6 @@
       "south": {"y": 180},
       "west": {"y": 270},
       "east": {"y": 90}
-    },
-    "base": [{
-      "model": "modcurrency:vend_bottom", "textures": { "texture": "#texture" }
-    }],
-    "window": [{
-      "model": "modcurrency:vend_door"
-    }]
+    }
   }
 }

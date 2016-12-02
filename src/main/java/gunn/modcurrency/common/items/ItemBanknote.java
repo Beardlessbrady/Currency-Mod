@@ -1,12 +1,10 @@
 package gunn.modcurrency.common.items;
 
-import gunn.modcurrency.ModCurrency;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -31,17 +29,16 @@ import java.util.List;
  *
  * File Created on 2016-10-28.
  */
-public class ItemBanknote extends Item {
+public class ItemBanknote extends BaseItem {
     public static final int noteLength = 6;
 
     public ItemBanknote(){
-        setRegistryName("banknote");
-        setCreativeTab(ModCurrency.tabCurrency);
-        GameRegistry.register(this);
+        super("banknote");
         setHasSubtypes(true);
     }
 
     @SideOnly(Side.CLIENT)
+    @Override
     public void initModel(){
         for(int i =0; i < noteLength; i++){
             ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName() + "_" + i, "inventory"));
