@@ -26,21 +26,11 @@ import java.util.*;
 import java.util.List;
 
 /**
+ * This class was created by <Brady Gunn>.
  * Distributed with the Currency-Mod for Minecraft.
- * Copyright (C) 2016  Brady Gunn
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * The Currency-Mod is open source and distributed under a
+ * Custom License: https://github.com/BeardlessBrady/Currency-Mod/blob/master/LICENSE
  *
  * File Created on 2016-11-02.
  */
@@ -49,7 +39,7 @@ public class GuiVendor extends GuiContainer {
     private static final ResourceLocation TAB_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/GuiVendorTabTexture.png");
     private TileVendor tilevendor;
     private GuiTextField nameField;
-    private boolean gearExtended;
+    private boolean gearExtended, creativeExtended;
 
     public GuiVendor(InventoryPlayer invPlayer, TileVendor tile) {
         super(new ContainerVendor(invPlayer, tile));
@@ -57,6 +47,7 @@ public class GuiVendor extends GuiContainer {
         xSize = 176;
         ySize = 235;
         gearExtended = false;
+        creativeExtended = false;
     }
 
     //Sends packet of new cost to server
@@ -82,6 +73,7 @@ public class GuiVendor extends GuiContainer {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
         if (gearExtended) nameField.drawTextBox();
+        //if (creativeExtended) System.out.println("OPEN");
     }
 
     @Override
@@ -128,8 +120,10 @@ public class GuiVendor extends GuiContainer {
         this.buttonList.add(new GuiButton(0, i + 103, j + 7, 45, 20, ChangeButton));        
 
         if (tilevendor.getField(2) == 1) {
-            //this.buttonList.add(new CustomButton(1, i + 176, j + 20, 0, 21, 21, 22, "", TAB_TEXTURE));   //Lock Tab
-            this.buttonList.add(new CustomButton(2, i + 176, j + 43, 0, 0, 21, 22, "", TAB_TEXTURE));   //Gear Tab
+            this.buttonList.add(new CustomButton(1, i + 176, j + 20, 0, 21, 21, 22, "", TAB_TEXTURE));   //Lock Tab
+            this.buttonList.add(new CustomButton(2, i + 176, j + 43, 0, 0, 21, 21, "", TAB_TEXTURE));   //Gear Tab
+            if(tilevendor.getField(5) == 1)this.buttonList.add(new CustomButton(3, i + 176, j + 65, 0, 44, 21, 21, "", TAB_TEXTURE));   //Creative Tab
+
             this.nameField = new GuiTextField(0, fontRendererObj, i + 217, j + 72, 45, 10);        //Setting Costs
             this.nameField.setTextColor(Integer.parseInt("0099ff", 16));
             this.nameField.setEnableBackgroundDrawing(false);
@@ -140,20 +134,39 @@ public class GuiVendor extends GuiContainer {
     }
 
     private void drawIcons() {
+        int i = (this.width - this.xSize) / 2;
+        int j = (this.height - this.ySize) / 2;
         Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         
         //Draw Lock Icon
-       // if (tilevendor.getField(1) == 1) {
-       //     drawTexturedModalRect(180, 23, 245, 15, 11, 16);
-       // } else {
-       //     drawTexturedModalRect(180, 25, 245, 0, 11, 14);
-       // }
+        if (tilevendor.getField(1) == 1) {
+            drawTexturedModalRect(180, 23, 245, 15, 11, 16);
+        } else {
+            drawTexturedModalRect(180, 25, 245, 0, 11, 14);
+        }
         
         //Draw Gear Icon and Extended Background
-        if (gearExtended) drawTexturedModalRect(176, 43, 27, 0, 91, 54);
+        if (gearExtended) drawTexturedModalRect(176, 43, 27, 0, 91, 47);
         drawTexturedModalRect(174, 46, 237, 32, 19, 15);
-        
+
+        //Draw Creative Icon
+        if(tilevendor.getField(5) == 1) {
+            if(!gearExtended) {
+                this.buttonList.remove(3);
+                this.buttonList.add(new CustomButton(3, i + 176, j + 65, 0, 44, 21, 21, "", TAB_TEXTURE));   //Creative Tab
+                if(creativeExtended) drawTexturedModalRect(176, 65, 27, 48, 91, 47);
+                drawTexturedModalRect(175, 71, 237, 48, 19, 9);
+            }else{
+                this.buttonList.remove(3);
+                this.buttonList.add(new CustomButton(3, i + 176, j + 91, 0, 44, 21, 21, "", TAB_TEXTURE));   //Creative Tab
+                if(creativeExtended) drawTexturedModalRect(176, 91, 27, 48, 91, 47);
+                drawTexturedModalRect(175, 97, 237, 48, 19, 9);
+            }
+        }
+
+
+
         //Draw Selected Slot Overlay
         int slotId = tilevendor.getField(3) - 37;
         int slotColumn, slotRow;
@@ -261,6 +274,8 @@ public class GuiVendor extends GuiContainer {
             case 2:
                 gearExtended = !gearExtended;
                 break;
+            case 3:
+                creativeExtended = !creativeExtended;
         }
     }
 }

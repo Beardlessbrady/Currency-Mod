@@ -35,7 +35,6 @@ public class GuiHandler implements IGuiHandler{
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         BlockPos xyz = new BlockPos(x,y,z);
         TileEntity tileEntity = world.getTileEntity(xyz);
-        System.out.println(tileEntity instanceof  TileVendor);
         if(tileEntity instanceof TileVendor && ID == 30){
             TileVendor tilevendor = (TileVendor) tileEntity;
             return new ContainerVendor(player.inventory, tilevendor);

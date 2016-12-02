@@ -179,7 +179,6 @@ public class ContainerVendor extends Container {
                     tilevendor.setField(4, tilevendor.getField(4) + cost * amnt);
                 }
             } else {
-                System.out.println("No Affordo");
             }
             return slotStack;
         }

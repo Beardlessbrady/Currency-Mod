@@ -66,6 +66,7 @@ public class BlockTopVendor extends BaseBlock{
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+        getTile(world,pos).setField(5,player.isCreative() ? 1 : 0);
         if (world.isRemote) return true;
         if(isBlockBelow(world, pos)) {
             if (heldItem != null){

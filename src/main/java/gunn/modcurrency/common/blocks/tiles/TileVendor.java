@@ -49,7 +49,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     
     private int bank, profit, selectedSlot, face;
     private String owner;
-    private boolean locked, mode;       //Mode 0 == Sell, 1 == Edit
+    private boolean locked, mode,creative;       //Mode 0 == Sell, 1 == Edit
     private String selectedName;
     private int[] itemCosts = new int[TOTAL_SLOTS_COUNT];       //Always Ignore slot 0
     private ItemStackHandler itemStackHandler = new ItemStackHandler(TOTAL_SLOTS_COUNT) {
@@ -61,6 +61,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     public TileVendor() {
         locked = false;
         mode = false;       //true = Edit, false = Sell
+        creative = false;
         selectedName = "No Item";
         bank = 0;
         profit = 0;
@@ -171,6 +172,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         compound.setInteger("face", face);
         compound.setBoolean("locked", locked);
         compound.setBoolean("mode", mode);
+        compound.setBoolean("creative", creative);
         compound.setInteger("selectedSlot", selectedSlot);
         compound.setString("selectedName", selectedName);
         compound.setString("owner", owner);
@@ -191,6 +193,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         if (compound.hasKey("face")) face = compound.getInteger("face");
         if (compound.hasKey("locked")) locked = compound.getBoolean("locked");
         if (compound.hasKey("mode")) mode = compound.getBoolean("mode");
+        if (compound.hasKey("creative")) creative = compound.getBoolean("creative");
         if (compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
         if (compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
         if (compound.hasKey("owner")) owner = compound.getString("owner");
@@ -215,6 +218,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         tag.setInteger("face", face);
         tag.setBoolean("locked", locked);
         tag.setBoolean("mode", mode);
+        tag.setBoolean("creative", creative);
         tag.setInteger("selectedSlot", selectedSlot);
         tag.setString("selectedName", selectedName);
         tag.setString("owner", owner);
@@ -234,6 +238,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         face = pkt.getNbtCompound().getInteger("face");
         locked = pkt.getNbtCompound().getBoolean("locked");
         mode = pkt.getNbtCompound().getBoolean("mode");
+        creative = pkt.getNbtCompound().getBoolean("creative");
         selectedSlot = pkt.getNbtCompound().getInteger("selectedSlot");
         selectedName = pkt.getNbtCompound().getString("selectedName");
         owner = pkt.getNbtCompound().getString("owner");
@@ -262,7 +267,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     //</editor-fold>
 
     //<editor-fold desc="Getter & Setter Methods---------------------------------------------------------------------------------------------">
-    public int getFieldCount() {return 5;}
+    public int getFieldCount() {return 6;}
 
     public void setField(int id, int value) {
         switch (id) {
@@ -281,6 +286,8 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
             case 4:
                 profit = value;
                 break;
+            case 5:
+                creative = (value == 1);
         }
     }
 
@@ -296,6 +303,8 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
                 return selectedSlot;
             case 4:
                 return profit;
+            case 5:
+                return (creative) ? 1 : 0;
         }
         return -1;
     }

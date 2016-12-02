@@ -99,7 +99,9 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
     
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+        getTile(world,pos).setField(5,player.isCreative() ? 1 : 0);
         if (world.isRemote) return true;
+
         if(heldItem != null) {
             if (heldItem.getItem() == Items.DYE) {
                 //Saving tile variables
@@ -122,7 +124,7 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
             }
         }
         
-        if(player.isSneaking() && player.getUniqueID().toString().equals(getTile(world,pos).getOwner())) {
+        if((player.isSneaking() && player.getUniqueID().toString().equals(getTile(world,pos).getOwner())) || (player.isSneaking() && player.isCreative())) {
             if (getTile(world, pos).getField(2) == 1) {   //If True
                 getTile(world, pos).setField(2, 0);
             } else {
@@ -131,7 +133,6 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
             getTile(world, pos).getWorld().notifyBlockUpdate(getTile(world, pos).getPos(), getTile(world, pos).getBlockType().getDefaultState(), getTile(world, pos).getBlockType().getDefaultState(), 3);
             return true;
         }
-
         getTile(world,pos).openGui(player,world,pos);
         return true;
     }
