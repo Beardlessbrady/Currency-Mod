@@ -9,6 +9,7 @@ import gunn.modcurrency.common.core.util.CustomButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiOptionButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -73,7 +74,6 @@ public class GuiVendor extends GuiContainer {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
         if (gearExtended) nameField.drawTextBox();
-        //if (creativeExtended) System.out.println("OPEN");
     }
 
     @Override
@@ -105,6 +105,16 @@ public class GuiVendor extends GuiContainer {
                     fontRendererObj.drawString(I18n.format("[" + tilevendor.getSelectedName() + "]"), 258, 90, Integer.parseInt("0099ff", 16));
                 GL11.glPopMatrix();
             }
+            if(creativeExtended){
+                if(!gearExtended) {
+                    fontRendererObj.drawString(I18n.format("Infinite Stock"), 197, 73, Integer.parseInt("42401c", 16));
+                    fontRendererObj.drawString(I18n.format("Infinite Stock"), 196, 72, Integer.parseInt("fff200", 16));
+                }else{
+                    fontRendererObj.drawString(I18n.format("Infinite Stock"), 197, 99, Integer.parseInt("42401c", 16));
+                    fontRendererObj.drawString(I18n.format("Infinite Stock"), 196, 98, Integer.parseInt("fff200", 16));
+                }
+            }
+
         }
     }
 
@@ -122,8 +132,11 @@ public class GuiVendor extends GuiContainer {
         if (tilevendor.getField(2) == 1) {
             this.buttonList.add(new CustomButton(1, i + 176, j + 20, 0, 21, 21, 22, "", TAB_TEXTURE));   //Lock Tab
             this.buttonList.add(new CustomButton(2, i + 176, j + 43, 0, 0, 21, 21, "", TAB_TEXTURE));   //Gear Tab
-            if(tilevendor.getField(5) == 1)this.buttonList.add(new CustomButton(3, i + 176, j + 65, 0, 44, 21, 21, "", TAB_TEXTURE));   //Creative Tab
-
+            if(tilevendor.getField(5) == 1) {
+                this.buttonList.add(new CustomButton(3, i + 176, j + 65, 0, 44, 21, 21, "", TAB_TEXTURE));   //Creative Tab
+                this.buttonList.add(new GuiButton(4, i + 198, j + 85, 45, 20, "Enabled"));
+                this.buttonList.get(4).visible = false;
+            }
             this.nameField = new GuiTextField(0, fontRendererObj, i + 217, j + 72, 45, 10);        //Setting Costs
             this.nameField.setTextColor(Integer.parseInt("0099ff", 16));
             this.nameField.setEnableBackgroundDrawing(false);
@@ -153,15 +166,19 @@ public class GuiVendor extends GuiContainer {
         //Draw Creative Icon
         if(tilevendor.getField(5) == 1) {
             if(!gearExtended) {
-                this.buttonList.remove(3);
-                this.buttonList.add(new CustomButton(3, i + 176, j + 65, 0, 44, 21, 21, "", TAB_TEXTURE));   //Creative Tab
-                if(creativeExtended) drawTexturedModalRect(176, 65, 27, 48, 91, 47);
+                this.buttonList.set(3,(new CustomButton(3, i + 176, j + 65, 0, 44, 21, 21, "", TAB_TEXTURE)));   //Creative Tab
+                if(creativeExtended && tilevendor.getField(5) == 1) {
+                    this.buttonList.set(4,(new GuiButton(4, i + 198, j + 85, 45, 20, "Enabled")));
+                    drawTexturedModalRect(176, 65, 27, 48, 91, 47);
+                }else if(!creativeExtended && tilevendor.getField(5) == 1) this.buttonList.get(4).visible = false;
                 drawTexturedModalRect(175, 71, 237, 48, 19, 9);
             }else{
-                this.buttonList.remove(3);
-                this.buttonList.add(new CustomButton(3, i + 176, j + 91, 0, 44, 21, 21, "", TAB_TEXTURE));   //Creative Tab
-                if(creativeExtended) drawTexturedModalRect(176, 91, 27, 48, 91, 47);
-                drawTexturedModalRect(175, 97, 237, 48, 19, 9);
+                this.buttonList.set(3,(new CustomButton(3, i + 176, j + 91, 0, 44, 21, 21, "", TAB_TEXTURE)));   //Creative Tab
+                 if(creativeExtended  && tilevendor.getField(5) == 1) {
+                     this.buttonList.set(4,(new GuiButton(4, i + 198, j + 111, 45, 20, "Enabled")));
+                     drawTexturedModalRect(176, 91, 27, 48, 91, 47);
+                 }else if (!creativeExtended && tilevendor.getField(5) == 1) this.buttonList.get(4).visible = false;
+                 drawTexturedModalRect(175, 97, 237, 48, 19, 9);
             }
         }
 
@@ -276,6 +293,9 @@ public class GuiVendor extends GuiContainer {
                 break;
             case 3:
                 creativeExtended = !creativeExtended;
+                break;
+            case 4:
+                System.out.println("CLICKED");
         }
     }
 }
