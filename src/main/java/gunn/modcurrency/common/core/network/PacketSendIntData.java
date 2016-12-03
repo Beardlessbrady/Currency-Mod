@@ -83,6 +83,11 @@ public class PacketSendIntData implements IMessage {
                     BlockVendor block2 = (BlockVendor) world.getBlockState(message.blockPos).getBlock();
                     block2.getTile(world, message.blockPos)
                             .setItemCost(message.data);
+                    break;
+                case 3:     //Enable/Disable Creative Button [to server]
+                    BlockVendor block3 = (BlockVendor) world.getBlockState(message.blockPos).getBlock();
+                    block3.getTile(world, message.blockPos)
+                            .setField(6, message.data);
             }
         }
     }

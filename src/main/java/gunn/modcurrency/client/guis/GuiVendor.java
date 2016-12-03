@@ -134,7 +134,7 @@ public class GuiVendor extends GuiContainer {
             this.buttonList.add(new CustomButton(2, i + 176, j + 43, 0, 0, 21, 21, "", TAB_TEXTURE));   //Gear Tab
             if(tilevendor.getField(5) == 1) {
                 this.buttonList.add(new CustomButton(3, i + 176, j + 65, 0, 44, 21, 21, "", TAB_TEXTURE));   //Creative Tab
-                this.buttonList.add(new GuiButton(4, i + 198, j + 85, 45, 20, "Enabled"));
+                this.buttonList.add(new GuiButton(4, i + 198, j + 85, 45, 20, "BORKED"));
                 this.buttonList.get(4).visible = false;
             }
             this.nameField = new GuiTextField(0, fontRendererObj, i + 217, j + 72, 45, 10);        //Setting Costs
@@ -164,18 +164,19 @@ public class GuiVendor extends GuiContainer {
         drawTexturedModalRect(174, 46, 237, 32, 19, 15);
 
         //Draw Creative Icon
+        //System.out.println(tilevendor.getField(6));
         if(tilevendor.getField(5) == 1) {
             if(!gearExtended) {
                 this.buttonList.set(3,(new CustomButton(3, i + 176, j + 65, 0, 44, 21, 21, "", TAB_TEXTURE)));   //Creative Tab
                 if(creativeExtended && tilevendor.getField(5) == 1) {
-                    this.buttonList.set(4,(new GuiButton(4, i + 198, j + 85, 45, 20, "Enabled")));
+                    this.buttonList.set(4,(new GuiButton(4, i + 198, j + 85, 45, 20, ((tilevendor.getField(6) == 1) ? "Enabled" : "Disabled"))));
                     drawTexturedModalRect(176, 65, 27, 48, 91, 47);
                 }else if(!creativeExtended && tilevendor.getField(5) == 1) this.buttonList.get(4).visible = false;
                 drawTexturedModalRect(175, 71, 237, 48, 19, 9);
             }else{
                 this.buttonList.set(3,(new CustomButton(3, i + 176, j + 91, 0, 44, 21, 21, "", TAB_TEXTURE)));   //Creative Tab
                  if(creativeExtended  && tilevendor.getField(5) == 1) {
-                     this.buttonList.set(4,(new GuiButton(4, i + 198, j + 111, 45, 20, "Enabled")));
+                     this.buttonList.set(4,(new GuiButton(4, i + 198, j + 111, 45, 20, ((tilevendor.getField(6) == 1) ? "Enabled" : "Disabled"))));
                      drawTexturedModalRect(176, 91, 27, 48, 91, 47);
                  }else if (!creativeExtended && tilevendor.getField(5) == 1) this.buttonList.get(4).visible = false;
                  drawTexturedModalRect(175, 97, 237, 48, 19, 9);
@@ -278,13 +279,9 @@ public class GuiVendor extends GuiContainer {
                 pack0.setBlockPos(tilevendor.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack0);
                 break;
-            case 1:         //Lock Button
+            case 1: //Lock Button
                 PacketSendIntData pack1 = new PacketSendIntData();
-                if (tilevendor.getField(1) == 1) { 
-                    pack1.setData(0, tilevendor.getPos(), 0);
-                } else { 
-                    pack1.setData(1, tilevendor.getPos(), 0);
-                }
+                pack1.setData((tilevendor.getField(1) == 1) ? 0 : 1, tilevendor.getPos(), 0);
                 PacketHandler.INSTANCE.sendToServer(pack1);
                 tilevendor.getWorld().notifyBlockUpdate(tilevendor.getPos(), tilevendor.getBlockType().getDefaultState(), tilevendor.getBlockType().getDefaultState(), 3);
                 break;
@@ -295,7 +292,10 @@ public class GuiVendor extends GuiContainer {
                 creativeExtended = !creativeExtended;
                 break;
             case 4:
-                System.out.println("CLICKED");
+                PacketSendIntData pack4 = new PacketSendIntData();
+                pack4.setData((tilevendor.getField(6) == 1) ? 0 : 1, tilevendor.getPos(), 3);
+                PacketHandler.INSTANCE.sendToServer(pack4);
+                break;
         }
     }
 }
