@@ -46,7 +46,7 @@ public class RenderTileVendor extends TileEntitySpecialRenderer<TileVendor>{
     private IBakedModel getBakedModelWindow() {
         if (bakedModelWindow == null) {
             try {
-                modelWindow = ModelLoaderRegistry.getModel(new ResourceLocation(ModCurrency.MODID, "block/vend_window.json"));
+                modelWindow = ModelLoaderRegistry.getModel(new ResourceLocation(ModCurrency.MODID, "block/vend_window"));
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -57,19 +57,37 @@ public class RenderTileVendor extends TileEntitySpecialRenderer<TileVendor>{
     }
 
     public void renderTileEntityAt(TileVendor te, double x, double y, double z, float partialTicks, int destroyStage){
-        GlStateManager.pushAttrib();
         GlStateManager.pushMatrix();
-        GlStateManager.translate(x, y, z);
+        int facing = te.getFaceData(); //0 = North, 1 = East, 2 = South, 3 = West
+
+        // Ensures starting position is same for every facing direction
+        switch(facing){
+            case 0: //NORTH
+                GlStateManager.translate(x,y,z);
+                break;
+            case 1: //EAST
+                GlStateManager.translate(x + 1,y,z);
+                GlStateManager.rotate(-90,0,1,0);
+                break;
+            case 2: //SOUTH
+                GlStateManager.translate(x + 1,y,z + 1);
+                GlStateManager.rotate(180,0,1,0);
+                break;
+            case 3: //WEST
+                GlStateManager.translate(x,y,z + 1);
+                GlStateManager.rotate(90,0,1,0);
+                break;
+        }
 
         renderWindow(te, x, y, z, partialTicks, destroyStage);
 
         GlStateManager.popMatrix();
-        GlStateManager.popAttrib();
 
     }
 
     public void renderWindow(TileVendor te, double x, double y, double z, float ticks, int stage){
         GlStateManager.pushMatrix();
+        GL11.glEnable(GL11.GL_BLEND);
 
         this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         World world = te.getWorld();
@@ -86,6 +104,7 @@ public class RenderTileVendor extends TileEntitySpecialRenderer<TileVendor>{
                 Tessellator.getInstance().getBuffer(),false);
         tessellator.draw();
 
+        GL11.glDisable(GL11.GL_BLEND);
         GlStateManager.popMatrix();
     }
 }
