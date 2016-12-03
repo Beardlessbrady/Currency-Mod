@@ -1,0 +1,16 @@
+{
+	"__comment": "Designed by Beardlessbrady with Cubik Studio - https://cubik.studio",
+	"textures": {
+		"VendTextures": "#Texture"
+	},
+	"elements": [
+		{
+			"__comment": "Door Window",
+			"from": [ 4, 7, 0.5 ],
+			"to": [ 15, 30, 0.75 ],
+			"faces": {
+				"north": { "uv": [ 8.5, 4.5, 9.5, 5.5 ], "texture": "#VendTextures" }
+			}
+		}
+	]
+}

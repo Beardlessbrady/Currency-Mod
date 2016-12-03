@@ -163,11 +163,11 @@ public class ContainerVendor extends Container {
                     return null; //Checks if player is holding stack, if its different then one being clicked do nothing
                 }
             }
-            if(slotStack.stackSize < amnt && slotStack.stackSize != 0) amnt = slotStack.stackSize;
+            if(tilevendor.getField(6) == 0) if(slotStack.stackSize < amnt && slotStack.stackSize != 0) amnt = slotStack.stackSize;
             
             if ((bank >= (cost * amnt))) {   //If has enough money, buy it
-                if (slotStack.stackSize >= amnt) {
-                    slotStack.splitStack(amnt);
+                if (slotStack.stackSize >= amnt || tilevendor.getField(6) == 1) {
+                    if(tilevendor.getField(6) == 0) slotStack.splitStack(amnt);
                     playBuyStack = slotStack.copy();
                     playBuyStack.stackSize = amnt;
                     
