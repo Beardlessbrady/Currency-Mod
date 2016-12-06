@@ -40,12 +40,11 @@
 		},
 		{
 			"__comment": "Top Box Panel",
-			"from": [ 0, 15, 0 ],
-			"to": [ 16, 16, 16 ],
+			"from": [ 0, 15, 0.9844 ],
+			"to": [ 16, 16, 15.9844 ],
 			"faces": {
 				"down": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" },
 				"up": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" },
-				"north": { "uv": [ 0, 0, 8, 0.5 ], "texture": "#VendTextures" },
 				"south": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" },
 				"west": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" },
 				"east": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" }
@@ -89,6 +88,17 @@
 				"down": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" },
 				"north": { "uv": [ 0, 1, 5.5, 1.5 ], "texture": "#VendTextures" },
 				"south": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" }
+			}
+		},
+		{
+			"__comment": "Cube9",
+			"from": [ 0, 15, 0 ],
+			"to": [ 16, 16.48, 1 ],
+			"rotation": { "origin": [ 0, 15, 0 ], "axis": "x", "angle": 45 },
+			"faces": {
+				"north": { "uv": [ 0, 0.02000046, 8, 0.5 ], "texture": "#VendTextures" },
+				"west": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" },
+				"east": { "uv": [ 8.5, 6, 9.5, 7 ], "texture": "#VendTextures" }
 			}
 		}
 	]

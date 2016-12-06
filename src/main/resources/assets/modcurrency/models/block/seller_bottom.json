@@ -1,0 +1,53 @@
+{
+	"__comment": "Designed by Beardlessbrady with Cubik Studio - https://cubik.studio",
+	"textures": {
+		"texture": "#texture"
+	},
+	"elements": [
+		{
+			"__comment": "Cube2",
+			"from": [ 0, 1, 0 ],
+			"to": [ 16, 7, 16 ],
+			"faces": {
+				"north": { "uv": [ 0, 12.5, 8, 15.5 ], "texture": "#texture" },
+				"south": { "uv": [ 0, 12.5, 8, 15.5 ], "texture": "#texture" },
+				"west": { "uv": [ 0, 12.5, 8, 15.5 ], "texture": "#texture" },
+				"east": { "uv": [ 0, 12.5, 8, 15.5 ], "texture": "#texture" }
+			}
+		},
+		{
+			"__comment": "Cube5",
+			"from": [ 0, 0, 1 ],
+			"to": [ 16, 1, 16 ],
+			"faces": {
+				"down": { "uv": [ 0, 12.5, 8, 15.5 ], "texture": "#texture" },
+				"south": { "uv": [ 0, 12.5, 8, 13 ], "texture": "#texture" },
+				"west": { "uv": [ 0, 12.5, 8, 13 ], "texture": "#texture" },
+				"east": { "uv": [ 0, 12.5, 8, 13 ], "texture": "#texture" }
+			}
+		},
+		{
+			"__comment": "Cube24",
+			"from": [ 0, 7, 0 ],
+			"to": [ 16, 16, 16 ],
+			"faces": {
+				"up": { "uv": [ 10, 2.5, 11.5, 3.5 ], "texture": "#texture" },
+				"north": { "uv": [ 0, 9, 8, 12.5 ], "texture": "#texture" },
+				"south": { "uv": [ 6, 0, 8, 2 ], "texture": "#texture" },
+				"west": { "uv": [ 6, 0, 8, 2 ], "texture": "#texture" },
+				"east": { "uv": [ 6, 0, 8, 2 ], "texture": "#texture" }
+			}
+		},
+		{
+			"__comment": "Cube13",
+			"from": [ 0, 0, 1 ],
+			"to": [ 16, 1.45, 1.7 ],
+			"rotation": { "origin": [ 0, 0, 1 ], "axis": "x", "angle": -45 },
+			"faces": {
+				"north": { "uv": [ 0, 15.5, 8, 16 ], "texture": "#texture" },
+				"west": { "uv": [ 0.5, 14, 1.5, 15 ], "texture": "#texture" },
+				"east": { "uv": [ 0, 15, 1, 16 ], "texture": "#texture" }
+			}
+		}
+	]
+}

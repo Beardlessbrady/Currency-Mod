@@ -3,6 +3,7 @@ package gunn.modcurrency.client.render;
 import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.common.blocks.tiles.TileVendor;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.IBakedModel;
@@ -88,6 +89,7 @@ public class RenderTileVendor extends TileEntitySpecialRenderer<TileVendor>{
     public void renderWindow(TileVendor te, double x, double y, double z, float ticks, int stage){
         GlStateManager.pushMatrix();
         GL11.glEnable(GL11.GL_BLEND);
+
 
         this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         World world = te.getWorld();
