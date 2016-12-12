@@ -28,6 +28,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
  */
 public class BaseBlock extends Block{
 
+
     public BaseBlock(Material mat, String name){
         super(mat);
         setRegistryName(name);
