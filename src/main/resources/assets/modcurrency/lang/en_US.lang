@@ -6,3 +6,4 @@ item.modcurrency:banknote_4.name=Fifty-Dollar Banknote
 item.modcurrency:banknote_5.name=One Hundred-Dollar Banknote
 
 tile.modcurrency:blockvendor.name=Vending Machine
+tile.modcurrency:blockseller.name=Exchange Machine

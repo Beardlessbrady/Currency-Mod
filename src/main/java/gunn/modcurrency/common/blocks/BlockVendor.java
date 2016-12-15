@@ -2,7 +2,7 @@ package gunn.modcurrency.common.blocks;
 
 import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.common.blocks.items.IBColored;
-import gunn.modcurrency.common.blocks.tiles.TileVendor;
+import gunn.modcurrency.common.tiles.TileVendor;
 import gunn.modcurrency.common.core.handler.StateHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -89,6 +89,18 @@ public class BlockVendor extends Block implements ITileEntityProvider {
             GameRegistry.addShapelessRecipe(basic, stack);
         }
     }
+
+    public void initModel(){
+        for(int i =0; i < 16; i++){
+            //Im Lazy and I hate Mojangs EnumDyeColor, BE CONSISTENT (lightBlue, light_blue....)
+            if(i == 12){
+                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 12, new ModelResourceLocation(getRegistryName(), "color=light_blue" + ",facing=north,item=true"));
+            }else {
+                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), i, new ModelResourceLocation(getRegistryName(), "color=" + EnumDyeColor.byDyeDamage(i) + ",facing=north,item=true"));
+            }
+        }
+    }
+
 
     @Override
     public boolean isOpaqueCube(IBlockState state) {
@@ -190,17 +202,6 @@ public class BlockVendor extends Block implements ITileEntityProvider {
     @Override
     public int damageDropped(IBlockState state) {
         return getMetaFromState(state);
-    }
-
-    public void initModel(){
-        for(int i =0; i < 16; i++){
-            //Im Lazy and I hate Mojangs EnumDyeColor, BE CONSISTENT (lightBlue, light_blue....)
-            if(i == 12){
-                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 12, new ModelResourceLocation(getRegistryName(), "color=light_blue" + ",facing=north,item=true"));
-            }else {
-                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), i, new ModelResourceLocation(getRegistryName(), "color=" + EnumDyeColor.byDyeDamage(i) + ",facing=north,item=true"));
-            }
-        }
     }
 
     //<editor-fold desc="Block States--------------------------------------------------------------------------------------------------------">

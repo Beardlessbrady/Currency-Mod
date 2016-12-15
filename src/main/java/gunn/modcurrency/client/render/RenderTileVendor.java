@@ -1,9 +1,8 @@
 package gunn.modcurrency.client.render;
 
 import gunn.modcurrency.ModCurrency;
-import gunn.modcurrency.common.blocks.tiles.TileVendor;
+import gunn.modcurrency.common.tiles.TileVendor;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.IBakedModel;

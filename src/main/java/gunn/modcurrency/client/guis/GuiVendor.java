@@ -1,15 +1,14 @@
 package gunn.modcurrency.client.guis;
 
-import gunn.modcurrency.common.blocks.containers.ContainerVendor;
+import gunn.modcurrency.common.containers.ContainerVendor;
 import gunn.modcurrency.common.core.handler.PacketHandler;
 import gunn.modcurrency.common.core.network.PacketSendIntData;
 import gunn.modcurrency.common.core.network.PacketSendItemToServer;
-import gunn.modcurrency.common.blocks.tiles.TileVendor;
+import gunn.modcurrency.common.tiles.TileVendor;
 import gunn.modcurrency.common.core.util.CustomButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiOptionButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;

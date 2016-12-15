@@ -1,7 +1,7 @@
-package gunn.modcurrency.common.blocks.containers;
+package gunn.modcurrency.common.containers;
 
 import gunn.modcurrency.common.items.ModItems;
-import gunn.modcurrency.common.blocks.tiles.TileVendor;
+import gunn.modcurrency.common.tiles.TileVendor;
 import gunn.modcurrency.common.core.util.SlotBank;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;

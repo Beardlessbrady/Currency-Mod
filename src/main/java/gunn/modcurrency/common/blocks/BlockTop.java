@@ -1,6 +1,6 @@
 package gunn.modcurrency.common.blocks;
 
-import gunn.modcurrency.common.blocks.tiles.TileVendor;
+import gunn.modcurrency.common.tiles.TileVendor;
 import gunn.modcurrency.common.core.handler.StateHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;

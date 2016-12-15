@@ -1,5 +1,5 @@
 
-package gunn.modcurrency.common.blocks.tiles;
+package gunn.modcurrency.common.tiles;
 
 import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.common.items.ModItems;
@@ -20,8 +20,6 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
-
-import static net.minecraft.inventory.InventoryHelper.dropInventoryItems;
 
 /**
  * Distributed with the Currency-Mod for Minecraft.
@@ -48,9 +46,8 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     private static final int TOTAL_SLOTS_COUNT = MONEY_SLOT_COUNT + VEND_SLOT_COUNT;
     
     private int bank, profit, selectedSlot, face;
-    private String owner;
-    private boolean locked, mode,creative,infinite,gearExtended;       //Mode 0 == Sell, 1 == Edit
-    private String selectedName;
+    private String owner, selectedName;
+    private boolean locked, mode, creative, infinite, gearExtended;
     private int[] itemCosts = new int[TOTAL_SLOTS_COUNT];       //Always Ignore slot 0
     private ItemStackHandler itemStackHandler = new ItemStackHandler(TOTAL_SLOTS_COUNT) {
         @Override
@@ -59,17 +56,18 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         }};
     
     public TileVendor() {
-        locked = false;
-        mode = false;       //true = Edit, false = Sell
-        creative = false;
-        infinite = false;
-        gearExtended = false;
-        selectedName = "No Item";
         bank = 0;
         profit = 0;
         selectedSlot = 37;
         face = 0;
         owner = "";
+        selectedName = "No Item";
+        locked = false;
+        mode = false;
+        creative = false;
+        infinite = false;
+        gearExtended = false;
+
         for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = 0;
     }
 
