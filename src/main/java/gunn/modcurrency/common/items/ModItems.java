@@ -35,7 +35,7 @@ public class ModItems {
     }
 
     @SideOnly(Side.CLIENT)
-    public static void initItemModels(){
+    public static void ItemModels(){
         itembanknote.initModel();
     }
 }

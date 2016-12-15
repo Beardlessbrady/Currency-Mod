@@ -21,22 +21,25 @@ package gunn.modcurrency.common.blocks;
  */
 public class ModBlocks {
     public static BlockTop blockTop;
-    public static BlockVendor blockvendor;
+    public static BlockVendor blockVendor;
+    public static BlockSeller blockSeller;
 
     public static void preInit(){
         setupBlocks();
     }
 
     private static void setupBlocks(){
-        blockvendor = new BlockVendor();
         blockTop = new BlockTop();
+        blockVendor = new BlockVendor();
+        blockSeller = new BlockSeller();
     }
 
-    public static void initInitModels(){
-        blockvendor.initModel();
+    public static void ItemModels(){
+        blockVendor.initModel();
+        blockSeller.initModel();
     }
     
     public static void addRecipes(){
-        blockvendor.recipe();
+        blockVendor.recipe();
     }
 }

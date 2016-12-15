@@ -56,12 +56,12 @@ public class BlockTop extends Block{
     }
 
     public int whatBlock(World world, BlockPos pos){
-        if(world.getBlockState(pos.down()).getBlock().equals(ModBlocks.blockvendor)) return 0;
+        if(world.getBlockState(pos.down()).getBlock().equals(ModBlocks.blockVendor)) return 0;
         return -1;
     }
 
     public int whatBlock(IBlockAccess world, BlockPos pos){
-        if(world.getBlockState(pos.down()).getBlock().equals(ModBlocks.blockvendor)) return 0;
+        if(world.getBlockState(pos.down()).getBlock().equals(ModBlocks.blockVendor)) return 0;
         return -1;
     }
 
@@ -122,7 +122,7 @@ public class BlockTop extends Block{
                 te.setField(2,0);
                 te.outChange();
                 te.dropItems();
-                ItemStack stack= new ItemStack(Item.getItemFromBlock(ModBlocks.blockvendor));
+                ItemStack stack= new ItemStack(Item.getItemFromBlock(ModBlocks.blockVendor));
                 stack.setItemDamage(worldIn.getBlockState(pos.down()).getValue(StateHandler.COLOR).getDyeDamage());
                 spawnAsEntity(worldIn,pos,stack);
                 break;

@@ -1,0 +1,15 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "custom": { "flip-v": true },
+    "model": "modcurrency:seller_bottom",
+    "textures": {
+      "particle": "blocks/coal_block",
+      "texture": "modcurrency:blocks/vendor/seller_BLACK"
+    }
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}]
+  }
+}

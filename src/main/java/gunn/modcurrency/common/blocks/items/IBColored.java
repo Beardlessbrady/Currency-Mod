@@ -27,9 +27,9 @@ import java.util.List;
  *
  * File Created on 2016-11-14.
  */
-public class ItemVendor extends ItemBlock{
+public class IBColored extends ItemBlock{
     
-    public ItemVendor(Block block){
+    public IBColored(Block block){
         super(block);
         setHasSubtypes(true);
     }

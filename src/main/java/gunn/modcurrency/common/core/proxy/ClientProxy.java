@@ -33,8 +33,8 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void preInit(FMLPreInitializationEvent e) {
         super.preInit(e);
-        ModItems.initItemModels();
-        ModBlocks.initInitModels();
+        ModItems.ItemModels();
+        ModBlocks.ItemModels();
         
         OBJLoader.INSTANCE.addDomain(ModCurrency.MODID);
     }

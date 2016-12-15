@@ -1,7 +1,7 @@
 package gunn.modcurrency.common.blocks;
 
 import gunn.modcurrency.ModCurrency;
-import gunn.modcurrency.common.blocks.items.ItemVendor;
+import gunn.modcurrency.common.blocks.items.IBColored;
 import gunn.modcurrency.common.blocks.tiles.TileVendor;
 import gunn.modcurrency.common.core.handler.StateHandler;
 import net.minecraft.block.Block;
@@ -31,7 +31,6 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 
-import static gunn.modcurrency.common.blocks.ModBlocks.blockvendor;
 
 /**
  * Distributed with the Currency-Mod for Minecraft.
@@ -64,12 +63,12 @@ public class BlockVendor extends Block implements ITileEntityProvider {
         setSoundType(SoundType.METAL);
 
         GameRegistry.register(this);
-        GameRegistry.register(new ItemVendor(this), getRegistryName());
+        GameRegistry.register(new IBColored(this), getRegistryName());
         GameRegistry.registerTileEntity(TileVendor.class, ModCurrency.MODID + "_tevendor");
     }
 
     public void recipe(){
-        ItemStack basic = new ItemStack(Item.getItemFromBlock(blockvendor));
+        ItemStack basic = new ItemStack(Item.getItemFromBlock(this));
         ItemStack color = new ItemStack(Items.DYE);
         basic.setItemDamage(0);
 
@@ -83,7 +82,7 @@ public class BlockVendor extends Block implements ITileEntityProvider {
                 'D', Items.IRON_DOOR);
 
         for(int i = 1; i < 16; i++) {
-            ItemStack stack = new ItemStack(Item.getItemFromBlock(blockvendor));
+            ItemStack stack = new ItemStack(Item.getItemFromBlock(this));
             stack.setItemDamage(i);
             color.setItemDamage(i);
             GameRegistry.addShapelessRecipe(stack, color, basic);
@@ -193,7 +192,6 @@ public class BlockVendor extends Block implements ITileEntityProvider {
         return getMetaFromState(state);
     }
 
-    //<editor-fold desc="Models & Textures---------------------------------------------------------------------------------------------------">
     public void initModel(){
         for(int i =0; i < 16; i++){
             //Im Lazy and I hate Mojangs EnumDyeColor, BE CONSISTENT (lightBlue, light_blue....)
@@ -204,7 +202,6 @@ public class BlockVendor extends Block implements ITileEntityProvider {
             }
         }
     }
-    //</editor-fold>
 
     //<editor-fold desc="Block States--------------------------------------------------------------------------------------------------------">
     @Override
