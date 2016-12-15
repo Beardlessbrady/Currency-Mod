@@ -174,7 +174,6 @@ public class GuiVendor extends GuiContainer {
         drawTexturedModalRect(174, 46, 237, 32, 19, 15);
 
         //Draw Creative Icon
-        //System.out.println(tilevendor.getField(6));
         if(tilevendor.getField(5) == 1) {
             if(!gearExtended) {
                 this.buttonList.set(3,(new CustomButton(3, i + 176, j + 65, 0, 44, 21, 21, "", TAB_TEXTURE)));   //Creative Tab
@@ -193,34 +192,34 @@ public class GuiVendor extends GuiContainer {
             }
         }
 
+        if(gearExtended) {
+            //Draw Selected Slot Overlay
+            int slotId = tilevendor.getField(3) - 37;
+            int slotColumn, slotRow;
 
+            if (slotId >= 0 && slotId <= 4) {
+                slotColumn = 0;
+                slotRow = slotId + 1;
+            } else if (slotId >= 5 && slotId <= 9) {
+                slotColumn = 1;
+                slotRow = (slotId + 1) - 5;
+            } else if (slotId >= 10 && slotId <= 14) {
+                slotColumn = 2;
+                slotRow = (slotId + 1) - 10;
+            } else if (slotId >= 15 && slotId <= 19) {
+                slotColumn = 3;
+                slotRow = (slotId + 1) - 15;
+            } else if (slotId >= 20 && slotId <= 24) {
+                slotColumn = 4;
+                slotRow = (slotId + 1) - 20;
+            } else {
+                slotColumn = 5;
+                slotRow = (slotId + 1) - 25;
+            }
 
-        //Draw Selected Slot Overlay
-        int slotId = tilevendor.getField(3) - 37;
-        int slotColumn, slotRow;
-        
-        if (slotId >= 0 && slotId <= 4) {
-            slotColumn = 0;
-            slotRow = slotId + 1;
-        } else if (slotId >= 5 && slotId <= 9) {
-            slotColumn = 1;
-            slotRow = (slotId + 1) - 5;
-        } else if (slotId >= 10 && slotId <= 14) {
-            slotColumn = 2;
-            slotRow = (slotId + 1) - 10;
-        } else if (slotId >= 15 && slotId <= 19) {
-            slotColumn = 3;
-            slotRow = (slotId + 1) - 15;
-        } else if (slotId >= 20 && slotId <= 24) {
-            slotColumn = 4;
-            slotRow = (slotId + 1) - 20;
-        } else {
-            slotColumn = 5;
-            slotRow = (slotId + 1) - 25;
+            Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
+            drawTexturedModalRect(24 + (18 * slotRow), 30 + (18 * slotColumn), 177, 0, 20, 20); //Selection Box
         }
-
-        Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
-        drawTexturedModalRect(24 + (18 * slotRow), 30 + (18 * slotColumn), 177, 0, 20, 20); //Selection Box
     }
 
     @Override
@@ -273,7 +272,7 @@ public class GuiVendor extends GuiContainer {
         if(tilevendor.getField(2) == 1) {
             super.mouseClicked(mouseX, mouseY, mouseButton);
             nameField.mouseClicked(mouseX, mouseY, mouseButton);
-            if (mouseButton == 2) updateTextField();
+            if (gearExtended && mouseButton == 0) updateTextField();
         }else{
             super.mouseClicked(mouseX, mouseY, mouseButton);
         }
@@ -297,6 +296,9 @@ public class GuiVendor extends GuiContainer {
                 break;
             case 2:
                 gearExtended = !gearExtended;
+                PacketSendIntData pack2 = new PacketSendIntData();
+                pack2.setData(gearExtended ? 1 : 0, tilevendor.getPos(), 4);
+                PacketHandler.INSTANCE.sendToServer(pack2);
                 break;
             case 3:
                 creativeExtended = !creativeExtended;

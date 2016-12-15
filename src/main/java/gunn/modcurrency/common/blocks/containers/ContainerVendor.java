@@ -114,11 +114,21 @@ public class ContainerVendor extends Container {
     @Nullable
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-        if(tilevendor.getField(2) == 1) {                //EDIT MODE
+        if(tilevendor.getField(2) == 1) {               //EDIT MODE
             if (slotId >= 0 && slotId <= 36) {          
                 return super.slotClick(slotId, dragType, clickTypeIn, player);
-            } else if (slotId >= 37 && slotId <= 67) {
-                return super.slotClick(slotId, dragType, clickTypeIn, player);
+            } else if (slotId >= 37 && slotId <= 67 && tilevendor.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 0) {
+                tilevendor.setField(3, slotId);
+                if (getSlot(slotId).getHasStack()) {
+                    tilevendor.setSelectedName(getSlot(slotId).getStack().getDisplayName());
+                } else {
+                    tilevendor.setSelectedName("No Item");
+                }
+                tilevendor.getWorld().notifyBlockUpdate(tilevendor.getPos(), tilevendor.getBlockType().getDefaultState(), tilevendor.getBlockType().getDefaultState(), 3);
+                return null;
+            }else if (slotId >= 37 && slotId <= 67 && tilevendor.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 1) {
+                return super.slotClick(slotId, 0, clickTypeIn, player);
+            }else { return super.slotClick(slotId, dragType, clickTypeIn, player);
             }
         }else {  //Sell Mode
             if (slotId >= 0 && slotId <= 36) {           //Is Players Inv or Money Slot
@@ -238,4 +248,3 @@ public class ContainerVendor extends Container {
         tilevendor.setField(id, data);
     }
 }
-

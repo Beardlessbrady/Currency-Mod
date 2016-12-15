@@ -49,7 +49,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     
     private int bank, profit, selectedSlot, face;
     private String owner;
-    private boolean locked, mode,creative,infinite;       //Mode 0 == Sell, 1 == Edit
+    private boolean locked, mode,creative,infinite,gearExtended;       //Mode 0 == Sell, 1 == Edit
     private String selectedName;
     private int[] itemCosts = new int[TOTAL_SLOTS_COUNT];       //Always Ignore slot 0
     private ItemStackHandler itemStackHandler = new ItemStackHandler(TOTAL_SLOTS_COUNT) {
@@ -63,6 +63,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         mode = false;       //true = Edit, false = Sell
         creative = false;
         infinite = false;
+        gearExtended = false;
         selectedName = "No Item";
         bank = 0;
         profit = 0;
@@ -175,6 +176,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         compound.setBoolean("mode", mode);
         compound.setBoolean("creative", creative);
         compound.setBoolean("infinite", infinite);
+        compound.setBoolean("gearExtended", gearExtended);
         compound.setInteger("selectedSlot", selectedSlot);
         compound.setString("selectedName", selectedName);
         compound.setString("owner", owner);
@@ -197,6 +199,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         if (compound.hasKey("mode")) mode = compound.getBoolean("mode");
         if (compound.hasKey("creative")) creative = compound.getBoolean("creative");
         if (compound.hasKey("infinite")) infinite = compound.getBoolean("infinite");
+        if (compound.hasKey("gearExtended")) gearExtended = compound.getBoolean("gearExtended");
         if (compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
         if (compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
         if (compound.hasKey("owner")) owner = compound.getString("owner");
@@ -223,6 +226,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         tag.setBoolean("mode", mode);
         tag.setBoolean("creative", creative);
         tag.setBoolean("infinite", infinite);
+        tag.setBoolean("gearExtended", gearExtended);
         tag.setInteger("selectedSlot", selectedSlot);
         tag.setString("selectedName", selectedName);
         tag.setString("owner", owner);
@@ -244,6 +248,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
         mode = pkt.getNbtCompound().getBoolean("mode");
         creative = pkt.getNbtCompound().getBoolean("creative");
         infinite = pkt.getNbtCompound().getBoolean("infinite");
+        gearExtended = pkt.getNbtCompound().getBoolean("gearExtended");
         selectedSlot = pkt.getNbtCompound().getInteger("selectedSlot");
         selectedName = pkt.getNbtCompound().getString("selectedName");
         owner = pkt.getNbtCompound().getString("owner");
@@ -272,7 +277,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     //</editor-fold>
 
     //<editor-fold desc="Getter & Setter Methods---------------------------------------------------------------------------------------------">
-    public int getFieldCount() {return 8;}
+    public int getFieldCount() {return 9;}
 
     public void setField(int id, int value) {
         switch (id) {
@@ -299,6 +304,9 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
                 break;
             case 7:
                 face = value;
+                break;
+            case 8:
+                gearExtended = (value == 1);
         }
     }
 
@@ -320,6 +328,8 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
                 return (infinite) ? 1 : 0;
             case 7:
                 return face;
+            case 8:
+                return (gearExtended) ? 1 : 0;
         }
         return -1;
     }

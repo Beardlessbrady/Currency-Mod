@@ -88,6 +88,11 @@ public class PacketSendIntData implements IMessage {
                     BlockVendor block3 = (BlockVendor) world.getBlockState(message.blockPos).getBlock();
                     block3.getTile(world, message.blockPos)
                             .setField(6, message.data);
+                    break;
+                case 4:     //Send Gear Tab State [to server]
+                    BlockVendor block4 = (BlockVendor) world.getBlockState(message.blockPos).getBlock();
+                    block4.getTile(world, message.blockPos)
+                            .setField(8, message.data);
             }
         }
     }

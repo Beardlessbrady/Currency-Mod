@@ -92,6 +92,11 @@ public class BlockVendor extends Block implements ITileEntityProvider {
     }
 
     @Override
+    public boolean isOpaqueCube(IBlockState state) {
+        return false;
+    }
+
+    @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
         return new TileVendor();
     }

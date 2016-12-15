@@ -1,7 +1,5 @@
 package gunn.modcurrency.common.blocks;
 
-import gunn.modcurrency.ModCurrency;
-import gunn.modcurrency.common.blocks.items.ItemVendor;
 import gunn.modcurrency.common.blocks.tiles.TileVendor;
 import gunn.modcurrency.common.core.handler.StateHandler;
 import net.minecraft.block.Block;
@@ -10,14 +8,11 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -27,7 +22,6 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
-import java.util.Random;
 
 /**
  * Distributed with the Currency-Mod for Minecraft.
@@ -129,12 +123,17 @@ public class BlockTop extends Block{
                 te.outChange();
                 te.dropItems();
                 ItemStack stack= new ItemStack(Item.getItemFromBlock(ModBlocks.blockvendor));
-                stack.setItemDamage(state.getValue(StateHandler.COLOR).getDyeDamage());
+                stack.setItemDamage(worldIn.getBlockState(pos.down()).getValue(StateHandler.COLOR).getDyeDamage());
                 spawnAsEntity(worldIn,pos,stack);
                 break;
         }
         super.breakBlock(worldIn, pos.down(), state);
         worldIn.setBlockToAir(pos.down());
+    }
+
+    @Override
+    public boolean isOpaqueCube(IBlockState state) {
+        return false;
     }
 
     //<editor-fold desc="Block States--------------------------------------------------------------------------------------------------------">
