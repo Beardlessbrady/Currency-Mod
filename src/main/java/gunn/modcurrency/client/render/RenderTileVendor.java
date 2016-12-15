@@ -59,7 +59,7 @@ public class RenderTileVendor extends TileEntitySpecialRenderer<TileVendor>{
 
     public void renderTileEntityAt(TileVendor te, double x, double y, double z, float partialTicks, int destroyStage){
         GlStateManager.pushMatrix();
-        int facing = te.getFaceData(); //0 = North, 1 = East, 2 = South, 3 = West
+        int facing = te.getField(7); //0 = North, 1 = East, 2 = South, 3 = West
 
         // Ensures starting position is same for every facing direction
         switch(facing){

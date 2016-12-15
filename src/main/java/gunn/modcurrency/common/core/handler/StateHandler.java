@@ -5,6 +5,7 @@ import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.IStringSerializable;
 
 /**
  * Distributed with the Currency-Mod for Minecraft.
@@ -29,4 +30,15 @@ public class StateHandler {
     public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
     public static final PropertyEnum<EnumDyeColor> COLOR = PropertyEnum.create("color", EnumDyeColor.class);
     public static final PropertyBool ITEM = PropertyBool.create("item");
+    public static final PropertyEnum<EnumTopTypes> TOP = PropertyEnum.create("top", EnumTopTypes.class);
+
+    public enum EnumTopTypes implements IStringSerializable {
+        VENDOR,
+        SELLER;
+
+        @Override
+        public String getName() {
+            return name().toLowerCase();
+        }
+    }
 }

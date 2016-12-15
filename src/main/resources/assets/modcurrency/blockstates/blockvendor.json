@@ -17,10 +17,6 @@
       },
       "false": {}
     },
-    "normal": [{}],
-    "inventory": [{
-      "model": "modcurrency:vend_item"
-    }],
     "color": {
       "white":{
         "textures": {

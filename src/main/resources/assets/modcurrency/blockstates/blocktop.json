@@ -10,9 +10,13 @@
   },
   "variants": {
     "normal": [{}],
-    "inventory": [{
-      "model": "modcurrency:vend_item"
-    }],
+    "inventory": [{}],
+    "top":{
+      "vendor":{},
+      "seller":{
+        "model": "modcurrency:seller_top"
+      }
+    },
     "color": {
       "white":{
         "textures": {

@@ -114,22 +114,10 @@ public class ContainerVendor extends Container {
     @Nullable
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-        IItemHandler itemHandler = this.tilevendor.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-        
         if(tilevendor.getField(2) == 1) {                //EDIT MODE
             if (slotId >= 0 && slotId <= 36) {          
                 return super.slotClick(slotId, dragType, clickTypeIn, player);
-            } else if (slotId >= 37 && slotId <= 67) {   
-                if (clickTypeIn == ClickType.CLONE) tilevendor.setField(3, slotId);
-                if ((clickTypeIn == ClickType.CLONE) || (clickTypeIn == ClickType.PICKUP && slotId == tilevendor.getField(3))) {
-                    if (getSlot(slotId).getHasStack()) {
-                        tilevendor.setSelectedName(getSlot(slotId).getStack().getDisplayName());
-                    } else {
-                        tilevendor.setSelectedName("No Item");
-                    }
-                    tilevendor.getWorld().notifyBlockUpdate(tilevendor.getPos(), tilevendor.getBlockType().getDefaultState(), tilevendor.getBlockType().getDefaultState(), 3);
-                    return null;
-                }
+            } else if (slotId >= 37 && slotId <= 67) {
                 return super.slotClick(slotId, dragType, clickTypeIn, player);
             }
         }else {  //Sell Mode

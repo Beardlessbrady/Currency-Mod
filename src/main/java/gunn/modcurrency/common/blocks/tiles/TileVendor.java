@@ -272,7 +272,7 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     //</editor-fold>
 
     //<editor-fold desc="Getter & Setter Methods---------------------------------------------------------------------------------------------">
-    public int getFieldCount() {return 7;}
+    public int getFieldCount() {return 8;}
 
     public void setField(int id, int value) {
         switch (id) {
@@ -296,6 +296,9 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
                 break;
             case 6:
                 infinite = (value == 1);
+                break;
+            case 7:
+                face = value;
         }
     }
 
@@ -315,6 +318,8 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
                 return (creative) ? 1 : 0;
             case 6:
                 return (infinite) ? 1 : 0;
+            case 7:
+                return face;
         }
         return -1;
     }
@@ -333,14 +338,6 @@ public class TileVendor extends TileEntity implements ICapabilityProvider, ITick
     
     public ItemStack getStack(int index){
         return itemStackHandler.getStackInSlot(index);
-    }
-    
-    public void setFaceData(int num){
-        face = num;
-    }    //0 = North, 1 = East, 2 = South, 3 = West
-    
-    public int getFaceData(){
-        return face;
     }
     
     public void setOwner(String owner){

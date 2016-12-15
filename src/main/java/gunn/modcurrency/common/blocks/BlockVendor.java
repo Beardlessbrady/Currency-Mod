@@ -4,6 +4,7 @@ import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.common.blocks.items.ItemVendor;
 import gunn.modcurrency.common.blocks.tiles.TileVendor;
 import gunn.modcurrency.common.core.handler.StateHandler;
+import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -11,7 +12,6 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -20,7 +20,6 @@ import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -31,7 +30,6 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
-import java.util.List;
 
 import static gunn.modcurrency.common.blocks.ModBlocks.blockvendor;
 
@@ -54,13 +52,18 @@ import static gunn.modcurrency.common.blocks.ModBlocks.blockvendor;
  *
  * File Created on 2016-10-30.
  */
-public class BlockVendor extends BaseBlock implements ITileEntityProvider {
+public class BlockVendor extends Block implements ITileEntityProvider {
     
     public BlockVendor() {
-        super(Material.ROCK, "blockvendor");
-        setCreativeTab(ModCurrency.tabCurrency);
+        super(Material.ROCK);
+        setRegistryName("blockvendor");
+        setUnlocalizedName(this.getRegistryName().toString());
+
         setHardness(3.0F);
+        setCreativeTab(ModCurrency.tabCurrency);
         setSoundType(SoundType.METAL);
+
+        GameRegistry.register(this);
         GameRegistry.register(new ItemVendor(this), getRegistryName());
         GameRegistry.registerTileEntity(TileVendor.class, ModCurrency.MODID + "_tevendor");
     }
@@ -75,7 +78,7 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
                 "ACA",
                 "ADA",
                 'A', Items.IRON_INGOT,
-                'B', Items.REPEATER,
+                'B', Items.COMPARATOR,
                 'C', Item.getItemFromBlock(Blocks.CHEST),
                 'D', Items.IRON_DOOR);
 
@@ -105,7 +108,7 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
         if(heldItem != null) {
             if (heldItem.getItem() == Items.DYE) {
                 //Saving tile variables
-                int face = getTile(world, pos).getFaceData();
+                int face = getTile(world, pos).getField(7);
                 int bank = getTile(world, pos).getField(0);
                 int[] itemCosts = getTile(world, pos).getAllItemCosts();
                 ItemStackHandler stackHandler = getTile(world, pos).getStackHandler();
@@ -114,7 +117,7 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
                 world.setBlockState(pos.up(), world.getBlockState(pos.up()).withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())), 3);
                 
                 //Setting tile variables
-                getTile(world, pos).setFaceData(face);
+                getTile(world, pos).setField(7,face);
                 getTile(world, pos).setField(0, bank);
                 getTile(world, pos).setAllItemCosts(itemCosts);
                 getTile(world, pos).setStackHandler(stackHandler);
@@ -151,9 +154,9 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
                 break;
         }
 
-        getTile(worldIn, pos).setFaceData(face);
+        getTile(worldIn, pos).setField(7,face);
         EnumDyeColor color = state.getValue(StateHandler.COLOR);
-        worldIn.setBlockState(pos.up(),ModBlocks.blocktopvendor.getDefaultState().withProperty(StateHandler.COLOR, color));
+        worldIn.setBlockState(pos.up(),ModBlocks.blockTop.getDefaultState().withProperty(StateHandler.COLOR, color));
 
         if(placer instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) placer;
@@ -186,7 +189,6 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
     }
 
     //<editor-fold desc="Models & Textures---------------------------------------------------------------------------------------------------">
-    @Override
     public void initModel(){
         for(int i =0; i < 16; i++){
             //Im Lazy and I hate Mojangs EnumDyeColor, BE CONSISTENT (lightBlue, light_blue....)
@@ -219,7 +221,7 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
     public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
         EnumFacing face = EnumFacing.NORTH;
         TileVendor tile = (TileVendor)worldIn.getTileEntity(pos);
-        int i = tile.getFaceData();
+        int i = tile.getField(7);
         
         switch(i){
             case 0: face = EnumFacing.NORTH;
@@ -234,10 +236,5 @@ public class BlockVendor extends BaseBlock implements ITileEntityProvider {
         
         return state.withProperty(StateHandler.FACING, face).withProperty(StateHandler.ITEM, false);
     }
-    
-    public void renderItems(){
-        
-    }
-
     //</editor-fold>
 }

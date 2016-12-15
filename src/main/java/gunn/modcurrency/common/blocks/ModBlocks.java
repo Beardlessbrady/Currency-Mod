@@ -20,9 +20,8 @@ package gunn.modcurrency.common.blocks;
  * File Created on 2016-10-30.
  */
 public class ModBlocks {
+    public static BlockTop blockTop;
     public static BlockVendor blockvendor;
-    public static BlockTopVendor blocktopvendor;
-    public static BlockSeller blockSeller;
 
     public static void preInit(){
         setupBlocks();
@@ -30,13 +29,11 @@ public class ModBlocks {
 
     private static void setupBlocks(){
         blockvendor = new BlockVendor();
-        blocktopvendor = new BlockTopVendor();
-        blockSeller = new BlockSeller();
+        blockTop = new BlockTop();
     }
 
     public static void initInitModels(){
         blockvendor.initModel();
-        blockSeller.initModel();
     }
     
     public static void addRecipes(){
