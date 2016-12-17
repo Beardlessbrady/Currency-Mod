@@ -1,7 +1,7 @@
 package gunn.modcurrency.common.core.handler;
 
-import gunn.modcurrency.common.containers.ContainerVendor;
-import gunn.modcurrency.client.guis.GuiVendor;
+import gunn.modcurrency.common.containers.ContainerBuySell;
+import gunn.modcurrency.client.guis.GuiBuySell;
 import gunn.modcurrency.common.tiles.TileSeller;
 import gunn.modcurrency.common.tiles.TileVendor;
 import net.minecraft.entity.player.EntityPlayer;
@@ -39,12 +39,12 @@ public class GuiHandler implements IGuiHandler{
 
         if(tileEntity instanceof TileVendor && ID == 30){
             TileVendor tilevendor = (TileVendor) tileEntity;
-            return new ContainerVendor(player.inventory, tilevendor);
+            return new ContainerBuySell(player.inventory, tilevendor);
         }
 
         if(tileEntity instanceof TileSeller && ID == 31){
             TileSeller tileSeller = (TileSeller) tileEntity;
-            return new ContainerVendor(player.inventory, tileSeller);
+            return new ContainerBuySell(player.inventory, tileSeller);
         }
         return null;
     }
@@ -56,12 +56,12 @@ public class GuiHandler implements IGuiHandler{
 
         if(tileEntity instanceof TileVendor && ID == 30){
             TileVendor tilevendor = (TileVendor) tileEntity;
-            return new GuiVendor(player.inventory, tilevendor);
+            return new GuiBuySell(player.inventory, tilevendor);
         }
 
         if(tileEntity instanceof  TileSeller && ID == 31){
             TileSeller tileSeller = (TileSeller) tileEntity;
-            return new GuiVendor(player.inventory, tileSeller);
+            return new GuiBuySell(player.inventory, tileSeller);
         }
         return null;
     }

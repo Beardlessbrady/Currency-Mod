@@ -1,6 +1,7 @@
 package gunn.modcurrency.common.containers;
 
 import gunn.modcurrency.common.items.ModItems;
+import gunn.modcurrency.common.tiles.TileSeller;
 import gunn.modcurrency.common.tiles.TileVendor;
 import gunn.modcurrency.common.core.util.SlotBank;
 import net.minecraft.entity.player.EntityPlayer;
@@ -35,7 +36,7 @@ import javax.annotation.Nullable;
  *
  * File Created on 2016-11-02.
  */
-public class ContainerVendor extends Container {
+public class ContainerBuySell extends Container {
     //Slot Index's
     //0-35 = Player Inventory's
     //36 = Money Slot
@@ -56,9 +57,17 @@ public class ContainerVendor extends Container {
     private final int TE_TOTAL = 31;
 
     private TileVendor tilevendor;
+    private TileSeller tileSeller;
     private int[] cachedFields;
-    public ContainerVendor(InventoryPlayer invPlayer, TileVendor tilevendor) {
-        this.tilevendor = tilevendor;
+    public ContainerBuySell(InventoryPlayer invPlayer, TileVendor tile) {
+        this.tilevendor = tile;
+
+        setupPlayerInv(invPlayer);
+        setupTeInv();
+    }
+
+    public ContainerBuySell(InventoryPlayer invPlayer, TileSeller tile) {
+        this.tileSeller = tile;
 
         setupPlayerInv(invPlayer);
         setupTeInv();

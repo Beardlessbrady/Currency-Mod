@@ -1,9 +1,10 @@
 package gunn.modcurrency.client.guis;
 
-import gunn.modcurrency.common.containers.ContainerVendor;
+import gunn.modcurrency.common.containers.ContainerBuySell;
 import gunn.modcurrency.common.core.handler.PacketHandler;
 import gunn.modcurrency.common.core.network.PacketSendIntData;
 import gunn.modcurrency.common.core.network.PacketSendItemToServer;
+import gunn.modcurrency.common.tiles.TileSeller;
 import gunn.modcurrency.common.tiles.TileVendor;
 import gunn.modcurrency.common.core.util.CustomButton;
 import net.minecraft.client.Minecraft;
@@ -44,21 +45,47 @@ import java.util.List;
  *
  * File Created on 2016-11-02.
  */
-public class GuiVendor extends GuiContainer {
+public class GuiBuySell extends GuiContainer {
     private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/GuiVendorTexture.png");
     private static final ResourceLocation TAB_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/GuiVendorTabTexture.png");
     private TileVendor tilevendor;
+    private TileSeller tileSeller;
     private GuiTextField nameField;
     private boolean gearExtended, creativeExtended;
 
-    public GuiVendor(InventoryPlayer invPlayer, TileVendor tile) {
-        super(new ContainerVendor(invPlayer, tile));
+    public GuiBuySell(InventoryPlayer invPlayer, TileVendor tile) {
+        super(new ContainerBuySell(invPlayer, tile));
         tilevendor = tile;
         xSize = 176;
         ySize = 235;
         gearExtended = false;
         creativeExtended = false;
     }
+
+    public GuiBuySell(InventoryPlayer invPlayer, TileSeller tile) {
+        super(new ContainerBuySell(invPlayer, tile));
+        tileSeller = tile;
+        xSize = 176;
+        ySize = 235;
+        gearExtended = false;
+        creativeExtended = false;
+    }
+
+    public int getTileField(int field, int type){
+        if(type == 0) { //Normal Fields
+            if (tilevendor != null) return tilevendor.getField(field);
+            if (tileSeller != null) return tileSeller.getField(field);
+            return -1;
+        }else if (type == 1) { //Cost
+            if (tilevendor != null) return tilevendor.getItemCost(field);
+            if (tileSeller != null) return tileSeller.getItemCost(field);
+        }
+        return -1;
+    }
+
+
+
+
 
     //Sends packet of new cost to server
     private void setCost() {
@@ -75,7 +102,7 @@ public class GuiVendor extends GuiContainer {
 
     //Updates Cost text field
     private void updateTextField() {
-        this.nameField.setText(String.valueOf(tilevendor.getItemCost(tilevendor.getField(3) - 37)));
+        this.nameField.setText(String.valueOf(getTileField(3,0) - 37));
     }
 
     //<editor-fold desc="Drawing Gui Assets--------------------------------------------------------------------------------------------------">
