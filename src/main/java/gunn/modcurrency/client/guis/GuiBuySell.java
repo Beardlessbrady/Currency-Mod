@@ -268,7 +268,7 @@ public class GuiBuySell extends GuiContainer {
             int column = ((j - startY) / 18);
             int slot = row + (column * 5);
             ItemStack currStack;
-            
+
             if(tileVendor != null){
                 currStack = tileVendor.getStack(slot + 1);
             }else{
@@ -296,7 +296,7 @@ public class GuiBuySell extends GuiContainer {
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         int numChar = Character.getNumericValue(typedChar);
-        if ((numChar >= 0 && numChar <= 9) || (keyCode == 14) || keyCode == 211 || (keyCode == 203) || (keyCode == 205)) { //Ensures keys input are only numbers or backspace type keys
+        if ((getTileField(2,0) == 1) && (numChar >= 0 && numChar <= 9) || (keyCode == 14) || keyCode == 211 || (keyCode == 203) || (keyCode == 205)) { //Ensures keys input are only numbers or backspace type keys
             if (this.nameField.textboxKeyTyped(typedChar, keyCode)) setCost();
         } else {
             super.keyTyped(typedChar, keyCode);
@@ -331,7 +331,6 @@ public class GuiBuySell extends GuiContainer {
                 if(tileSeller != null) pack1.setData((tileSeller.getField(1) == 1) ? 0 : 1, tileSeller.getPos(), 0);
                 System.out.println(tileSeller.getField(1));
                 PacketHandler.INSTANCE.sendToServer(pack1);
-                System.out.println("LATA" + tileSeller.getField(1));
 
                 if(tileVendor != null) tileVendor.getWorld().notifyBlockUpdate(tileVendor.getPos(), tileVendor.getBlockType().getDefaultState(), tileVendor.getBlockType().getDefaultState(), 3);
                 if(tileSeller != null) tileSeller.getWorld().notifyBlockUpdate(tileSeller.getPos(), tileSeller.getBlockType().getDefaultState(), tileSeller.getBlockType().getDefaultState(), 3);
