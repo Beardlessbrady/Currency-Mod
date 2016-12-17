@@ -169,14 +169,14 @@ public class GuiBuySell extends GuiContainer {
         int j = (this.height - this.ySize) / 2;
         String ChangeButton = "Change";
         
-        if(tileVendor.getField(2) == 1) ChangeButton = "Profit";
+        if(getTileField(2, 0) == 1) ChangeButton = "Profit";
         
         this.buttonList.add(new GuiButton(0, i + 103, j + 7, 45, 20, ChangeButton));        
 
-        if (tileVendor.getField(2) == 1) {
+        if (getTileField(2,0) == 1) {
             this.buttonList.add(new CustomButton(1, i + 176, j + 20, 0, 21, 21, 22, "", TAB_TEXTURE));   //Lock Tab
             this.buttonList.add(new CustomButton(2, i + 176, j + 43, 0, 0, 21, 21, "", TAB_TEXTURE));   //Gear Tab
-            if(tileVendor.getField(5) == 1) {
+            if(getTileField(5,0) == 1) {
                 this.buttonList.add(new CustomButton(3, i + 176, j + 65, 0, 44, 21, 21, "", TAB_TEXTURE));   //Creative Tab
                 this.buttonList.add(new GuiButton(4, i + 198, j + 85, 45, 20, "BORKED"));
                 this.buttonList.get(4).visible = false;
