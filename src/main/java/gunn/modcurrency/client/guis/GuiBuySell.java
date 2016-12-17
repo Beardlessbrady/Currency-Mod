@@ -329,11 +329,13 @@ public class GuiBuySell extends GuiContainer {
                 PacketSendIntData pack1 = new PacketSendIntData();
                 if(tileVendor != null) pack1.setData((tileVendor.getField(1) == 1) ? 0 : 1, tileVendor.getPos(), 0);
                 if(tileSeller != null) pack1.setData((tileSeller.getField(1) == 1) ? 0 : 1, tileSeller.getPos(), 0);
+                System.out.println(tileSeller.getField(1));
                 PacketHandler.INSTANCE.sendToServer(pack1);
-
+                System.out.println("LATA" + tileSeller.getField(1));
 
                 if(tileVendor != null) tileVendor.getWorld().notifyBlockUpdate(tileVendor.getPos(), tileVendor.getBlockType().getDefaultState(), tileVendor.getBlockType().getDefaultState(), 3);
                 if(tileSeller != null) tileSeller.getWorld().notifyBlockUpdate(tileSeller.getPos(), tileSeller.getBlockType().getDefaultState(), tileSeller.getBlockType().getDefaultState(), 3);
+
                 break;
             case 2:
                 gearExtended = !gearExtended;
