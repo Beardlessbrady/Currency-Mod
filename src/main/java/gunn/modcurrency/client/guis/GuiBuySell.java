@@ -48,18 +48,22 @@ import java.util.List;
 public class GuiBuySell extends GuiContainer {
     private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/GuiVendorTexture.png");
     private static final ResourceLocation TAB_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/GuiVendorTabTexture.png");
-    private TileVendor tilevendor;
+    private TileVendor tileVendor;
     private TileSeller tileSeller;
     private GuiTextField nameField;
     private boolean gearExtended, creativeExtended;
+    
+    private String header;
 
     public GuiBuySell(InventoryPlayer invPlayer, TileVendor tile) {
         super(new ContainerBuySell(invPlayer, tile));
-        tilevendor = tile;
+        tileVendor = tile;
         xSize = 176;
         ySize = 235;
         gearExtended = false;
         creativeExtended = false;
+        
+        header = "Vending Machine";
     }
 
     public GuiBuySell(InventoryPlayer invPlayer, TileSeller tile) {
@@ -69,34 +73,35 @@ public class GuiBuySell extends GuiContainer {
         ySize = 235;
         gearExtended = false;
         creativeExtended = false;
+
+        header = "Exchange Machine";
     }
 
     public int getTileField(int field, int type){
         if(type == 0) { //Normal Fields
-            if (tilevendor != null) return tilevendor.getField(field);
+            if (tileVendor != null) return tileVendor.getField(field);
             if (tileSeller != null) return tileSeller.getField(field);
             return -1;
         }else if (type == 1) { //Cost
-            if (tilevendor != null) return tilevendor.getItemCost(field);
+            if (tileVendor != null) return tileVendor.getItemCost(field);
             if (tileSeller != null) return tileSeller.getItemCost(field);
         }
         return -1;
     }
-
-
-
-
-
+    
     //Sends packet of new cost to server
     private void setCost() {
         if (this.nameField.getText().length() > 0) {
             int newCost = Integer.valueOf(this.nameField.getText());
 
             PacketSendIntData pack = new PacketSendIntData();
-            pack.setData(newCost, tilevendor.getPos(), 1);
+            if(tileVendor != null) pack.setData(newCost, tileVendor.getPos(), 1);
+            if(tileSeller != null) pack.setData(newCost, tileSeller.getPos(), 1);
 
             PacketHandler.INSTANCE.sendToServer(pack);
-            tilevendor.getWorld().notifyBlockUpdate(tilevendor.getPos(), tilevendor.getBlockType().getDefaultState(), tilevendor.getBlockType().getDefaultState(), 3);
+
+            if(tileVendor != null) tileVendor.getWorld().notifyBlockUpdate(tileVendor.getPos(), tileVendor.getBlockType().getDefaultState(), tileVendor.getBlockType().getDefaultState(), 3);
+            if(tileSeller != null) tileSeller.getWorld().notifyBlockUpdate(tileSeller.getPos(), tileSeller.getBlockType().getDefaultState(), tileSeller.getBlockType().getDefaultState(), 3);
         }
     }
 
@@ -121,13 +126,12 @@ public class GuiBuySell extends GuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        fontRendererObj.drawString(I18n.format("Vending Machine"), 5, 7, Color.darkGray.getRGB());
+        fontRendererObj.drawString(I18n.format(header), 5, 7, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("Inventory"), 4, 142, Color.darkGray.getRGB());
-        if(tilevendor.getField(2) == 0) fontRendererObj.drawString(I18n.format("Cash") + ": $" + tilevendor.getField(0), 5, 16, Color.darkGray.getRGB());
-        
-        if (tilevendor.getField(2) == 1) {
+        if(getTileField(2,0) == 0) fontRendererObj.drawString(I18n.format("Cash") + ": $" + getTileField(0,0), 5, 16, Color.darkGray.getRGB());
+        if (getTileField(2,0) == 1) {
             drawIcons();
-            fontRendererObj.drawString(I18n.format("Profit") + ": $" + tilevendor.getField(4), 5, 16, Color.darkGray.getRGB());
+            fontRendererObj.drawString(I18n.format("Profit") + ": $" + getTileField(4,0), 5, 16, Color.darkGray.getRGB());
 
             if (gearExtended) {
                 fontRendererObj.drawString(I18n.format("Slot Settings"), 197, 51, Integer.parseInt("42401c", 16));
@@ -135,10 +139,15 @@ public class GuiBuySell extends GuiContainer {
                 fontRendererObj.drawString(I18n.format("Cost:"), 183, 73, Integer.parseInt("211d1b", 16));
                 fontRendererObj.drawString(I18n.format("Cost:"), 184, 72, Color.lightGray.getRGB());
                 fontRendererObj.drawString(I18n.format("$"), 210, 72, Integer.parseInt("0099ff", 16));
+                
+                String selectedName = "";
+                if(tileVendor != null) selectedName = tileVendor.getSelectedName();
+                if(tileSeller != null) selectedName = tileSeller.getSelectedName();
+                
                 GL11.glPushMatrix();
                     GL11.glScaled(0.7, 0.7, 0.7);
-                    fontRendererObj.drawString(I18n.format("[" + tilevendor.getSelectedName() + "]"), 257, 91, Integer.parseInt("001f33", 16));
-                    fontRendererObj.drawString(I18n.format("[" + tilevendor.getSelectedName() + "]"), 258, 90, Integer.parseInt("0099ff", 16));
+                    fontRendererObj.drawString(I18n.format("[" + selectedName + "]"), 257, 91, Integer.parseInt("001f33", 16));
+                    fontRendererObj.drawString(I18n.format("[" + selectedName + "]"), 258, 90, Integer.parseInt("0099ff", 16));
                 GL11.glPopMatrix();
             }
             if(creativeExtended){
@@ -150,7 +159,6 @@ public class GuiBuySell extends GuiContainer {
                     fontRendererObj.drawString(I18n.format("Infinite Stock"), 196, 98, Integer.parseInt("fff200", 16));
                 }
             }
-
         }
     }
 
@@ -161,14 +169,14 @@ public class GuiBuySell extends GuiContainer {
         int j = (this.height - this.ySize) / 2;
         String ChangeButton = "Change";
         
-        if(tilevendor.getField(2) == 1) ChangeButton = "Profit";
+        if(tileVendor.getField(2) == 1) ChangeButton = "Profit";
         
         this.buttonList.add(new GuiButton(0, i + 103, j + 7, 45, 20, ChangeButton));        
 
-        if (tilevendor.getField(2) == 1) {
+        if (tileVendor.getField(2) == 1) {
             this.buttonList.add(new CustomButton(1, i + 176, j + 20, 0, 21, 21, 22, "", TAB_TEXTURE));   //Lock Tab
             this.buttonList.add(new CustomButton(2, i + 176, j + 43, 0, 0, 21, 21, "", TAB_TEXTURE));   //Gear Tab
-            if(tilevendor.getField(5) == 1) {
+            if(tileVendor.getField(5) == 1) {
                 this.buttonList.add(new CustomButton(3, i + 176, j + 65, 0, 44, 21, 21, "", TAB_TEXTURE));   //Creative Tab
                 this.buttonList.add(new GuiButton(4, i + 198, j + 85, 45, 20, "BORKED"));
                 this.buttonList.get(4).visible = false;
@@ -189,7 +197,7 @@ public class GuiBuySell extends GuiContainer {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         
         //Draw Lock Icon
-        if (tilevendor.getField(1) == 1) {
+        if (getTileField(1,0) == 1) {
             drawTexturedModalRect(180, 23, 245, 15, 11, 16);
         } else {
             drawTexturedModalRect(180, 25, 245, 0, 11, 14);
@@ -200,27 +208,27 @@ public class GuiBuySell extends GuiContainer {
         drawTexturedModalRect(174, 46, 237, 32, 19, 15);
 
         //Draw Creative Icon
-        if(tilevendor.getField(5) == 1) {
+        if(getTileField(5,0) == 1) {
             if(!gearExtended) {
                 this.buttonList.set(3,(new CustomButton(3, i + 176, j + 65, 0, 44, 21, 21, "", TAB_TEXTURE)));   //Creative Tab
-                if(creativeExtended && tilevendor.getField(5) == 1) {
-                    this.buttonList.set(4,(new GuiButton(4, i + 198, j + 85, 45, 20, ((tilevendor.getField(6) == 1) ? "Enabled" : "Disabled"))));
+                if(creativeExtended && getTileField(5,0) == 1) {
+                    this.buttonList.set(4,(new GuiButton(4, i + 198, j + 85, 45, 20, ((getTileField(6,0) == 1) ? "Enabled" : "Disabled"))));
                     drawTexturedModalRect(176, 65, 27, 48, 91, 47);
-                }else if(!creativeExtended && tilevendor.getField(5) == 1) this.buttonList.get(4).visible = false;
+                }else if(!creativeExtended && getTileField(5,0) == 1) this.buttonList.get(4).visible = false;
                 drawTexturedModalRect(175, 71, 237, 48, 19, 9);
             }else{
                 this.buttonList.set(3,(new CustomButton(3, i + 176, j + 91, 0, 44, 21, 21, "", TAB_TEXTURE)));   //Creative Tab
-                 if(creativeExtended  && tilevendor.getField(5) == 1) {
-                     this.buttonList.set(4,(new GuiButton(4, i + 198, j + 111, 45, 20, ((tilevendor.getField(6) == 1) ? "Enabled" : "Disabled"))));
+                 if(creativeExtended  && getTileField(5,0) == 1) {
+                     this.buttonList.set(4,(new GuiButton(4, i + 198, j + 111, 45, 20, ((getTileField(6,0) == 1) ? "Enabled" : "Disabled"))));
                      drawTexturedModalRect(176, 91, 27, 48, 91, 47);
-                 }else if (!creativeExtended && tilevendor.getField(5) == 1) this.buttonList.get(4).visible = false;
+                 }else if (!creativeExtended && getTileField(5,0) == 1) this.buttonList.get(4).visible = false;
                  drawTexturedModalRect(175, 97, 237, 48, 19, 9);
             }
         }
 
         if(gearExtended) {
             //Draw Selected Slot Overlay
-            int slotId = tilevendor.getField(3) - 37;
+            int slotId = getTileField(3,0) - 37;
             int slotColumn, slotRow;
 
             if (slotId >= 0 && slotId <= 4) {
@@ -254,28 +262,30 @@ public class GuiBuySell extends GuiContainer {
         int j = (y - (this.height - this.ySize) / 2);
 
         if(j < 140 && j > 30) {
-            IItemHandler itemHandler = this.tilevendor.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
             int startX = 43;
             int startY = 31;
-
             int row = ((i - startX) / 18);
             int column = ((j - startY) / 18);
-
             int slot = row + (column * 5);
-
-            ItemStack currStack = tilevendor.getStack(slot + 1);
+            ItemStack currStack;
+            
+            if(tileVendor != null){
+                currStack = tileVendor.getStack(slot + 1);
+            }else{
+                currStack = tileSeller.getStack(slot + 1);
+            }
 
             List<String> list = new ArrayList<>();
             list.add(String.valueOf(currStack.getDisplayName()));
-            list.add("$" + (String.valueOf(tilevendor.getItemCost(slot))));
-
+            list.add("$" + (String.valueOf(getTileField(slot,1))));
 
             FontRenderer font = stack.getItem().getFontRenderer(stack);
             net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(stack);
             this.drawHoveringText(list, x, y, (font == null ? fontRendererObj : font));
             net.minecraftforge.fml.client.config.GuiUtils.postItemToolTip();
 
-            tilevendor.getWorld().notifyBlockUpdate(tilevendor.getPos(), tilevendor.getBlockType().getDefaultState(), tilevendor.getBlockType().getDefaultState(), 3);
+            if(tileVendor != null) tileVendor.getWorld().notifyBlockUpdate(tileVendor.getPos(), tileVendor.getBlockType().getDefaultState(), tileVendor.getBlockType().getDefaultState(), 3);
+            if(tileSeller != null) tileSeller.getWorld().notifyBlockUpdate(tileSeller.getPos(), tileSeller.getBlockType().getDefaultState(), tileSeller.getBlockType().getDefaultState(), 3);
         }else{
             super.renderToolTip(stack, x, y);
         }
@@ -295,7 +305,7 @@ public class GuiBuySell extends GuiContainer {
     
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        if(tilevendor.getField(2) == 1) {
+        if(getTileField(2,0) == 1) {
             super.mouseClicked(mouseX, mouseY, mouseButton);
             nameField.mouseClicked(mouseX, mouseY, mouseButton);
             if (gearExtended && mouseButton == 0) updateTextField();
@@ -311,19 +321,25 @@ public class GuiBuySell extends GuiContainer {
         switch (button.id) {
             case 0:         //Change Button
                 PacketSendItemToServer pack0 = new PacketSendItemToServer();
-                pack0.setBlockPos(tilevendor.getPos());
+                if(tileVendor != null) pack0.setBlockPos(tileVendor.getPos());
+                if(tileSeller != null) pack0.setBlockPos(tileSeller.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack0);
                 break;
             case 1: //Lock Button
                 PacketSendIntData pack1 = new PacketSendIntData();
-                pack1.setData((tilevendor.getField(1) == 1) ? 0 : 1, tilevendor.getPos(), 0);
+                if(tileVendor != null) pack1.setData((tileVendor.getField(1) == 1) ? 0 : 1, tileVendor.getPos(), 0);
+                if(tileSeller != null) pack1.setData((tileSeller.getField(1) == 1) ? 0 : 1, tileSeller.getPos(), 0);
                 PacketHandler.INSTANCE.sendToServer(pack1);
-                tilevendor.getWorld().notifyBlockUpdate(tilevendor.getPos(), tilevendor.getBlockType().getDefaultState(), tilevendor.getBlockType().getDefaultState(), 3);
+
+
+                if(tileVendor != null) tileVendor.getWorld().notifyBlockUpdate(tileVendor.getPos(), tileVendor.getBlockType().getDefaultState(), tileVendor.getBlockType().getDefaultState(), 3);
+                if(tileSeller != null) tileSeller.getWorld().notifyBlockUpdate(tileSeller.getPos(), tileSeller.getBlockType().getDefaultState(), tileSeller.getBlockType().getDefaultState(), 3);
                 break;
             case 2:
                 gearExtended = !gearExtended;
                 PacketSendIntData pack2 = new PacketSendIntData();
-                pack2.setData(gearExtended ? 1 : 0, tilevendor.getPos(), 4);
+                if(tileVendor != null) pack2.setData(gearExtended ? 1 : 0, tileVendor.getPos(), 4);
+                if(tileSeller != null) pack2.setData(gearExtended ? 1 : 0, tileSeller.getPos(), 4);
                 PacketHandler.INSTANCE.sendToServer(pack2);
                 break;
             case 3:
@@ -331,7 +347,8 @@ public class GuiBuySell extends GuiContainer {
                 break;
             case 4:
                 PacketSendIntData pack4 = new PacketSendIntData();
-                pack4.setData((tilevendor.getField(6) == 1) ? 0 : 1, tilevendor.getPos(), 3);
+                if(tileVendor != null) pack4.setData((tileVendor.getField(6) == 1) ? 0 : 1, tileVendor.getPos(), 3);
+                if(tileSeller != null) pack4.setData((tileSeller.getField(6) == 1) ? 0 : 1, tileSeller.getPos(), 3);
                 PacketHandler.INSTANCE.sendToServer(pack4);
                 break;
         }
