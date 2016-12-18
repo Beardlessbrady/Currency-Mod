@@ -1,7 +1,7 @@
 {
 	"__comment": "Designed by Beardlessbrady with Cubik Studio - https://cubik.studio",
 	"textures": {
-		"VendTextures": "modcurrency:blocks/vendor/vend_BLACK"
+		"VendTextures": "modcurrency:blocks/buysell/buysell_black"
 	},
 	"elements": [
 		{
@@ -9,7 +9,12 @@
 			"from": [ 4, 7, 0.5 ],
 			"to": [ 15, 30, 0.75 ],
 			"faces": {
-				"north": { "uv": [ 8.5, 4.5, 9.5, 5.5 ], "texture": "#VendTextures" }
+				"down": { "uv": [ 11.5, 0, 12.5, 0.5 ], "texture": "#VendTextures" },
+				"up": { "uv": [ 11.5, 0.5, 12.5, 0 ], "texture": "#VendTextures" },
+				"north": { "uv": [ 12.5, 0, 11.5, 0.5 ], "texture": "#VendTextures" },
+				"south": { "uv": [ 11.5, 0, 12.5, 0.5 ], "texture": "#VendTextures" },
+				"west": { "uv": [ 11.5, 0, 12, 0.5 ], "texture": "#VendTextures" },
+				"east": { "uv": [ 12.5, 0, 12, 0.5 ], "texture": "#VendTextures" }
 			}
 		}
 	]

@@ -159,36 +159,33 @@ public class BlockTop extends Block{
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
         int faceData = 0;
-        switch(whatBlock(worldIn, pos)){
-            case -1: break;
-            case 0:
-                TileVendor tile = (TileVendor) worldIn.getTileEntity(pos.down());
-                faceData = tile.getField(7);
-                break;
-        }
+
+        ModTile tile = (ModTile) worldIn.getTileEntity(pos.down());
+        faceData = tile.getField(7);
 
         EnumFacing face = EnumFacing.NORTH;
-        switch(faceData){
+        switch(faceData) {
+        case 1:
+            face = EnumFacing.EAST;
+            break;
+        case 2:
+            face = EnumFacing.SOUTH;
+            break;
+        case 3:
+            face = EnumFacing.WEST;
+            break;
+    }
+
+    StateHandler.EnumTopTypes type = StateHandler.EnumTopTypes.VENDOR;
+        switch(whatBlock(worldIn, pos)) {
             case 1:
-                face = EnumFacing.EAST;
-                break;
-            case 2:
-                face = EnumFacing.SOUTH;
-                break;
-            case 3:
-                face = EnumFacing.WEST;
-                break;
-        }
-
-        StateHandler.EnumTopTypes type= StateHandler.EnumTopTypes.VENDOR;
-        switch(whatBlock(worldIn,pos)){
-            case 1: type = StateHandler.EnumTopTypes.SELLER;
+                type = StateHandler.EnumTopTypes.SELLER;
         }
 
 
-        return getDefaultState().withProperty(StateHandler.FACING, face)
-                .withProperty(StateHandler.COLOR, worldIn.getBlockState(pos.down()).getValue(StateHandler.COLOR))
-                .withProperty(StateHandler.TOP, type);
+            return getDefaultState().withProperty(StateHandler.FACING, face)
+                    .withProperty(StateHandler.COLOR, worldIn.getBlockState(pos.down()).getValue(StateHandler.COLOR))
+                    .withProperty(StateHandler.TOP, type);
     }
     //</editor-fold>
 }

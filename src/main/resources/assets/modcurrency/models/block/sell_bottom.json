@@ -1,7 +1,7 @@
 {
 	"__comment": "Designed by Beardlessbrady with Cubik Studio - https://cubik.studio",
 	"textures": {
-		"texture": "sell_texture"
+		"texture": "#texture"
 	},
 	"elements": [
 		{
@@ -31,7 +31,7 @@
 			"from": [ 4.2981, 7.2, 0.4 ],
 			"to": [ 14.7981, 16, 0.401 ],
 			"faces": {
-				"north": { "uv": [ 8.5, 6.5, 13, 10.5 ], "texture": "#texture" },
+				"north": { "uv": [ 8.5, 10, 13, 14 ], "texture": "#texture" },
 				"south": { "uv": [ 4.5, 0, 15.1, 9 ], "texture": "#texture" }
 			}
 		},
