@@ -101,7 +101,6 @@ public class BlockVendor extends Block implements ITileEntityProvider {
         }
     }
 
-
     @Override
     public boolean isOpaqueCube(IBlockState state) {
         return false;
@@ -209,7 +208,7 @@ public class BlockVendor extends Block implements ITileEntityProvider {
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, new IProperty[] {StateHandler.COLOR, StateHandler.FACING, StateHandler.ITEM});
     }
-    
+
     @Override
     public IBlockState getStateFromMeta(int meta) {
         return this.getDefaultState().withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(meta));
@@ -225,7 +224,7 @@ public class BlockVendor extends Block implements ITileEntityProvider {
         EnumFacing face = EnumFacing.NORTH;
         TileVendor tile = (TileVendor)worldIn.getTileEntity(pos);
         int i = tile.getField(7);
-        
+
         switch(i){
             case 0: face = EnumFacing.NORTH;
                 break;
@@ -236,7 +235,7 @@ public class BlockVendor extends Block implements ITileEntityProvider {
             case 3: face = EnumFacing.WEST;
                 break;
         }
-        
+
         return state.withProperty(StateHandler.FACING, face).withProperty(StateHandler.ITEM, false);
     }
     //</editor-fold>

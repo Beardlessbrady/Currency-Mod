@@ -1,8 +1,8 @@
 package gunn.modcurrency.common.blocks;
 
-import gunn.modcurrency.common.tiles.TileSeller;
-import gunn.modcurrency.common.tiles.TileVendor;
+import gunn.modcurrency.api.ModTile;
 import gunn.modcurrency.common.core.handler.StateHandler;
+import gunn.modcurrency.common.tiles.TileVendor;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -58,16 +58,18 @@ public class BlockTop extends Block{
 
     public int whatBlock(World world, BlockPos pos){
         if(world.getBlockState(pos.down()).getBlock().equals(ModBlocks.blockVendor)) return 0;
+        if(world.getBlockState(pos.down()).getBlock().equals(ModBlocks.blockSeller)) return 1;
         return -1;
     }
 
     public int whatBlock(IBlockAccess world, BlockPos pos){
         if(world.getBlockState(pos.down()).getBlock().equals(ModBlocks.blockVendor)) return 0;
+        if(world.getBlockState(pos.down()).getBlock().equals(ModBlocks.blockSeller)) return 1;
         return -1;
     }
 
-    public TileVendor getTile(World world, BlockPos pos) {
-        return (TileVendor) world.getTileEntity(pos.down());
+    public ModTile getTile(World world, BlockPos pos) {
+        return (ModTile) world.getTileEntity(pos.down());
     }
 
     @Override
@@ -105,7 +107,8 @@ public class BlockTop extends Block{
                     getTile(world,pos).getWorld().notifyBlockUpdate(getTile(world,pos).getPos(), getTile(world,pos).getBlockType().getDefaultState(), getTile(world,pos).getBlockType().getDefaultState(), 3);
                     return true;
                 }
-                getTile(world,pos).openGui(player, world, pos.down());
+                TileVendor te = (TileVendor) getTile(world,pos);
+                te.openGui(player, world, pos.down());
                 return true;
             //</editor-fold>
         }
@@ -117,7 +120,7 @@ public class BlockTop extends Block{
         switch(whatBlock(worldIn,pos)){
             case -1: break;
             case 0:
-                TileVendor te = getTile(worldIn, pos);
+                TileVendor te = (TileVendor) getTile(worldIn, pos);
                 te.setField(2,1);
                 te.outChange();
                 te.setField(2,0);
@@ -177,9 +180,15 @@ public class BlockTop extends Block{
                 break;
         }
 
+        StateHandler.EnumTopTypes type= StateHandler.EnumTopTypes.VENDOR;
+        switch(whatBlock(worldIn,pos)){
+            case 1: type = StateHandler.EnumTopTypes.SELLER;
+        }
+
 
         return getDefaultState().withProperty(StateHandler.FACING, face)
-                .withProperty(StateHandler.COLOR, worldIn.getBlockState(pos.down()).getValue(StateHandler.COLOR));
+                .withProperty(StateHandler.COLOR, worldIn.getBlockState(pos.down()).getValue(StateHandler.COLOR))
+                .withProperty(StateHandler.TOP, type);
     }
     //</editor-fold>
 }

@@ -5,11 +5,116 @@
     "model": "modcurrency:seller_bottom",
     "textures": {
       "particle": "blocks/coal_block",
-      "texture": "modcurrency:blocks/vendor/seller_BLACK"
+      "texture": "modcurrency:blocks/seller/sell_BLACK"
     }
   },
   "variants": {
     "normal": [{}],
-    "inventory": [{}]
+    "inventory": [{}],
+    "item": {
+      "true": {
+        "model": "modcurrency:seller_item"
+      },
+      "false": {}
+    },
+    "color": {
+      "white":{
+        "textures": {
+          "particle": "blocks/quartz_block_side",
+          "texture": "modcurrency:blocks/seller/sell_WHITE"
+        }
+      },
+      "orange":{
+        "textures": {
+          "particle": "blocks/wool_colored_orange",
+          "texture": "modcurrency:blocks/seller/sell_ORANGE"
+        }
+      },
+      "magenta":{
+        "textures": {
+          "particle": "blocks/wool_colored_magenta",
+          "texture": "modcurrency:blocks/seller/sell_MAGENTA"
+        }
+      },
+      "light_blue":{
+        "textures": {
+          "particle": "blocks/wool_colored_light_blue",
+          "texture": "modcurrency:blocks/seller/sell_LIGHTBLUE"
+        }
+      },
+      "yellow":{
+        "textures": {
+          "particle": "blocks/gold_block",
+          "texture": "modcurrency:blocks/seller/sell_YELLOW"
+        }
+      },
+      "lime":{
+        "textures": {
+          "particle": "blocks/wool_colored_lime",
+          "texture": "modcurrency:blocks/seller/sell_LIME"
+        }
+      },
+      "pink":{
+        "textures": {
+          "particle": "blocks/wool_colored_pink",
+          "texture": "modcurrency:blocks/seller/sell_PINK"
+        }
+      },
+      "gray":{
+        "textures": {
+          "particle": "blocks/wool_colored_gray",
+          "texture": "modcurrency:blocks/seller/sell_GRAY"
+        }
+      },
+      "silver":{
+        "textures": {
+          "particle": "blocks/wool_colored_silver",
+          "texture": "modcurrency:blocks/seller/sell_SILVER"
+        }
+      },
+      "cyan":{
+        "textures": {
+          "particle": "blocks/wool_colored_cyan",
+          "texture": "modcurrency:blocks/seller/sell_CYAN"
+        }
+      },
+      "purple":{
+        "textures": {
+          "particle": "blocks/wool_colored_purple",
+          "texture": "modcurrency:blocks/seller/sell_PURPLE"
+        }
+      },
+      "blue":{
+        "textures": {
+          "particle": "blocks/wool_colored_blue",
+          "texture": "modcurrency:blocks/seller/sell_BLUE"
+        }
+      },
+      "brown":{
+        "textures": {
+          "particle": "blocks/hardened_clay_stained_brown",
+          "texture": "modcurrency:blocks/seller/sell_BROWN"
+        }
+      },
+      "green":{
+        "textures": {
+          "particle": "blocks/wool_colored_green",
+          "texture": "modcurrency:blocks/seller/sell_GREEN"
+        }
+      },
+      "red":{
+        "textures": {
+          "particle": "blocks/hardened_clay_stained_red",
+          "texture": "modcurrency:blocks/seller/sell_RED"
+        }
+      },
+      "black":{}
+    },
+    "facing": {
+      "north": {},
+      "south": {"y": 180},
+      "west": {"y": 270},
+      "east": {"y": 90}
+    }
   }
 }

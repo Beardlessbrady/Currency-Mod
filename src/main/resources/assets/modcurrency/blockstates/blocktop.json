@@ -14,7 +14,10 @@
     "top":{
       "vendor":{},
       "seller":{
-        "model": "modcurrency:seller_top"
+        "model": "modcurrency:seller_top",
+        "textures": {
+          "texture": "modcurrency:blocks/seller/sell_BLACK"
+        }
       }
     },
     "color": {

@@ -1,9 +1,37 @@
 {
 	"__comment": "Designed by Beardlessbrady with Cubik Studio - https://cubik.studio",
 	"textures": {
-		"texture": "#texture"
+		"texture": "sell_texture"
 	},
 	"elements": [
+		{
+			"__comment": "Cube13",
+			"from": [ 15, 0, 0 ],
+			"to": [ 16, 15, 1 ],
+			"faces": {
+				"north": { "uv": [ 0, 0.5, 0.5, 8 ], "texture": "#texture" },
+				"west": { "uv": [ 0, 1.5, 0.5, 10.5 ], "texture": "#texture" },
+				"east": { "uv": [ 0, 2, 0.5, 11 ], "texture": "#texture" }
+			}
+		},
+		{
+			"__comment": "PlaneZ16",
+			"from": [ 4.2981, -0.0071, 0.4 ],
+			"to": [ 14.7981, 13.7929, 0.401 ],
+			"faces": {
+				"north": { "uv": [ 8.5, 0.5, 13, 6 ], "texture": "#texture" },
+				"south": { "uv": [ 4.5, 0, 15.1, 9 ], "texture": "#texture" }
+			}
+		},
+		{
+			"__comment": "Cube17",
+			"from": [ 4, 0, 0.5 ],
+			"to": [ 15, 14, 1.5 ],
+			"faces": {
+				"north": { "uv": [ 0.5, 1, 6, 12 ], "texture": "#texture" },
+				"east": { "uv": [ 14.5, 0, 15.5, 10 ], "texture": "#texture" }
+			}
+		},
 		{
 			"__comment": "Cube11",
 			"from": [ 0, 15, 1 ],
@@ -28,7 +56,7 @@
 		},
 		{
 			"__comment": "Cube21",
-			"from": [ 4, 3, 0 ],
+			"from": [ 4, 3, 1 ],
 			"to": [ 16, 15, 15 ],
 			"faces": {
 				"north": { "uv": [ 0, 0.5, 6, 7.5 ], "texture": "#texture" },
@@ -37,7 +65,7 @@
 		},
 		{
 			"__comment": "Cube24",
-			"from": [ 0, 0, 0 ],
+			"from": [ 0, 0, 1 ],
 			"to": [ 16, 3, 16 ],
 			"faces": {
 				"down": { "uv": [ 10.5, 9, 14.5, 5.5 ], "texture": "#texture" },
@@ -65,7 +93,8 @@
 			"faces": {
 				"down": { "uv": [ 6, 0, 8, 2 ], "texture": "#texture" },
 				"north": { "uv": [ 6, 0.5, 8, 2 ], "texture": "#texture" },
-				"west": { "uv": [ 6, 0, 8, 2 ], "texture": "#texture" }
+				"west": { "uv": [ 6, 0, 8, 2 ], "texture": "#texture" },
+				"east": { "uv": [ 6.5, 1, 7.5, 2.5 ], "texture": "#texture" }
 			}
 		},
 		{
@@ -74,7 +103,8 @@
 			"to": [ 4, 6.5, 15 ],
 			"faces": {
 				"north": { "uv": [ 6, 0, 8, 2 ], "texture": "#texture" },
-				"west": { "uv": [ 6, 0, 8, 2.5 ], "texture": "#texture" }
+				"west": { "uv": [ 6, 0, 8, 2.5 ], "texture": "#texture" },
+				"east": { "uv": [ 7, 2.5, 8, 5 ], "texture": "#texture" }
 			}
 		},
 		{
@@ -92,7 +122,29 @@
 			"from": [ 0.5, 3, 0.5 ],
 			"to": [ 3.5, 6, 0.501 ],
 			"faces": {
-				"north": { "uv": [ 8.5, 14, 11, 16 ], "texture": "#texture" }
+				"north": { "uv": [ 4, 13, 6.5, 15 ], "texture": "#texture" },
+				"east": { "uv": [ 16, 15, 16, 16 ], "texture": "#texture" }
+			}
+		},
+		{
+			"__comment": "Cube25",
+			"from": [ 0, 0, 0 ],
+			"to": [ 4, 3, 1 ],
+			"faces": {
+				"down": { "uv": [ 1, 13, 5, 14 ], "texture": "#texture" },
+				"up": { "uv": [ 6, 8, 7.5, 9 ], "texture": "#texture" },
+				"north": { "uv": [ 6, 7, 6.5, 10 ], "texture": "#texture" },
+				"west": { "uv": [ 6.5, 1, 7.5, 4 ], "texture": "#texture" },
+				"east": { "uv": [ 6, 1.5, 7, 4.5 ], "texture": "#texture" }
+			}
+		},
+		{
+			"__comment": "Cube26",
+			"from": [ 4, 14, 0 ],
+			"to": [ 15, 15, 1 ],
+			"faces": {
+				"down": { "uv": [ 2.5, 0.5, 4.5, 1 ], "texture": "#texture" },
+				"north": { "uv": [ 0.5, 0.5, 6, 1 ], "texture": "#texture" }
 			}
 		}
 	]
