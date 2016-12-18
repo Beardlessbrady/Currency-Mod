@@ -1,6 +1,7 @@
 package gunn.modcurrency.common.containers;
 
 import gunn.modcurrency.common.items.ModItems;
+import gunn.modcurrency.api.ModTile;
 import gunn.modcurrency.common.tiles.TileSeller;
 import gunn.modcurrency.common.tiles.TileVendor;
 import gunn.modcurrency.common.core.util.SlotBank;
@@ -55,27 +56,14 @@ public class ContainerBuySell extends Container {
     private final int TE_VEND_ROW_COUNT = 5;
     private final int TE_VEND_TOTAL_COUNT = TE_VEND_COLUMN_COUNT * TE_VEND_ROW_COUNT;
 
-    private TileVendor tileVendor;
-    private TileSeller tileSeller;
+    private ModTile tile;
     private int[] cachedFields;
 
-    public ContainerBuySell(InventoryPlayer invPlayer, TileVendor tile) {
-        this.tileVendor = tile;
+    public ContainerBuySell(InventoryPlayer invPlayer, ModTile te) {
+        tile = te;
 
         setupPlayerInv(invPlayer);
         setupTeInv();
-    }
-
-    public ContainerBuySell(InventoryPlayer invPlayer, TileSeller tile) {
-        this.tileSeller = tile;
-
-        setupPlayerInv(invPlayer);
-        setupTeInv();
-    }
-
-    public void setTileField(int id, int data) {
-        if (tileVendor != null) tileVendor.setField(id, data);
-        if (tileSeller != null) tileSeller.setField(id, data);
     }
 
     private void setupPlayerInv(InventoryPlayer invPlayer) {
@@ -103,15 +91,10 @@ public class ContainerBuySell extends Container {
     private void setupTeInv() {
         final int TE_MONEY_XPOS = 152;
         final int TE_MONEY_YPOS = 9;
-        IItemHandler itemHandler;
+        IItemHandler itemHandler  = this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 
-        if (tileVendor != null) {
-            itemHandler = this.tileVendor.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-            addSlotToContainer(new SlotBank(itemHandler, 0, TE_MONEY_XPOS, TE_MONEY_YPOS));
-        } else {
-            itemHandler = this.tileSeller.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-            addSlotToContainer(new SlotItemHandler(itemHandler, 0, TE_MONEY_XPOS, TE_MONEY_YPOS));
-        }
+        if(tile instanceof TileVendor) addSlotToContainer(new SlotBank(itemHandler, 0, TE_MONEY_XPOS, TE_MONEY_YPOS));
+        if(tile instanceof TileSeller) addSlotToContainer(new SlotItemHandler(itemHandler, 0, TE_MONEY_XPOS, TE_MONEY_YPOS));
 
         final int SLOT_X_SPACING = 18;
         final int SLOT_Y_SPACING = 18;
@@ -130,28 +113,27 @@ public class ContainerBuySell extends Container {
 
     @Override
     public boolean canInteractWith(EntityPlayer playerIn) {
-        if (tileVendor != null) return tileVendor.canInteractWith(playerIn);
-        return tileSeller.canInteractWith(playerIn);
+        return tile.canInteractWith(playerIn);
     }
 
     @Nullable
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-        if (tileVendor != null) {
+        if (tile instanceof TileVendor) {
             //<editor-fold desc="Vendor Slot Click">
-            if (tileVendor.getField(2) == 1) {               //EDIT MODE
+            if (tile.getField(2) == 1) {               //EDIT MODE
                 if (slotId >= 0 && slotId <= 36) {
                     return super.slotClick(slotId, dragType, clickTypeIn, player);
-                } else if (slotId >= 37 && slotId <= 67 && tileVendor.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 0) {
-                    tileVendor.setField(3, slotId);
+                } else if (slotId >= 37 && slotId <= 67 && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 0) {
+                    tile.setField(3, slotId);
                     if (getSlot(slotId).getHasStack()) {
-                        tileVendor.setSelectedName(getSlot(slotId).getStack().getDisplayName());
+                        tile.setSelectedName(getSlot(slotId).getStack().getDisplayName());
                     } else {
-                        tileVendor.setSelectedName("No Item");
+                        tile.setSelectedName("No Item");
                     }
-                    tileVendor.getWorld().notifyBlockUpdate(tileVendor.getPos(), tileVendor.getBlockType().getDefaultState(), tileVendor.getBlockType().getDefaultState(), 3);
+                    tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
                     return null;
-                } else if (slotId >= 37 && slotId <= 67 && tileVendor.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 1) {
+                } else if (slotId >= 37 && slotId <= 67 && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 1) {
                     return super.slotClick(slotId, 0, clickTypeIn, player);
                 } else {
                     return super.slotClick(slotId, dragType, clickTypeIn, player);
@@ -171,19 +153,20 @@ public class ContainerBuySell extends Container {
             }
             //</editor-fold>
         } else {
-            if (tileSeller.getField(2) == 1) {        //Edit Mode
+            //<editor-fold desc="Seller Slot Click">
+            if (tile.getField(2) == 1) {        //Edit Mode
                 if (slotId >= 0 && slotId <= 36) {
                     return super.slotClick(slotId, dragType, clickTypeIn, player);
-                } else if (slotId >= 37 && slotId <= 67 && tileSeller.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 0) {
-                    tileSeller.setField(3, slotId);
+                } else if (slotId >= 37 && slotId <= 67 && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 0) {
+                    tile.setField(3, slotId);
                     if (getSlot(slotId).getHasStack()) {
-                        tileSeller.setSelectedName(getSlot(slotId).getStack().getDisplayName());
+                        tile.setSelectedName(getSlot(slotId).getStack().getDisplayName());
                     } else {
-                        tileSeller.setSelectedName("No Item");
+                        tile.setSelectedName("No Item");
                     }
-                    tileSeller.getWorld().notifyBlockUpdate(tileSeller.getPos(), tileSeller.getBlockType().getDefaultState(), tileSeller.getBlockType().getDefaultState(), 3);
+                    tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
                     return null;
-                } else if (slotId >= 37 && slotId <= 67 && tileSeller.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 1) {
+                } else if (slotId >= 37 && slotId <= 67 && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 1) {
                     return super.slotClick(slotId, 0, clickTypeIn, player);
                 } else {
                     return super.slotClick(slotId, dragType, clickTypeIn, player);
@@ -194,20 +177,19 @@ public class ContainerBuySell extends Container {
                     return super.slotClick(slotId, dragType, clickTypeIn, player);
                 }
             }
+            //</editor-fold>
         }
         return null;
     }
 
-
-    //For Vendor
     public ItemStack checkAfford(int slotId, int amnt, EntityPlayer player){
-        if(tileVendor != null) {
-            IItemHandler itemHandler = this.tileVendor.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        if(tile instanceof TileVendor) {
+            IItemHandler itemHandler = this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
             ItemStack playStack = player.inventory.getItemStack();
             ItemStack slotStack = itemHandler.getStackInSlot(slotId - PLAYER_TOTAL_COUNT);
             ItemStack playBuyStack;
-            int bank = tileVendor.getField(0);
-            int cost = tileVendor.getItemCost(slotId - PLAYER_TOTAL_COUNT - 1);
+            int bank = tile.getField(0);
+            int cost = tile.getItemCost(slotId - PLAYER_TOTAL_COUNT - 1);
 
             if (slotStack != null) {
                 if (playStack != null) {
@@ -216,12 +198,12 @@ public class ContainerBuySell extends Container {
                         return null; //Checks if player is holding stack, if its different then one being clicked do nothing
                     }
                 }
-                if (tileVendor.getField(6) == 0)
+                if (tile.getField(6) == 0)
                     if (slotStack.stackSize < amnt && slotStack.stackSize != 0) amnt = slotStack.stackSize;
 
                 if ((bank >= (cost * amnt))) {   //If has enough money, buy it
-                    if (slotStack.stackSize >= amnt || tileVendor.getField(6) == 1) {
-                        if (tileVendor.getField(6) == 0) slotStack.splitStack(amnt);
+                    if (slotStack.stackSize >= amnt || tile.getField(6) == 1) {
+                        if (tile.getField(6) == 0) slotStack.splitStack(amnt);
                         playBuyStack = slotStack.copy();
                         playBuyStack.stackSize = amnt;
 
@@ -229,8 +211,8 @@ public class ContainerBuySell extends Container {
                             playBuyStack.stackSize = amnt + playStack.stackSize;
                         }
                         player.inventory.setItemStack(playBuyStack);
-                        tileVendor.setField(0, bank - (cost * amnt));
-                        tileVendor.setField(4, tileVendor.getField(4) + cost * amnt);
+                        tile.setField(0, bank - (cost * amnt));
+                        tile.setField(4, tile.getField(4) + cost * amnt);
                     }
                 } else {
                 }
@@ -243,7 +225,7 @@ public class ContainerBuySell extends Container {
     @Nullable
     @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int index) {
-        if(tileVendor != null) {
+        if(tile instanceof TileVendor) {
             ItemStack sourceStack = null;
             Slot slot = this.inventorySlots.get(index);
 
@@ -257,7 +239,7 @@ public class ContainerBuySell extends Container {
                             return null;
                         }
                     } else {
-                        if (tileVendor.getField(2) == 1) {     //Only allow shift clicking from player inv in edit mode
+                        if (tile.getField(2) == 1) {     //Only allow shift clicking from player inv in edit mode
                             if (!this.mergeItemStack(copyStack, TE_VEND_FIRST_SLOT_INDEX, TE_VEND_FIRST_SLOT_INDEX + TE_VEND_TOTAL_COUNT, false)) {
                                 return null;
                             }
@@ -285,20 +267,20 @@ public class ContainerBuySell extends Container {
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        if(tileVendor != null) {
-            boolean fieldChanged[] = new boolean[tileVendor.getFieldCount()];
+        if(tile instanceof TileVendor) {
+            boolean fieldChanged[] = new boolean[tile.getFieldCount()];
 
-            if (cachedFields == null) cachedFields = new int[tileVendor.getFieldCount()];
+            if (cachedFields == null) cachedFields = new int[tile.getFieldCount()];
 
             for (int i = 0; i < cachedFields.length; i++) {
-                if (cachedFields[i] != tileVendor.getField(i)) {
-                    cachedFields[i] = tileVendor.getField(i);
+                if (cachedFields[i] != tile.getField(i)) {
+                    cachedFields[i] = tile.getField(i);
                     fieldChanged[i] = true;
                 }
             }
 
             for (IContainerListener listener : this.listeners) {
-                for (int field = 0; field < tileVendor.getFieldCount(); ++field) {
+                for (int field = 0; field < tile.getFieldCount(); ++field) {
                     if (fieldChanged[field]) listener.sendProgressBarUpdate(this, field, cachedFields[field]);
                 }
             }
@@ -307,6 +289,6 @@ public class ContainerBuySell extends Container {
 
     @Override
     public void updateProgressBar(int id, int data) {
-        setTileField(id,data);
+        tile.setField(id,data);
     }
 }

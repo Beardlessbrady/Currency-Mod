@@ -4,6 +4,7 @@ import gunn.modcurrency.common.containers.ContainerBuySell;
 import gunn.modcurrency.common.core.handler.PacketHandler;
 import gunn.modcurrency.common.core.network.PacketSendIntData;
 import gunn.modcurrency.common.core.network.PacketSendItemToServer;
+import gunn.modcurrency.api.ModTile;
 import gunn.modcurrency.common.tiles.TileSeller;
 import gunn.modcurrency.common.tiles.TileVendor;
 import gunn.modcurrency.common.core.util.CustomButton;
@@ -17,8 +18,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -48,45 +47,22 @@ import java.util.List;
 public class GuiBuySell extends GuiContainer {
     private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/GuiVendorTexture.png");
     private static final ResourceLocation TAB_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/GuiVendorTabTexture.png");
-    private TileVendor tileVendor;
-    private TileSeller tileSeller;
+    private ModTile tile;
     private GuiTextField nameField;
     private boolean gearExtended, creativeExtended;
     
     private String header;
 
-    public GuiBuySell(InventoryPlayer invPlayer, TileVendor tile) {
-        super(new ContainerBuySell(invPlayer, tile));
-        tileVendor = tile;
-        xSize = 176;
-        ySize = 235;
-        gearExtended = false;
-        creativeExtended = false;
-        
-        header = "Vending Machine";
-    }
-
-    public GuiBuySell(InventoryPlayer invPlayer, TileSeller tile) {
-        super(new ContainerBuySell(invPlayer, tile));
-        tileSeller = tile;
+    public GuiBuySell(InventoryPlayer invPlayer, ModTile te) {
+        super(new ContainerBuySell(invPlayer, te));
+        tile = te;
         xSize = 176;
         ySize = 235;
         gearExtended = false;
         creativeExtended = false;
 
-        header = "Exchange Machine";
-    }
-
-    public int getTileField(int field, int type){
-        if(type == 0) { //Normal Fields
-            if (tileVendor != null) return tileVendor.getField(field);
-            if (tileSeller != null) return tileSeller.getField(field);
-            return -1;
-        }else if (type == 1) { //Cost
-            if (tileVendor != null) return tileVendor.getItemCost(field);
-            if (tileSeller != null) return tileSeller.getItemCost(field);
-        }
-        return -1;
+        if(tile instanceof TileVendor) header = "Vending Machine";
+        if(tile instanceof TileSeller) header = "Exchange Machine";;
     }
     
     //Sends packet of new cost to server
@@ -95,19 +71,16 @@ public class GuiBuySell extends GuiContainer {
             int newCost = Integer.valueOf(this.nameField.getText());
 
             PacketSendIntData pack = new PacketSendIntData();
-            if(tileVendor != null) pack.setData(newCost, tileVendor.getPos(), 1);
-            if(tileSeller != null) pack.setData(newCost, tileSeller.getPos(), 1);
+            pack.setData(newCost, tile.getPos(), 1);
 
             PacketHandler.INSTANCE.sendToServer(pack);
-
-            if(tileVendor != null) tileVendor.getWorld().notifyBlockUpdate(tileVendor.getPos(), tileVendor.getBlockType().getDefaultState(), tileVendor.getBlockType().getDefaultState(), 3);
-            if(tileSeller != null) tileSeller.getWorld().notifyBlockUpdate(tileSeller.getPos(), tileSeller.getBlockType().getDefaultState(), tileSeller.getBlockType().getDefaultState(), 3);
+            tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
         }
     }
 
     //Updates Cost text field
     private void updateTextField() {
-        this.nameField.setText(String.valueOf(getTileField(3,0) - 37));
+        this.nameField.setText(String.valueOf(tile.getItemCost(tile.getField(3) -37)));
     }
 
     //<editor-fold desc="Drawing Gui Assets--------------------------------------------------------------------------------------------------">
@@ -128,10 +101,10 @@ public class GuiBuySell extends GuiContainer {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
         fontRendererObj.drawString(I18n.format(header), 5, 7, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("Inventory"), 4, 142, Color.darkGray.getRGB());
-        if(getTileField(2,0) == 0) fontRendererObj.drawString(I18n.format("Cash") + ": $" + getTileField(0,0), 5, 16, Color.darkGray.getRGB());
-        if (getTileField(2,0) == 1) {
+        if(tile.getField(2) == 0) fontRendererObj.drawString(I18n.format("Cash") + ": $" + tile.getField(0), 5, 16, Color.darkGray.getRGB());
+        if (tile.getField(2) == 1) {
             drawIcons();
-            fontRendererObj.drawString(I18n.format("Profit") + ": $" + getTileField(4,0), 5, 16, Color.darkGray.getRGB());
+            fontRendererObj.drawString(I18n.format("Profit") + ": $" + tile.getField(4), 5, 16, Color.darkGray.getRGB());
 
             if (gearExtended) {
                 fontRendererObj.drawString(I18n.format("Slot Settings"), 197, 51, Integer.parseInt("42401c", 16));
@@ -140,9 +113,7 @@ public class GuiBuySell extends GuiContainer {
                 fontRendererObj.drawString(I18n.format("Cost:"), 184, 72, Color.lightGray.getRGB());
                 fontRendererObj.drawString(I18n.format("$"), 210, 72, Integer.parseInt("0099ff", 16));
                 
-                String selectedName = "";
-                if(tileVendor != null) selectedName = tileVendor.getSelectedName();
-                if(tileSeller != null) selectedName = tileSeller.getSelectedName();
+                String selectedName = tile.getSelectedName();
                 
                 GL11.glPushMatrix();
                     GL11.glScaled(0.7, 0.7, 0.7);
@@ -169,14 +140,14 @@ public class GuiBuySell extends GuiContainer {
         int j = (this.height - this.ySize) / 2;
         String ChangeButton = "Change";
         
-        if(getTileField(2, 0) == 1) ChangeButton = "Profit";
+        if(tile.getField(2) == 1) ChangeButton = "Profit";
         
         this.buttonList.add(new GuiButton(0, i + 103, j + 7, 45, 20, ChangeButton));        
 
-        if (getTileField(2,0) == 1) {
+        if (tile.getField(2) == 1) {
             this.buttonList.add(new CustomButton(1, i + 176, j + 20, 0, 21, 21, 22, "", TAB_TEXTURE));   //Lock Tab
             this.buttonList.add(new CustomButton(2, i + 176, j + 43, 0, 0, 21, 21, "", TAB_TEXTURE));   //Gear Tab
-            if(getTileField(5,0) == 1) {
+            if(tile.getField(5) == 1) {
                 this.buttonList.add(new CustomButton(3, i + 176, j + 65, 0, 44, 21, 21, "", TAB_TEXTURE));   //Creative Tab
                 this.buttonList.add(new GuiButton(4, i + 198, j + 85, 45, 20, "BORKED"));
                 this.buttonList.get(4).visible = false;
@@ -197,7 +168,7 @@ public class GuiBuySell extends GuiContainer {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         
         //Draw Lock Icon
-        if (getTileField(1,0) == 1) {
+        if (tile.getField(1) == 1) {
             drawTexturedModalRect(180, 23, 245, 15, 11, 16);
         } else {
             drawTexturedModalRect(180, 25, 245, 0, 11, 14);
@@ -208,27 +179,27 @@ public class GuiBuySell extends GuiContainer {
         drawTexturedModalRect(174, 46, 237, 32, 19, 15);
 
         //Draw Creative Icon
-        if(getTileField(5,0) == 1) {
+        if(tile.getField(5) == 1) {
             if(!gearExtended) {
                 this.buttonList.set(3,(new CustomButton(3, i + 176, j + 65, 0, 44, 21, 21, "", TAB_TEXTURE)));   //Creative Tab
-                if(creativeExtended && getTileField(5,0) == 1) {
-                    this.buttonList.set(4,(new GuiButton(4, i + 198, j + 85, 45, 20, ((getTileField(6,0) == 1) ? "Enabled" : "Disabled"))));
+                if(creativeExtended && tile.getField(5) == 1) {
+                    this.buttonList.set(4,(new GuiButton(4, i + 198, j + 85, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
                     drawTexturedModalRect(176, 65, 27, 48, 91, 47);
-                }else if(!creativeExtended && getTileField(5,0) == 1) this.buttonList.get(4).visible = false;
+                }else if(!creativeExtended && tile.getField(5) == 1) this.buttonList.get(4).visible = false;
                 drawTexturedModalRect(175, 71, 237, 48, 19, 9);
             }else{
                 this.buttonList.set(3,(new CustomButton(3, i + 176, j + 91, 0, 44, 21, 21, "", TAB_TEXTURE)));   //Creative Tab
-                 if(creativeExtended  && getTileField(5,0) == 1) {
-                     this.buttonList.set(4,(new GuiButton(4, i + 198, j + 111, 45, 20, ((getTileField(6,0) == 1) ? "Enabled" : "Disabled"))));
+                 if(creativeExtended  && tile.getField(5) == 1) {
+                     this.buttonList.set(4,(new GuiButton(4, i + 198, j + 111, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
                      drawTexturedModalRect(176, 91, 27, 48, 91, 47);
-                 }else if (!creativeExtended && getTileField(5,0) == 1) this.buttonList.get(4).visible = false;
+                 }else if (!creativeExtended && tile.getField(5) == 1) this.buttonList.get(4).visible = false;
                  drawTexturedModalRect(175, 97, 237, 48, 19, 9);
             }
         }
 
         if(gearExtended) {
             //Draw Selected Slot Overlay
-            int slotId = getTileField(3,0) - 37;
+            int slotId = tile.getField(3) - 37;
             int slotColumn, slotRow;
 
             if (slotId >= 0 && slotId <= 4) {
@@ -267,25 +238,18 @@ public class GuiBuySell extends GuiContainer {
             int row = ((i - startX) / 18);
             int column = ((j - startY) / 18);
             int slot = row + (column * 5);
-            ItemStack currStack;
-
-            if(tileVendor != null){
-                currStack = tileVendor.getStack(slot + 1);
-            }else{
-                currStack = tileSeller.getStack(slot + 1);
-            }
+            ItemStack currStack = tile.getStack(slot + 1);
 
             List<String> list = new ArrayList<>();
             list.add(String.valueOf(currStack.getDisplayName()));
-            list.add("$" + (String.valueOf(getTileField(slot,1))));
+            list.add("$" + (String.valueOf(tile.getItemCost(slot))));
 
             FontRenderer font = stack.getItem().getFontRenderer(stack);
             net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(stack);
             this.drawHoveringText(list, x, y, (font == null ? fontRendererObj : font));
             net.minecraftforge.fml.client.config.GuiUtils.postItemToolTip();
 
-            if(tileVendor != null) tileVendor.getWorld().notifyBlockUpdate(tileVendor.getPos(), tileVendor.getBlockType().getDefaultState(), tileVendor.getBlockType().getDefaultState(), 3);
-            if(tileSeller != null) tileSeller.getWorld().notifyBlockUpdate(tileSeller.getPos(), tileSeller.getBlockType().getDefaultState(), tileSeller.getBlockType().getDefaultState(), 3);
+            tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
         }else{
             super.renderToolTip(stack, x, y);
         }
@@ -296,7 +260,7 @@ public class GuiBuySell extends GuiContainer {
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         int numChar = Character.getNumericValue(typedChar);
-        if ((getTileField(2,0) == 1) && (numChar >= 0 && numChar <= 9) || (keyCode == 14) || keyCode == 211 || (keyCode == 203) || (keyCode == 205)) { //Ensures keys input are only numbers or backspace type keys
+        if ((tile.getField(2) == 1) && (numChar >= 0 && numChar <= 9) || (keyCode == 14) || keyCode == 211 || (keyCode == 203) || (keyCode == 205)) { //Ensures keys input are only numbers or backspace type keys
             if (this.nameField.textboxKeyTyped(typedChar, keyCode)) setCost();
         } else {
             super.keyTyped(typedChar, keyCode);
@@ -305,7 +269,7 @@ public class GuiBuySell extends GuiContainer {
     
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        if(getTileField(2,0) == 1) {
+        if(tile.getField(2) == 1) {
             super.mouseClicked(mouseX, mouseY, mouseButton);
             nameField.mouseClicked(mouseX, mouseY, mouseButton);
             if (gearExtended && mouseButton == 0) updateTextField();
@@ -321,26 +285,20 @@ public class GuiBuySell extends GuiContainer {
         switch (button.id) {
             case 0:         //Change Button
                 PacketSendItemToServer pack0 = new PacketSendItemToServer();
-                if(tileVendor != null) pack0.setBlockPos(tileVendor.getPos());
-                if(tileSeller != null) pack0.setBlockPos(tileSeller.getPos());
+                pack0.setBlockPos(tile.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack0);
                 break;
             case 1: //Lock Button
                 PacketSendIntData pack1 = new PacketSendIntData();
-                if(tileVendor != null) pack1.setData((tileVendor.getField(1) == 1) ? 0 : 1, tileVendor.getPos(), 0);
-                if(tileSeller != null) pack1.setData((tileSeller.getField(1) == 1) ? 0 : 1, tileSeller.getPos(), 0);
-                System.out.println(tileSeller.getField(1));
+                pack1.setData((tile.getField(1) == 1) ? 0 : 1, tile.getPos(), 0);
                 PacketHandler.INSTANCE.sendToServer(pack1);
 
-                if(tileVendor != null) tileVendor.getWorld().notifyBlockUpdate(tileVendor.getPos(), tileVendor.getBlockType().getDefaultState(), tileVendor.getBlockType().getDefaultState(), 3);
-                if(tileSeller != null) tileSeller.getWorld().notifyBlockUpdate(tileSeller.getPos(), tileSeller.getBlockType().getDefaultState(), tileSeller.getBlockType().getDefaultState(), 3);
-
+                tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
                 break;
             case 2:
                 gearExtended = !gearExtended;
                 PacketSendIntData pack2 = new PacketSendIntData();
-                if(tileVendor != null) pack2.setData(gearExtended ? 1 : 0, tileVendor.getPos(), 4);
-                if(tileSeller != null) pack2.setData(gearExtended ? 1 : 0, tileSeller.getPos(), 4);
+                pack2.setData(gearExtended ? 1 : 0, tile.getPos(), 4);
                 PacketHandler.INSTANCE.sendToServer(pack2);
                 break;
             case 3:
@@ -348,8 +306,7 @@ public class GuiBuySell extends GuiContainer {
                 break;
             case 4:
                 PacketSendIntData pack4 = new PacketSendIntData();
-                if(tileVendor != null) pack4.setData((tileVendor.getField(6) == 1) ? 0 : 1, tileVendor.getPos(), 3);
-                if(tileSeller != null) pack4.setData((tileSeller.getField(6) == 1) ? 0 : 1, tileSeller.getPos(), 3);
+                pack4.setData((tile.getField(6) == 1) ? 0 : 1, tile.getPos(), 3);
                 PacketHandler.INSTANCE.sendToServer(pack4);
                 break;
         }

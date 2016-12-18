@@ -1,6 +1,7 @@
 package gunn.modcurrency.common.tiles;
 
 import gunn.modcurrency.ModCurrency;
+import gunn.modcurrency.api.ModTile;
 import gunn.modcurrency.common.items.ModItems;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -8,7 +9,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -38,7 +38,7 @@ import javax.annotation.Nullable;
  *
  * File Created on 2016-12-15
  */
-public class TileSeller extends TileEntity implements ICapabilityProvider {
+public class TileSeller extends ModTile implements ICapabilityProvider {
     private static final int INPUT_SLOT_COUNT = 1;
     private static final int SELL_SLOT_COUNT = 30;
     private static final int TOTAL_SLOTS_COUNT = INPUT_SLOT_COUNT + SELL_SLOT_COUNT;
@@ -123,6 +123,7 @@ public class TileSeller extends TileEntity implements ICapabilityProvider {
     }
 
     //Player must be in certain range to open GUI
+    @Override
     public boolean canInteractWith(EntityPlayer player) {
         return !isInvalid() && player.getDistanceSq(pos.add(0.5D, 0.5D, 0.5D)) <= 64D;
     }
@@ -236,10 +237,12 @@ public class TileSeller extends TileEntity implements ICapabilityProvider {
     //</editor-fold>
 
     //<editor-fold desc="Getter & Setter Methods---------------------------------------------------------------------------------------------">
+    @Override
     public int getFieldCount() {
         return 8;
     }
 
+    @Override
     public void setField(int id, int value) {
         switch (id) {
             case 0:
@@ -270,6 +273,7 @@ public class TileSeller extends TileEntity implements ICapabilityProvider {
         }
     }
 
+    @Override
     public int getField(int id) {
         switch (id) {
             case 0:
@@ -294,46 +298,57 @@ public class TileSeller extends TileEntity implements ICapabilityProvider {
         return -1;
     }
 
+    @Override
     public String getSelectedName() {
         return selectedName;
     }
 
+    @Override
     public void setSelectedName(String name) {
         selectedName = name;
     }
 
+    @Override
     public int[] getAllItemCosts() {
         return itemRates.clone();
     }
 
+    @Override
     public void setAllItemCosts(int[] copy) {
         itemRates = copy.clone();
     }
 
+    @Override
     public int getItemCost(int index) {
         return itemRates[index];
     }
 
+    @Override
     public void setItemCost(int amount) {
         itemRates[selectedSlot - 37] = amount;
     }
 
+    @Override
     public ItemStack getStack(int index) {
         return itemStackHandler.getStackInSlot(index);
     }
 
+    @Override
     public void setOwner(String owner) {
         this.owner = owner;
     }
 
+    @Override
     public String getOwner() {
         return owner;
     }
 
+    @Override
     public ItemStackHandler getStackHandler() {
         return itemStackHandler;
     }
 
+    @Override
     public void setStackHandler(ItemStackHandler copy) {
         itemStackHandler = copy;
     }

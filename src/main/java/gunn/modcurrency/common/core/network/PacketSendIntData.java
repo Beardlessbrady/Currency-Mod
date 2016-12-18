@@ -1,9 +1,11 @@
 package gunn.modcurrency.common.core.network;
 
+import gunn.modcurrency.api.ModTile;
 import gunn.modcurrency.common.blocks.BlockSeller;
 import gunn.modcurrency.common.blocks.BlockVendor;
 import gunn.modcurrency.common.blocks.ModBlocks;
 import io.netty.buffer.ByteBuf;
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -71,58 +73,26 @@ public class PacketSendIntData implements IMessage {
         private void handle(PacketSendIntData message, MessageContext ctx) {
             EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
             World world = playerEntity.worldObj;
-            if(world.getBlockState(message.blockPos).getBlock().equals(ModBlocks.blockVendor)) {
-                switch (message.mode) {
-                    case 0:     //BlockVendor set Lock [to server]
-                        BlockVendor block0 = (BlockVendor) world.getBlockState(message.blockPos).getBlock();
-                        block0.getTile(world, message.blockPos).setField(1, message.data);
-                        break;
-                    case 1:     //Block Vendor set Cost [to server]
-                        BlockVendor block1 = (BlockVendor) world.getBlockState(message.blockPos).getBlock();
-                        block1.getTile(world, message.blockPos).setItemCost(message.data);
-                        break;
-                    case 2:     //Block Vendor, updated cost [to Client]
-                        BlockVendor block2 = (BlockVendor) world.getBlockState(message.blockPos).getBlock();
-                        block2.getTile(world, message.blockPos)
-                                .setItemCost(message.data);
-                        break;
-                    case 3:     //Enable/Disable Creative Button [to server]
-                        BlockVendor block3 = (BlockVendor) world.getBlockState(message.blockPos).getBlock();
-                        block3.getTile(world, message.blockPos)
-                                .setField(6, message.data);
-                        break;
-                    case 4:     //Send Gear Tab State [to server]
-                        BlockVendor block4 = (BlockVendor) world.getBlockState(message.blockPos).getBlock();
-                        block4.getTile(world, message.blockPos)
-                                .setField(8, message.data);
-                }
-            }else{
-                switch (message.mode) {
-                    case 0:     //BlockSeller set Lock [to server]
-                        BlockSeller block0 = (BlockSeller) world.getBlockState(message.blockPos).getBlock();
-                        System.out.println("Before" + block0.getTile(world,message.blockPos).getField(1));
-                        block0.getTile(world, message.blockPos).setField(1, message.data);
-                        System.out.println("After" + block0.getTile(world,message.blockPos).getField(1));
-                        break;
-                    case 1:     //BlockSeller set Cost [to server]
-                        BlockSeller block1 = (BlockSeller) world.getBlockState(message.blockPos).getBlock();
-                        block1.getTile(world, message.blockPos).setItemCost(message.data);
-                        break;
-                    case 2:     //BlockSeller, updated cost [to Client]
-                        BlockSeller block2 = (BlockSeller) world.getBlockState(message.blockPos).getBlock();
-                        block2.getTile(world, message.blockPos)
-                                .setItemCost(message.data);
-                        break;
-                    case 3:     //Enable/Disable Creative Button [to server]
-                        BlockSeller block3 = (BlockSeller) world.getBlockState(message.blockPos).getBlock();
-                        block3.getTile(world, message.blockPos)
-                                .setField(6, message.data);
-                        break;
-                    case 4:     //Send Gear Tab State [to server]
-                        BlockSeller block4 = (BlockSeller) world.getBlockState(message.blockPos).getBlock();
-                        block4.getTile(world, message.blockPos)
-                                .setField(8, message.data);
-                }
+            switch (message.mode) {
+                case 0:     //BlockVendor set Lock [to server]
+                    ModTile te0= (ModTile) world.getTileEntity(message.blockPos);
+                    te0.setField(1, message.data);
+                    break;
+                case 1:     //Block Vendor set Cost [to server]
+                    ModTile te1= (ModTile) world.getTileEntity(message.blockPos);
+                    te1.setItemCost(message.data);
+                    break;
+                case 2:     //Block Vendor, updated cost [to Client]
+                    ModTile te2= (ModTile) world.getTileEntity(message.blockPos);
+                    te2.setItemCost(message.data);
+                    break;
+                case 3:     //Enable/Disable Creative Button [to server]
+                    ModTile te3= (ModTile) world.getTileEntity(message.blockPos);
+                    te3.setField(6, message.data);
+                    break;
+                case 4:     //Send Gear Tab State [to server]
+                    ModTile te4= (ModTile) world.getTileEntity(message.blockPos);
+                    te4.setField(8, message.data);
             }
         }
     }
