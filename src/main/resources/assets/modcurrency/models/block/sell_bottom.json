@@ -1,7 +1,8 @@
 {
 	"__comment": "Designed by Beardlessbrady with Cubik Studio - https://cubik.studio",
 	"textures": {
-		"texture": "#texture"
+		"texture": "#texture",
+		"screen": "modcurrency:blocks/buysell/sell_screen"
 	},
 	"elements": [
 		{
@@ -28,11 +29,11 @@
 		},
 		{
 			"__comment": "PlaneZ16",
-			"from": [ 4.2981, 7.2, 0.4 ],
-			"to": [ 14.7981, 16, 0.401 ],
+			"from": [ 4.2981, 7.3, 0.4 ],
+			"to": [ 14.7981, 29.7, 0.401 ],
 			"faces": {
-				"north": { "uv": [ 8.5, 10, 13, 14 ], "texture": "#texture" },
-				"south": { "uv": [ 4.5, 0, 15.1, 9 ], "texture": "#texture" }
+				"north": { "uv": [ 0, 0, 8, 16 ], "texture": "#screen" },
+				"south": { "uv": [ 4.5, 0, 15.1, 9 ], "texture": "#screen" }
 			}
 		},
 		{

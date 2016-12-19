@@ -1,49 +1,8 @@
 {
 	"__comment": "Designed by Beardlessbrady with Cubik Studio - https://cubik.studio",
 	"textures": {
-		"texture": "#texture"
-	},
-	"display": {
-		"thirdperson_righthand": {
-			"rotation": [ 0, 178, 0 ],
-			"translation": [ 0.00, 0.75, 0.00 ],
-			"scale": [ 0.28, 0.28, 0.28 ]
-		},
-		"thirdperson_lefthand": {
-			"rotation": [ 0, 178, 0 ],
-			"translation": [ 0.00, 0.75, 0.00 ],
-			"scale": [ 0.28, 0.28, 0.28 ]
-		},
-		"firstperson_righthand": {
-			"rotation": [ 350, 98, 0 ],
-			"translation": [ 3.50, 1, 0.00 ],
-			"scale": [ 0.28, 0.28, 0.28 ]
-		},
-		"firstperson_lefthand": {
-			"rotation": [ 350, 98, 0 ],
-			"translation": [ 3.50, 1.25, 0.00 ],
-			"scale": [ 0.28, 0.28, 0.28 ]
-		},
-		"gui": {
-			"rotation": [ 24, 150, 0 ],
-			"translation": [ 0.00, -1.25, 0.00 ],
-			"scale": [ 0.50, 0.50, 0.50 ]
-		},
-		"head": {
-			"rotation": [ 0, 0, 0 ],
-			"translation": [ 0.00, 0.00, 0.00 ],
-			"scale": [ 1.00, 1.00, 1.00 ]
-		},
-		"fixed": {
-			"rotation": [ 0, 0, 0 ],
-			"translation": [ 0.00, 0.00, 0.00 ],
-			"scale": [ 1.00, 1.00, 1.00 ]
-		},
-		"ground": {
-			"rotation": [ 0, 0, 0 ],
-			"translation": [ 0.00, 0.00, 0.00 ],
-			"scale": [ 0.34, 0.34, 0.34 ]
-		}
+		"texture": "#texture",
+		"screen": "modcurrency:blocks/buysell/sell_screen"
 	},
 	"elements": [
 		{
@@ -189,8 +148,8 @@
 			"from": [ 4.3, 7.3, 0.3 ],
 			"to": [ 14.7, 29.7, 0.301 ],
 			"faces": {
-				"north": { "uv": [ 15.5, 7.5, 16, 8 ], "texture": "#texture" },
-				"south": { "uv": [ 4.5, 0, 15.1, 9 ], "texture": "#texture" }
+				"north": { "uv": [ 0, 0, 8, 16 ], "texture": "#screen" },
+				"south": { "uv": [ 4.5, 0, 15.1, 9 ], "texture": "#screen" }
 			}
 		},
 		{
