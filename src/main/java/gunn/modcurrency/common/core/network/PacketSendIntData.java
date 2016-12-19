@@ -1,11 +1,7 @@
 package gunn.modcurrency.common.core.network;
 
 import gunn.modcurrency.api.ModTile;
-import gunn.modcurrency.common.blocks.BlockSeller;
-import gunn.modcurrency.common.blocks.BlockVendor;
-import gunn.modcurrency.common.blocks.ModBlocks;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;

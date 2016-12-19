@@ -58,13 +58,13 @@ public class BlockTop extends Block{
 
     public int whatBlock(World world, BlockPos pos){
         if(world.getBlockState(pos.down()).getBlock().equals(ModBlocks.blockVendor)) return 0;
-        if(world.getBlockState(pos.down()).getBlock().equals(ModBlocks.blockSeller)) return 1;
+       // if(world.getBlockState(pos.down()).getBlock().equals(ModBlocks.blockSeller)) return 1;
         return -1;
     }
 
     public int whatBlock(IBlockAccess world, BlockPos pos){
         if(world.getBlockState(pos.down()).getBlock().equals(ModBlocks.blockVendor)) return 0;
-        if(world.getBlockState(pos.down()).getBlock().equals(ModBlocks.blockSeller)) return 1;
+       // if(world.getBlockState(pos.down()).getBlock().equals(ModBlocks.blockSeller)) return 1;
         return -1;
     }
 

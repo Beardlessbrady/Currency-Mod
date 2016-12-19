@@ -2,8 +2,6 @@ package gunn.modcurrency.common.tiles;
 
 import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.api.ModTile;
-import gunn.modcurrency.common.items.ModItems;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -36,27 +34,26 @@ import javax.annotation.Nullable;
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
- * File Created on 2016-12-15
+ * File Created on 2016-12-19
  */
-public class TileSeller extends ModTile implements ICapabilityProvider {
-    private static final int INPUT_SLOT_COUNT = 1;
-    private static final int SELL_SLOT_COUNT = 30;
-    private static final int TOTAL_SLOTS_COUNT = INPUT_SLOT_COUNT + SELL_SLOT_COUNT;
+public class TileSeller extends ModTile implements ICapabilityProvider{
+    private static final int SELL_SLOT_COUNT = 1;
+    private static final int VEND_SLOT_COUNT = 30;
+    private static final int TOTAL_SLOTS_COUNT = SELL_SLOT_COUNT + VEND_SLOT_COUNT;
 
     private int bank, selectedSlot, face;
     private String owner, selectedName;
     private boolean locked, mode, creative, infinite, gearExtended;
-    private int[] itemRates = new int[TOTAL_SLOTS_COUNT];       //Ignore slot 0 (Input Slot)
+    private int[] itemCosts = new int[TOTAL_SLOTS_COUNT];       //Always Ignore slot 0
     private ItemStackHandler itemStackHandler = new ItemStackHandler(TOTAL_SLOTS_COUNT) {
         @Override
         protected void onContentsChanged(int slot) {
             markDirty();
-        }
-    };
+        }};
 
     public TileSeller() {
         bank = 0;
-        selectedSlot = 0;
+        selectedSlot = 37;
         face = 0;
         owner = "";
         selectedName = "No Item";
@@ -66,66 +63,11 @@ public class TileSeller extends ModTile implements ICapabilityProvider {
         infinite = false;
         gearExtended = false;
 
-        for (int i = 0; i < itemRates.length; i++) itemRates[i] = 0;
+        for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = 0;
     }
 
-    public void openGui(EntityPlayer player, World world, BlockPos pos) {
+    public void openGui(EntityPlayer player, World world, BlockPos pos){
         player.openGui(ModCurrency.instance, 31, world, pos.getX(), pos.getY(), pos.getZ());
-    }
-
-    //Outputs change in least amount of bills
-    public void outChange() {
-        int amount = bank;
-
-        int[] out = new int[6];
-
-        out[5] = Math.round(amount / 100);
-        amount = amount - (out[5] * 100);
-
-        out[4] = Math.round(amount / 50);
-        amount = amount - (out[4] * 50);
-
-        out[3] = Math.round(amount / 20);
-        amount = amount - (out[3] * 20);
-
-        out[2] = Math.round(amount / 10);
-        amount = amount - (out[2] * 10);
-
-        out[1] = Math.round(amount / 5);
-        amount = amount - (out[1] * 5);
-
-        out[0] = Math.round(amount);
-
-        if (!worldObj.isRemote) {
-            for (int i = 0; i < out.length; i++) {
-                if (out[i] != 0) {
-                    ItemStack item = new ItemStack(ModItems.itembanknote);
-                    item.setItemDamage(i);
-                    item.stackSize = out[i];
-
-                    bank = 0;
-
-                    worldObj.spawnEntityInWorld(new EntityItem(worldObj, getPos().getX(), getPos().getY(), getPos().getZ(), item));
-                }
-            }
-        }
-    }
-
-    //Drop Items
-    public void dropItems() {
-        for (int i = 0; i < itemStackHandler.getSlots(); i++) {
-            ItemStack item = itemStackHandler.getStackInSlot(i);
-            if (item != null) {
-                worldObj.spawnEntityInWorld(new EntityItem(worldObj, getPos().getX(), getPos().getY(), getPos().getZ(), item));
-                itemStackHandler.setStackInSlot(i, null);   //Just in case
-            }
-        }
-    }
-
-    //Player must be in certain range to open GUI
-    @Override
-    public boolean canInteractWith(EntityPlayer player) {
-        return !isInvalid() && player.getDistanceSq(pos.add(0.5D, 0.5D, 0.5D)) <= 64D;
     }
 
     //<editor-fold desc="NBT & Packet Stoof--------------------------------------------------------------------------------------------------">
@@ -145,7 +87,7 @@ public class TileSeller extends ModTile implements ICapabilityProvider {
         compound.setString("owner", owner);
 
         NBTTagCompound itemCostsNBT = new NBTTagCompound();
-        for (int i = 0; i < itemRates.length; i++) itemCostsNBT.setInteger("cost" + i, itemRates[i]);
+        for (int i = 0; i < itemCosts.length; i++) itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
         compound.setTag("itemCosts", itemCostsNBT);
 
         return compound;
@@ -168,7 +110,7 @@ public class TileSeller extends ModTile implements ICapabilityProvider {
 
         if (compound.hasKey("itemCosts")) {
             NBTTagCompound itemCostsNBT = compound.getCompoundTag("itemCosts");
-            for (int i = 0; i < itemRates.length; i++) itemRates[i] = itemCostsNBT.getInteger("cost" + i);
+            for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = itemCostsNBT.getInteger("cost" + i);
         }
     }
 
@@ -193,7 +135,7 @@ public class TileSeller extends ModTile implements ICapabilityProvider {
         tag.setString("owner", owner);
 
         NBTTagCompound itemCostsNBT = new NBTTagCompound();
-        for (int i = 0; i < itemRates.length; i++) itemCostsNBT.setInteger("cost" + i, itemRates[i]);
+        for (int i = 0; i < itemCosts.length; i++) itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
         tag.setTag("itemCosts", itemCostsNBT);
 
         return new SPacketUpdateTileEntity(pos, 1, tag);
@@ -214,7 +156,7 @@ public class TileSeller extends ModTile implements ICapabilityProvider {
         owner = pkt.getNbtCompound().getString("owner");
 
         NBTTagCompound itemCostsNBT = pkt.getNbtCompound().getCompoundTag("itemCosts");
-        for (int i = 0; i < itemRates.length; i++) itemRates[i] = itemCostsNBT.getInteger("cost" + i);
+        for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = itemCostsNBT.getInteger("cost" + i);
     }
     //</editor-fold>--------------------------------
 
@@ -238,9 +180,7 @@ public class TileSeller extends ModTile implements ICapabilityProvider {
 
     //<editor-fold desc="Getter & Setter Methods---------------------------------------------------------------------------------------------">
     @Override
-    public int getFieldCount() {
-        return 8;
-    }
+    public int getFieldCount() {return 9;}
 
     @Override
     public void setField(int id, int value) {
@@ -258,7 +198,7 @@ public class TileSeller extends ModTile implements ICapabilityProvider {
                 selectedSlot = value;
                 break;
             case 4:
-                //Nadda
+                break;
             case 5:
                 creative = (value == 1);
                 break;
@@ -285,7 +225,7 @@ public class TileSeller extends ModTile implements ICapabilityProvider {
             case 3:
                 return selectedSlot;
             case 4:
-                //Nadda
+                return 0;
             case 5:
                 return (creative) ? 1 : 0;
             case 6:
@@ -299,42 +239,30 @@ public class TileSeller extends ModTile implements ICapabilityProvider {
     }
 
     @Override
-    public String getSelectedName() {
-        return selectedName;
-    }
+    public String getSelectedName() {return selectedName;}
 
     @Override
-    public void setSelectedName(String name) {
-        selectedName = name;
-    }
+    public void setSelectedName (String name){selectedName = name;}
 
     @Override
-    public int[] getAllItemCosts() {
-        return itemRates.clone();
-    }
+    public int[] getAllItemCosts(){return itemCosts.clone();}
 
     @Override
-    public void setAllItemCosts(int[] copy) {
-        itemRates = copy.clone();
-    }
+    public void setAllItemCosts(int[] copy){itemCosts = copy.clone();}
 
     @Override
-    public int getItemCost(int index) {
-        return itemRates[index];
-    }
+    public int getItemCost(int index) {return itemCosts[index];}
 
     @Override
-    public void setItemCost(int amount) {
-        itemRates[selectedSlot - 37] = amount;
-    }
+    public void setItemCost(int amount) {itemCosts[selectedSlot - 37] = amount;}
 
     @Override
-    public ItemStack getStack(int index) {
+    public ItemStack getStack(int index){
         return itemStackHandler.getStackInSlot(index);
     }
 
     @Override
-    public void setOwner(String owner) {
+    public void setOwner(String owner){
         this.owner = owner;
     }
 
@@ -344,14 +272,10 @@ public class TileSeller extends ModTile implements ICapabilityProvider {
     }
 
     @Override
-    public ItemStackHandler getStackHandler() {
-        return itemStackHandler;
-    }
+    public ItemStackHandler getStackHandler(){ return itemStackHandler; }
 
     @Override
-    public void setStackHandler(ItemStackHandler copy) {
-        itemStackHandler = copy;
-    }
+    public void setStackHandler(ItemStackHandler copy){ itemStackHandler = copy; }
     //</editor-fold>
 
 }

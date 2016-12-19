@@ -30,7 +30,8 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
  * File Created on 2016-11-02.
  */
 public class GuiHandler implements IGuiHandler{
-    //Id 30 = BlockVendor [Closed]
+    //Id 30 = BlockVendor
+    //Id 31 = BlockSeller
 
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
