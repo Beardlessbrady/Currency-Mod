@@ -167,14 +167,13 @@ public class BlockSeller extends Block implements ITileEntityProvider{
 
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-       /* TileSeller te = getTile(worldIn, pos);
+        TileSeller te = getTile(worldIn, pos);
         te.setField(2,1);
         te.outChange();
         te.setField(2,0);
         te.outChange();
 
         te.dropItems();
-        */
         super.breakBlock(worldIn, pos, state);
         worldIn.setBlockToAir(pos.up());
     }

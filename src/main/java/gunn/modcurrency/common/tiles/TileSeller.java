@@ -175,6 +175,23 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
         }
     }
 
+    //Drop Items
+    public void dropItems(){
+        for(int i = 0; i < itemStackHandler.getSlots(); i++){
+            ItemStack item = itemStackHandler.getStackInSlot(i);
+            if(item != null){
+                worldObj.spawnEntityInWorld(new EntityItem(worldObj, getPos().getX(), getPos().getY(), getPos().getZ(), item));
+                itemStackHandler.setStackInSlot(i, null);   //Just in case
+            }
+        }
+    }
+
+    //Player must be in certain range to open GUI
+    @Override
+    public boolean canInteractWith(EntityPlayer player) {
+        return !isInvalid() && player.getDistanceSq(pos.add(0.5D, 0.5D, 0.5D)) <= 64D;
+    }
+
     //<editor-fold desc="NBT & Packet Stoof--------------------------------------------------------------------------------------------------">
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {

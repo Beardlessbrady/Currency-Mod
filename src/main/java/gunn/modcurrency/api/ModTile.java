@@ -29,6 +29,8 @@ public class ModTile extends TileEntity implements ICapabilityProvider {
 
     public void outChange(){}
 
+    public void dropItems(){}
+
     public boolean canInteractWith(EntityPlayer player){return true;}
 
     public int getFieldCount() {return 0;}
