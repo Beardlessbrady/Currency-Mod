@@ -81,19 +81,17 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
                     for (int i = 1; i < itemStackHandler.getSlots(); i++) {
                         if (itemStackHandler.getStackInSlot(i) != null) {
                             if (itemStackHandler.getStackInSlot(0).getUnlocalizedName().equals(itemStackHandler.getStackInSlot(i).getUnlocalizedName())) {
-                                int amount = itemStackHandler.getStackInSlot(i).stackSize;
-                                
-
-                                break;
+                                int cost = getItemCost(i - 1);
+                                if(cashRegister >= cost){
+                                    ItemStack inputItem = itemStackHandler.getStackInSlot(0);
+                                    bank = bank + cost;
+                                    cashRegister = cashRegister - cost;
+                                    inputItem.stackSize--;
+                                }
                             }
                         }
                     }
-
-
-                    //  amount = amount * itemStackHandler.getStackInSlot(0).stackSize;
-                    // itemStackHandler.setStackInSlot(0, null);
-                    //  bank = bank + amount; */
-                    markDirty();
+                    if(itemStackHandler.getStackInSlot(0).stackSize == 0) itemStackHandler.setStackInSlot(0, null);
                 }
             } else {        //EDIT MODE
                 if (itemStackHandler.getStackInSlot(0) != null) {
@@ -125,11 +123,11 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
                         amount = amount * itemStackHandler.getStackInSlot(0).stackSize;
                         itemStackHandler.setStackInSlot(0, null);
                         cashRegister = cashRegister + amount;
-                        markDirty();
                     }
                 }
             }
         }
+        markDirty();
     }
 
     //Outputs change in least amount of bills

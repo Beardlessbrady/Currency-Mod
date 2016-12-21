@@ -109,7 +109,7 @@ public class GuiBuySell extends GuiContainer {
             drawIcons();
 
             String profitName = "Profit";
-            if(tile instanceof TileSeller) profitName = "Cash Well";
+            if(tile instanceof TileSeller) profitName = "Funds";
                 fontRendererObj.drawString(I18n.format(profitName) + ": $" + tile.getField(4), 5, 16, Color.darkGray.getRGB());
 
             if (gearExtended) {
