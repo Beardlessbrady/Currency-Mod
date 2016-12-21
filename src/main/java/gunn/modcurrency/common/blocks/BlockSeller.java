@@ -4,20 +4,28 @@ import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.common.blocks.items.IBColored;
 import gunn.modcurrency.common.core.handler.StateHandler;
 import gunn.modcurrency.common.tiles.TileSeller;
+import gunn.modcurrency.common.tiles.TileVendor;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -61,7 +69,16 @@ public class BlockSeller extends Block implements ITileEntityProvider{
     public void recipe(){
     }
 
-    public void initModel(){}
+    public void initModel(){
+        for(int i =0; i < 16; i++){
+            //Im Lazy and I hate Mojangs EnumDyeColor, BE CONSISTENT (lightBlue, light_blue....)
+            if(i == 12){
+                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 12, new ModelResourceLocation(getRegistryName(), "color=light_blue" + ",facing=north,item=true"));
+            }else {
+                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), i, new ModelResourceLocation(getRegistryName(), "color=" + EnumDyeColor.byDyeDamage(i) + ",facing=north,item=true"));
+            }
+        }
+    }
 
     @Override
     public boolean isOpaqueCube(IBlockState state) {
@@ -117,4 +134,90 @@ public class BlockSeller extends Block implements ITileEntityProvider{
         getTile(world,pos).openGui(player,world,pos);
         return true;
     }
+
+    @Override
+    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+        int face = 0;
+        switch(placer.getHorizontalFacing().getOpposite()){
+            case NORTH: face = 0;
+                break;
+            case EAST: face = 1;
+                break;
+            case SOUTH: face = 2;
+                break;
+            case WEST: face = 3;
+                break;
+        }
+
+        getTile(worldIn, pos).setField(7,face);
+        EnumDyeColor color = state.getValue(StateHandler.COLOR);
+        worldIn.setBlockState(pos.up(),ModBlocks.blockTop.getDefaultState().withProperty(StateHandler.COLOR, color));
+
+        if(placer instanceof EntityPlayer) {
+            EntityPlayer player = (EntityPlayer) placer;
+            String playerName = player.getUniqueID().toString();
+            getTile(worldIn, pos).setOwner(playerName);
+        }
+    }
+
+    @Override
+    public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
+        return worldIn.getBlockState(pos.up()).getBlock().isReplaceable(worldIn,pos.up());
+    }
+
+    @Override
+    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+       /* TileSeller te = getTile(worldIn, pos);
+        te.setField(2,1);
+        te.outChange();
+        te.setField(2,0);
+        te.outChange();
+
+        te.dropItems();
+        */
+        super.breakBlock(worldIn, pos, state);
+        worldIn.setBlockToAir(pos.up());
+    }
+
+    @Override
+    public int damageDropped(IBlockState state) {
+        return getMetaFromState(state);
+    }
+
+    //<editor-fold desc="Block States--------------------------------------------------------------------------------------------------------">
+    @Override
+    protected BlockStateContainer createBlockState() {
+        return new BlockStateContainer(this, new IProperty[] {StateHandler.COLOR, StateHandler.FACING, StateHandler.ITEM});
+    }
+
+    @Override
+    public IBlockState getStateFromMeta(int meta) {
+        return this.getDefaultState().withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(meta));
+    }
+
+    @Override
+    public int getMetaFromState(IBlockState state) {
+        return ((EnumDyeColor)state.getValue(StateHandler.COLOR)).getDyeDamage();
+    }
+
+    @Override
+    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
+        EnumFacing face = EnumFacing.NORTH;
+        TileSeller tile = (TileSeller) worldIn.getTileEntity(pos);
+        int i = tile.getField(7);
+
+        switch(i){
+            case 0: face = EnumFacing.NORTH;
+                break;
+            case 1: face = EnumFacing.EAST;
+                break;
+            case 2: face = EnumFacing.SOUTH;
+                break;
+            case 3: face = EnumFacing.WEST;
+                break;
+        }
+
+        return state.withProperty(StateHandler.FACING, face).withProperty(StateHandler.ITEM, false);
+    }
+    //</editor-fold>
 }
