@@ -104,7 +104,10 @@ public class GuiBuySell extends GuiContainer {
         if(tile.getField(2) == 0) fontRendererObj.drawString(I18n.format("Cash") + ": $" + tile.getField(0), 5, 16, Color.darkGray.getRGB());
         if (tile.getField(2) == 1) {
             drawIcons();
-            fontRendererObj.drawString(I18n.format("Profit") + ": $" + tile.getField(4), 5, 16, Color.darkGray.getRGB());
+
+            String profitName = "Profit";
+            if(tile instanceof TileSeller) profitName = "Cash Well";
+                fontRendererObj.drawString(I18n.format(profitName) + ": $" + tile.getField(4), 5, 16, Color.darkGray.getRGB());
 
             if (gearExtended) {
                 fontRendererObj.drawString(I18n.format("Slot Settings"), 197, 51, Integer.parseInt("42401c", 16));
@@ -139,10 +142,11 @@ public class GuiBuySell extends GuiContainer {
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
         String ChangeButton = "Change";
+
+        if(tile instanceof TileVendor) if(tile.getField(2) == 1) ChangeButton = "Profit";
+        if(tile instanceof TileSeller) if(tile.getField(2) == 1) ChangeButton = "Cash";
         
-        if(tile.getField(2) == 1) ChangeButton = "Profit";
-        
-        this.buttonList.add(new GuiButton(0, i + 103, j + 7, 45, 20, ChangeButton));        
+        this.buttonList.add(new GuiButton(0, i + 103, j + 7, 45, 20, ChangeButton));
 
         if (tile.getField(2) == 1) {
             this.buttonList.add(new CustomButton(1, i + 176, j + 20, 0, 21, 21, 22, "", TAB_TEXTURE));   //Lock Tab

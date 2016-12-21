@@ -27,6 +27,8 @@ import net.minecraftforge.items.ItemStackHandler;
  */
 public class ModTile extends TileEntity implements ICapabilityProvider {
 
+    public void outChange(){}
+
     public boolean canInteractWith(EntityPlayer player){return true;}
 
     public int getFieldCount() {return 0;}
