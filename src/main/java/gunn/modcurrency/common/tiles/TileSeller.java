@@ -82,11 +82,14 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
                         if (itemStackHandler.getStackInSlot(i) != null) {
                             if (itemStackHandler.getStackInSlot(0).getUnlocalizedName().equals(itemStackHandler.getStackInSlot(i).getUnlocalizedName())) {
                                 int cost = getItemCost(i - 1);
-                                if(cashRegister >= cost){
+                                if((cashRegister >= cost || infinite) && (itemStackHandler.getStackInSlot(i).stackSize < itemStackHandler.getStackInSlot(i).getMaxStackSize())){
                                     ItemStack inputItem = itemStackHandler.getStackInSlot(0);
+                                    ItemStack stockitem = itemStackHandler.getStackInSlot(i);
                                     bank = bank + cost;
-                                    cashRegister = cashRegister - cost;
+                                    if(!infinite) cashRegister = cashRegister - cost;
                                     inputItem.stackSize--;
+                                    if(!infinite) stockitem.stackSize++;
+
                                 }
                             }
                         }

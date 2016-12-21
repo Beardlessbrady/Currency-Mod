@@ -102,15 +102,23 @@ public class GuiBuySell extends GuiContainer {
         fontRendererObj.drawString(I18n.format(header), 5, 6, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("Inventory"), 4, 142, Color.darkGray.getRGB());
         if(tile.getField(2) == 0){
-            fontRendererObj.drawString(I18n.format("Your Cash") + ": $" + tile.getField(0), 5, 15, Color.darkGray.getRGB());
-            if(tile instanceof TileSeller) fontRendererObj.drawString(I18n.format("Funds") + ": $" + tile.getField(4), 5, 23, Color.darkGray.getRGB());
+            fontRendererObj.drawString(I18n.format("Cash") + ": $" + tile.getField(0), 5, 15, Color.darkGray.getRGB());
+
+            String fundAmount = Integer.toString(tile.getField(4));
+            if(tile.getField(6) == 1) fundAmount = "Infinite";
+            if(tile instanceof TileSeller) fontRendererObj.drawString(I18n.format("Funds") + ": $" + fundAmount, 5, 23, Color.darkGray.getRGB());
         }
+
         if (tile.getField(2) == 1) {
             drawIcons();
 
             String profitName = "Profit";
-            if(tile instanceof TileSeller) profitName = "Funds";
-                fontRendererObj.drawString(I18n.format(profitName) + ": $" + tile.getField(4), 5, 16, Color.darkGray.getRGB());
+            String profitAmnt = Integer.toString(tile.getField(4));
+            if(tile instanceof TileSeller){
+                profitName = "Funds";
+                if(tile.getField(6)==1) profitAmnt = "Infinite";
+            }
+            fontRendererObj.drawString(I18n.format(profitName) + ": $" + profitAmnt, 5, 16, Color.darkGray.getRGB());
 
             if (gearExtended) {
                 fontRendererObj.drawString(I18n.format("Slot Settings"), 197, 51, Integer.parseInt("42401c", 16));
@@ -172,12 +180,6 @@ public class GuiBuySell extends GuiContainer {
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-
-        //Draw Input Icon
-        Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
-        if(tile instanceof TileVendor) drawTexturedModalRect(152, 9, 177, 21, 16, 16);
-        if(tile instanceof TileSeller) drawTexturedModalRect(152, 9, 177, 38, 16, 16);
-
 
         Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
 
