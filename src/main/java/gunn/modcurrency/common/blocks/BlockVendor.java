@@ -192,10 +192,9 @@ public class BlockVendor extends Block implements ITileEntityProvider {
         te.outChange();
         te.setField(2,0);
         te.outChange();
-        
         te.dropItems();
-        super.breakBlock(worldIn, pos, state);
         worldIn.setBlockToAir(pos.up());
+        super.breakBlock(worldIn, pos, state);
     }
 
     @Override

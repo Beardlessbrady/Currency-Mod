@@ -118,18 +118,19 @@ public class BlockTop extends Block{
 
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-        ModTile te = (ModTile) getTile(worldIn, pos);
-        te.setField(2, 1);
-        te.outChange();
-        te.setField(2, 0);
-        te.outChange();
-        te.dropItems();
+        if(!worldIn.isAirBlock(pos.down())){
+            ModTile te = (ModTile) getTile(worldIn, pos);
+            te.setField(2, 1);
+            te.outChange();
+            te.setField(2, 0);
+            te.outChange();
+            te.dropItems();
 
-        ItemStack stack = new ItemStack(Item.getItemFromBlock(ModBlocks.blockVendor));
-        if(te instanceof  TileSeller) stack = new ItemStack(Item.getItemFromBlock(ModBlocks.blockSeller));
-        stack.setItemDamage(worldIn.getBlockState(pos.down()).getValue(StateHandler.COLOR).getDyeDamage());
-        spawnAsEntity(worldIn, pos, stack);
-
+            ItemStack stack = new ItemStack(Item.getItemFromBlock(ModBlocks.blockVendor));
+            if(te instanceof  TileSeller) stack = new ItemStack(Item.getItemFromBlock(ModBlocks.blockSeller));
+            stack.setItemDamage(worldIn.getBlockState(pos.down()).getValue(StateHandler.COLOR).getDyeDamage());
+            spawnAsEntity(worldIn, pos, stack);
+        }
         super.breakBlock(worldIn, pos.down(), state);
         worldIn.setBlockToAir(pos.down());
     }
