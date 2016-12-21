@@ -227,7 +227,7 @@ public class ContainerBuySell extends Container {
     @Nullable
     @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int index) {
-        if(tile instanceof TileVendor) {
+        if (tile instanceof TileVendor) {
             ItemStack sourceStack = null;
             Slot slot = this.inventorySlots.get(index);
 
@@ -262,8 +262,50 @@ public class ContainerBuySell extends Container {
                 }
             }
             return sourceStack;
+        } else {
+            ItemStack sourceStack = null;
+            Slot slot = this.inventorySlots.get(index);
+
+            if (slot != null && slot.getHasStack()) {
+                ItemStack copyStack = slot.getStack();
+                sourceStack = copyStack.copy();
+
+                if (index < PLAYER_TOTAL_COUNT) {        //Player Inventory Slots
+                    if (tile.getField(2) == 0) {     //SELL MODE
+                        if (!this.mergeItemStack(copyStack, TE_MONEY_FIRST_SLOT_INDEX, TE_MONEY_FIRST_SLOT_INDEX + 1, false)) {
+                            return null;
+                        }
+                    } else {
+                        if (tile.getField(2) == 1) {     //Only allow shift clicking from player inv in edit mode
+                            if (inventorySlots.get(index).getStack().getItem() == ModItems.itembanknote) {
+                                if (!this.mergeItemStack(copyStack, TE_MONEY_FIRST_SLOT_INDEX, TE_MONEY_FIRST_SLOT_INDEX + 1, false)) {
+                                    return null;
+                                }
+                            } else if (!this.mergeItemStack(copyStack, TE_VEND_FIRST_SLOT_INDEX, TE_VEND_FIRST_SLOT_INDEX + TE_VEND_TOTAL_COUNT, false)) {
+                                return null;
+                            }
+                        } else {
+                            return null;
+                        }
+                    }
+                } else if (index >= TE_VEND_FIRST_SLOT_INDEX && index < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_TOTAL_COUNT) {  //TE Inventory
+                    if (!this.mergeItemStack(copyStack, 0, PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT, false)) {
+                        return null;
+                    }
+                } else if (index == TE_MONEY_FIRST_SLOT_INDEX) {
+                    if (!this.mergeItemStack(copyStack, 0, PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT, false)) {
+                        return null;
+                    }
+                }
+
+                if (copyStack.stackSize == 0) {
+                    slot.putStack(null);
+                } else {
+                    slot.onSlotChanged();
+                }
+            }
+            return sourceStack;
         }
-        return null;
     }
     
     @Override

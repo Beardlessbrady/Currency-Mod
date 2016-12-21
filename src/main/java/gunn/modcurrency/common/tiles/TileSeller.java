@@ -81,7 +81,9 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
                     for (int i = 1; i < itemStackHandler.getSlots(); i++) {
                         if (itemStackHandler.getStackInSlot(i) != null) {
                             if (itemStackHandler.getStackInSlot(0).getUnlocalizedName().equals(itemStackHandler.getStackInSlot(i).getUnlocalizedName())) {
-                                System.out.println("ITSAMATCH");
+                                int amount = itemStackHandler.getStackInSlot(i).stackSize;
+                                
+
                                 break;
                             }
                         }
@@ -93,7 +95,7 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
                     //  bank = bank + amount; */
                     markDirty();
                 }
-            } else {
+            } else {        //EDIT MODE
                 if (itemStackHandler.getStackInSlot(0) != null) {
                     if (itemStackHandler.getStackInSlot(0).getItem().equals(ModItems.itembanknote)) {
                         int amount;

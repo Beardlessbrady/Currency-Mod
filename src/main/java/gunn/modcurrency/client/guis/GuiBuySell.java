@@ -62,7 +62,7 @@ public class GuiBuySell extends GuiContainer {
         creativeExtended = false;
 
         if(tile instanceof TileVendor) header = "Vending Machine";
-        if(tile instanceof TileSeller) header = "Exchange Machine";;
+        if(tile instanceof TileSeller) header = "Exchange Machine";
     }
     
     //Sends packet of new cost to server
@@ -99,9 +99,12 @@ public class GuiBuySell extends GuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        fontRendererObj.drawString(I18n.format(header), 5, 7, Color.darkGray.getRGB());
+        fontRendererObj.drawString(I18n.format(header), 5, 6, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("Inventory"), 4, 142, Color.darkGray.getRGB());
-        if(tile.getField(2) == 0) fontRendererObj.drawString(I18n.format("Cash") + ": $" + tile.getField(0), 5, 16, Color.darkGray.getRGB());
+        if(tile.getField(2) == 0){
+            fontRendererObj.drawString(I18n.format("Your Cash") + ": $" + tile.getField(0), 5, 15, Color.darkGray.getRGB());
+            if(tile instanceof TileSeller) fontRendererObj.drawString(I18n.format("Funds") + ": $" + tile.getField(4), 5, 23, Color.darkGray.getRGB());
+        }
         if (tile.getField(2) == 1) {
             drawIcons();
 
@@ -144,7 +147,7 @@ public class GuiBuySell extends GuiContainer {
         String ChangeButton = "Change";
 
         if(tile instanceof TileVendor) if(tile.getField(2) == 1) ChangeButton = "Profit";
-        if(tile instanceof TileSeller) if(tile.getField(2) == 1) ChangeButton = "Cash";
+        if(tile instanceof TileSeller) ChangeButton = "Cash";
         
         this.buttonList.add(new GuiButton(0, i + 103, j + 7, 45, 20, ChangeButton));
 
