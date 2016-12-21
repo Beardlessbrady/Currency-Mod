@@ -119,7 +119,7 @@ public class ContainerBuySell extends Container {
     @Nullable
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-
+        if (tile instanceof TileVendor) {
             //<editor-fold desc="Vendor Slot Click">
             if (tile.getField(2) == 1) {               //EDIT MODE
                 if (slotId >= 0 && slotId <= 36) {
@@ -139,7 +139,7 @@ public class ContainerBuySell extends Container {
                     return super.slotClick(slotId, dragType, clickTypeIn, player);
                 }
             } else {  //Sell Mode
-                if (slotId >= 0 && slotId <= 36) {           //Is Players Inv or Money Slot
+                if (slotId >= 0 && slotId <= 36) {           //Is Players Inv or Input Slot
                     return super.slotClick(slotId, dragType, clickTypeIn, player);
                 } else if (slotId >= 37 && slotId <= 67) {  //Is TE Inv
                     if (clickTypeIn == ClickType.PICKUP && dragType == 0) {   //Left Click = 1 item
@@ -152,11 +152,40 @@ public class ContainerBuySell extends Container {
                 }
             }
             //</editor-fold>
+        } else if (tile instanceof TileSeller) {
+            //<editor-fold desc="Seller Slot Click">
+            if (tile.getField(2) == 1) {      //EDIT MODE
+                if (slotId >= 0 && slotId <= 36) {
+                    return super.slotClick(slotId, dragType, clickTypeIn, player);
+                } else if (slotId >= 37 && slotId <= 67 && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 0) {
+                    tile.setField(3, slotId);
+                    if (getSlot(slotId).getHasStack()) {
+                        tile.setSelectedName(getSlot(slotId).getStack().getDisplayName());
+                    } else {
+                        tile.setSelectedName("No Item");
+                    }
+                    tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
+                    return null;
+                } else if (slotId >= 37 && slotId <= 67 && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 1) {
+                    return super.slotClick(slotId, 0, clickTypeIn, player);
+                } else {
+                    return super.slotClick(slotId, dragType, clickTypeIn, player);
+                }
+            } else {  //Sell Mode
+                if (slotId >= 0 && slotId <= 36) {           //Is Players Inv or Input Slot
+                    return super.slotClick(slotId, dragType, clickTypeIn, player);
+                } else if (slotId >= 37 && slotId <= 67) {  //Is TE Inv
+                    return null;
+                }
+            }
+            //</editor-fold>
+        }
         return null;
     }
 
-    public ItemStack checkAfford(int slotId, int amnt, EntityPlayer player){
-        if(tile instanceof TileVendor) {
+
+    public ItemStack checkAfford(int slotId, int amnt, EntityPlayer player) {
+        if (tile instanceof TileVendor) {
             IItemHandler itemHandler = this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
             ItemStack playStack = player.inventory.getItemStack();
             ItemStack slotStack = itemHandler.getStackInSlot(slotId - PLAYER_TOTAL_COUNT);

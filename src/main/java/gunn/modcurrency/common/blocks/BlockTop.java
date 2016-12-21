@@ -2,6 +2,7 @@ package gunn.modcurrency.common.blocks;
 
 import gunn.modcurrency.api.ModTile;
 import gunn.modcurrency.common.core.handler.StateHandler;
+import gunn.modcurrency.common.tiles.TileSeller;
 import gunn.modcurrency.common.tiles.TileVendor;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
@@ -74,8 +75,6 @@ public class BlockTop extends Block{
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-        switch (whatBlock(world, pos)) {
-            case 0:
                 //<editor-fold desc="Vendor Activation">
                 getTile(world,pos).setField(5, player.isCreative() ? 1 : 0);
                 if (world.isRemote) return true;
@@ -107,12 +106,14 @@ public class BlockTop extends Block{
                     getTile(world,pos).getWorld().notifyBlockUpdate(getTile(world,pos).getPos(), getTile(world,pos).getBlockType().getDefaultState(), getTile(world,pos).getBlockType().getDefaultState(), 3);
                     return true;
                 }
-                TileVendor te = (TileVendor) getTile(world,pos);
-                te.openGui(player, world, pos.down());
+                if(whatBlock(world,pos) == 0) {
+                    TileVendor te = (TileVendor) getTile(world, pos);
+                    te.openGui(player, world,pos.down());
+                }else if(whatBlock(world,pos) == 1){
+                    TileSeller te = (TileSeller) getTile(world, pos);
+                    te.openGui(player,world,pos.down());
+                }
                 return true;
-            //</editor-fold>
-        }
-        return false;
     }
 
     @Override
