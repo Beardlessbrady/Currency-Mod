@@ -171,9 +171,16 @@ public class GuiBuySell extends GuiContainer {
     private void drawIcons() {
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
-        Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        
+
+        //Draw Input Icon
+        Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
+        if(tile instanceof TileVendor) drawTexturedModalRect(152, 9, 177, 21, 16, 16);
+        if(tile instanceof TileSeller) drawTexturedModalRect(152, 9, 177, 38, 16, 16);
+
+
+        Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
+
         //Draw Lock Icon
         if (tile.getField(1) == 1) {
             drawTexturedModalRect(180, 23, 245, 15, 11, 16);

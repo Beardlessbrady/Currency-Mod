@@ -157,6 +157,8 @@ public class ContainerBuySell extends Container {
             if (tile.getField(2) == 1) {      //EDIT MODE
                 if (slotId >= 0 && slotId <= 36) {
                     return super.slotClick(slotId, dragType, clickTypeIn, player);
+                } else if ((slotId >= 37 && slotId <= 67 && tile.getField(8) == 0)) {
+                    return super.slotClick(slotId, dragType, clickTypeIn, player);
                 } else if (slotId >= 37 && slotId <= 67 && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 0) {
                     tile.setField(3, slotId);
                     if (getSlot(slotId).getHasStack()) {
