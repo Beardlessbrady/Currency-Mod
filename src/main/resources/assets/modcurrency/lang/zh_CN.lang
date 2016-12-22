@@ -1,0 +1,9 @@
+item.modcurrency:banknote_0.name=一元钞票
+item.modcurrency:banknote_1.name=五元钞票
+item.modcurrency:banknote_2.name=十元钞票
+item.modcurrency:banknote_3.name=二十元钞票
+item.modcurrency:banknote_4.name=五十元钞票
+item.modcurrency:banknote_5.name=一百元钞票
+
+tile.modcurrency:blockvendor.name=自动售货机
+tile.modcurrency:blockseller.name=自动兑换机
