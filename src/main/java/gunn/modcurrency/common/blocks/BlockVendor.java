@@ -202,6 +202,16 @@ public class BlockVendor extends Block implements ITileEntityProvider {
         return getMetaFromState(state);
     }
 
+    @Override
+    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
+        super.onNeighborChange(world, pos, neighbor);
+
+    }
+
+    public boolean isChestBelow(World world, BlockPos pos){
+        return world.getBlockState(pos.down()).getBlock().equals(Blocks.CHEST);
+    }
+
     //<editor-fold desc="Block States--------------------------------------------------------------------------------------------------------">
     @Override
     protected BlockStateContainer createBlockState() {

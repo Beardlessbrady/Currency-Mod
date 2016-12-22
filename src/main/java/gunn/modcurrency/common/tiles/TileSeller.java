@@ -78,6 +78,7 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
         if (!worldObj.isRemote) {
             if (!mode) {        //SELL MODE
                 if (itemStackHandler.getStackInSlot(0) != null) {
+                    searchLoop:
                     for (int i = 1; i < itemStackHandler.getSlots(); i++) {
                         if (itemStackHandler.getStackInSlot(i) != null) {
                             if (itemStackHandler.getStackInSlot(0).getUnlocalizedName().equals(itemStackHandler.getStackInSlot(i).getUnlocalizedName())) {
@@ -89,12 +90,14 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
                                     if(!infinite) cashRegister = cashRegister - cost;
                                     inputItem.stackSize--;
                                     if(!infinite) stockitem.stackSize++;
-
                                 }
                             }
                         }
+                        if(itemStackHandler.getStackInSlot(0).stackSize == 0) {
+                            itemStackHandler.setStackInSlot(0, null);
+                            break searchLoop;
+                        }
                     }
-                    if(itemStackHandler.getStackInSlot(0).stackSize == 0) itemStackHandler.setStackInSlot(0, null);
                 }
             } else {        //EDIT MODE
                 if (itemStackHandler.getStackInSlot(0) != null) {
