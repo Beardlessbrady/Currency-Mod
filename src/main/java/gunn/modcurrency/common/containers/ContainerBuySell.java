@@ -120,7 +120,8 @@ public class ContainerBuySell extends Container {
             int slotNum = TE_VEND_MAIN_TOTAL_COUNT + 1 + x;
             int xpos = 15;
             int ypos = 32 + x * 18;
-            addSlotToContainer(new SlotItemHandler(itemHandler,slotNum,xpos,ypos));
+            if(tile instanceof TileVendor) addSlotToContainer(new SlotBank(itemHandler,slotNum,xpos,ypos));
+            if(tile instanceof TileSeller) addSlotToContainer(new SlotItemHandler(itemHandler,slotNum,xpos,ypos));
         }
     }
 
@@ -137,7 +138,7 @@ public class ContainerBuySell extends Container {
             if (tile.getField(2) == 1) {               //EDIT MODE
                 if (slotId >= 0 && slotId <= 36) {
                     return super.slotClick(slotId, dragType, clickTypeIn, player);
-                } else if (slotId >= 37 && slotId <= 67 && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 0) {
+                } else if (slotId >= 37 && slotId < 67 && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 0) {
                     tile.setField(3, slotId);
                     if (getSlot(slotId).getHasStack()) {
                         tile.setSelectedName(getSlot(slotId).getStack().getDisplayName());
@@ -146,7 +147,7 @@ public class ContainerBuySell extends Container {
                     }
                     tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
                     return null;
-                } else if (slotId >= 37 && slotId <= 67 && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 1) {
+                } else if (slotId >= 37 && slotId < 67 && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 1) {
                     return super.slotClick(slotId, 0, clickTypeIn, player);
                 } else {
                     return super.slotClick(slotId, dragType, clickTypeIn, player);
@@ -154,13 +155,15 @@ public class ContainerBuySell extends Container {
             } else {  //Sell Mode
                 if (slotId >= 0 && slotId <= 36) {           //Is Players Inv or Input Slot
                     return super.slotClick(slotId, dragType, clickTypeIn, player);
-                } else if (slotId >= 37 && slotId <= 67) {  //Is TE Inv
+                } else if (slotId >= 37 && slotId < 67) {  //Is TE Inv
                     if (clickTypeIn == ClickType.PICKUP && dragType == 0) {   //Left Click = 1 item
                         return checkAfford(slotId, 1, player);
                     } else if (clickTypeIn == ClickType.PICKUP && dragType == 1) {   //Right Click = 10 item
                         return checkAfford(slotId, 10, player);
                     } else if (clickTypeIn == ClickType.QUICK_MOVE) {
                         return checkAfford(slotId, 64, player);
+                    } else {
+                        return null;
                     }
                 }
             }
@@ -170,9 +173,9 @@ public class ContainerBuySell extends Container {
             if (tile.getField(2) == 1) {      //EDIT MODE
                 if (slotId >= 0 && slotId <= 36) {
                     return super.slotClick(slotId, dragType, clickTypeIn, player);
-                } else if ((slotId >= 37 && slotId <= 67 && tile.getField(8) == 0)) {
+                } else if ((slotId >= 37 && slotId < 67 && tile.getField(8) == 0)) {
                     return super.slotClick(slotId, dragType, clickTypeIn, player);
-                } else if (slotId >= 37 && slotId <= 67 && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 0) {
+                } else if (slotId >= 37 && slotId < 67 && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 0) {
                     tile.setField(3, slotId);
                     if (getSlot(slotId).getHasStack()) {
                         tile.setSelectedName(getSlot(slotId).getStack().getDisplayName());
@@ -181,7 +184,7 @@ public class ContainerBuySell extends Container {
                     }
                     tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
                     return null;
-                } else if (slotId >= 37 && slotId <= 67 && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 1) {
+                } else if (slotId >= 37 && slotId < 67 && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 1) {
                     return super.slotClick(slotId, 0, clickTypeIn, player);
                 } else {
                     return super.slotClick(slotId, dragType, clickTypeIn, player);
@@ -189,7 +192,7 @@ public class ContainerBuySell extends Container {
             } else {  //Sell Mode
                 if (slotId >= 0 && slotId <= 36) {           //Is Players Inv or Input Slot
                     return super.slotClick(slotId, dragType, clickTypeIn, player);
-                } else if (slotId >= 37 && slotId <= 67) {  //Is TE Inv
+                } else if (slotId >= 37 && slotId < 67) {  //Is TE Inv
                     return null;
                 }
             }
@@ -243,6 +246,7 @@ public class ContainerBuySell extends Container {
     @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int index) {
         if (tile instanceof TileVendor) {
+            //<editor-fold desc="Vendor Shifting">
             ItemStack sourceStack = null;
             Slot slot = this.inventorySlots.get(index);
 
@@ -264,10 +268,12 @@ public class ContainerBuySell extends Container {
                             return null;
                         }
                     }
-                } else if (index >= TE_VEND_FIRST_SLOT_INDEX && index < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT) {  //TE Inventory
+                } else if (index >= TE_VEND_FIRST_SLOT_INDEX && index < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT + TE_BUFFER_TOTAL_COUNT) {  //TE Inventory
                     if (!this.mergeItemStack(copyStack, 0, PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT, false)) {
                         return null;
                     }
+                } else {
+                   return null;
                 }
 
                 if (copyStack.stackSize == 0) {
@@ -277,7 +283,9 @@ public class ContainerBuySell extends Container {
                 }
             }
             return sourceStack;
+            //</editor-fold>
         } else {
+            //<editor-fold desc="Seller Shifting">
             ItemStack sourceStack = null;
             Slot slot = this.inventorySlots.get(index);
 
@@ -303,7 +311,7 @@ public class ContainerBuySell extends Container {
                             return null;
                         }
                     }
-                } else if (index >= TE_VEND_FIRST_SLOT_INDEX && index < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT) {  //TE Inventory
+                } else if (index >= TE_VEND_FIRST_SLOT_INDEX && index < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT + TE_BUFFER_TOTAL_COUNT) {  //TE Inventory
                     if (!this.mergeItemStack(copyStack, 0, PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT, false)) {
                         return null;
                     }
@@ -320,6 +328,7 @@ public class ContainerBuySell extends Container {
                 }
             }
             return sourceStack;
+            //</editor-fold>
         }
     }
     
