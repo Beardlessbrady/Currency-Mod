@@ -42,6 +42,7 @@ public class ContainerBuySell extends Container {
     //0-35 = Player Inventory's
     //36 = Money Slot
     //37-67 = Vend Slots
+    //68-73 = Buffer Slots
     private final int HOTBAR_SLOT_COUNT = 9;
     private final int PLAYER_INV_ROW_COUNT = 3;
     private final int PLAYER_INV_COLUMN_COUNT = 9;
@@ -54,7 +55,9 @@ public class ContainerBuySell extends Container {
 
     private final int TE_VEND_COLUMN_COUNT = 6;
     private final int TE_VEND_ROW_COUNT = 5;
-    private final int TE_VEND_TOTAL_COUNT = TE_VEND_COLUMN_COUNT * TE_VEND_ROW_COUNT;
+    private final int TE_VEND_MAIN_TOTAL_COUNT = TE_VEND_COLUMN_COUNT * TE_VEND_ROW_COUNT;
+
+    private final int TE_BUFFER_TOTAL_COUNT = 6;
 
     private ModTile tile;
     private int[] cachedFields;
@@ -93,6 +96,7 @@ public class ContainerBuySell extends Container {
         final int TE_MONEY_YPOS = 9;
         IItemHandler itemHandler  = this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 
+        //Input Slot
         if(tile instanceof TileVendor) addSlotToContainer(new SlotBank(itemHandler, 0, TE_MONEY_XPOS, TE_MONEY_YPOS));
         if(tile instanceof TileSeller) addSlotToContainer(new SlotItemHandler(itemHandler, 0, TE_MONEY_XPOS, TE_MONEY_YPOS));
 
@@ -101,6 +105,7 @@ public class ContainerBuySell extends Container {
         final int TE_INV_XPOS = 44;
         final int TE_INV_YPOS = 32;
 
+        //Main Slots
         for (int y = 0; y < TE_VEND_COLUMN_COUNT; y++) {
             for (int x = 0; x < TE_VEND_ROW_COUNT; x++) {
                 int slotNum = 1 + y * TE_VEND_ROW_COUNT + x;
@@ -108,6 +113,14 @@ public class ContainerBuySell extends Container {
                 int ypos = TE_INV_YPOS + y * SLOT_Y_SPACING;
                 addSlotToContainer(new SlotItemHandler(itemHandler, slotNum, xpos, ypos));
             }
+        }
+
+        //Buffer Slots
+        for (int x = 0; x < TE_BUFFER_TOTAL_COUNT; x++){
+            int slotNum = TE_VEND_MAIN_TOTAL_COUNT + 1 + x;
+            int xpos = 15;
+            int ypos = 32 + x * 18;
+            addSlotToContainer(new SlotItemHandler(itemHandler,slotNum,xpos,ypos));
         }
     }
 
@@ -244,14 +257,14 @@ public class ContainerBuySell extends Container {
                         }
                     } else {
                         if (tile.getField(2) == 1) {     //Only allow shift clicking from player inv in edit mode
-                            if (!this.mergeItemStack(copyStack, TE_VEND_FIRST_SLOT_INDEX, TE_VEND_FIRST_SLOT_INDEX + TE_VEND_TOTAL_COUNT, false)) {
+                            if (!this.mergeItemStack(copyStack, TE_VEND_FIRST_SLOT_INDEX, TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT, false)) {
                                 return null;
                             }
                         } else {
                             return null;
                         }
                     }
-                } else if (index >= TE_VEND_FIRST_SLOT_INDEX && index < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_TOTAL_COUNT) {  //TE Inventory
+                } else if (index >= TE_VEND_FIRST_SLOT_INDEX && index < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT) {  //TE Inventory
                     if (!this.mergeItemStack(copyStack, 0, PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT, false)) {
                         return null;
                     }
@@ -283,14 +296,14 @@ public class ContainerBuySell extends Container {
                                 if (!this.mergeItemStack(copyStack, TE_MONEY_FIRST_SLOT_INDEX, TE_MONEY_FIRST_SLOT_INDEX + 1, false)) {
                                     return null;
                                 }
-                            } else if (!this.mergeItemStack(copyStack, TE_VEND_FIRST_SLOT_INDEX, TE_VEND_FIRST_SLOT_INDEX + TE_VEND_TOTAL_COUNT, false)) {
+                            } else if (!this.mergeItemStack(copyStack, TE_VEND_FIRST_SLOT_INDEX, TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT, false)) {
                                 return null;
                             }
                         } else {
                             return null;
                         }
                     }
-                } else if (index >= TE_VEND_FIRST_SLOT_INDEX && index < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_TOTAL_COUNT) {  //TE Inventory
+                } else if (index >= TE_VEND_FIRST_SLOT_INDEX && index < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT) {  //TE Inventory
                     if (!this.mergeItemStack(copyStack, 0, PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT, false)) {
                         return null;
                     }

@@ -44,7 +44,8 @@ import javax.annotation.Nullable;
 public class TileVendor extends ModTile implements ICapabilityProvider, ITickable{
     private static final int MONEY_SLOT_COUNT = 1;
     private static final int VEND_SLOT_COUNT = 30;
-    private static final int TOTAL_SLOTS_COUNT = MONEY_SLOT_COUNT + VEND_SLOT_COUNT;
+    private static final int BUFFER_SLOT_COUNT = 6;
+    private static final int TOTAL_SLOTS_COUNT = MONEY_SLOT_COUNT + VEND_SLOT_COUNT + BUFFER_SLOT_COUNT;
 
     private int bank, profit, selectedSlot, face;
     private String owner, selectedName;

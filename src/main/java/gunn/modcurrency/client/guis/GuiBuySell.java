@@ -248,7 +248,7 @@ public class GuiBuySell extends GuiContainer {
         int i = (x - (this.width - this.xSize) / 2);
         int j = (y - (this.height - this.ySize) / 2);
 
-        if(j < 140 && j > 30) {
+        if(j < 140 && j > 30 && i >= 43) {
             int startX = 43;
             int startY = 31;
             int row = ((i - startX) / 18);
