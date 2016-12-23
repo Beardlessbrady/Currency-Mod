@@ -118,6 +118,25 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
                 bank = bank + amount;
                 markDirty();
             }
+
+            if(profit >= 20){
+                Loop:
+                for(int i = 0; i < BUFFER_SLOT_COUNT; i++){
+                    if(bufferStackHandler.getStackInSlot(i) != null){
+                        if(bufferStackHandler.getStackInSlot(i).stackSize < bufferStackHandler.getStackInSlot(i).getMaxStackSize()){
+                            profit = profit - 20;
+                            bufferStackHandler.getStackInSlot(i).stackSize++;
+                            break Loop;
+                        }
+                    }else if(bufferStackHandler.getStackInSlot(i) == null){
+                        ItemStack newStack = new ItemStack(ModItems.itembanknote);
+                        newStack.setItemDamage(3);
+                        bufferStackHandler.setStackInSlot(i, newStack);
+                        profit = profit - 20;
+                        break Loop;
+                    }
+                }
+            }
         }
     }
 
