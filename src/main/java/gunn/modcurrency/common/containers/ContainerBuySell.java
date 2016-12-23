@@ -118,7 +118,9 @@ public class ContainerBuySell extends Container {
         //Buffer Slots
         for (int x = 0; x < TE_BUFFER_TOTAL_COUNT; x++){
             int slotNum = TE_VEND_MAIN_TOTAL_COUNT + 1 + x;
-            int xpos = 15;
+            int xpos = 0;
+            if(tile.getField(2) == 1) xpos = 15;
+            if(tile.getField(2) == 0) xpos = -1000;
             int ypos = 32 + x * 18;
             if(tile instanceof TileVendor) addSlotToContainer(new SlotBank(itemHandler,slotNum,xpos,ypos));
             if(tile instanceof TileSeller) addSlotToContainer(new SlotItemHandler(itemHandler,slotNum,xpos,ypos));

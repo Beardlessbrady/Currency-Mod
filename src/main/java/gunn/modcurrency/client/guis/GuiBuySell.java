@@ -109,6 +109,11 @@ public class GuiBuySell extends GuiContainer {
             if(tile instanceof TileSeller) fontRendererObj.drawString(I18n.format("Funds") + ": $" + fundAmount, 5, 23, Color.darkGray.getRGB());
         }
 
+        if (tile.getField(2) == 0){
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+            Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
+            drawTexturedModalRect(14, 31, 177, 21, 18, 108);
+        }
         if (tile.getField(2) == 1) {
             drawIcons();
 
