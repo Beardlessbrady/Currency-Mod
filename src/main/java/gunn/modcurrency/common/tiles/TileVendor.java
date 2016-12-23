@@ -123,7 +123,7 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
                 Loop:
                 for(int i = 0; i < BUFFER_SLOT_COUNT; i++){
                     if(bufferStackHandler.getStackInSlot(i) != null){
-                        if(bufferStackHandler.getStackInSlot(i).stackSize < bufferStackHandler.getStackInSlot(i).getMaxStackSize()){
+                        if(bufferStackHandler.getStackInSlot(i).getItemDamage() == 3 && bufferStackHandler.getStackInSlot(i).stackSize < bufferStackHandler.getStackInSlot(i).getMaxStackSize()){
                             profit = profit - 20;
                             bufferStackHandler.getStackInSlot(i).stackSize++;
                             break Loop;

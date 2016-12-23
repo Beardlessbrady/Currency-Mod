@@ -2,6 +2,7 @@ package gunn.modcurrency.common.blocks;
 
 import gunn.modcurrency.api.ModTile;
 import gunn.modcurrency.common.core.handler.StateHandler;
+import gunn.modcurrency.common.items.ModItems;
 import gunn.modcurrency.common.tiles.TileSeller;
 import gunn.modcurrency.common.tiles.TileVendor;
 import net.minecraft.block.Block;
@@ -24,6 +25,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
+import java.util.Random;
 
 /**
  * Distributed with the Currency-Mod for Minecraft.
@@ -84,6 +86,7 @@ public class BlockTop extends Block{
                         int face = getTile(world,pos).getField(7);
                         int bank = getTile(world,pos).getField(0);
                         int[] itemCosts = getTile(world,pos).getAllItemCosts();
+                        ItemStackHandler inputStackHandler = getTile(world, pos).getInputHandler();
                         ItemStackHandler vendStackHandler = getTile(world, pos).getVendHandler();
                         ItemStackHandler buffStackHandler = getTile(world, pos).getBufferHandler();
 
@@ -93,7 +96,7 @@ public class BlockTop extends Block{
                         getTile(world,pos).setField(7,face);
                         getTile(world,pos).setField(0, bank);
                         getTile(world,pos).setAllItemCosts(itemCosts);
-                        getTile(world, pos).setStackHandlers(buffStackHandler, vendStackHandler);
+                        getTile(world, pos).setStackHandlers(inputStackHandler, buffStackHandler, vendStackHandler);
                         if (!player.isCreative()) heldItem.stackSize--;
                         return true;
                     }
@@ -119,21 +122,20 @@ public class BlockTop extends Block{
 
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-        if(!worldIn.isAirBlock(pos.down())){
-            ModTile te = (ModTile) getTile(worldIn, pos);
-            te.setField(2, 1);
-            te.outChange();
-            te.setField(2, 0);
-            te.outChange();
-            te.dropItems();
-
-            ItemStack stack = new ItemStack(Item.getItemFromBlock(ModBlocks.blockVendor));
-            if(te instanceof  TileSeller) stack = new ItemStack(Item.getItemFromBlock(ModBlocks.blockSeller));
-            stack.setItemDamage(worldIn.getBlockState(pos.down()).getValue(StateHandler.COLOR).getDyeDamage());
-            spawnAsEntity(worldIn, pos, stack);
-        }
-        super.breakBlock(worldIn, pos.down(), state);
         worldIn.setBlockToAir(pos.down());
+        super.breakBlock(worldIn, pos, state);
+    }
+
+    @Nullable
+    @Override
+    public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+        if(state.getValue(StateHandler.TOP) == StateHandler.EnumTopTypes.VENDOR)return Item.getItemFromBlock(ModBlocks.blockVendor);
+        return Item.getItemFromBlock(ModBlocks.blockSeller);
+    }
+
+    @Override
+    public int damageDropped(IBlockState state) {
+        return getMetaFromState(state);
     }
 
     @Override
