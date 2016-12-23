@@ -45,20 +45,20 @@ import javax.annotation.Nullable;
 public class TileVendor extends ModTile implements ICapabilityProvider, ITickable{
     private static final int MONEY_SLOT_COUNT = 1;
     private static final int VEND_SLOT_COUNT = 30;
-    private static final int TOTAL_BUFFER_SLOT_COUNT = 6;
-    private static final int TOTAL_SLOTS_COUNT = MONEY_SLOT_COUNT + VEND_SLOT_COUNT;
+    private static final int BUFFER_SLOT_COUNT = 6;
 
     private int bank, profit, selectedSlot, face;
     private String owner, selectedName;
     private boolean locked, mode, creative, infinite, gearExtended;
-    private int[] itemCosts = new int[TOTAL_SLOTS_COUNT];       //Always Ignore slot 0
-    private ItemStackHandler vendStackHandler = new ItemStackHandler(TOTAL_SLOTS_COUNT) {
+    private int[] itemCosts = new int[VEND_SLOT_COUNT];
+    private ItemStackHandler inputStackHandler = new ItemStackHandler(MONEY_SLOT_COUNT);
+    private ItemStackHandler vendStackHandler = new ItemStackHandler(VEND_SLOT_COUNT) {
         @Override
         protected void onContentsChanged(int slot) {
             markDirty();
         }
     };
-    private ItemStackHandler bufferStackHandler = new ItemStackHandler(TOTAL_BUFFER_SLOT_COUNT) {
+    private ItemStackHandler bufferStackHandler = new ItemStackHandler(BUFFER_SLOT_COUNT) {
         @Override
         protected void onContentsChanged(int slot) {
             markDirty();
@@ -88,9 +88,9 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
     @Override
     public void update() {
         if (!worldObj.isRemote) {
-            if (vendStackHandler.getStackInSlot(0) != null) {
+            if (inputStackHandler.getStackInSlot(0) != null) {
                 int amount;
-                switch (vendStackHandler.getStackInSlot(0).getItemDamage()) {
+                switch (inputStackHandler.getStackInSlot(0).getItemDamage()) {
                     case 0:
                         amount = 1;
                         break;
@@ -113,8 +113,8 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
                         amount = -1;
                         break;
                 }
-                amount = amount * vendStackHandler.getStackInSlot(0).stackSize;
-                vendStackHandler.setStackInSlot(0, null);
+                amount = amount * inputStackHandler.getStackInSlot(0).stackSize;
+                inputStackHandler.setStackInSlot(0, null);
                 bank = bank + amount;
                 markDirty();
             }
@@ -288,8 +288,9 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            if(facing == null) return (T) new CombinedInvWrapper(vendStackHandler, bufferStackHandler); //Inside Itself
+            if(facing == null) return (T) new CombinedInvWrapper(inputStackHandler, vendStackHandler, bufferStackHandler); //Inside Itself
             if(facing == EnumFacing.DOWN) return (T) bufferStackHandler;
+            if(facing != EnumFacing.DOWN) return (T) vendStackHandler;
         }
         return super.getCapability(capability, facing);
     }

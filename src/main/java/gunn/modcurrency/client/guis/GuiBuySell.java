@@ -254,7 +254,7 @@ public class GuiBuySell extends GuiContainer {
             int row = ((i - startX) / 18);
             int column = ((j - startY) / 18);
             int slot = row + (column * 5);
-            ItemStack currStack = tile.getStack(slot + 1);
+            ItemStack currStack = tile.getStack(slot);
 
             List<String> list = new ArrayList<>();
             list.add(String.valueOf(currStack.getDisplayName()));
