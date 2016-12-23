@@ -203,7 +203,6 @@ public class BlockVendor extends Block implements ITileEntityProvider {
     public int damageDropped(IBlockState state) {
         return getMetaFromState(state);
     }
-
     //<editor-fold desc="Block States--------------------------------------------------------------------------------------------------------">
     @Override
     protected BlockStateContainer createBlockState() {
