@@ -191,6 +191,13 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
                 vendStackHandler.setStackInSlot(i, null);   //Just in case
             }
         }
+        for (int i = 0; i < bufferStackHandler.getSlots(); i++){
+            ItemStack item = bufferStackHandler.getStackInSlot(i);
+            if (item != null) {
+                worldObj.spawnEntityInWorld(new EntityItem(worldObj, getPos().getX(), getPos().getY(), getPos().getZ(), item));
+                vendStackHandler.setStackInSlot(i, null);   //Just in case
+            }
+        }
     }
 
     //Player must be in certain range to open GUI
@@ -206,6 +213,8 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
         compound.setTag("items", vendStackHandler.serializeNBT());
+        compound.setTag("buffer", bufferStackHandler.serializeNBT());
+        compound.setTag("input", inputStackHandler.serializeNBT());
         compound.setInteger("bank", bank);
         compound.setInteger("profit", profit);
         compound.setInteger("face", face);
@@ -229,6 +238,8 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         if (compound.hasKey("items")) vendStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("items"));
+        if (compound.hasKey("buffer")) bufferStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("buffer"));
+        if (compound.hasKey("input")) inputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("input"));
         if (compound.hasKey("bank")) bank = compound.getInteger("bank");
         if (compound.hasKey("profit")) profit = compound.getInteger("profit");
         if (compound.hasKey("face")) face = compound.getInteger("face");
@@ -424,6 +435,11 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
     }
 
     @Override
+    public ItemStackHandler getInputHandler() {
+        return inputStackHandler;
+    }
+
+    @Override
     public ItemStackHandler getBufferHandler() {
         return bufferStackHandler;
     }
@@ -434,7 +450,8 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
     }
 
     @Override
-    public void setStackHandlers(ItemStackHandler buffCopy, ItemStackHandler vendCopy) {
+    public void setStackHandlers(ItemStackHandler inputCopy, ItemStackHandler buffCopy, ItemStackHandler vendCopy) {
+        inputStackHandler = inputCopy;
         vendStackHandler = vendCopy;
         bufferStackHandler = buffCopy;
     }
