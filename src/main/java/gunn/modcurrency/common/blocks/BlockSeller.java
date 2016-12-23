@@ -105,7 +105,7 @@ public class BlockSeller extends Block implements ITileEntityProvider{
                 int face = getTile(world, pos).getField(7);
                 int bank = getTile(world, pos).getField(0);
                 int[] itemCosts = getTile(world, pos).getAllItemCosts();
-                ItemStackHandler stackHandler = getTile(world, pos).getStackHandler();
+             //   ItemStackHandler stackHandler = getTile(world, pos).getStackHandler();
 
                 world.setBlockState(pos, state.withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())), 3);
                 world.setBlockState(pos.up(), world.getBlockState(pos.up()).withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())), 3);
@@ -114,7 +114,7 @@ public class BlockSeller extends Block implements ITileEntityProvider{
                 getTile(world, pos).setField(7,face);
                 getTile(world, pos).setField(0, bank);
                 getTile(world, pos).setAllItemCosts(itemCosts);
-                getTile(world, pos).setStackHandler(stackHandler);
+              //  getTile(world, pos).setStackHandler(stackHandler);
 
                 if (!player.isCreative()) heldItem.stackSize--;
                 return true;

@@ -65,8 +65,10 @@ public class ModTile extends TileEntity implements ICapabilityProvider {
         return null;
     }
 
-    public ItemStackHandler getStackHandler(){ return null; }
+    public ItemStackHandler getBufferHandler(){ return null; }
 
-    public void setStackHandler(ItemStackHandler copy){}
+    public ItemStackHandler getVendHandler(){ return null; }
+
+    public void setStackHandlers(ItemStackHandler buffCopy, ItemStackHandler vendCopy){}
 
 }

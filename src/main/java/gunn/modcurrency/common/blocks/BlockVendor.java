@@ -27,7 +27,9 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
+import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
 import javax.annotation.Nullable;
 
@@ -126,7 +128,8 @@ public class BlockVendor extends Block implements ITileEntityProvider {
                 int face = getTile(world, pos).getField(7);
                 int bank = getTile(world, pos).getField(0);
                 int[] itemCosts = getTile(world, pos).getAllItemCosts();
-                ItemStackHandler stackHandler = getTile(world, pos).getStackHandler();
+                ItemStackHandler vendStackHandler = getTile(world, pos).getVendHandler();
+                ItemStackHandler buffStackHandler = getTile(world, pos).getBufferHandler();
 
                 world.setBlockState(pos, state.withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())), 3);
                 world.setBlockState(pos.up(), world.getBlockState(pos.up()).withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())), 3);
@@ -135,7 +138,7 @@ public class BlockVendor extends Block implements ITileEntityProvider {
                 getTile(world, pos).setField(7,face);
                 getTile(world, pos).setField(0, bank);
                 getTile(world, pos).setAllItemCosts(itemCosts);
-                getTile(world, pos).setStackHandler(stackHandler);
+                getTile(world, pos).setStackHandlers(buffStackHandler, vendStackHandler);
 
                 if (!player.isCreative()) heldItem.stackSize--;
                 return true;
@@ -208,9 +211,6 @@ public class BlockVendor extends Block implements ITileEntityProvider {
 
     }
 
-    public boolean isChestBelow(World world, BlockPos pos){
-        return world.getBlockState(pos.down()).getBlock().equals(Blocks.CHEST);
-    }
 
     //<editor-fold desc="Block States--------------------------------------------------------------------------------------------------------">
     @Override

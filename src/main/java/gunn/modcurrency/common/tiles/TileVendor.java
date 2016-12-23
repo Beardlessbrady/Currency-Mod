@@ -19,6 +19,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
 import javax.annotation.Nullable;
 
@@ -44,14 +45,20 @@ import javax.annotation.Nullable;
 public class TileVendor extends ModTile implements ICapabilityProvider, ITickable{
     private static final int MONEY_SLOT_COUNT = 1;
     private static final int VEND_SLOT_COUNT = 30;
-    private static final int BUFFER_SLOT_COUNT = 6;
-    private static final int TOTAL_SLOTS_COUNT = MONEY_SLOT_COUNT + VEND_SLOT_COUNT + BUFFER_SLOT_COUNT;
+    private static final int TOTAL_BUFFER_SLOT_COUNT = 6;
+    private static final int TOTAL_SLOTS_COUNT = MONEY_SLOT_COUNT + VEND_SLOT_COUNT;
 
     private int bank, profit, selectedSlot, face;
     private String owner, selectedName;
     private boolean locked, mode, creative, infinite, gearExtended;
     private int[] itemCosts = new int[TOTAL_SLOTS_COUNT];       //Always Ignore slot 0
-    private ItemStackHandler itemStackHandler = new ItemStackHandler(TOTAL_SLOTS_COUNT) {
+    private ItemStackHandler vendStackHandler = new ItemStackHandler(TOTAL_SLOTS_COUNT) {
+        @Override
+        protected void onContentsChanged(int slot) {
+            markDirty();
+        }
+    };
+    private ItemStackHandler bufferStackHandler = new ItemStackHandler(TOTAL_BUFFER_SLOT_COUNT) {
         @Override
         protected void onContentsChanged(int slot) {
             markDirty();
@@ -81,9 +88,9 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
     @Override
     public void update() {
         if (!worldObj.isRemote) {
-            if (itemStackHandler.getStackInSlot(0) != null) {
+            if (vendStackHandler.getStackInSlot(0) != null) {
                 int amount;
-                switch (itemStackHandler.getStackInSlot(0).getItemDamage()) {
+                switch (vendStackHandler.getStackInSlot(0).getItemDamage()) {
                     case 0:
                         amount = 1;
                         break;
@@ -106,8 +113,8 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
                         amount = -1;
                         break;
                 }
-                amount = amount * itemStackHandler.getStackInSlot(0).stackSize;
-                itemStackHandler.setStackInSlot(0, null);
+                amount = amount * vendStackHandler.getStackInSlot(0).stackSize;
+                vendStackHandler.setStackInSlot(0, null);
                 bank = bank + amount;
                 markDirty();
             }
@@ -158,11 +165,11 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
 
     //Drop Items
     public void dropItems() {
-        for (int i = 0; i < itemStackHandler.getSlots(); i++) {
-            ItemStack item = itemStackHandler.getStackInSlot(i);
+        for (int i = 0; i < vendStackHandler.getSlots(); i++) {
+            ItemStack item = vendStackHandler.getStackInSlot(i);
             if (item != null) {
                 worldObj.spawnEntityInWorld(new EntityItem(worldObj, getPos().getX(), getPos().getY(), getPos().getZ(), item));
-                itemStackHandler.setStackInSlot(i, null);   //Just in case
+                vendStackHandler.setStackInSlot(i, null);   //Just in case
             }
         }
     }
@@ -173,11 +180,13 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
         return !isInvalid() && player.getDistanceSq(pos.add(0.5D, 0.5D, 0.5D)) <= 64D;
     }
 
+
+
     //<editor-fold desc="NBT & Packet Stoof--------------------------------------------------------------------------------------------------">
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
-        compound.setTag("items", itemStackHandler.serializeNBT());
+        compound.setTag("items", vendStackHandler.serializeNBT());
         compound.setInteger("bank", bank);
         compound.setInteger("profit", profit);
         compound.setInteger("face", face);
@@ -200,7 +209,7 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        if (compound.hasKey("items")) itemStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("items"));
+        if (compound.hasKey("items")) vendStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("items"));
         if (compound.hasKey("bank")) bank = compound.getInteger("bank");
         if (compound.hasKey("profit")) profit = compound.getInteger("profit");
         if (compound.hasKey("face")) face = compound.getInteger("face");
@@ -279,7 +288,8 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return (T) itemStackHandler;
+            if(facing == null) return (T) new CombinedInvWrapper(vendStackHandler, bufferStackHandler); //Inside Itself
+            if(facing == EnumFacing.DOWN) return (T) bufferStackHandler;
         }
         return super.getCapability(capability, facing);
     }
@@ -380,7 +390,7 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
 
     @Override
     public ItemStack getStack(int index) {
-        return itemStackHandler.getStackInSlot(index);
+        return vendStackHandler.getStackInSlot(index);
     }
 
     @Override
@@ -394,14 +404,21 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
     }
 
     @Override
-    public ItemStackHandler getStackHandler() {
-        return itemStackHandler;
+    public ItemStackHandler getBufferHandler() {
+        return bufferStackHandler;
     }
 
     @Override
-    public void setStackHandler(ItemStackHandler copy) {
-        itemStackHandler = copy;
+    public ItemStackHandler getVendHandler() {
+        return vendStackHandler;
     }
+
+    @Override
+    public void setStackHandlers(ItemStackHandler buffCopy, ItemStackHandler vendCopy) {
+        vendStackHandler = vendCopy;
+        bufferStackHandler = buffCopy;
+    }
+
     //</editor-fold>
 
 

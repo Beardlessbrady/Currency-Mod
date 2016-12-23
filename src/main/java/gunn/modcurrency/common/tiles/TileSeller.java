@@ -403,10 +403,22 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
     }
 
     @Override
-    public ItemStackHandler getStackHandler(){ return itemStackHandler; }
+    public ItemStackHandler getBufferHandler() {
+       // return bufferStackHandler;
+        return null;
+    }
 
     @Override
-    public void setStackHandler(ItemStackHandler copy){ itemStackHandler = copy; }
+    public ItemStackHandler getVendHandler() {
+        //return vendStackHandler;
+        return null;
+    }
+
+    @Override
+    public void setStackHandlers(ItemStackHandler buffCopy, ItemStackHandler vendCopy) {
+      //  vendStackHandler = vendCopy;
+      //  bufferStackHandler = buffCopy;
+    }
     //</editor-fold>
 
 }

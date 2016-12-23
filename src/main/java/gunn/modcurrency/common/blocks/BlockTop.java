@@ -84,7 +84,8 @@ public class BlockTop extends Block{
                         int face = getTile(world,pos).getField(7);
                         int bank = getTile(world,pos).getField(0);
                         int[] itemCosts = getTile(world,pos).getAllItemCosts();
-                        ItemStackHandler stackHandler = getTile(world,pos).getStackHandler();
+                        ItemStackHandler vendStackHandler = getTile(world, pos).getVendHandler();
+                        ItemStackHandler buffStackHandler = getTile(world, pos).getBufferHandler();
 
                         world.setBlockState(pos, state.withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())), 3);
                         world.setBlockState(pos.down(), world.getBlockState(pos.down()).withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())), 3);
@@ -92,7 +93,7 @@ public class BlockTop extends Block{
                         getTile(world,pos).setField(7,face);
                         getTile(world,pos).setField(0, bank);
                         getTile(world,pos).setAllItemCosts(itemCosts);
-                        getTile(world,pos).setStackHandler(stackHandler);
+                        getTile(world, pos).setStackHandlers(buffStackHandler, vendStackHandler);
                         if (!player.isCreative()) heldItem.stackSize--;
                         return true;
                     }
