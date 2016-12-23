@@ -204,13 +204,6 @@ public class BlockVendor extends Block implements ITileEntityProvider {
         return getMetaFromState(state);
     }
 
-    @Override
-    public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) {
-        super.onNeighborChange(world, pos, neighbor);
-
-    }
-
-
     //<editor-fold desc="Block States--------------------------------------------------------------------------------------------------------">
     @Override
     protected BlockStateContainer createBlockState() {
@@ -224,7 +217,7 @@ public class BlockVendor extends Block implements ITileEntityProvider {
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return ((EnumDyeColor)state.getValue(StateHandler.COLOR)).getDyeDamage();
+        return (state.getValue(StateHandler.COLOR)).getDyeDamage();
     }
 
     @Override

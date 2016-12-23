@@ -41,5 +41,6 @@ public class ModBlocks {
     
     public static void addRecipes(){
         blockVendor.recipe();
+        blockSeller.recipe();
     }
 }

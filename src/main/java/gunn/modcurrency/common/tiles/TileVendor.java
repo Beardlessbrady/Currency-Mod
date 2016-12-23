@@ -6,7 +6,6 @@ import gunn.modcurrency.api.ModTile;
 import gunn.modcurrency.common.items.ModItems;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -43,7 +42,7 @@ import javax.annotation.Nullable;
  * File Created on 2016-10-30.
  */
 public class TileVendor extends ModTile implements ICapabilityProvider, ITickable{
-    private static final int MONEY_SLOT_COUNT = 1;
+    private static final int INPUT_SLOT_COUNT = 1;
     private static final int VEND_SLOT_COUNT = 30;
     private static final int BUFFER_SLOT_COUNT = 6;
 
@@ -51,19 +50,9 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
     private String owner, selectedName;
     private boolean locked, mode, creative, infinite, gearExtended;
     private int[] itemCosts = new int[VEND_SLOT_COUNT];
-    private ItemStackHandler inputStackHandler = new ItemStackHandler(MONEY_SLOT_COUNT);
-    private ItemStackHandler vendStackHandler = new ItemStackHandler(VEND_SLOT_COUNT) {
-        @Override
-        protected void onContentsChanged(int slot) {
-            markDirty();
-        }
-    };
-    private ItemStackHandler bufferStackHandler = new ItemStackHandler(BUFFER_SLOT_COUNT) {
-        @Override
-        protected void onContentsChanged(int slot) {
-            markDirty();
-        }
-    };
+    private ItemStackHandler inputStackHandler = new ItemStackHandler(INPUT_SLOT_COUNT);
+    private ItemStackHandler vendStackHandler = new ItemStackHandler(VEND_SLOT_COUNT);
+    private ItemStackHandler bufferStackHandler = new ItemStackHandler(BUFFER_SLOT_COUNT);
 
     public TileVendor() {
         bank = 0;

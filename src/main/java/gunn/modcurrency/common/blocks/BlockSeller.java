@@ -15,6 +15,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
@@ -67,6 +68,26 @@ public class BlockSeller extends Block implements ITileEntityProvider{
     }
 
     public void recipe(){
+        ItemStack basic = new ItemStack(Item.getItemFromBlock(this));
+        ItemStack color = new ItemStack(Items.DYE);
+        basic.setItemDamage(0);
+
+        GameRegistry.addRecipe(basic,
+                "ABA",
+                "ACA",
+                "ADA",
+                'A', Items.IRON_INGOT,
+                'B', Items.REPEATER,
+                'C', Item.getItemFromBlock(Blocks.CHEST),
+                'D', Items.IRON_DOOR);
+
+        for(int i = 1; i < 16; i++) {
+            ItemStack stack = new ItemStack(Item.getItemFromBlock(this));
+            stack.setItemDamage(i);
+            color.setItemDamage(i);
+            GameRegistry.addShapelessRecipe(stack, color, basic);
+            GameRegistry.addShapelessRecipe(basic, stack);
+        }
     }
 
     public void initModel(){
@@ -105,7 +126,9 @@ public class BlockSeller extends Block implements ITileEntityProvider{
                 int face = getTile(world, pos).getField(7);
                 int bank = getTile(world, pos).getField(0);
                 int[] itemCosts = getTile(world, pos).getAllItemCosts();
-             //   ItemStackHandler stackHandler = getTile(world, pos).getStackHandler();
+                ItemStackHandler inputStackHandler = getTile(world, pos).getInputHandler();
+                ItemStackHandler vendStackHandler = getTile(world, pos).getVendHandler();
+                ItemStackHandler buffStackHandler = getTile(world, pos).getBufferHandler();
 
                 world.setBlockState(pos, state.withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())), 3);
                 world.setBlockState(pos.up(), world.getBlockState(pos.up()).withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())), 3);
@@ -114,7 +137,7 @@ public class BlockSeller extends Block implements ITileEntityProvider{
                 getTile(world, pos).setField(7,face);
                 getTile(world, pos).setField(0, bank);
                 getTile(world, pos).setAllItemCosts(itemCosts);
-              //  getTile(world, pos).setStackHandler(stackHandler);
+                getTile(world, pos).setStackHandlers(inputStackHandler, buffStackHandler, vendStackHandler);
 
                 if (!player.isCreative()) heldItem.stackSize--;
                 return true;
@@ -195,7 +218,7 @@ public class BlockSeller extends Block implements ITileEntityProvider{
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return ((EnumDyeColor)state.getValue(StateHandler.COLOR)).getDyeDamage();
+        return (state.getValue(StateHandler.COLOR)).getDyeDamage();
     }
 
     @Override

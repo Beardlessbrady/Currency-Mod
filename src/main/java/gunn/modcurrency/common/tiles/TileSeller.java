@@ -17,6 +17,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
 import javax.annotation.Nullable;
 
@@ -40,20 +41,17 @@ import javax.annotation.Nullable;
  * File Created on 2016-12-19
  */
 public class TileSeller extends ModTile implements ICapabilityProvider, ITickable{
-    private static final int SELL_SLOT_COUNT = 1;
+    private static final int INPUT_SLOT_COUNT = 1;
     private static final int VEND_SLOT_COUNT = 30;
     private static final int BUFFER_SLOT_COUNT = 6;
-    private static final int TOTAL_SLOTS_COUNT = SELL_SLOT_COUNT + VEND_SLOT_COUNT + BUFFER_SLOT_COUNT;
 
     private int bank, selectedSlot, face, cashRegister;
     private String owner, selectedName;
     private boolean locked, mode, creative, infinite, gearExtended;
-    private int[] itemCosts = new int[TOTAL_SLOTS_COUNT];       //Always Ignore slot 0
-    private ItemStackHandler itemStackHandler = new ItemStackHandler(TOTAL_SLOTS_COUNT) {
-        @Override
-        protected void onContentsChanged(int slot) {
-            markDirty();
-        }};
+    private int[] itemCosts = new int[VEND_SLOT_COUNT];
+    private ItemStackHandler inputStackHandler = new ItemStackHandler(INPUT_SLOT_COUNT);
+    private ItemStackHandler vendStackHandler = new ItemStackHandler(VEND_SLOT_COUNT);
+    private ItemStackHandler bufferStackHandler = new ItemStackHandler(BUFFER_SLOT_COUNT);
 
     public TileSeller() {
         bank = 0;
@@ -78,33 +76,56 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
     public void update() {
         if (!worldObj.isRemote) {
             if (!mode) {        //SELL MODE
-                if (itemStackHandler.getStackInSlot(0) != null) {
+                if (inputStackHandler.getStackInSlot(0) != null) {
                     searchLoop:
-                    for (int i = 1; i < itemStackHandler.getSlots(); i++) {
-                        if (itemStackHandler.getStackInSlot(i) != null) {
-                            if (itemStackHandler.getStackInSlot(0).getUnlocalizedName().equals(itemStackHandler.getStackInSlot(i).getUnlocalizedName())) {
-                                int cost = getItemCost(i - 1);
-                                if((cashRegister >= cost || infinite) && (itemStackHandler.getStackInSlot(i).stackSize < itemStackHandler.getStackInSlot(i).getMaxStackSize())){
-                                    ItemStack inputItem = itemStackHandler.getStackInSlot(0);
-                                    ItemStack stockitem = itemStackHandler.getStackInSlot(i);
+                    for (int i = 0; i < vendStackHandler.getSlots(); i++) {
+                        if (vendStackHandler.getStackInSlot(i) != null) {
+                            if (inputStackHandler.getStackInSlot(0).getUnlocalizedName().equals(vendStackHandler.getStackInSlot(i).getUnlocalizedName())) {
+                                int cost = getItemCost(i);
+                                boolean isThereRoom = false;
+                                int buffSlot = 0;
+
+                                RoomLoop:
+                                for(int j = 0; j < BUFFER_SLOT_COUNT; j++){
+                                    if(bufferStackHandler.getStackInSlot(j) != null){
+                                        if((bufferStackHandler.getStackInSlot(j).getUnlocalizedName().equals(inputStackHandler.getStackInSlot(0).getUnlocalizedName())
+                                                && (bufferStackHandler.getStackInSlot(j).stackSize < bufferStackHandler.getStackInSlot(j).getMaxStackSize()))) isThereRoom = true;
+                                    }else isThereRoom = true;
+                                    if(isThereRoom){
+                                        buffSlot = j;
+                                        break RoomLoop;
+                                    }
+                                }
+
+                                if((cashRegister >= cost || infinite) && isThereRoom){
+                                    ItemStack inputItem = inputStackHandler.getStackInSlot(0);
+                                    ItemStack stockitem = vendStackHandler.getStackInSlot(i);
                                     bank = bank + cost;
-                                    if(!infinite) cashRegister = cashRegister - cost;
+                                    if(!infinite){
+                                        cashRegister = cashRegister - cost;
+                                        if(bufferStackHandler.getStackInSlot(buffSlot) != null) bufferStackHandler.getStackInSlot(buffSlot).stackSize++;
+                                        if(bufferStackHandler.getStackInSlot(buffSlot) == null){
+                                            ItemStack newStack = inputItem.copy();
+                                            newStack.stackSize = 1;
+                                            bufferStackHandler.setStackInSlot(buffSlot, newStack);
+                                        }
+                                    }
                                     inputItem.stackSize--;
-                                    if(!infinite) stockitem.stackSize++;
+                                    isThereRoom = false;
                                 }
                             }
                         }
-                        if(itemStackHandler.getStackInSlot(0).stackSize == 0) {
-                            itemStackHandler.setStackInSlot(0, null);
+                        if(inputStackHandler.getStackInSlot(0).stackSize == 0) {
+                            inputStackHandler.setStackInSlot(0, null);
                             break searchLoop;
                         }
                     }
                 }
             } else {        //EDIT MODE
-                if (itemStackHandler.getStackInSlot(0) != null) {
-                    if (itemStackHandler.getStackInSlot(0).getItem().equals(ModItems.itembanknote)) {
+                if (inputStackHandler.getStackInSlot(0) != null) {
+                    if (inputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itembanknote)) {
                         int amount;
-                        switch (itemStackHandler.getStackInSlot(0).getItemDamage()) {
+                        switch (inputStackHandler.getStackInSlot(0).getItemDamage()) {
                             case 0:
                                 amount = 1;
                                 break;
@@ -127,8 +148,8 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
                                 amount = -1;
                                 break;
                         }
-                        amount = amount * itemStackHandler.getStackInSlot(0).stackSize;
-                        itemStackHandler.setStackInSlot(0, null);
+                        amount = amount * inputStackHandler.getStackInSlot(0).stackSize;
+                        inputStackHandler.setStackInSlot(0, null);
                         cashRegister = cashRegister + amount;
                     }
                 }
@@ -181,11 +202,18 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
 
     //Drop Items
     public void dropItems(){
-        for(int i = 0; i < itemStackHandler.getSlots(); i++){
-            ItemStack item = itemStackHandler.getStackInSlot(i);
-            if(item != null){
+        for (int i = 0; i < vendStackHandler.getSlots(); i++) {
+            ItemStack item = vendStackHandler.getStackInSlot(i);
+            if (item != null) {
                 worldObj.spawnEntityInWorld(new EntityItem(worldObj, getPos().getX(), getPos().getY(), getPos().getZ(), item));
-                itemStackHandler.setStackInSlot(i, null);   //Just in case
+                vendStackHandler.setStackInSlot(i, null);   //Just in case
+            }
+        }
+        for (int i = 0; i < bufferStackHandler.getSlots(); i++){
+            ItemStack item = bufferStackHandler.getStackInSlot(i);
+            if (item != null) {
+                worldObj.spawnEntityInWorld(new EntityItem(worldObj, getPos().getX(), getPos().getY(), getPos().getZ(), item));
+                vendStackHandler.setStackInSlot(i, null);   //Just in case
             }
         }
     }
@@ -200,7 +228,9 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
-        compound.setTag("items", itemStackHandler.serializeNBT());
+        compound.setTag("items", vendStackHandler.serializeNBT());
+        compound.setTag("buffer", bufferStackHandler.serializeNBT());
+        compound.setTag("input", inputStackHandler.serializeNBT());
         compound.setInteger("bank", bank);
         compound.setInteger("face", face);
         compound.setInteger("cashRegister", cashRegister);
@@ -223,7 +253,9 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        if (compound.hasKey("items")) itemStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("items"));
+        if (compound.hasKey("items")) vendStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("items"));
+        if (compound.hasKey("buffer")) bufferStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("buffer"));
+        if (compound.hasKey("input")) inputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("input"));
         if (compound.hasKey("bank")) bank = compound.getInteger("bank");
         if (compound.hasKey("face")) face = compound.getInteger("face");
         if (compound.hasKey("cashRegister")) cashRegister = compound.getInteger("cashRegister");
@@ -302,7 +334,9 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
     @Override
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return (T) itemStackHandler;
+            if (facing == null) return (T) new CombinedInvWrapper(inputStackHandler, vendStackHandler, bufferStackHandler); //Inside Itself
+            if (facing == EnumFacing.DOWN) return (T) bufferStackHandler;
+            if (facing != EnumFacing.DOWN) return null;
         }
         return super.getCapability(capability, facing);
     }
@@ -388,8 +422,8 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
     public void setItemCost(int amount) {itemCosts[selectedSlot - 37] = amount;}
 
     @Override
-    public ItemStack getStack(int index){
-        return itemStackHandler.getStackInSlot(index);
+    public ItemStack getStack(int index) {
+        return vendStackHandler.getStackInSlot(index);
     }
 
     @Override
@@ -403,21 +437,25 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
     }
 
     @Override
+    public ItemStackHandler getInputHandler() {
+        return inputStackHandler;
+    }
+
+    @Override
     public ItemStackHandler getBufferHandler() {
-       // return bufferStackHandler;
-        return null;
+        return bufferStackHandler;
     }
 
     @Override
     public ItemStackHandler getVendHandler() {
-        //return vendStackHandler;
-        return null;
+        return vendStackHandler;
     }
 
     @Override
     public void setStackHandlers(ItemStackHandler inputCopy, ItemStackHandler buffCopy, ItemStackHandler vendCopy) {
-      //  vendStackHandler = vendCopy;
-      //  bufferStackHandler = buffCopy;
+        inputStackHandler = inputCopy;
+        vendStackHandler = vendCopy;
+        bufferStackHandler = buffCopy;
     }
     //</editor-fold>
 
