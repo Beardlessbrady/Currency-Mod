@@ -121,27 +121,27 @@ public class GuiBuySell extends GuiContainer {
             fontRendererObj.drawString(I18n.format(profitName) + ": $" + profitAmnt, 5, 16, Color.darkGray.getRGB());
 
             if (gearExtended) {
-                fontRendererObj.drawString(I18n.format("Slot Settings"), 197, 51, Integer.parseInt("42401c", 16));
-                fontRendererObj.drawString(I18n.format("Slot Settings"), 196, 50, Integer.parseInt("fff200", 16));
-                fontRendererObj.drawString(I18n.format("Cost:"), 183, 73, Integer.parseInt("211d1b", 16));
-                fontRendererObj.drawString(I18n.format("Cost:"), 184, 72, Color.lightGray.getRGB());
-                fontRendererObj.drawString(I18n.format("$"), 210, 72, Integer.parseInt("0099ff", 16));
+                fontRendererObj.drawString(I18n.format("Slot Settings"), -81, 51, Integer.parseInt("42401c", 16));
+                fontRendererObj.drawString(I18n.format("Slot Settings"), -80, 50, Integer.parseInt("fff200", 16));
+                fontRendererObj.drawString(I18n.format("Cost:"), -84, 73, Integer.parseInt("211d1b", 16));
+                fontRendererObj.drawString(I18n.format("Cost:"), -83, 72, Color.lightGray.getRGB());
+                fontRendererObj.drawString(I18n.format("$"), -57, 72, Integer.parseInt("0099ff", 16));
                 
                 String selectedName = tile.getSelectedName();
                 
                 GL11.glPushMatrix();
                     GL11.glScaled(0.7, 0.7, 0.7);
-                    fontRendererObj.drawString(I18n.format("[" + selectedName + "]"), 257, 91, Integer.parseInt("001f33", 16));
-                    fontRendererObj.drawString(I18n.format("[" + selectedName + "]"), 258, 90, Integer.parseInt("0099ff", 16));
+                    fontRendererObj.drawString(I18n.format("[" + selectedName + "]"), -117, 91, Integer.parseInt("001f33", 16));
+                    fontRendererObj.drawString(I18n.format("[" + selectedName + "]"), -118, 90, Integer.parseInt("0099ff", 16));
                 GL11.glPopMatrix();
             }
             if(creativeExtended){
                 if(!gearExtended) {
-                    fontRendererObj.drawString(I18n.format("Infinite Stock"), 197, 73, Integer.parseInt("42401c", 16));
-                    fontRendererObj.drawString(I18n.format("Infinite Stock"), 196, 72, Integer.parseInt("fff200", 16));
+                    fontRendererObj.drawString(I18n.format("Infinite Stock"), -86, 73, Integer.parseInt("42401c", 16));
+                    fontRendererObj.drawString(I18n.format("Infinite Stock"), -85, 72, Integer.parseInt("fff200", 16));
                 }else{
-                    fontRendererObj.drawString(I18n.format("Infinite Stock"), 197, 99, Integer.parseInt("42401c", 16));
-                    fontRendererObj.drawString(I18n.format("Infinite Stock"), 196, 98, Integer.parseInt("fff200", 16));
+                    fontRendererObj.drawString(I18n.format("Infinite Stock"), -86, 99, Integer.parseInt("42401c", 16));
+                    fontRendererObj.drawString(I18n.format("Infinite Stock"), -85, 98, Integer.parseInt("fff200", 16));
                 }
             }
         }
@@ -160,14 +160,14 @@ public class GuiBuySell extends GuiContainer {
         this.buttonList.add(new GuiButton(0, i + 103, j + 7, 45, 20, ChangeButton));
 
         if (tile.getField(2) == 1) {
-            this.buttonList.add(new CustomButton(1, i + 176, j + 20, 0, 21, 21, 22, "", TAB_TEXTURE));   //Lock Tab
-            this.buttonList.add(new CustomButton(2, i + 176, j + 43, 0, 0, 21, 21, "", TAB_TEXTURE));   //Gear Tab
+            this.buttonList.add(new CustomButton(1, i - 20, j + 20, 0, 21, 21, 22, "", TAB_TEXTURE));   //Lock Tab
+            this.buttonList.add(new CustomButton(2, i - 20, j + 43, 0, 0, 21, 21, "", TAB_TEXTURE));   //Gear Tab
             if(tile.getField(5) == 1) {
-                this.buttonList.add(new CustomButton(3, i + 176, j + 65, 0, 44, 21, 21, "", TAB_TEXTURE));   //Creative Tab
+                this.buttonList.add(new CustomButton(3, i - 20, j + 65, 0, 44, 21, 21, "", TAB_TEXTURE));   //Creative Tab
                 this.buttonList.add(new GuiButton(4, i + 198, j + 85, 45, 20, "BORKED"));
                 this.buttonList.get(4).visible = false;
             }
-            this.nameField = new GuiTextField(0, fontRendererObj, i + 217, j + 72, 45, 10);        //Setting Costs
+            this.nameField = new GuiTextField(0, fontRendererObj, i -50, j + 72, 45, 10);        //Setting Costs
             this.nameField.setTextColor(Integer.parseInt("0099ff", 16));
             this.nameField.setEnableBackgroundDrawing(false);
             this.nameField.setMaxStringLength(7);
@@ -185,31 +185,31 @@ public class GuiBuySell extends GuiContainer {
 
         //Draw Lock Icon
         if (tile.getField(1) == 1) {
-            drawTexturedModalRect(180, 23, 245, 15, 11, 16);
+            drawTexturedModalRect(-14, 23, 245, 15, 11, 16);
         } else {
-            drawTexturedModalRect(180, 25, 245, 0, 11, 14);
+            drawTexturedModalRect(-14, 25, 245, 0, 11, 14);
         }
         
         //Draw Gear Icon and Extended Background
-        if (gearExtended) drawTexturedModalRect(176, 43, 27, 0, 91, 47);
-        drawTexturedModalRect(174, 46, 237, 32, 19, 15);
+        if (gearExtended) drawTexturedModalRect(-91, 43, 27, 0, 91, 47);
+        drawTexturedModalRect(-20, 46, 237, 32, 19, 15);
 
         //Draw Creative Icon
         if(tile.getField(5) == 1) {
             if(!gearExtended) {
-                this.buttonList.set(3,(new CustomButton(3, i + 176, j + 65, 0, 44, 21, 21, "", TAB_TEXTURE)));   //Creative Tab
+                this.buttonList.set(3,(new CustomButton(3, i - 20, j + 65, 0, 44, 21, 21, "", TAB_TEXTURE)));   //Creative Tab
                 if(creativeExtended && tile.getField(5) == 1) {
-                    this.buttonList.set(4,(new GuiButton(4, i + 198, j + 85, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
-                    drawTexturedModalRect(176, 65, 27, 48, 91, 47);
+                    this.buttonList.set(4,(new GuiButton(4, i - 68, j + 85, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
+                    drawTexturedModalRect(-90, 65, 27, 48, 91, 47);
                 }else if(!creativeExtended && tile.getField(5) == 1) this.buttonList.get(4).visible = false;
-                drawTexturedModalRect(175, 71, 237, 48, 19, 9);
+                drawTexturedModalRect(-20, 71, 237, 48, 19, 9);
             }else{
-                this.buttonList.set(3,(new CustomButton(3, i + 176, j + 91, 0, 44, 21, 21, "", TAB_TEXTURE)));   //Creative Tab
+                this.buttonList.set(3,(new CustomButton(3, i -20, j + 91, 0, 44, 21, 21, "", TAB_TEXTURE)));   //Creative Tab
                  if(creativeExtended  && tile.getField(5) == 1) {
-                     this.buttonList.set(4,(new GuiButton(4, i + 198, j + 111, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
-                     drawTexturedModalRect(176, 91, 27, 48, 91, 47);
+                     this.buttonList.set(4,(new GuiButton(4, i - 68, j + 111, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
+                     drawTexturedModalRect(-90, 91, 27, 48, 91, 47);
                  }else if (!creativeExtended && tile.getField(5) == 1) this.buttonList.get(4).visible = false;
-                 drawTexturedModalRect(175, 97, 237, 48, 19, 9);
+                 drawTexturedModalRect(-20, 97, 237, 48, 19, 9);
             }
         }
 
