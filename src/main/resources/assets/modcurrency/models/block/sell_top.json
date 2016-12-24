@@ -33,17 +33,17 @@
 			"from": [ 0, 0, 15 ],
 			"to": [ 16, 3, 16 ],
 			"faces": {
-				"down": { "uv": [ 0, 15, 0.5, 15.5 ], "texture": "#texture", "rotation": 270 },
-				"up": { "uv": [ 0, 7.5, 0.5, 7 ], "texture": "#texture", "rotation": 90 },
-				"south": { "uv": [ 0.5, 7, 0, 15.5 ], "texture": "#texture" },
-				"west": { "uv": [ 0, 7, 0.5, 15.5 ], "texture": "#texture" },
-				"east": { "uv": [ 0.5, 7, 0, 15.5 ], "texture": "#texture" }
+				"down": { "uv": [ 0.5, 9.5, 5, 10 ], "texture": "#texture" },
+				"up": { "uv": [ 0.5, 7.5, 5, 7 ], "texture": "#texture" },
+				"south": { "uv": [ 0.5, 7, 5, 10 ], "texture": "#texture" },
+				"west": { "uv": [ 0.5, 7, 1, 10 ], "texture": "#texture" },
+				"east": { "uv": [ 5, 7, 4.5, 10 ], "texture": "#texture" }
 			}
 		},
 		{
 			"__comment": "Cube16",
-			"from": [ 1, 2, 0 ],
-			"to": [ 15, 3, 15.5 ],
+			"from": [ 3, 2, 0 ],
+			"to": [ 14, 3, 16 ],
 			"faces": {
 				"down": { "uv": [ 2, 10, 6, 5.5 ], "texture": "#texture" },
 				"up": { "uv": [ 2, 5.5, 6, 10 ], "texture": "#texture" },
