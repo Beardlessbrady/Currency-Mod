@@ -94,6 +94,8 @@ public class GuiBuySell extends GuiContainer {
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
+        if(tile instanceof TileVendor) drawTexturedModalRect(guiLeft + 152, guiTop + 9, 198, 0, 13,14);
+        if(tile instanceof TileSeller) drawTexturedModalRect(guiLeft + 152, guiTop + 9, 198, 17, 13,14);
     }
 
     @Override
