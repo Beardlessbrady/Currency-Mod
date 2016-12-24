@@ -175,8 +175,20 @@ public class ContainerBuySell extends Container {
             if (tile.getField(2) == 1) {      //EDIT MODE
                 if (slotId >= 0 && slotId <= 36) {
                     return super.slotClick(slotId, dragType, clickTypeIn, player);
-                } else if ((slotId >= 37 && slotId < 67 && tile.getField(8) == 0)) {
-                    return super.slotClick(slotId, dragType, clickTypeIn, player);
+                } else if ((slotId >= 37 && slotId < 67 && tile.getField(8) == 0)) {    //Vend Slots, not in Selection mode
+                    InventoryPlayer inventoryPlayer = player.inventory;
+                    Slot ghostSlot = this.inventorySlots.get(slotId);
+                    if (dragType == 0 && clickTypeIn == ClickType.PICKUP) {      //LEFT
+                        if (inventoryPlayer.getItemStack() != null) {
+                            ItemStack ghostStack = inventoryPlayer.getItemStack().copy();
+
+                            ghostStack.stackSize = 1;
+                            ghostSlot.putStack(ghostStack);
+                        }
+                    } else if (dragType == 1 && clickTypeIn == ClickType.PICKUP) {  //RIGHT
+                        ghostSlot.putStack(null);
+                    }
+                    return inventoryPlayer.getItemStack();
                 } else if (slotId >= 37 && slotId < 67 && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 0) {
                     tile.setField(3, slotId);
                     if (getSlot(slotId).getHasStack()) {
@@ -186,11 +198,9 @@ public class ContainerBuySell extends Container {
                     }
                     tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
                     return null;
-                } else if (slotId >= 37 && slotId < 67 && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 1) {
-                    return super.slotClick(slotId, 0, clickTypeIn, player);
-                } else {
-                    return super.slotClick(slotId, dragType, clickTypeIn, player);
-                }
+                } else if (slotId > 66 && slotId < 73){
+                    return super.slotClick(slotId, dragType, clickTypeIn, player); //Buffer Slots
+                } else return null;
             } else {  //Sell Mode
                 if (slotId >= 0 && slotId <= 36) {           //Is Players Inv or Input Slot
                     return super.slotClick(slotId, dragType, clickTypeIn, player);
