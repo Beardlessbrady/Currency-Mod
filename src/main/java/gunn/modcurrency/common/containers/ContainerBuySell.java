@@ -213,7 +213,6 @@ public class ContainerBuySell extends Container {
         return null;
     }
 
-
     public ItemStack checkAfford(int slotId, int amnt, EntityPlayer player) {
         if (tile instanceof TileVendor) {
             IItemHandler itemHandler = this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
@@ -311,14 +310,12 @@ public class ContainerBuySell extends Container {
                             return null;
                         }
                     } else {
-                        if (tile.getField(2) == 1) {     //Only allow shift clicking from player inv in edit mode
+                        if (tile.getField(2) == 1) {
                             if (inventorySlots.get(index).getStack().getItem() == ModItems.itembanknote) {
                                 if (!this.mergeItemStack(copyStack, TE_MONEY_FIRST_SLOT_INDEX, TE_MONEY_FIRST_SLOT_INDEX + 1, false)) {
                                     return null;
                                 }
-                            } else if (!this.mergeItemStack(copyStack, TE_VEND_FIRST_SLOT_INDEX, TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT, false)) {
-                                return null;
-                            }
+                            }else return null;
                         } else {
                             return null;
                         }

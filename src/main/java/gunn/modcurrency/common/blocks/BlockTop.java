@@ -122,20 +122,15 @@ public class BlockTop extends Block{
 
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-        worldIn.setBlockToAir(pos.down());
+        if(!worldIn.isAirBlock(pos.down())) {
+            ItemStack drop = new ItemStack(Item.getItemFromBlock(ModBlocks.blockVendor));
+            if (worldIn.getBlockState(pos.down()).getBlock().equals(ModBlocks.blockSeller)) drop = new ItemStack(Item.getItemFromBlock(ModBlocks.blockSeller));
+            drop.setItemDamage(worldIn.getBlockState(pos.down()).getValue(StateHandler.COLOR).getDyeDamage());
+            spawnAsEntity(worldIn,pos,drop);
+        }
+
         super.breakBlock(worldIn, pos, state);
-    }
-
-    @Nullable
-    @Override
-    public Item getItemDropped(IBlockState state, Random rand, int fortune) {
-        if(state.getValue(StateHandler.TOP) == StateHandler.EnumTopTypes.VENDOR)return Item.getItemFromBlock(ModBlocks.blockVendor);
-        return Item.getItemFromBlock(ModBlocks.blockSeller);
-    }
-
-    @Override
-    public int damageDropped(IBlockState state) {
-        return getMetaFromState(state);
+        worldIn.setBlockToAir(pos.down());
     }
 
     @Override

@@ -196,8 +196,9 @@ public class BlockSeller extends Block implements ITileEntityProvider{
         te.setField(2,0);
         te.outChange();
         te.dropItems();
-        worldIn.setBlockToAir(pos.up());
+
         super.breakBlock(worldIn, pos, state);
+        worldIn.setBlockToAir(pos.up());
     }
 
     @Override

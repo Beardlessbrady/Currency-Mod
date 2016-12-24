@@ -202,13 +202,6 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
 
     //Drop Items
     public void dropItems(){
-        for (int i = 0; i < vendStackHandler.getSlots(); i++) {
-            ItemStack item = vendStackHandler.getStackInSlot(i);
-            if (item != null) {
-                worldObj.spawnEntityInWorld(new EntityItem(worldObj, getPos().getX(), getPos().getY(), getPos().getZ(), item));
-                vendStackHandler.setStackInSlot(i, null);   //Just in case
-            }
-        }
         for (int i = 0; i < bufferStackHandler.getSlots(); i++){
             ItemStack item = bufferStackHandler.getStackInSlot(i);
             if (item != null) {
@@ -335,7 +328,7 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
     public <T> T getCapability(Capability<T> capability, EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             if (facing == null) return (T) new CombinedInvWrapper(inputStackHandler, vendStackHandler, bufferStackHandler); //Inside Itself
-            if (facing == EnumFacing.DOWN) return (T) bufferStackHandler;
+            if (facing == EnumFacing.DOWN) return null;
             if (facing != EnumFacing.DOWN) return null;
 
         }
