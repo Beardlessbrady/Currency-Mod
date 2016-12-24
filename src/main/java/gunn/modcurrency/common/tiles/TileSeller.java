@@ -319,7 +319,14 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return true;
+            if(facing == null) return true;
+            if(facing != EnumFacing.DOWN) return false;
+            if(!locked){
+                if(facing == EnumFacing.DOWN) return false;
+            }else{
+                if(facing == EnumFacing.DOWN) return true;
+            }
+            return false;
         }
         return super.hasCapability(capability, facing);
     }
@@ -329,8 +336,6 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             if (facing == null) return (T) new CombinedInvWrapper(inputStackHandler, vendStackHandler, bufferStackHandler); //Inside Itself
             if (facing == EnumFacing.DOWN) return (T) bufferStackHandler;
-            if (facing != EnumFacing.DOWN) return null; //TODO Fix
-
         }
         return super.getCapability(capability, facing);
     }

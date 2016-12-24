@@ -298,7 +298,15 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return true;
+            if(facing == null) return true;
+            if(!locked){
+                if(facing == EnumFacing.DOWN) return false;
+                if(facing != EnumFacing.DOWN) return false;
+            }else{
+                if(facing == EnumFacing.DOWN) return true;
+                if(facing != EnumFacing.DOWN) return true;
+            }
+            return false;
         }
         return super.hasCapability(capability, facing);
     }
