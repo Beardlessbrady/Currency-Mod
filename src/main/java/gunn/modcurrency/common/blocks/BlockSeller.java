@@ -1,6 +1,7 @@
 package gunn.modcurrency.common.blocks;
 
 import gunn.modcurrency.ModCurrency;
+import gunn.modcurrency.api.ModTile;
 import gunn.modcurrency.common.blocks.items.IBColored;
 import gunn.modcurrency.common.core.handler.StateHandler;
 import gunn.modcurrency.common.tiles.TileSeller;
@@ -27,6 +28,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -122,22 +126,39 @@ public class BlockSeller extends Block implements ITileEntityProvider{
 
         if(heldItem != null) {
             if (heldItem.getItem() == Items.DYE) {
-                //Saving tile variables
-                int face = getTile(world, pos).getField(7);
-                int bank = getTile(world, pos).getField(0);
-                int[] itemCosts = getTile(world, pos).getAllItemCosts();
-                ItemStackHandler inputStackHandler = getTile(world, pos).getInputHandler();
-                ItemStackHandler vendStackHandler = getTile(world, pos).getVendHandler();
-                ItemStackHandler buffStackHandler = getTile(world, pos).getBufferHandler();
+                //<editor-fold desc="Saving Tile Variables">
+                ModTile tile = getTile(world,pos);
+
+                ItemStackHandler inputStackHandler = tile.getInputHandler();
+                ItemStackHandler vendStackHandler = tile.getVendHandler();
+                ItemStackHandler buffStackHandler = tile.getBufferHandler();
+
+                int bank = tile.getField(0);
+                int face = tile.getField(7);
+                int cashRegister = tile.getField(4);
+                int locked = tile.getField(1);
+                int mode = tile.getField(2);
+                int infinite = tile.getField(6);
+                String owner = tile.getOwner();
+                int[] itemCosts = tile.getAllItemCosts();
+                //</editor-fold>
 
                 world.setBlockState(pos, state.withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())), 3);
                 world.setBlockState(pos.up(), world.getBlockState(pos.up()).withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())), 3);
 
-                //Setting tile variables
-                getTile(world, pos).setField(7,face);
-                getTile(world, pos).setField(0, bank);
-                getTile(world, pos).setAllItemCosts(itemCosts);
-                getTile(world, pos).setStackHandlers(inputStackHandler, buffStackHandler, vendStackHandler);
+                //<editor-fold desc="Setting Tile Variables">
+                tile = getTile(world,pos);
+
+                tile.setStackHandlers(inputStackHandler, buffStackHandler, vendStackHandler);
+                tile.setField(0, bank);
+                tile.setField(7,face);
+                tile.setField(4,cashRegister);
+                tile.setField(1,locked);
+                tile.setField(2, mode);
+                tile.setField(6, infinite);
+                tile.setOwner(owner);
+                tile.setAllItemCosts(itemCosts);
+                //</editor-fold>
 
                 if (!player.isCreative()) heldItem.stackSize--;
                 return true;

@@ -54,6 +54,7 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
     private ItemStackHandler vendStackHandler = new ItemStackHandler(VEND_SLOT_COUNT);
     private ItemStackHandler bufferStackHandler = new ItemStackHandler(BUFFER_SLOT_COUNT);
 
+
     public TileVendor() {
         bank = 0;
         profit = 0;

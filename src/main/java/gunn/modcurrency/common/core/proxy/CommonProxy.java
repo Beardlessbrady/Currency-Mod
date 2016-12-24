@@ -2,9 +2,11 @@ package gunn.modcurrency.common.core.proxy;
 
 import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.common.blocks.ModBlocks;
+import gunn.modcurrency.common.core.handler.EventHandlerCommon;
 import gunn.modcurrency.common.core.handler.GuiHandler;
 import gunn.modcurrency.common.core.handler.PacketHandler;
 import gunn.modcurrency.common.items.ModItems;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -40,7 +42,9 @@ public class CommonProxy {
 
     public void Init(FMLInitializationEvent e){
         ModBlocks.addRecipes();
+        MinecraftForge.EVENT_BUS.register(new EventHandlerCommon());
     }
+
 
     public void postInit(FMLPostInitializationEvent e){
     }
