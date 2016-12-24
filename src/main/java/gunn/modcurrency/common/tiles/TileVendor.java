@@ -166,6 +166,7 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
                     } else {
                         bank = 0;
                     }
+
                     worldObj.spawnEntityInWorld(new EntityItem(worldObj, getPos().getX(), getPos().getY(), getPos().getZ(), item));
                 }
             }
