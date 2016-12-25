@@ -1,15 +1,10 @@
 ---------------------------------------------Next Release Todo List
-    -Change Button Usage
-        -Detect Money in slots when outputting
-        -Don't allow anything in input slot (VENDOR) well in Edit mode (Visual Indication because players are dumb)
-        -Diff Input slot icons for edit mode
-    -ToolTip when hovering over tabs explaining what they do
-    -If the player closes the GUI with an item in the input slot (and it can't be bought) drop item *Also There extra cash)
     -Animation
         -Render Items in Vendor
         -Animate Door Open when in Edit Mode (Vendor)
         -Same as above for Exchanger
         -Visual/Sound Que when cant afford/full/whateva
+    -Detect Money in slots when outputting(Spitting Change Button)
     -Only allow input and output in their respective sides (and not the opposite)
     -Lighting Issues on Both Blocks
     -Configs, Configs, Configs
@@ -28,7 +23,8 @@
     -Vendor/Seller GUI can only be open by one player at a time now
     -Clicking the Change/Profit button now attempts to put money into the players inventory. If there is no room it spits it out
     -'Spitting Money' is less sporadic when output from Vendor/Seller
-    -Input slot icon now changes if in 'Stock Mode' or 'Sell Mode'.
+    -Input slot icon now changes depending on Vending/Exchange Machine mode
+    -Added Tooltips to GUI Tabs
 
 
 ---------------------------------------------Feature Todo List

@@ -109,8 +109,12 @@ public class GuiBuySell extends GuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+        int i = (mouseX - (this.width - this.xSize) / 2);
+        int j = (mouseY - (this.height - this.ySize) / 2);
+
         fontRendererObj.drawString(I18n.format(header), 5, 6, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("Inventory"), 4, 142, Color.darkGray.getRGB());
+
         if(tile.getField(2) == 0){
             fontRendererObj.drawString(I18n.format("Cash") + ": $" + tile.getField(0), 5, 15, Color.darkGray.getRGB());
 
@@ -160,6 +164,78 @@ public class GuiBuySell extends GuiContainer {
                 }
             }
         }
+
+        //Draw Tab Tooltips
+        if(tile.getField(2) == 1) {
+            if (j <= 41 && j >= 21 && i < 0 && i >= -21) {      //Lock Tab
+                List<String> list = new ArrayList<>();
+                list.add("Lock Tab");
+                list.add("Enable/Disable");
+                list.add("hopper interaction");
+
+                int ypos = 0;
+                if(tile.getField(8) == 0) ypos = 28;
+                if(tile.getField(8) == 1) ypos = 20;
+
+                this.drawHoveringText(list, -132, ypos, fontRendererObj);
+            }
+
+            if (j <= 63 && j >= 43 && i < 0 && i >= -21) {
+                List<String> list = new ArrayList<>();
+                list.add("Settings Tab");
+                list.add("Set items costs");
+
+                int ypos = 0;
+                if(tile.getField(8) == 0) ypos = 54;
+                if(tile.getField(8) == 1) ypos = 30;
+
+                this.drawHoveringText(list, -114, ypos, fontRendererObj);
+            }
+
+            if(tile.getField(5) == 1){
+                if (j <= 85 && j >= 65 && i < 0 && i >= -21 && tile.getField(8) == 0) {
+                    List<String> list = new ArrayList<>();
+                    list.add("Creative Tab");
+
+                    int xpos = 0;
+                    if(tile instanceof TileVendor){
+                        list.add("Infinite Stock");
+                        xpos = -104;
+                    }
+                    if(tile instanceof TileSeller){
+                        list.add("Infinite Funds");
+                        xpos = -107;
+                    }
+
+                    int ypos = 0;
+                    if(!creativeExtended) ypos = 78;
+                    if(creativeExtended) ypos = 128;
+
+                    this.drawHoveringText(list, xpos, ypos, fontRendererObj);
+                }
+
+                if (j <= 112 && j >= 92 && i < 0 && i >= -21 && tile.getField(8) == 1) {
+                    List<String> list = new ArrayList<>();
+                    list.add("Creative Tab");
+
+                    int xpos = 0;
+                    if(tile instanceof TileVendor){
+                        list.add("Infinite Stock");
+                        xpos = -104;
+                    }
+                    if(tile instanceof TileSeller){
+                        list.add("Infinite Funds");
+                        xpos = -107;
+                    }
+
+                    int ypos = 0;
+                    if(!creativeExtended) ypos = 107;
+                    if(creativeExtended) ypos = 154;
+
+                    this.drawHoveringText(list, xpos, ypos, fontRendererObj);
+                }
+            }
+        }
     }
 
     @Override
@@ -175,10 +251,10 @@ public class GuiBuySell extends GuiContainer {
         this.buttonList.add(new GuiButton(0, i + 103, j + 7, 45, 20, ChangeButton));
 
         if (tile.getField(2) == 1) {
-            this.buttonList.add(new CustomButton(1, i - 20, j + 20, 0, 21, 21, 22, "", TAB_TEXTURE));   //Lock Tab
-            this.buttonList.add(new CustomButton(2, i - 20, j + 43, 0, 0, 21, 21, "", TAB_TEXTURE));   //Gear Tab
+            this.buttonList.add(new CustomButton(1, i - 21, j + 20, 0, 21, 21, 22, "", TAB_TEXTURE));   //Lock Tab
+            this.buttonList.add(new CustomButton(2, i - 21, j + 43, 0, 0, 21, 21, "", TAB_TEXTURE));   //Gear Tab
             if(tile.getField(5) == 1) {
-                this.buttonList.add(new CustomButton(3, i - 20, j + 65, 0, 44, 21, 21, "", TAB_TEXTURE));   //Creative Tab
+                this.buttonList.add(new CustomButton(3, i - 21, j + 65, 0, 44, 21, 21, "", TAB_TEXTURE));   //Creative Tab
                 this.buttonList.add(new GuiButton(4, i + 198, j + 85, 45, 20, "BORKED"));
                 this.buttonList.get(4).visible = false;
             }
@@ -200,31 +276,31 @@ public class GuiBuySell extends GuiContainer {
 
         //Draw Lock Icon
         if (tile.getField(1) == 1) {
-            drawTexturedModalRect(-14, 23, 245, 15, 11, 16);
+            drawTexturedModalRect(-15, 23, 245, 15, 11, 16);
         } else {
-            drawTexturedModalRect(-14, 25, 245, 0, 11, 14);
+            drawTexturedModalRect(-15, 25, 245, 0, 11, 14);
         }
         
         //Draw Gear Icon and Extended Background
         if (gearExtended) drawTexturedModalRect(-91, 43, 27, 0, 91, 47);
-        drawTexturedModalRect(-20, 46, 237, 32, 19, 15);
+        drawTexturedModalRect(-21, 46, 237, 32, 19, 15);
 
         //Draw Creative Icon
         if(tile.getField(5) == 1) {
             if(!gearExtended) {
-                this.buttonList.set(3,(new CustomButton(3, i - 20, j + 65, 0, 44, 21, 21, "", TAB_TEXTURE)));   //Creative Tab
+                this.buttonList.set(3,(new CustomButton(3, i - 21, j + 65, 0, 44, 21, 21, "", TAB_TEXTURE)));   //Creative Tab
                 if(creativeExtended && tile.getField(5) == 1) {
-                    this.buttonList.set(4,(new GuiButton(4, i - 68, j + 85, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
-                    drawTexturedModalRect(-90, 65, 27, 48, 91, 47);
+                    this.buttonList.set(4,(new GuiButton(4, i - 69, j + 85, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
+                    drawTexturedModalRect(-91, 65, 27, 48, 91, 47);
                 }else if(!creativeExtended && tile.getField(5) == 1) this.buttonList.get(4).visible = false;
-                drawTexturedModalRect(-20, 71, 237, 48, 19, 9);
+                drawTexturedModalRect(-21, 71, 237, 48, 19, 9);
             }else{
-                this.buttonList.set(3,(new CustomButton(3, i -20, j + 91, 0, 44, 21, 21, "", TAB_TEXTURE)));   //Creative Tab
+                this.buttonList.set(3,(new CustomButton(3, i -21, j + 91, 0, 44, 21, 21, "", TAB_TEXTURE)));   //Creative Tab
                  if(creativeExtended  && tile.getField(5) == 1) {
-                     this.buttonList.set(4,(new GuiButton(4, i - 68, j + 111, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
-                     drawTexturedModalRect(-90, 91, 27, 48, 91, 47);
+                     this.buttonList.set(4,(new GuiButton(4, i - 69, j + 111, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
+                     drawTexturedModalRect(-91, 91, 27, 48, 91, 47);
                  }else if (!creativeExtended && tile.getField(5) == 1) this.buttonList.get(4).visible = false;
-                 drawTexturedModalRect(-20, 97, 237, 48, 19, 9);
+                 drawTexturedModalRect(-21, 97, 237, 48, 19, 9);
             }
         }
 
@@ -304,7 +380,7 @@ public class GuiBuySell extends GuiContainer {
             super.mouseClicked(mouseX, mouseY, mouseButton);
             nameField.mouseClicked(mouseX, mouseY, mouseButton);
             if (gearExtended && mouseButton == 0) updateTextField();
-        }else{
+        }else {
             super.mouseClicked(mouseX, mouseY, mouseButton);
         }
     }
