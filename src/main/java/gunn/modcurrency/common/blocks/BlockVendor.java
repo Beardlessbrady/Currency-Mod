@@ -91,12 +91,12 @@ public class BlockVendor extends Block implements ITileEntityProvider {
         }
     }
 
-    public void initModel(){
-        for(int i =0; i < 16; i++){
+    public void initModel() {
+        for (int i = 0; i < 16; i++) {
             //Im Lazy and I hate Mojangs EnumDyeColor, BE CONSISTENT (lightBlue, light_blue....)
-            if(i == 12){
+            if (i == 12) {
                 ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 12, new ModelResourceLocation(getRegistryName(), "color=light_blue" + ",facing=north,item=true"));
-            }else {
+            } else {
                 ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), i, new ModelResourceLocation(getRegistryName(), "color=" + EnumDyeColor.byDyeDamage(i) + ",facing=north,item=true"));
             }
         }

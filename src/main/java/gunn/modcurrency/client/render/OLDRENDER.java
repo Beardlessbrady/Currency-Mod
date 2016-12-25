@@ -38,10 +38,12 @@ import org.lwjgl.opengl.GL11;
  * File Created on 2016-11-21.
  */
 @SideOnly(Side.CLIENT)
-public class RenderTileVendor extends TileEntitySpecialRenderer<TileVendor>{
+public class OLDRENDER extends TileEntitySpecialRenderer{
 
     private IModel modelWindow;
+    private IModel modelDoor;
     private IBakedModel bakedModelWindow;
+    private IBakedModel bakedModelDoor;
 
     private IBakedModel getBakedModelWindow() {
         if (bakedModelWindow == null) {
@@ -54,6 +56,19 @@ public class RenderTileVendor extends TileEntitySpecialRenderer<TileVendor>{
                     location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString()));
         }
         return bakedModelWindow;
+    }
+
+    private IBakedModel getBakedModelDoor() {
+        if (bakedModelDoor == null) {
+            try {
+                modelDoor = ModelLoaderRegistry.getModel(new ResourceLocation(ModCurrency.MODID, "block/vend_door"));
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            bakedModelDoor = modelDoor.bake(TRSRTransformation.identity(), DefaultVertexFormats.BLOCK,
+                    location -> Minecraft.getMinecraft().getTextureMapBlocks().getAtlasSprite(location.toString()));
+        }
+        return bakedModelDoor;
     }
 
     public void renderTileEntityAt(TileVendor te, double x, double y, double z, float partialTicks, int destroyStage){
@@ -85,27 +100,25 @@ public class RenderTileVendor extends TileEntitySpecialRenderer<TileVendor>{
 
     }
 
-    public void renderWindow(TileVendor te, double x, double y, double z, float ticks, int stage){
+
+
+    public void renderDoor(TileVendor te, double x, double y, double z, float ticks, int stage){
         GlStateManager.pushMatrix();
         GL11.glEnable(GL11.GL_BLEND);
-
 
         this.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
         World world = te.getWorld();
         GlStateManager.translate(-te.getPos().getX(), -te.getPos().getY(), -te.getPos().getZ());
 
 
-        Tessellator tessellator = Tessellator.getInstance();
-        tessellator.getBuffer().begin(GL11.GL_QUADS, DefaultVertexFormats.BLOCK);
-        Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModel(
-                world,
-                getBakedModelWindow(),
-                world.getBlockState(te.getPos()),
-                te.getPos(),
-                Tessellator.getInstance().getBuffer(),false);
-        tessellator.draw();
+
+
+
+
 
         GL11.glDisable(GL11.GL_BLEND);
         GlStateManager.popMatrix();
     }
+
+
 }

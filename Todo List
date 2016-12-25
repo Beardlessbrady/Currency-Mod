@@ -1,9 +1,10 @@
 ---------------------------------------------Next Release Todo List
-    -Animation
-        -Render Items in Vendor
-        -Animate Door Open when in Edit Mode (Vendor)
-        -Same as above for Exchanger
-        -Visual/Sound Que when cant afford/full/whateva
+    -Model Polishing
+        -(Vendor) Door Open/Closes when changing mode via BakedModel
+        -(Seller) Lock Door Open/Closes when changing mode via BakedModel
+        -(Vendor)Render Items via BakedModel?
+        -(Seller) Animate Screen texture make it more lively?
+    -Visual/Sound Ques when cant afford/full/whateva
     -Detect Money in slots when outputting(Spitting Change Button)
     -Only allow input and output in their respective sides (and not the opposite)
     -Lighting Issues on Both Blocks
@@ -28,6 +29,8 @@
 
 
 ---------------------------------------------Feature Todo List
+    -Vendor/Seller Additions
+        -NBT Specific enable/disable for item selling/buying (specific with enchants and such)
     -WAILA integration
     -Money Balance
         -Cap on how much money can be received per day
