@@ -5,6 +5,7 @@ import gunn.modcurrency.api.ModTile;
 import gunn.modcurrency.common.items.ModItems;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -196,7 +197,26 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
                     }else {
                         bank = 0;
                     }
-                    worldObj.spawnEntityInWorld(new EntityItem(worldObj, getPos().getX(), getPos().getY(), getPos().getZ(), item));
+
+                    InventoryPlayer inventoryPlayer = playerUsing.inventory;
+                    if(inventoryPlayer.getFirstEmptyStack() != -1){     //If Players Inventory has room
+                        inventoryPlayer.setInventorySlotContents(inventoryPlayer.getFirstEmptyStack(), item);
+                    }else{          //If no room, spawn
+                        int x = getPos().getX();
+                        int z = getPos().getZ();
+
+                        switch(face){
+                            case 0: z = z -2; //North
+                                break;
+                            case 1: x = x +2; //East
+                                break;
+                            case 2: z = z +2; //South
+                                break;
+                            case 3: x = x -2;//West
+                                break;
+                        }
+                        worldObj.spawnEntityInWorld(new EntityItem(worldObj,x, getPos().up().getY(), z, item));
+                    }
                 }
             }
         }

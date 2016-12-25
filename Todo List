@@ -1,7 +1,6 @@
 ---------------------------------------------Next Release Todo List
     -Change Button Usage
-        -Clicking puts money into inv, if full then spit
-        -Fix Derp Spit
+        -Detect Money in slots when outputting
         -Don't allow anything in input slot (VENDOR) well in Edit mode (Visual Indication because players are dumb)
         -Diff Input slot icons for edit mode
     -ToolTip when hovering over tabs explaining what they do
@@ -27,7 +26,8 @@
 
 ---------------------------------------------COMPLETED for next Release
     -Vendor/Seller GUI can only be open by one player at a time now
-
+    -Clicking the Change/Profit button now attempts to put money into the players inventory. If there is no room it spits it out
+    -'Spitting Money' is less sporadic when output from Vendor/Seller
 
 
 ---------------------------------------------Feature Todo List

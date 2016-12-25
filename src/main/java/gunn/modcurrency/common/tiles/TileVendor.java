@@ -6,6 +6,7 @@ import gunn.modcurrency.api.ModTile;
 import gunn.modcurrency.common.items.ModItems;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -159,6 +160,7 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
         out[0] = Math.round(amount);
 
         if (!worldObj.isRemote) {
+            System.out.println(face);
             for (int i = 0; i < out.length; i++) {
                 if (out[i] != 0) {
                     ItemStack item = new ItemStack(ModItems.itembanknote);
@@ -171,7 +173,25 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
                         bank = 0;
                     }
 
-                    worldObj.spawnEntityInWorld(new EntityItem(worldObj, getPos().getX(), getPos().getY(), getPos().getZ(), item));
+                    InventoryPlayer inventoryPlayer = playerUsing.inventory;
+                    if(inventoryPlayer.getFirstEmptyStack() != -1){     //If Players Inventory has room
+                        inventoryPlayer.setInventorySlotContents(inventoryPlayer.getFirstEmptyStack(), item);
+                    }else{          //If no room, spawn
+                        int x = getPos().getX();
+                        int z = getPos().getZ();
+
+                        switch(face){
+                            case 0: z = z -2; //North
+                                break;
+                            case 1: x = x +2; //East
+                                break;
+                            case 2: z = z +2; //South
+                                break;
+                            case 3: x = x -2;//West
+                                break;
+                        }
+                        worldObj.spawnEntityInWorld(new EntityItem(worldObj,x, getPos().up().getY(), z, item));
+                    }
                 }
             }
         }
