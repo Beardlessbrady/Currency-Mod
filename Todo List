@@ -2,10 +2,8 @@
     -Change Button Usage
         -Clicking puts money into inv, if full then spit
         -Fix Derp Spit
-    -(Bug Report) First buffer slot never fills after selling 5 different items?
-    -(Bug Report) Hard to click in/out items?
-
         -Don't allow anything in input slot (VENDOR) well in Edit mode (Visual Indication because players are dumb)
+        -Diff Input slot icons for edit mode
     -ToolTip when hovering over tabs explaining what they do
     -If the player closes the GUI with an item in the input slot (and it can't be bought) drop item *Also There extra cash)
     -Animation
@@ -18,10 +16,19 @@
     -Configs, Configs, Configs
     -Everything in The Lang File
 
+    Bugs
+    -(Bug Report) First buffer slot never fills after selling 5 different items?
+    -(Bug Report) Hard to click in/out items?
+
     --Extra Features if yur up to it punk
         -Players Head appears on side (small)
         -Name Machine on front
         -Owner Info somewhere
+
+---------------------------------------------COMPLETED for next Release
+    -Vendor/Seller GUI can only be open by one player at a time now
+
+
 
 ---------------------------------------------Feature Todo List
     -WAILA integration

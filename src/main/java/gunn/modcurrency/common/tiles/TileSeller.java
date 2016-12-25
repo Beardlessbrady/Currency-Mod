@@ -52,6 +52,7 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
     private ItemStackHandler inputStackHandler = new ItemStackHandler(INPUT_SLOT_COUNT);
     private ItemStackHandler vendStackHandler = new ItemStackHandler(VEND_SLOT_COUNT);
     private ItemStackHandler bufferStackHandler = new ItemStackHandler(BUFFER_SLOT_COUNT);
+    private EntityPlayer playerUsing = null;
 
     public TileSeller() {
         bank = 0;
@@ -70,6 +71,7 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
 
     public void openGui(EntityPlayer player, World world, BlockPos pos){
         player.openGui(ModCurrency.instance, 31, world, pos.getX(), pos.getY(), pos.getZ());
+        playerUsing = player;
     }
 
     @Override
@@ -455,6 +457,15 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
         inputStackHandler = inputCopy;
         vendStackHandler = vendCopy;
         bufferStackHandler = buffCopy;
+    }
+
+
+    public EntityPlayer getPlayerUsing(){
+        return playerUsing;
+    }
+
+    public void voidPlayerUsing(){
+        playerUsing = null;
     }
     //</editor-fold>
 

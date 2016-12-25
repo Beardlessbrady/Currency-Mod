@@ -73,4 +73,11 @@ public class ModTile extends TileEntity implements ICapabilityProvider {
 
     public void setStackHandlers(ItemStackHandler inputCopy, ItemStackHandler buffCopy, ItemStackHandler vendCopy){}
 
+    public EntityPlayer getPlayerUsing(){
+        return null;
+    }
+
+    public void voidPlayerUsing(){
+    }
+
 }

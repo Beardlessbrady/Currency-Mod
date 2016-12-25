@@ -69,6 +69,12 @@ public class ContainerBuySell extends Container {
         setupTeInv();
     }
 
+    @Override
+    public void onContainerClosed(EntityPlayer playerIn) {
+        super.onContainerClosed(playerIn);
+        tile.voidPlayerUsing();
+    }
+
     private void setupPlayerInv(InventoryPlayer invPlayer) {
         final int SLOT_X_SPACING = 18;
         final int SLOT_Y_SPACING = 18;
@@ -365,5 +371,9 @@ public class ContainerBuySell extends Container {
     @Override
     public void updateProgressBar(int id, int data) {
         tile.setField(id, data);
+    }
+
+    public void attemptChangeToInv(){
+
     }
 }

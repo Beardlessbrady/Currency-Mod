@@ -121,62 +121,65 @@ public class BlockSeller extends Block implements ITileEntityProvider{
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-        getTile(world,pos).setField(5,player.isCreative() ? 1 : 0);
-        if (world.isRemote) return true;
+        if(getTile(world, pos).getPlayerUsing() == null) {
+            getTile(world, pos).setField(5, player.isCreative() ? 1 : 0);
+            if (world.isRemote) return true;
 
-        if(heldItem != null) {
-            if (heldItem.getItem() == Items.DYE) {
-                //<editor-fold desc="Saving Tile Variables">
-                ModTile tile = getTile(world,pos);
+            if (heldItem != null) {
+                if (heldItem.getItem() == Items.DYE) {
+                    //<editor-fold desc="Saving Tile Variables">
+                    ModTile tile = getTile(world, pos);
 
-                ItemStackHandler inputStackHandler = tile.getInputHandler();
-                ItemStackHandler vendStackHandler = tile.getVendHandler();
-                ItemStackHandler buffStackHandler = tile.getBufferHandler();
+                    ItemStackHandler inputStackHandler = tile.getInputHandler();
+                    ItemStackHandler vendStackHandler = tile.getVendHandler();
+                    ItemStackHandler buffStackHandler = tile.getBufferHandler();
 
-                int bank = tile.getField(0);
-                int face = tile.getField(7);
-                int cashRegister = tile.getField(4);
-                int locked = tile.getField(1);
-                int mode = tile.getField(2);
-                int infinite = tile.getField(6);
-                String owner = tile.getOwner();
-                int[] itemCosts = tile.getAllItemCosts();
-                //</editor-fold>
+                    int bank = tile.getField(0);
+                    int face = tile.getField(7);
+                    int cashRegister = tile.getField(4);
+                    int locked = tile.getField(1);
+                    int mode = tile.getField(2);
+                    int infinite = tile.getField(6);
+                    String owner = tile.getOwner();
+                    int[] itemCosts = tile.getAllItemCosts();
+                    //</editor-fold>
 
-                world.setBlockState(pos, state.withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())), 3);
-                world.setBlockState(pos.up(), world.getBlockState(pos.up()).withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())), 3);
+                    world.setBlockState(pos, state.withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())), 3);
+                    world.setBlockState(pos.up(), world.getBlockState(pos.up()).withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())), 3);
 
-                //<editor-fold desc="Setting Tile Variables">
-                tile = getTile(world,pos);
+                    //<editor-fold desc="Setting Tile Variables">
+                    tile = getTile(world, pos);
 
-                tile.setStackHandlers(inputStackHandler, buffStackHandler, vendStackHandler);
-                tile.setField(0, bank);
-                tile.setField(7,face);
-                tile.setField(4,cashRegister);
-                tile.setField(1,locked);
-                tile.setField(2, mode);
-                tile.setField(6, infinite);
-                tile.setOwner(owner);
-                tile.setAllItemCosts(itemCosts);
-                //</editor-fold>
+                    tile.setStackHandlers(inputStackHandler, buffStackHandler, vendStackHandler);
+                    tile.setField(0, bank);
+                    tile.setField(7, face);
+                    tile.setField(4, cashRegister);
+                    tile.setField(1, locked);
+                    tile.setField(2, mode);
+                    tile.setField(6, infinite);
+                    tile.setOwner(owner);
+                    tile.setAllItemCosts(itemCosts);
+                    //</editor-fold>
 
-                if (!player.isCreative()) heldItem.stackSize--;
+                    if (!player.isCreative()) heldItem.stackSize--;
+                    return true;
+                }
+            }
+
+            if ((player.isSneaking() && player.getUniqueID().toString().equals(getTile(world, pos).getOwner())) || (player.isSneaking() && player.isCreative())) {
+                if (getTile(world, pos).getField(2) == 1) {   //If True
+                    getTile(world, pos).setField(2, 0);
+                } else {
+                    getTile(world, pos).setField(2, 1);
+                }
+                getTile(world, pos).getWorld().notifyBlockUpdate(getTile(world, pos).getPos(), getTile(world, pos).getBlockType().getDefaultState(), getTile(world, pos).getBlockType().getDefaultState(), 3);
                 return true;
             }
-        }
 
-        if((player.isSneaking() && player.getUniqueID().toString().equals(getTile(world,pos).getOwner())) || (player.isSneaking() && player.isCreative())) {
-            if (getTile(world, pos).getField(2) == 1) {   //If True
-                getTile(world, pos).setField(2, 0);
-            } else {
-                getTile(world, pos).setField(2, 1);
-            }
-            getTile(world, pos).getWorld().notifyBlockUpdate(getTile(world, pos).getPos(), getTile(world, pos).getBlockType().getDefaultState(), getTile(world, pos).getBlockType().getDefaultState(), 3);
+            getTile(world, pos).openGui(player, world, pos);
             return true;
         }
-
-        getTile(world,pos).openGui(player,world,pos);
-        return true;
+        return false;
     }
 
     @Override
