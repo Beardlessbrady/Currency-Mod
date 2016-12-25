@@ -28,6 +28,7 @@
     -Vendor/Seller GUI can only be open by one player at a time now
     -Clicking the Change/Profit button now attempts to put money into the players inventory. If there is no room it spits it out
     -'Spitting Money' is less sporadic when output from Vendor/Seller
+    -Input slot icon now changes if in 'Stock Mode' or 'Sell Mode'.
 
 
 ---------------------------------------------Feature Todo List

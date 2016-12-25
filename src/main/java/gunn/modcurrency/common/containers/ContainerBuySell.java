@@ -98,13 +98,19 @@ public class ContainerBuySell extends Container {
     }
 
     private void setupTeInv() {
-        final int TE_MONEY_XPOS = 152;
-        final int TE_MONEY_YPOS = 9;
         IItemHandler itemHandler  = this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 
         //Input Slot
-        if(tile instanceof TileVendor) addSlotToContainer(new SlotBank(itemHandler, 0, TE_MONEY_XPOS, TE_MONEY_YPOS));
-        if(tile instanceof TileSeller) addSlotToContainer(new SlotItemHandler(itemHandler, 0, TE_MONEY_XPOS, TE_MONEY_YPOS));
+        if(tile instanceof TileVendor){
+            int xpos = 0;
+            if(tile.getField(2) == 0) xpos = 152;
+            if(tile.getField(2) == 1) xpos = -1000;
+            addSlotToContainer(new SlotBank(itemHandler, 0, xpos,9));
+        }
+        if(tile instanceof TileSeller){
+            if(tile.getField(2) == 0) addSlotToContainer(new SlotItemHandler(itemHandler, 0, 152, 9));
+            if(tile.getField(2) == 1) addSlotToContainer(new SlotBank(itemHandler, 0, 152, 9));
+        }
 
         final int SLOT_X_SPACING = 18;
         final int SLOT_Y_SPACING = 18;
@@ -273,7 +279,11 @@ public class ContainerBuySell extends Container {
 
                 if (index < PLAYER_TOTAL_COUNT) {        //Player Inventory Slots
                     if (inventorySlots.get(index).getStack().getItem() == ModItems.itembanknote) {
-                        if (!this.mergeItemStack(copyStack, TE_MONEY_FIRST_SLOT_INDEX, TE_MONEY_FIRST_SLOT_INDEX + 1, false)) {
+                        if(tile.getField(2) == 0) {
+                            if (!this.mergeItemStack(copyStack, TE_MONEY_FIRST_SLOT_INDEX, TE_MONEY_FIRST_SLOT_INDEX + 1, false)) {
+                                return null;
+                            }
+                        }else{
                             return null;
                         }
                     } else {
