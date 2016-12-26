@@ -1,9 +1,9 @@
 ---------------------------------------------Next Release Todo List
     -Model Polishing
-        -(Vendor) Door Open/Closes when changing mode via BakedModel
-        -(Seller) Lock Door Open/Closes when changing mode via BakedModel
+        -(Vendor) Add state for Mode, use json to animate door
+        -(Seller) Add state for Mode, use json to animate bottom door/blue screen?
+            -When on animate screen texture
         -(Vendor)Render Items via BakedModel?
-        -(Seller) Animate Screen texture make it more lively?
     -Visual/Sound Ques when cant afford/full/whateva
     -Detect Money in slots when outputting(Spitting Change Button)
     -Only allow input and output in their respective sides (and not the opposite)

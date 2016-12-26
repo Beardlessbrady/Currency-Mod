@@ -2,9 +2,14 @@ package gunn.modcurrency.client.model;
 
 import gunn.modcurrency.ModCurrency;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
+import org.lwjgl.opengl.GL11;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -29,12 +34,40 @@ import java.util.List;
  * File Created on 2016-12-25
  */
 public class BakedModelVendor implements IBakedModel {
-    public static final ModelResourceLocation BAKED_MODEL = new ModelResourceLocation(ModCurrency.MODID + "bakedVendorBlock");
+    IBakedModel originalModel;
+
+    public BakedModelVendor(IBakedModel model){
+        originalModel = model;
+    }
+
+
 
     @Override
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
-        return null;
+        return renderDoor().getQuads(state, side, rand);
+
+
     }
+
+
+    private IBakedModel renderDoor(){
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Override
     public boolean isAmbientOcclusion() {
