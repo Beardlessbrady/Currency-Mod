@@ -31,6 +31,7 @@ public class StateHandler {
     public static final PropertyEnum<EnumDyeColor> COLOR = PropertyEnum.create("color", EnumDyeColor.class);
     public static final PropertyBool ITEM = PropertyBool.create("item");
     public static final PropertyEnum<EnumTopTypes> TOP = PropertyEnum.create("top", EnumTopTypes.class);
+    public static final PropertyBool OPEN = PropertyBool.create("open");
 
     public enum EnumTopTypes implements IStringSerializable {
         VENDOR,

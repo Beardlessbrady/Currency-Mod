@@ -3,6 +3,7 @@ package gunn.modcurrency.common.tiles;
 
 import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.api.ModTile;
+import gunn.modcurrency.common.core.handler.StateHandler;
 import gunn.modcurrency.common.items.ModItems;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;

@@ -95,9 +95,9 @@ public class BlockVendor extends Block implements ITileEntityProvider {
         for (int i = 0; i < 16; i++) {
             //Im Lazy and I hate Mojangs EnumDyeColor, BE CONSISTENT (lightBlue, light_blue....)
             if (i == 12) {
-                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 12, new ModelResourceLocation(getRegistryName(), "color=light_blue" + ",facing=north,item=true"));
+                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 12, new ModelResourceLocation(getRegistryName(), "color=light_blue" + ",facing=north,item=true,open=false"));
             } else {
-                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), i, new ModelResourceLocation(getRegistryName(), "color=" + EnumDyeColor.byDyeDamage(i) + ",facing=north,item=true"));
+                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), i, new ModelResourceLocation(getRegistryName(), "color=" + EnumDyeColor.byDyeDamage(i) + ",facing=north,item=true,open=false"));
             }
         }
     }
@@ -164,12 +164,42 @@ public class BlockVendor extends Block implements ITileEntityProvider {
             }
 
             if ((player.isSneaking() && player.getUniqueID().toString().equals(getTile(world, pos).getOwner())) || (player.isSneaking() && player.isCreative())) {
+                //<editor-fold desc="Saving Tile Variables">
+                ModTile tile = getTile(world, pos);
+
+                ItemStackHandler inputStackHandler = tile.getInputHandler();
+                ItemStackHandler vendStackHandler = tile.getVendHandler();
+                ItemStackHandler buffStackHandler = tile.getBufferHandler();
+
+                int bank = tile.getField(0);
+                int face = tile.getField(7);
+                int profit = tile.getField(4);
+                int locked = tile.getField(1);
+                int infinite = tile.getField(6);
+                String owner = tile.getOwner();
+                int[] itemCosts = tile.getAllItemCosts();
+                //</editor-fold>
+
                 if (getTile(world, pos).getField(2) == 1) {   //If True
+                    world.setBlockState(pos,state.withProperty(StateHandler.OPEN, false),3);
                     getTile(world, pos).setField(2, 0);
                 } else {
+                    world.setBlockState(pos,state.withProperty(StateHandler.OPEN, true),3);
                     getTile(world, pos).setField(2, 1);
                 }
-                getTile(world, pos).getWorld().notifyBlockUpdate(getTile(world, pos).getPos(), getTile(world, pos).getBlockType().getDefaultState(), getTile(world, pos).getBlockType().getDefaultState(), 3);
+
+                //<editor-fold desc="Setting Tile Variables">
+                tile = getTile(world, pos);
+
+                tile.setStackHandlers(inputStackHandler, buffStackHandler, vendStackHandler);
+                tile.setField(0, bank);
+                tile.setField(7, face);
+                tile.setField(4, profit);
+                tile.setField(1, locked);
+                tile.setField(6, infinite);
+                tile.setOwner(owner);
+                tile.setAllItemCosts(itemCosts);
+                //</editor-fold>
                 return true;
             }
             getTile(world, pos).openGui(player, world, pos);
@@ -228,7 +258,7 @@ public class BlockVendor extends Block implements ITileEntityProvider {
     //<editor-fold desc="Block States--------------------------------------------------------------------------------------------------------">
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, new IProperty[] {StateHandler.COLOR, StateHandler.FACING, StateHandler.ITEM});
+        return new BlockStateContainer(this, new IProperty[] {StateHandler.COLOR, StateHandler.FACING, StateHandler.ITEM, StateHandler.OPEN});
     }
 
     @Override
@@ -258,7 +288,10 @@ public class BlockVendor extends Block implements ITileEntityProvider {
                 break;
         }
 
-        return state.withProperty(StateHandler.FACING, face).withProperty(StateHandler.ITEM, false);
+        boolean open= tile.getField(2) == 1;
+
+        return state.withProperty(StateHandler.FACING, face).withProperty(StateHandler.ITEM, false)
+                .withProperty(StateHandler.OPEN, open);
     }
     //</editor-fold>
 }
