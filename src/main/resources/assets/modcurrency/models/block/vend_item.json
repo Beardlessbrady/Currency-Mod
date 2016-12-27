@@ -3,48 +3,6 @@
 	"textures": {
 		"VendTextures": "#texture"
 	},
-	"display": {
-		"thirdperson_righthand": {
-			"rotation": [ 0, 178, 0 ],
-			"translation": [ 0.00, 0.75, 0.00 ],
-			"scale": [ 0.28, 0.28, 0.28 ]
-		},
-		"thirdperson_lefthand": {
-			"rotation": [ 0, 178, 0 ],
-			"translation": [ 0.00, 0.75, 0.00 ],
-			"scale": [ 0.28, 0.28, 0.28 ]
-		},
-		"firstperson_righthand": {
-			"rotation": [ 350, 98, 0 ],
-			"translation": [ 3.50, 1, 0.00 ],
-			"scale": [ 0.28, 0.28, 0.28 ]
-		},
-		"firstperson_lefthand": {
-			"rotation": [ 350, 98, 0 ],
-			"translation": [ 3.50, 1.25, 0.00 ],
-			"scale": [ 0.28, 0.28, 0.28 ]
-		},
-		"gui": {
-			"rotation": [ 24, 150, 0 ],
-			"translation": [ 0.00, -1.25, 0.00 ],
-			"scale": [ 0.50, 0.50, 0.50 ]
-		},
-		"head": {
-			"rotation": [ 0, 0, 0 ],
-			"translation": [ 0.00, 0.00, 0.00 ],
-			"scale": [ 1.00, 1.00, 1.00 ]
-		},
-		"fixed": {
-			"rotation": [ 0, 0, 0 ],
-			"translation": [ 0.00, 0.00, 0.00 ],
-			"scale": [ 1.00, 1.00, 1.00 ]
-		},
-		"ground": {
-			"rotation": [ 0, 0, 0 ],
-			"translation": [ 0.00, 0.00, 0.00 ],
-			"scale": [ 0.34, 0.34, 0.34 ]
-		}
-	},
 	"elements": [
 		{
 			"__comment": "Bottom Flap",
@@ -140,7 +98,7 @@
 			"from": [ 4, 7, 0.5 ],
 			"to": [ 15, 30, 0.75 ],
 			"faces": {
-				"north": { "uv": [ 11.5, 0.5, 12.5, 1 ], "texture": "#VendTextures" }
+				"north": { "uv": [ 8.5, 0.5, 9.5, 1 ], "texture": "#VendTextures" }
 			}
 		},
 		{

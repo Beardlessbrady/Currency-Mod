@@ -11,7 +11,7 @@
 			"faces": {
 				"down": { "uv": [ 0, 15.5, 8, 12.5 ], "texture": "#VendTexture" },
 				"up": { "uv": [ 0, 12.5, 8, 15.5 ], "texture": "#VendTexture" },
-				"north": { "uv": [ 8, 13, 0, 12.5 ], "texture": "#VendTexture" },
+				"north": { "uv": [ 8, 4.5, 16, 7.5 ], "texture": "#VendTexture" },
 				"south": { "uv": [ 0, 15, 8, 15.5 ], "texture": "#VendTexture" },
 				"west": { "uv": [ 0, 12.5, 0.5, 15.5 ], "texture": "#VendTexture", "rotation": 270 },
 				"east": { "uv": [ 8, 12.5, 7.5, 15.5 ], "texture": "#VendTexture", "rotation": 90 }

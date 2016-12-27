@@ -1,6 +1,9 @@
 ---------------------------------------------Next Release Todo List
     -Model Polishing
-        -(Vendor) Add state for Mode, use json to animate door
+        -(Vendor) Door
+            -Fix F3 only bug
+            -Add in Window
+            -Finalize Texture
         -(Seller) Add state for Mode, use json to animate bottom door/blue screen?
             -When on animate screen texture
         -(Vendor)Render Items via BakedModel?
@@ -18,6 +21,7 @@
     --Extra Features if yur up to it punk
         -Players Head appears on side (small)
         -Name Machine on front
+            -Icons beside name that indicate type of vendor/seller (I.E. Player,Admin,World Generated)
         -Owner Info somewhere
 
 ---------------------------------------------COMPLETED for next Release
