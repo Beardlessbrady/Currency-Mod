@@ -170,10 +170,6 @@ public class BlockVendor extends Block implements ITileEntityProvider {
                 } else {
                     getTile(world, pos).setField(2, 1);
                 }
-
-                world.notifyBlockUpdate(pos,state,state,3);
-                world.markBlockRangeForRenderUpdate(pos,pos);
-
                 return true;
             }
             getTile(world, pos).openGui(player, world, pos);
