@@ -399,7 +399,6 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
                 worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos),worldObj.getBlockState(pos), 3);
                 worldObj.scheduleBlockUpdate(pos,this.getBlockType(),0,0);
                 markDirty();
-                markDirty();
                 return (mode) ? 1 : 0;
             case 3:
                 return selectedSlot;

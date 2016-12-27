@@ -75,6 +75,10 @@ public class BlockTop extends Block{
         return (ModTile) world.getTileEntity(pos.down());
     }
 
+    public ModTile getTile(IBlockAccess world, BlockPos pos) {
+        return (ModTile) world.getTileEntity(pos.down());
+    }
+
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (getTile(world, pos).getPlayerUsing() == null) {
@@ -193,10 +197,13 @@ public class BlockTop extends Block{
         case 3:
             face = EnumFacing.WEST;
             break;
-    }
+        }
 
     StateHandler.EnumTopTypes type = StateHandler.EnumTopTypes.VENDOR;
         switch(whatBlock(worldIn, pos)) {
+            case 0:
+                if(getTile(worldIn,pos).getField(2) == 1) type = StateHandler.EnumTopTypes.VENDOROPEN;
+                break;
             case 1:
                 type = StateHandler.EnumTopTypes.SELLER;
         }

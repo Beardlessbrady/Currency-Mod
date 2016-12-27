@@ -35,6 +35,7 @@ public class StateHandler {
 
     public enum EnumTopTypes implements IStringSerializable {
         VENDOR,
+        VENDOROPEN,
         SELLER;
 
         @Override

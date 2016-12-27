@@ -18,8 +18,8 @@
 		},
 		{
 			"__comment": "Box Left Side b",
-			"from": [ 15, 0, 1 ],
-			"to": [ 16, 15, 2 ],
+			"from": [ 15, 0, 0 ],
+			"to": [ 16, 15, 1 ],
 			"faces": {
 				"down": { "uv": [ 7, 0.5, 8, 1 ], "texture": "#VendTextures", "rotation": 180 },
 				"north": { "uv": [ 7, 0, 8, 1 ], "texture": "#VendTextures" },
@@ -82,8 +82,8 @@
 		},
 		{
 			"__comment": "Cube8",
-			"from": [ 14.9999, 14, -10 ],
-			"to": [ 15.9999, 15, 1 ],
+			"from": [ 14.9999, 14, -11 ],
+			"to": [ 15.9999, 15, 0 ],
 			"faces": {
 				"down": { "uv": [ 7, 0, 8, 1 ], "texture": "#VendTextures", "rotation": 270 },
 				"up": { "uv": [ 0, 0, 11, 1 ], "texture": "#VendTextures", "rotation": 90 },
@@ -107,8 +107,8 @@
 		},
 		{
 			"__comment": "Cube10",
-			"from": [ 14.9999, 2, -14 ],
-			"to": [ 15.9999, 11, -10 ],
+			"from": [ 14.9999, 2, -15 ],
+			"to": [ 15.9999, 11, -11 ],
 			"faces": {
 				"down": { "uv": [ 7, 0, 8, 1 ], "texture": "#VendTextures", "rotation": 270 },
 				"north": { "uv": [ 7, 0, 8, 1 ], "texture": "#VendTextures" },
@@ -119,8 +119,8 @@
 		},
 		{
 			"__comment": "Cube10",
-			"from": [ 14.9999, 11, -14 ],
-			"to": [ 15.9999, 15, -10 ],
+			"from": [ 14.9999, 11, -15 ],
+			"to": [ 15.9999, 15, -11 ],
 			"faces": {
 				"up": { "uv": [ 7, 0.5, 8, 0 ], "texture": "#VendTextures", "rotation": 180 },
 				"north": { "uv": [ 7, 0, 8, 1 ], "texture": "#VendTextures" },
@@ -131,8 +131,8 @@
 		},
 		{
 			"__comment": "Cube12",
-			"from": [ 14.9999, 0, -14 ],
-			"to": [ 15.9999, 2, -10 ],
+			"from": [ 14.9999, 0, -15 ],
+			"to": [ 15.9999, 2, -11 ],
 			"faces": {
 				"down": { "uv": [ 7, 0.5, 8, 1 ], "texture": "#VendTextures", "rotation": 180 },
 				"north": { "uv": [ 7, 0, 8, 1 ], "texture": "#VendTextures" },
