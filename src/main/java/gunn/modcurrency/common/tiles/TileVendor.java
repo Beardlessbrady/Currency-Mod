@@ -366,10 +366,6 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
                 break;
             case 2:
                 mode = (value == 1);
-                worldObj.markBlockRangeForRenderUpdate(pos, pos);
-                worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos),worldObj.getBlockState(pos), 3);
-                worldObj.scheduleBlockUpdate(pos,this.getBlockType(),0,0);
-                markDirty();
                 break;
             case 3:
                 selectedSlot = value;
@@ -399,6 +395,11 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
             case 1:
                 return (locked) ? 1 : 0;
             case 2:
+                worldObj.markBlockRangeForRenderUpdate(pos, pos);
+                worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos),worldObj.getBlockState(pos), 3);
+                worldObj.scheduleBlockUpdate(pos,this.getBlockType(),0,0);
+                markDirty();
+                markDirty();
                 return (mode) ? 1 : 0;
             case 3:
                 return selectedSlot;

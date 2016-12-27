@@ -258,7 +258,7 @@ public class BlockVendor extends Block implements ITileEntityProvider {
                 break;
         }
 
-        boolean open= tile.getField(2) == 1;
+        boolean open = tile.getField(2) == 1;
 
         return state.withProperty(StateHandler.FACING, face).withProperty(StateHandler.ITEM, false)
                 .withProperty(StateHandler.OPEN, open);
