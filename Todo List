@@ -3,7 +3,6 @@
         -(Vendor) Door
             -Fix F3 only bug
             -Add in Window
-            -Finalize Texture
         -(Seller) Add state for Mode, use json to animate bottom door/blue screen?
             -When on animate screen texture
         -(Vendor)Render Items via BakedModel?
