@@ -1,11 +1,10 @@
 package gunn.modcurrency.common.core.proxy;
 
-import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.common.blocks.ModBlocks;
-import gunn.modcurrency.common.tiles.TileVendor;
+import gunn.modcurrency.common.core.handler.ModelHandler;
 import gunn.modcurrency.common.items.ModItems;
-import net.minecraftforge.client.model.obj.OBJLoader;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraft.client.Minecraft;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
@@ -34,8 +33,8 @@ public class ClientProxy extends CommonProxy {
         super.preInit(e);
         ModItems.ItemModels();
         ModBlocks.ItemModels();
-        
-        OBJLoader.INSTANCE.addDomain(ModCurrency.MODID);
+
+        MinecraftForge.EVENT_BUS.register(ModelHandler.instance);
     }
 
     @Override

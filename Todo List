@@ -1,7 +1,6 @@
 ---------------------------------------------Next Release Todo List
     -Model Polishing
         -(Vendor) Door
-            -Fix F3 only bug
             -Add in Window
         -(Seller) Add state for Mode, use json to animate bottom door/blue screen?
             -When on animate screen texture
