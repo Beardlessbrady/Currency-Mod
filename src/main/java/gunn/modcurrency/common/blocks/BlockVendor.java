@@ -164,42 +164,12 @@ public class BlockVendor extends Block implements ITileEntityProvider {
             }
 
             if ((player.isSneaking() && player.getUniqueID().toString().equals(getTile(world, pos).getOwner())) || (player.isSneaking() && player.isCreative())) {
-                //<editor-fold desc="Saving Tile Variables">
-                ModTile tile = getTile(world, pos);
-
-                ItemStackHandler inputStackHandler = tile.getInputHandler();
-                ItemStackHandler vendStackHandler = tile.getVendHandler();
-                ItemStackHandler buffStackHandler = tile.getBufferHandler();
-
-                int bank = tile.getField(0);
-                int face = tile.getField(7);
-                int profit = tile.getField(4);
-                int locked = tile.getField(1);
-                int infinite = tile.getField(6);
-                String owner = tile.getOwner();
-                int[] itemCosts = tile.getAllItemCosts();
-                //</editor-fold>
 
                 if (getTile(world, pos).getField(2) == 1) {   //If True
-                    world.setBlockState(pos,state.withProperty(StateHandler.OPEN, false),3);
                     getTile(world, pos).setField(2, 0);
                 } else {
-                    world.setBlockState(pos,state.withProperty(StateHandler.OPEN, true),3);
                     getTile(world, pos).setField(2, 1);
                 }
-
-                //<editor-fold desc="Setting Tile Variables">
-                tile = getTile(world, pos);
-
-                tile.setStackHandlers(inputStackHandler, buffStackHandler, vendStackHandler);
-                tile.setField(0, bank);
-                tile.setField(7, face);
-                tile.setField(4, profit);
-                tile.setField(1, locked);
-                tile.setField(6, infinite);
-                tile.setOwner(owner);
-                tile.setAllItemCosts(itemCosts);
-                //</editor-fold>
                 return true;
             }
             getTile(world, pos).openGui(player, world, pos);
