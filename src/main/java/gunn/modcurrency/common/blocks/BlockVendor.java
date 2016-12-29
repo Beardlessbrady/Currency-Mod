@@ -173,6 +173,7 @@ public class BlockVendor extends Block implements ITileEntityProvider {
                 return true;
             }
             getTile(world, pos).openGui(player, world, pos);
+
             return true;
         }
         return false;
@@ -244,24 +245,27 @@ public class BlockVendor extends Block implements ITileEntityProvider {
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
         EnumFacing face = EnumFacing.NORTH;
-        TileVendor tile = (TileVendor)worldIn.getTileEntity(pos);
+        TileVendor tile = (TileVendor) worldIn.getTileEntity(pos);
         int i = tile.getField(7);
 
-        switch(i){
-            case 0: face = EnumFacing.NORTH;
+        switch (i) {
+            case 0:
+                face = EnumFacing.NORTH;
                 break;
-            case 1: face = EnumFacing.EAST;
+            case 1:
+                face = EnumFacing.EAST;
                 break;
-            case 2: face = EnumFacing.SOUTH;
+            case 2:
+                face = EnumFacing.SOUTH;
                 break;
-            case 3: face = EnumFacing.WEST;
+            case 3:
+                face = EnumFacing.WEST;
                 break;
         }
 
-        boolean open = tile.getField(2) == 1;
-
         return state.withProperty(StateHandler.FACING, face).withProperty(StateHandler.ITEM, false)
-                .withProperty(StateHandler.OPEN, open);
+                .withProperty(StateHandler.OPEN, tile.getField(2) == 1);
     }
+
     //</editor-fold>
 }
