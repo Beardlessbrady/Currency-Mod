@@ -61,8 +61,8 @@ public class GuiBuySell extends GuiContainer {
         gearExtended = false;
         creativeExtended = false;
 
-        if(tile instanceof TileVendor) header = "Vending Machine";
-        if(tile instanceof TileSeller) header = "Exchange Machine";
+        if(tile instanceof TileVendor) header = "tile.modcurrency:blockvendor.name";
+        if(tile instanceof TileSeller) header = "tile.modcurrency:blockseller.name";
     }
     
     //Sends packet of new cost to server
@@ -113,14 +113,15 @@ public class GuiBuySell extends GuiContainer {
         int j = (mouseY - (this.height - this.ySize) / 2);
 
         fontRendererObj.drawString(I18n.format(header), 5, 6, Color.darkGray.getRGB());
-        fontRendererObj.drawString(I18n.format("Inventory"), 4, 142, Color.darkGray.getRGB());
+        fontRendererObj.drawString(I18n.format("tile.modcurrency:gui.playerinventory"), 4, 142, Color.darkGray.getRGB());
 
         if(tile.getField(2) == 0){
             fontRendererObj.drawString(I18n.format("Cash") + ": $" + tile.getField(0), 5, 15, Color.darkGray.getRGB());
 
             String fundAmount = Integer.toString(tile.getField(4));
-            if(tile.getField(6) == 1) fundAmount = "Infinite";
-            if(tile instanceof TileSeller) fontRendererObj.drawString(I18n.format("Funds") + ": $" + fundAmount, 5, 23, Color.darkGray.getRGB());
+            if(tile.getField(6) == 1) fundAmount = "tile.modcurrency:guisell.tabs.infinity.infinite";
+            if(tile instanceof TileSeller) fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.funds") + ": " + "tile.modcurrency:guisell.moneysymbol" + fundAmount, 5, 23, Color.darkGray.getRGB());
+
         }
 
         if (tile.getField(2) == 0){
@@ -131,20 +132,20 @@ public class GuiBuySell extends GuiContainer {
         if (tile.getField(2) == 1) {
             drawIcons();
 
-            String profitName = "Profit";
+            String profitName = "tile.modcurrency:guisell.profit";
             String profitAmnt = Integer.toString(tile.getField(4));
             if(tile instanceof TileSeller){
-                profitName = "Funds";
-                if(tile.getField(6)==1) profitAmnt = "Infinite";
+                profitName = "tile.modcurrency:guisell.funds";
+                if(tile.getField(6)==1) profitAmnt = "tile.modcurrency:guisell.tabs.infinity.infinite";
             }
             fontRendererObj.drawString(I18n.format(profitName) + ": $" + profitAmnt, 5, 16, Color.darkGray.getRGB());
 
             if (gearExtended) {
-                fontRendererObj.drawString(I18n.format("Slot Settings"), -81, 51, Integer.parseInt("42401c", 16));
-                fontRendererObj.drawString(I18n.format("Slot Settings"), -80, 50, Integer.parseInt("fff200", 16));
-                fontRendererObj.drawString(I18n.format("Cost:"), -84, 73, Integer.parseInt("211d1b", 16));
-                fontRendererObj.drawString(I18n.format("Cost:"), -83, 72, Color.lightGray.getRGB());
-                fontRendererObj.drawString(I18n.format("$"), -57, 72, Integer.parseInt("0099ff", 16));
+                fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.slotsettings"), -81, 51, Integer.parseInt("42401c", 16));
+                fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.slotsettings"), -80, 50, Integer.parseInt("fff200", 16));
+                fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.cost"), -84, 73, Integer.parseInt("211d1b", 16));
+                fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.cost"), -83, 72, Color.lightGray.getRGB());
+                fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.moneysymbol"), -57, 72, Integer.parseInt("0099ff", 16));
                 
                 String selectedName = tile.getSelectedName();
                 
@@ -156,11 +157,11 @@ public class GuiBuySell extends GuiContainer {
             }
             if(creativeExtended){
                 if(!gearExtended) {
-                    fontRendererObj.drawString(I18n.format("Infinite Stock"), -86, 73, Integer.parseInt("42401c", 16));
-                    fontRendererObj.drawString(I18n.format("Infinite Stock"), -85, 72, Integer.parseInt("fff200", 16));
+                    fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.tabs.infinity.infinitestock"), -86, 73, Integer.parseInt("42401c", 16));
+                    fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.tabs.infinity.infinitestock"), -85, 72, Integer.parseInt("fff200", 16));
                 }else{
-                    fontRendererObj.drawString(I18n.format("Infinite Stock"), -86, 99, Integer.parseInt("42401c", 16));
-                    fontRendererObj.drawString(I18n.format("Infinite Stock"), -85, 98, Integer.parseInt("fff200", 16));
+                    fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.tabs.infinity.infinitestock"), -86, 99, Integer.parseInt("42401c", 16));
+                    fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.tabs.infinity.infinitestock"), -85, 98, Integer.parseInt("fff200", 16));
                 }
             }
         }
@@ -243,10 +244,10 @@ public class GuiBuySell extends GuiContainer {
         super.initGui();
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
-        String ChangeButton = "Change";
+        String ChangeButton = "tile.modcurrency:guisell.changebutton";
 
-        if(tile instanceof TileVendor) if(tile.getField(2) == 1) ChangeButton = "Profit";
-        if(tile instanceof TileSeller) ChangeButton = "Cash";
+        if(tile instanceof TileVendor) if(tile.getField(2) == 1) ChangeButton = "tile.modcurrency:guisell.profit";
+        if(tile instanceof TileSeller) ChangeButton = "tile.modcurrency:guisell.cash";
         
         this.buttonList.add(new GuiButton(0, i + 103, j + 7, 45, 20, ChangeButton));
 
@@ -290,14 +291,14 @@ public class GuiBuySell extends GuiContainer {
             if(!gearExtended) {
                 this.buttonList.set(3,(new CustomButton(3, i - 21, j + 65, 0, 44, 21, 21, "", TAB_TEXTURE)));   //Creative Tab
                 if(creativeExtended && tile.getField(5) == 1) {
-                    this.buttonList.set(4,(new GuiButton(4, i - 69, j + 85, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
+                    this.buttonList.set(4,(new GuiButton(4, i - 69, j + 85, 45, 20, ((tile.getField(6) == 1) ? "tile.modcurrency:guisell.tabs.infinity.enabled" : "tile.modcurrency:guisell.tabs.infinity.disabled"))));
                     drawTexturedModalRect(-91, 65, 27, 48, 91, 47);
                 }else if(!creativeExtended && tile.getField(5) == 1) this.buttonList.get(4).visible = false;
                 drawTexturedModalRect(-21, 71, 237, 48, 19, 9);
             }else{
                 this.buttonList.set(3,(new CustomButton(3, i -21, j + 91, 0, 44, 21, 21, "", TAB_TEXTURE)));   //Creative Tab
                  if(creativeExtended  && tile.getField(5) == 1) {
-                     this.buttonList.set(4,(new GuiButton(4, i - 69, j + 111, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
+                     this.buttonList.set(4,(new GuiButton(4, i - 69, j + 111, 45, 20, ((tile.getField(6) == 1) ? "tile.modcurrency:guisell.tabs.infinity.enabled" : "tile.modcurrency:guisell.tabs.infinity.disabled"))));
                      drawTexturedModalRect(-91, 91, 27, 48, 91, 47);
                  }else if (!creativeExtended && tile.getField(5) == 1) this.buttonList.get(4).visible = false;
                  drawTexturedModalRect(-21, 97, 237, 48, 19, 9);
