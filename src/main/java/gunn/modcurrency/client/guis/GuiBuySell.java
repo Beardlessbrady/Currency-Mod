@@ -145,7 +145,7 @@ public class GuiBuySell extends GuiContainer {
                 fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.slotsettings"), -80, 50, Integer.parseInt("fff200", 16));
                 fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.cost"), -84, 73, Integer.parseInt("211d1b", 16));
                 fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.cost"), -83, 72, Color.lightGray.getRGB());
-                fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.moneysymbol"), -57, 72, Integer.parseInt("0099ff", 16));
+                fontRendererObj.drawString(I18n.format("$"), -57, 72, Integer.parseInt("0099ff", 16));
                 
                 String selectedName = tile.getSelectedName();
                 

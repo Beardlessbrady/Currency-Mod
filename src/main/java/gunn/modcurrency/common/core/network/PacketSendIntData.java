@@ -89,6 +89,10 @@ public class PacketSendIntData implements IMessage {
                 case 4:     //Send Gear Tab State [to server]
                     ModTile te4= (ModTile) world.getTileEntity(message.blockPos);
                     te4.setField(8, message.data);
+                    break;
+                case 5:     //Update Client
+                    ModTile te5= (ModTile) world.getTileEntity(message.blockPos);
+                    te5.update(world,message.blockPos);
             }
         }
     }

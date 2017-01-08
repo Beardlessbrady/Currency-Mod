@@ -3,7 +3,7 @@ package gunn.modcurrency.common.tiles;
 
 import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.api.ModTile;
-import gunn.modcurrency.common.core.handler.StateHandler;
+import gunn.modcurrency.common.core.handler.PacketHandler;
 import gunn.modcurrency.common.items.ModItems;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -396,8 +396,8 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
                 return (locked) ? 1 : 0;
             case 2:
                 worldObj.markBlockRangeForRenderUpdate(pos, pos);
-                worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
                 worldObj.scheduleBlockUpdate(pos,this.getBlockType(),0,0);
+                worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
                 markDirty();
                 return (mode) ? 1 : 0;
             case 3:

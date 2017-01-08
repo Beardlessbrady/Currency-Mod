@@ -43,5 +43,6 @@ public class PacketHandler {
     public static void registerMessages(){
         INSTANCE.registerMessage(PacketSendItemToServer.Handler.class, PacketSendItemToServer.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketSendIntData.Handler.class, PacketSendIntData.class, nextID(), Side.SERVER);
+        INSTANCE.registerMessage(PacketSendIntData.Handler.class, PacketSendIntData.class, nextID(), Side.CLIENT);
     }
 }

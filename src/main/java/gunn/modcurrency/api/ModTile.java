@@ -3,6 +3,8 @@ package gunn.modcurrency.api;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -30,6 +32,14 @@ public class ModTile extends TileEntity implements ICapabilityProvider {
     public void outChange(){}
 
     public void dropItems(){}
+
+    public void update(World world, BlockPos pos){
+        world.markBlockRangeForRenderUpdate(pos, pos);
+        world.scheduleBlockUpdate(pos,this.blockType,0,0);
+        world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
+        markDirty();
+        System.out.println("POOP I UPDATED");
+    }
 
     public boolean canInteractWith(EntityPlayer player){return true;}
 
