@@ -81,10 +81,10 @@ public class BlockTop extends Block{
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (getTile(world, pos).getPlayerUsing() == null) {
+        if (getTile(world, pos).getPlayerUsing() == null) {      //Client and Server
             getTile(world, pos).setField(5, player.isCreative() ? 1 : 0);
-            if (world.isRemote) return true;
-            if (heldItem != null) {
+
+            if (heldItem != null && !world.isRemote) {      //Just Server
                 if (heldItem.getItem() == Items.DYE) {
                     //<editor-fold desc="Saving Tile Variables">
                     ModTile tile = getTile(world, pos);
@@ -124,7 +124,8 @@ public class BlockTop extends Block{
                     return true;
                 }
             }
-            if (player.isSneaking()) {
+
+            if ((player.isSneaking() && player.getUniqueID().toString().equals(getTile(world, pos).getOwner())) || (player.isSneaking() && player.isCreative())) {      //Client and Server
                 if (getTile(world, pos).getField(2) == 1) {
                     getTile(world, pos).setField(2, 0);
                 } else {
@@ -133,14 +134,17 @@ public class BlockTop extends Block{
                 getTile(world, pos).getWorld().notifyBlockUpdate(getTile(world, pos).getPos(), getTile(world, pos).getBlockType().getDefaultState(), getTile(world, pos).getBlockType().getDefaultState(), 3);
                 return true;
             }
-            if (whatBlock(world, pos) == 0) {
-                TileVendor te = (TileVendor) getTile(world, pos);
-                te.openGui(player, world, pos.down());
-            } else if (whatBlock(world, pos) == 1) {
-                TileSeller te = (TileSeller) getTile(world, pos);
-                te.openGui(player, world, pos.down());
+
+            if(!world.isRemote) {    //Just Server
+                if (whatBlock(world, pos) == 0) {
+                    TileVendor te = (TileVendor) getTile(world, pos);
+                    te.openGui(player, world, pos.down());
+                } else if (whatBlock(world, pos) == 1) {
+                    TileSeller te = (TileSeller) getTile(world, pos);
+                    te.openGui(player, world, pos.down());
+                }
+                return true;
             }
-            return true;
         }
         return false;
     }
