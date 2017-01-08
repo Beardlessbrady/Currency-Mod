@@ -5,7 +5,8 @@
     "model": "modcurrency:vend_top",
     "textures": {
       "particle": "blocks/coal_block",
-      "texture": "modcurrency:blocks/buysell/buysell_black"
+      "texture": "modcurrency:blocks/buysell/buysell_black",
+      "screen": "modcurrency:blocks/buysell/sellscreen_on"
     }
   },
   "variants": {
@@ -18,6 +19,12 @@
       },
       "seller":{
         "model": "modcurrency:sell_top"
+      },
+      "selleropen":{
+        "model": "modcurrency:sell_top",
+        "textures": {
+          "screen": "modcurrency:blocks/buysell/sellscreen_off"
+        }
       }
     },
     "color": {
