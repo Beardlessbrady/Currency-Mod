@@ -17,6 +17,12 @@
       },
       "false": {}
     },
+    "open": {
+      "true": {
+        "model": "modcurrency:sell_bottom2"
+      },
+      "false": {}
+    },
     "color": {
       "white":{
         "textures": {

@@ -407,6 +407,10 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
             case 1:
                 return (locked) ? 1 : 0;
             case 2:
+                worldObj.markBlockRangeForRenderUpdate(pos, pos);
+                worldObj.scheduleBlockUpdate(pos,this.getBlockType(),0,0);
+                worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
+                markDirty();
                 return (mode) ? 1 : 0;
             case 3:
                 return selectedSlot;

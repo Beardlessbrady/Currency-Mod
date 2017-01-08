@@ -121,11 +121,10 @@ public class BlockSeller extends Block implements ITileEntityProvider{
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if(getTile(world, pos).getPlayerUsing() == null) {
+        if (getTile(world, pos).getPlayerUsing() == null) {      //Client and Server
             getTile(world, pos).setField(5, player.isCreative() ? 1 : 0);
-            if (world.isRemote) return true;
 
-            if (heldItem != null) {
+            if (heldItem != null && !world.isRemote) {       //Just Server
                 if (heldItem.getItem() == Items.DYE) {
                     //<editor-fold desc="Saving Tile Variables">
                     ModTile tile = getTile(world, pos);
@@ -166,7 +165,7 @@ public class BlockSeller extends Block implements ITileEntityProvider{
                 }
             }
 
-            if ((player.isSneaking() && player.getUniqueID().toString().equals(getTile(world, pos).getOwner())) || (player.isSneaking() && player.isCreative())) {
+            if ((player.isSneaking() && player.getUniqueID().toString().equals(getTile(world, pos).getOwner())) || (player.isSneaking() && player.isCreative())) {         //Client and Server
                 if (getTile(world, pos).getField(2) == 1) {   //If True
                     getTile(world, pos).setField(2, 0);
                 } else {
@@ -176,8 +175,10 @@ public class BlockSeller extends Block implements ITileEntityProvider{
                 return true;
             }
 
-            getTile(world, pos).openGui(player, world, pos);
-            return true;
+            if (!world.isRemote) {    //Just Server
+                getTile(world, pos).openGui(player, world, pos);
+                return true;
+            }
         }
         return false;
     }
@@ -233,7 +234,7 @@ public class BlockSeller extends Block implements ITileEntityProvider{
     //<editor-fold desc="Block States--------------------------------------------------------------------------------------------------------">
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, new IProperty[] {StateHandler.COLOR, StateHandler.FACING, StateHandler.ITEM});
+        return new BlockStateContainer(this, new IProperty[] {StateHandler.COLOR, StateHandler.FACING, StateHandler.ITEM, StateHandler.OPEN});
     }
 
     @Override
@@ -263,7 +264,8 @@ public class BlockSeller extends Block implements ITileEntityProvider{
                 break;
         }
 
-        return state.withProperty(StateHandler.FACING, face).withProperty(StateHandler.ITEM, false);
+        return state.withProperty(StateHandler.FACING, face).withProperty(StateHandler.ITEM, false)
+                .withProperty(StateHandler.OPEN, tile.getField(2) == 1);
     }
     //</editor-fold>
 }
