@@ -12,14 +12,9 @@ tile.modcurrency:guisell.profit=Profit
 tile.modcurrency:guisell.funds=Funds
 tile.modcurrency:guisell.slotsettings=Slot Settings
 tile.modcurrency:guisell.cost=Cost:
-tile.modcurrency:guisell.moneysymbol=$
-tile.modcurrency:guisell.changebutton=Change
 tile.modcurrency:guisell.cash=Cash
 
-tile.modcurrency:guisell.tabs.infinity.infinite=Infinite
 tile.modcurrency:guisell.tabs.infinity.infinitestock=Infinite Stock
-tile.modcurrency:guisell.tabs.infinity.enabled=Enabled
-tile.modcurrency:guisell.tabs.infinity.disabled=Disabled
 tile.modcurrency:guisell.tabs.lock.name=Lock Tab
 
 

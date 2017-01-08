@@ -119,8 +119,8 @@ public class GuiBuySell extends GuiContainer {
             fontRendererObj.drawString(I18n.format("Cash") + ": $" + tile.getField(0), 5, 15, Color.darkGray.getRGB());
 
             String fundAmount = Integer.toString(tile.getField(4));
-            if(tile.getField(6) == 1) fundAmount = "tile.modcurrency:guisell.tabs.infinity.infinite";
-            if(tile instanceof TileSeller) fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.funds") + ": " + "tile.modcurrency:guisell.moneysymbol" + fundAmount, 5, 23, Color.darkGray.getRGB());
+            if(tile.getField(6) == 1) fundAmount = "Infinite";
+            if(tile instanceof TileSeller) fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.funds") + ": " + "$" + fundAmount, 5, 23, Color.darkGray.getRGB());
 
         }
 
@@ -136,7 +136,7 @@ public class GuiBuySell extends GuiContainer {
             String profitAmnt = Integer.toString(tile.getField(4));
             if(tile instanceof TileSeller){
                 profitName = "tile.modcurrency:guisell.funds";
-                if(tile.getField(6)==1) profitAmnt = "tile.modcurrency:guisell.tabs.infinity.infinite";
+                if(tile.getField(6)==1) profitAmnt = "Infinite";
             }
             fontRendererObj.drawString(I18n.format(profitName) + ": $" + profitAmnt, 5, 16, Color.darkGray.getRGB());
 
@@ -244,10 +244,10 @@ public class GuiBuySell extends GuiContainer {
         super.initGui();
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
-        String ChangeButton = "tile.modcurrency:guisell.changebutton";
+        String ChangeButton = "Change";
 
-        if(tile instanceof TileVendor) if(tile.getField(2) == 1) ChangeButton = "tile.modcurrency:guisell.profit";
-        if(tile instanceof TileSeller) ChangeButton = "tile.modcurrency:guisell.cash";
+        if(tile instanceof TileVendor) if(tile.getField(2) == 1) ChangeButton = "Profit";
+        if(tile instanceof TileSeller) ChangeButton = "Cash";
         
         this.buttonList.add(new GuiButton(0, i + 103, j + 7, 45, 20, ChangeButton));
 
@@ -291,14 +291,14 @@ public class GuiBuySell extends GuiContainer {
             if(!gearExtended) {
                 this.buttonList.set(3,(new CustomButton(3, i - 21, j + 65, 0, 44, 21, 21, "", TAB_TEXTURE)));   //Creative Tab
                 if(creativeExtended && tile.getField(5) == 1) {
-                    this.buttonList.set(4,(new GuiButton(4, i - 69, j + 85, 45, 20, ((tile.getField(6) == 1) ? "tile.modcurrency:guisell.tabs.infinity.enabled" : "tile.modcurrency:guisell.tabs.infinity.disabled"))));
+                    this.buttonList.set(4,(new GuiButton(4, i - 69, j + 85, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
                     drawTexturedModalRect(-91, 65, 27, 48, 91, 47);
                 }else if(!creativeExtended && tile.getField(5) == 1) this.buttonList.get(4).visible = false;
                 drawTexturedModalRect(-21, 71, 237, 48, 19, 9);
             }else{
                 this.buttonList.set(3,(new CustomButton(3, i -21, j + 91, 0, 44, 21, 21, "", TAB_TEXTURE)));   //Creative Tab
                  if(creativeExtended  && tile.getField(5) == 1) {
-                     this.buttonList.set(4,(new GuiButton(4, i - 69, j + 111, 45, 20, ((tile.getField(6) == 1) ? "tile.modcurrency:guisell.tabs.infinity.enabled" : "tile.modcurrency:guisell.tabs.infinity.disabled"))));
+                     this.buttonList.set(4,(new GuiButton(4, i - 69, j + 111, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
                      drawTexturedModalRect(-91, 91, 27, 48, 91, 47);
                  }else if (!creativeExtended && tile.getField(5) == 1) this.buttonList.get(4).visible = false;
                  drawTexturedModalRect(-21, 97, 237, 48, 19, 9);
