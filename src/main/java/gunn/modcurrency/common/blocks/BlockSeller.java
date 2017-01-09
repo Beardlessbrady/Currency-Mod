@@ -162,7 +162,7 @@ public class BlockSeller extends Block implements ITileEntityProvider{
 
                     if (!player.isCreative()) heldItem.stackSize--;
                     return true;
-                }
+                } else if (heldItem != null && world.isRemote) return true;
             }
 
             if ((player.isSneaking() && player.getUniqueID().toString().equals(getTile(world, pos).getOwner())) || (player.isSneaking() && player.isCreative())) {         //Client and Server
@@ -178,7 +178,7 @@ public class BlockSeller extends Block implements ITileEntityProvider{
             if (!world.isRemote) {    //Just Server
                 getTile(world, pos).openGui(player, world, pos);
                 return true;
-            }
+            } else return true;
         }
         return false;
     }

@@ -123,7 +123,7 @@ public class BlockTop extends Block{
                     if (!player.isCreative()) heldItem.stackSize--;
                     return true;
                 }
-            }
+            } else if (heldItem != null && world.isRemote) return true;
 
             if ((player.isSneaking() && player.getUniqueID().toString().equals(getTile(world, pos).getOwner())) || (player.isSneaking() && player.isCreative())) {      //Client and Server
                 if (getTile(world, pos).getField(2) == 1) {
@@ -144,7 +144,7 @@ public class BlockTop extends Block{
                     te.openGui(player, world, pos.down());
                 }
                 return true;
-            }
+            } else return true;
         }
         return false;
     }
