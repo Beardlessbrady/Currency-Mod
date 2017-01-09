@@ -210,7 +210,6 @@ public class BlockTop extends Block{
                 break;
             case 1:
                 if(getTile(worldIn,pos).getField(2) == 1){
-                    System.out.println("POO");
                     type = StateHandler.EnumTopTypes.SELLEROPEN;
                 }else {
                     type = StateHandler.EnumTopTypes.SELLER;

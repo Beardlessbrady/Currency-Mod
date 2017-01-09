@@ -161,7 +161,6 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
         out[0] = Math.round(amount);
 
         if (!worldObj.isRemote) {
-            System.out.println(face);
             for (int i = 0; i < out.length; i++) {
                 if (out[i] != 0) {
                     ItemStack item = new ItemStack(ModItems.itembanknote);

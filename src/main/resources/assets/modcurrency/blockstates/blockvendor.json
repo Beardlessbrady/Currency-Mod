@@ -1,12 +1,14 @@
 {
   "forge_marker": 1,
   "defaults": {
-    "custom": { "flip-v": true },
-    "model": "modcurrency:vend_bottom",
-    "textures": {
-      "particle": "blocks/coal_block",
-      "texture": "modcurrency:blocks/buysell/buysell_black"
-    }
+    "textures": { "particle": "blocks/coal_block", "texture": "modcurrency:blocks/buysell/buysell_black" },
+    "model": "forge:multi-layer",
+    "custom": {
+      "base": "modcurrency:blockvendor#base",
+      "Solid": "modcurrency:blockvendor#base",
+      "Translucent": "modcurrency:blockvendor#window"
+    },
+    "transform": "forge:default-block"
   },
   "variants": {
     "normal": [{}],
@@ -121,6 +123,13 @@
       "south": {"y": 180},
       "west": {"y": 270},
       "east": {"y": 90}
-    }
+    },
+    "base": [{
+      "custom": { "flip-v": true },
+      "model": "modcurrency:vend_bottom", "textures": { "particle": "#particle", "texture": "#texture" }
+    }],
+    "window": [{
+      "model": "modcurrency:vend_window", "textures": { "overlay": "modcurrency:blocks/buysell/buysell_black" }
+    }]
   }
 }
