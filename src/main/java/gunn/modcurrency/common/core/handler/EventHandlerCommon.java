@@ -1,8 +1,15 @@
 package gunn.modcurrency.common.core.handler;
 
+import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.api.ModTile;
+import gunn.modcurrency.common.blocks.BlockVendor;
 import gunn.modcurrency.common.blocks.ModBlocks;
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -27,6 +34,8 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
  * File Created on 2016-12-24
  */
 public class EventHandlerCommon {
+    private static final ResourceLocation MODEL_Vendor = new ResourceLocation(ModCurrency.MODID, "block/vend_bottom");
+    public static final ModelResourceLocation locVendor = new ModelResourceLocation(ModCurrency.MODID, "block/vend_bottom");
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void protectedBreak(PlayerInteractEvent.LeftClickBlock e){
@@ -39,4 +48,14 @@ public class EventHandlerCommon {
             }
         }
     }
+
+    @SubscribeEvent
+    public void onModelBake(ModelBakeEvent e){
+        Object object = e.getModelRegistry().getObject(new ModelResourceLocation(ModCurrency.MODID + ":blockvendor", "inventory"));
+
+        System.out.println("MODEL ME");
+        System.out.println(object);
+    }
+
+
 }
