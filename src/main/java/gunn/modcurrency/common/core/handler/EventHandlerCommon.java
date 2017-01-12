@@ -2,6 +2,7 @@ package gunn.modcurrency.common.core.handler;
 
 import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.api.ModTile;
+import gunn.modcurrency.client.model.BakedModelVendor;
 import gunn.modcurrency.common.blocks.BlockVendor;
 import gunn.modcurrency.common.blocks.ModBlocks;
 import net.minecraft.block.Block;
@@ -51,10 +52,11 @@ public class EventHandlerCommon {
 
     @SubscribeEvent
     public void onModelBake(ModelBakeEvent e){
-        Object object = e.getModelRegistry().getObject(new ModelResourceLocation(ModCurrency.MODID + ":blockvendor", "inventory"));
+        ModelResourceLocation base = new ModelResourceLocation(ModCurrency.MODID + ":blockvendor","color=blue,facing=north,item=false,open=true");
+        IBakedModel basicVendor = e.getModelRegistry().getObject(base);
 
-        System.out.println("MODEL ME");
-        System.out.println(object);
+        e.getModelRegistry().putObject(base, new BakedModelVendor(basicVendor));
+
     }
 
 
