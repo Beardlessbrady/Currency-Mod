@@ -2,15 +2,10 @@ package gunn.modcurrency.common.core.handler;
 
 import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.api.ModTile;
-import gunn.modcurrency.client.model.BakedModelVendor;
-import gunn.modcurrency.common.blocks.BlockVendor;
 import gunn.modcurrency.common.blocks.ModBlocks;
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.ModelBakeEvent;
-import net.minecraftforge.client.model.IPerspectiveAwareModel;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -39,25 +34,14 @@ public class EventHandlerCommon {
     public static final ModelResourceLocation locVendor = new ModelResourceLocation(ModCurrency.MODID, "block/vend_bottom");
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void protectedBreak(PlayerInteractEvent.LeftClickBlock e){
+    public void protectedBreak(PlayerInteractEvent.LeftClickBlock e) {
         Block brokeBlock = e.getWorld().getBlockState(e.getPos()).getBlock();
-        if(brokeBlock == ModBlocks.blockSeller || brokeBlock == ModBlocks.blockVendor || brokeBlock == ModBlocks.blockTop) {
+        if (brokeBlock == ModBlocks.blockSeller || brokeBlock == ModBlocks.blockVendor || brokeBlock == ModBlocks.blockTop) {
             ModTile tile = (ModTile) e.getWorld().getTileEntity(e.getPos());
-            if(brokeBlock == ModBlocks.blockTop) tile = (ModTile) e.getWorld().getTileEntity(e.getPos().down());
+            if (brokeBlock == ModBlocks.blockTop) tile = (ModTile) e.getWorld().getTileEntity(e.getPos().down());
             if ((!e.getEntityPlayer().getUniqueID().toString().equals(tile.getOwner())) && !e.getEntityPlayer().isCreative()) {     //If not Owner (and not in creative) Can't Break
                 e.setCanceled(true);
             }
         }
     }
-
-    @SubscribeEvent
-    public void onModelBake(ModelBakeEvent e){
-        ModelResourceLocation base = new ModelResourceLocation(ModCurrency.MODID + ":blockvendor","color=blue,facing=north,item=false,open=true");
-        IBakedModel basicVendor = e.getModelRegistry().getObject(base);
-
-        e.getModelRegistry().putObject(base, new BakedModelVendor(basicVendor));
-
-    }
-
-
 }

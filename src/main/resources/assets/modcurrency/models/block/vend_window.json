@@ -1,7 +1,7 @@
 {
 	"__comment": "Designed by Beardlessbrady with Cubik Studio - https://cubik.studio",
 	"textures": {
-		"VendTextures": "#overlay"
+		"VendTextures": "modcurrency:blocks/buysell/buysell_black"
 	},
 	"elements": [
 		{
