@@ -278,7 +278,7 @@ public class ContainerBuySell extends Container {
                 sourceStack = copyStack.copy();
 
                 if (index < PLAYER_TOTAL_COUNT) {        //Player Inventory Slots
-                    if (inventorySlots.get(index).getStack().getItem() == ModItems.itembanknote) {
+                    if (inventorySlots.get(index).getStack().getItem() == ModItems.itemBanknote) {
                         if(tile.getField(2) == 0) {
                             if (!this.mergeItemStack(copyStack, TE_MONEY_FIRST_SLOT_INDEX, TE_MONEY_FIRST_SLOT_INDEX + 1, false)) {
                                 return null;
@@ -327,7 +327,7 @@ public class ContainerBuySell extends Container {
                         }
                     } else {
                         if (tile.getField(2) == 1) {
-                            if (inventorySlots.get(index).getStack().getItem() == ModItems.itembanknote) {
+                            if (inventorySlots.get(index).getStack().getItem() == ModItems.itemBanknote) {
                                 if (!this.mergeItemStack(copyStack, TE_MONEY_FIRST_SLOT_INDEX, TE_MONEY_FIRST_SLOT_INDEX + 1, false)) {
                                     return null;
                                 }

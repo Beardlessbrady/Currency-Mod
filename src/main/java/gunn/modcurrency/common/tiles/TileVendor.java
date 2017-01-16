@@ -125,7 +125,7 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
                             break Loop;
                         }
                     }else if(bufferStackHandler.getStackInSlot(i) == null){
-                        ItemStack newStack = new ItemStack(ModItems.itembanknote);
+                        ItemStack newStack = new ItemStack(ModItems.itemBanknote);
                         newStack.setItemDamage(3);
                         bufferStackHandler.setStackInSlot(i, newStack);
                         profit = profit - 20;
@@ -163,7 +163,7 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
         if (!worldObj.isRemote) {
             for (int i = 0; i < out.length; i++) {
                 if (out[i] != 0) {
-                    ItemStack item = new ItemStack(ModItems.itembanknote);
+                    ItemStack item = new ItemStack(ModItems.itemBanknote);
                     item.setItemDamage(i);
                     item.stackSize = out[i];
 

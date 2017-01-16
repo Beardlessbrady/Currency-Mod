@@ -32,6 +32,6 @@ public class SlotBank extends SlotItemHandler {
 
     @Override
     public boolean isItemValid(ItemStack stack) {
-        return stack.getItem() == ModItems.itembanknote;
+        return stack.getItem() == ModItems.itemBanknote;
     }
 }

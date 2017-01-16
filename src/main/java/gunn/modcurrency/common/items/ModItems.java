@@ -23,7 +23,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * File Created on 2016-10-28.
  */
 public class ModItems {
-    public static ItemBanknote itembanknote;
+    public static ItemBanknote itemBanknote;
+    public static ItemWallet itemWallet;
 
 
     public static void preInit(){
@@ -31,11 +32,13 @@ public class ModItems {
     }
 
     private static void setupItems(){
-        itembanknote = new ItemBanknote();
+        itemBanknote = new ItemBanknote();
+        itemWallet = new ItemWallet();
     }
 
     @SideOnly(Side.CLIENT)
     public static void ItemModels(){
-        itembanknote.initModel();
+        itemBanknote.initModel();
+        itemWallet.initModel();
     }
 }

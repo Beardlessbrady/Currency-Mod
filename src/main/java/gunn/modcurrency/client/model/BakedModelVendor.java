@@ -9,6 +9,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.common.model.TRSRTransformation;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -48,16 +49,20 @@ public class BakedModelVendor implements IBakedModel{
         quads.addAll(basicModel.getQuads(state, side, rand));
 
 
+
+        return quads;
+    }
+
+
+    /*public void itemImplementationOneDay(){
+
         ItemStack item = new ItemStack(Items.APPLE,1);
 
         ItemModelMesher modelMesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
         IBakedModel model = modelMesher.getItemModel(item);
-
         quads.addAll(model.getQuads(state, side, rand));
 
-
-        return quads;
-    }
+    }*/
 
     //<editor-fold desc="Methods Needed for IBakedModel">
     @Override
