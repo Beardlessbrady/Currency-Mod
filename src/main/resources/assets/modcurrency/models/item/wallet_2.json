@@ -1,7 +1,7 @@
 {
   "parent": "builtin/generated",
   "textures": {
-    "layer0": "modcurrency:items/wallet"
+    "layer0": "modcurrency:items/wallet2"
   },
   "display": {
     "gui": {
@@ -20,14 +20,14 @@
       "scale": [0.40, 0.40, 0.40]
     },
     "firstperson_righthand": {
-      "rotation": [0, 0, 0],
-      "translation": [0.00, 0.00, 0.00],
-      "scale": [0.80, 0.80, 0.80]
+      "rotation": [ 0, 158, 12 ],
+      "translation": [ 0.00, 2.00, 0.00 ],
+      "scale": [ 0.55, 0.55, 0.55 ]
     },
     "firstperson_lefthand": {
-      "rotation": [346, 296, 0],
-      "translation": [0.00, 0.00, 0.00],
-      "scale": [0.80, 0.80, 0.80]
+      "rotation": [ 0, 330, 12 ],
+      "translation": [ 0.00, 2.00, 0.00 ],
+      "scale": [ 0.55, 0.55, 0.55 ]
     },
     "ground": {
       "rotation": [0, 0, 0],

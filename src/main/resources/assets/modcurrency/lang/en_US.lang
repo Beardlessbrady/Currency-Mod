@@ -1,21 +1,25 @@
+//Item names
 item.modcurrency:banknote_0.name=One-Dollar Banknote
 item.modcurrency:banknote_1.name=Five-Dollar Banknote
 item.modcurrency:banknote_2.name=Ten-Dollar Banknote
 item.modcurrency:banknote_3.name=Twenty-Dollar Banknote
 item.modcurrency:banknote_4.name=Fifty-Dollar Banknote
 item.modcurrency:banknote_5.name=One Hundred-Dollar Banknote
+item.modcurrency:wallet.name=Wallet
 
+//Block names
 tile.modcurrency:blockvendor.name=Vending Machine
 tile.modcurrency:blockseller.name=Exchange Machine
 
+//Shared Gui Stuff
+tile.modcurrency:gui.playerinventory=Inventory
+
+//Buy Sell Gui Stuff
 tile.modcurrency:guisell.profit=Profit
 tile.modcurrency:guisell.funds=Funds
 tile.modcurrency:guisell.slotsettings=Slot Settings
 tile.modcurrency:guisell.cost=Cost:
 tile.modcurrency:guisell.cash=Cash
-
 tile.modcurrency:guisell.tabs.infinity.infinitestock=Infinite Stock
 tile.modcurrency:guisell.tabs.lock.name=Lock Tab
 
-
-tile.modcurrency:gui.playerinventory=Inventory

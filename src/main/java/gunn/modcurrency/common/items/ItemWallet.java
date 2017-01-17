@@ -2,11 +2,15 @@ package gunn.modcurrency.common.items;
 
 import gunn.modcurrency.ModCurrency;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.List;
 
 /**
  * Distributed with the Currency-Mod for Minecraft
@@ -28,17 +32,19 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * File Created on 2017-01-16
  */
 public class ItemWallet extends Item{
+    public static final int walletLength = 4;
 
     public ItemWallet(){
-        setHasSubtypes(true);
         setRegistryName("wallet");
-        setUnlocalizedName(getRegistryName().toString());
         setCreativeTab(ModCurrency.tabCurrency);
+        setUnlocalizedName(getRegistryName().toString());
         GameRegistry.register(this);
     }
 
     @SideOnly(Side.CLIENT)
     public void initModel(){
-        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(getRegistryName(), "inventory"));
+        for(int i =0; i < walletLength; i++){
+            ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName() + "_" + i, "inventory"));
+        }
     }
 }
