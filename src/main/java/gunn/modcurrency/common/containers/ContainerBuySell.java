@@ -49,13 +49,13 @@ public class ContainerBuySell extends Container {
     private final int PLAYER_INV_TOTAL_COUNT = PLAYER_INV_COLUMN_COUNT * PLAYER_INV_ROW_COUNT;
     private final int PLAYER_TOTAL_COUNT = HOTBAR_SLOT_COUNT + PLAYER_INV_TOTAL_COUNT;
 
-    private final int PLAYER_FIRST_SLOT_INDEX = 0;
-    private final int TE_MONEY_FIRST_SLOT_INDEX = PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT;
-    private final int TE_VEND_FIRST_SLOT_INDEX = TE_MONEY_FIRST_SLOT_INDEX + 1;
-
     private final int TE_VEND_COLUMN_COUNT = 6;
     private final int TE_VEND_ROW_COUNT = 5;
     private final int TE_VEND_MAIN_TOTAL_COUNT = TE_VEND_COLUMN_COUNT * TE_VEND_ROW_COUNT;
+
+    private final int PLAYER_FIRST_SLOT_INDEX = 0;
+    private final int TE_MONEY_FIRST_SLOT_INDEX = PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT;
+    private final int TE_VEND_FIRST_SLOT_INDEX = TE_MONEY_FIRST_SLOT_INDEX + 1;
 
     private final int TE_BUFFER_TOTAL_COUNT = 6;
 
@@ -81,8 +81,7 @@ public class ContainerBuySell extends Container {
         final int HOTBAR_XPOS = 8;
         final int HOTBAR_YPOS = 211;
 
-        for (int x = 0; x < HOTBAR_SLOT_COUNT; x++)
-            addSlotToContainer(new Slot(invPlayer, x, HOTBAR_XPOS + SLOT_X_SPACING * x, HOTBAR_YPOS));
+        for (int x = 0; x < HOTBAR_SLOT_COUNT; x++) addSlotToContainer(new Slot(invPlayer, x, HOTBAR_XPOS + SLOT_X_SPACING * x, HOTBAR_YPOS));
 
         final int PLAYER_INV_XPOS = 8;
         final int PLAYER_INV_YPOS = 153;

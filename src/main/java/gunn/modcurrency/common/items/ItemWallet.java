@@ -3,8 +3,16 @@ package gunn.modcurrency.common.items;
 import gunn.modcurrency.ModCurrency;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -33,6 +41,9 @@ import java.util.List;
  */
 public class ItemWallet extends Item{
     public static final int walletLength = 4;
+    public static final int WALLET_COLUMN_COUNT = 9;
+    public static final int WALLET_ROW_COUNT = 1; //TODO Modularize
+    public static final int WALLET_TOTAL_INV = WALLET_COLUMN_COUNT * WALLET_ROW_COUNT;
 
     public ItemWallet(){
         setRegistryName("wallet");
@@ -47,4 +58,50 @@ public class ItemWallet extends Item{
             ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName() + "_" + i, "inventory"));
         }
     }
+
+
+
+
+
+
+
+
+
+
+    public void openGui(EntityPlayer player, World world, BlockPos pos) {
+       // player.openGui(ModCurrency.instance, 30, world, pos.getX(), pos.getY(), pos.getZ());
+    }
+
+
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World worldIn, EntityPlayer playerIn, EnumHand hand) {
+        //If new adds the inventory tags
+        if(stack.getTagCompound() == null) createTags(stack);
+
+
+        return super.onItemRightClick(stack, worldIn, playerIn, hand);
+    }
+
+    public void createTags(ItemStack stack){
+        NBTTagCompound compound = new NBTTagCompound();
+        NBTTagCompound inventoryNBT = new NBTTagCompound();
+
+        for (int i = 0; i < WALLET_TOTAL_INV; i++) inventoryNBT.setTag(Integer.toString(i), new ItemStack(Blocks.AIR).writeToNBT(new NBTTagCompound()));
+        compound.setTag("inventory", inventoryNBT);
+
+        stack.setTagCompound(compound);
+    }
+
+    public void setInventoryTag(ItemStack stack, ItemStack[] newInventory){
+        if(newInventory.length == WALLET_TOTAL_INV){
+            NBTTagCompound compound = stack.getTagCompound();
+            NBTTagCompound inventoryNBT;
+
+            inventoryNBT = compound.getCompoundTag("inventory");
+            for(int i = 0; i < WALLET_TOTAL_INV; i++) inventoryNBT.setTag(Integer.toString(i), newInventory[i].writeToNBT(new NBTTagCompound()));
+        }else System.out.println("ERROR: ModCurrency, new Inventory for wallet has an invalid size");
+    }
+
+
+
 }
