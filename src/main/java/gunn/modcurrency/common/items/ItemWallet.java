@@ -69,7 +69,7 @@ public class ItemWallet extends Item{
 
 
     public void openGui(EntityPlayer player, World world, BlockPos pos) {
-       // player.openGui(ModCurrency.instance, 30, world, pos.getX(), pos.getY(), pos.getZ());
+       player.openGui(ModCurrency.instance, 32, world, pos.getX(), pos.getY(), pos.getZ());
     }
 
 
@@ -78,7 +78,7 @@ public class ItemWallet extends Item{
         //If new adds the inventory tags
         if(stack.getTagCompound() == null) createTags(stack);
 
-
+        openGui(playerIn, worldIn, playerIn.getPosition());
         return super.onItemRightClick(stack, worldIn, playerIn, hand);
     }
 

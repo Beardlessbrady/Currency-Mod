@@ -1,5 +1,11 @@
 package gunn.modcurrency.client.guis;
 
+import gunn.modcurrency.common.containers.ContainerWallet;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.util.ResourceLocation;
+
 /**
  * Distributed with the Currency-Mod for Minecraft
  * Copyright (C) 2017  Brady Gunn
@@ -19,5 +25,18 @@ package gunn.modcurrency.client.guis;
  *
  * File Created on 2017-01-17
  */
-public class GuiWallet {
+public class GuiWallet extends GuiContainer{
+    private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/GuiWalletTexture.png");
+
+
+
+    public GuiWallet(InventoryPlayer invPlayer) {
+        super(new ContainerWallet(invPlayer));
+    }
+
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
+        drawTexturedModalRect(guiLeft - 19, guiTop,0 ,0 , 213, 201);
+    }
 }

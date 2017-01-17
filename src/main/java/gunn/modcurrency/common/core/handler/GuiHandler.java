@@ -1,7 +1,10 @@
 package gunn.modcurrency.common.core.handler;
 
+import gunn.modcurrency.client.guis.GuiWallet;
 import gunn.modcurrency.common.containers.ContainerBuySell;
 import gunn.modcurrency.client.guis.GuiBuySell;
+import gunn.modcurrency.common.containers.ContainerWallet;
+import gunn.modcurrency.common.items.ModItems;
 import gunn.modcurrency.common.tiles.TileSeller;
 import gunn.modcurrency.common.tiles.TileVendor;
 import net.minecraft.entity.player.EntityPlayer;
@@ -32,6 +35,7 @@ import net.minecraftforge.fml.common.network.IGuiHandler;
 public class GuiHandler implements IGuiHandler{
     //Id 30 = BlockVendor
     //Id 31 = BlockSeller
+    //Id 32 = Wallet
 
     @Override
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
@@ -46,6 +50,10 @@ public class GuiHandler implements IGuiHandler{
         if(tileEntity instanceof TileSeller && ID == 31){
             TileSeller tileSeller = (TileSeller) tileEntity;
             return new ContainerBuySell(player.inventory, tileSeller);
+        }
+
+        if(ID == 32 && player.getHeldItemMainhand().getItem().equals(ModItems.itemWallet)){
+            return new ContainerWallet(player.inventory);
         }
         return null;
     }
@@ -63,6 +71,10 @@ public class GuiHandler implements IGuiHandler{
         if(tileEntity instanceof  TileSeller && ID == 31){
             TileSeller tileSeller = (TileSeller) tileEntity;
             return new GuiBuySell(player.inventory, tileSeller);
+        }
+
+        if(ID == 32 && player.getHeldItemMainhand().getItem().equals(ModItems.itemWallet)){
+            return new GuiWallet(player.inventory);
         }
         return null;
     }
