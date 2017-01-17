@@ -1,5 +1,6 @@
 package gunn.modcurrency.common.containers;
 
+import gunn.modcurrency.client.guis.GuiWallet;
 import gunn.modcurrency.common.items.ItemWallet;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -43,6 +44,8 @@ public class ContainerWallet extends Container{
     private final int PLAYER_FIRST_SLOT_INDEX = 0;
     private final int WALLET_FIRST_SLOT_INDEX = PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT;
 
+    private final int GUI_XPOS_OFFPUT = GuiWallet.GUI_XPOS_OFFPUT;
+
     public ContainerWallet(InventoryPlayer invPlayer ){
         setupPlayerInv(invPlayer);
     }
@@ -50,20 +53,20 @@ public class ContainerWallet extends Container{
     private void setupPlayerInv(InventoryPlayer invPlayer){
         final int SLOT_X_SPACING = 18;
         final int SLOT_Y_SPACING = 18;
-        final int HOTBAR_XPOS = 8;
-        final int HOTBAR_YPOS = 9;
+        final int HOTBAR_XPOS = 27;
+        final int HOTBAR_YPOS = 178;
 
-        for (int x = 0; x < HOTBAR_SLOT_COUNT; x++) addSlotToContainer(new Slot(invPlayer, x, HOTBAR_XPOS + SLOT_X_SPACING * x, HOTBAR_YPOS));
+        for (int x = 0; x < HOTBAR_SLOT_COUNT; x++) addSlotToContainer(new Slot(invPlayer, x, (HOTBAR_XPOS + SLOT_X_SPACING * x) + GUI_XPOS_OFFPUT, HOTBAR_YPOS));
 
-        final int PLAYER_INV_XPOS = 8;
-        final int PLAYER_INV_YPOS = 153;
+        final int PLAYER_INV_XPOS = 27;
+        final int PLAYER_INV_YPOS = 120;
 
         for (int y = 0; y < PLAYER_INV_ROW_COUNT; y++){
             for (int x = 0; x < PLAYER_INV_COLUMN_COUNT; x++){
                 int slotNum = HOTBAR_SLOT_COUNT + y * PLAYER_INV_COLUMN_COUNT + x;
                 int xpos = PLAYER_INV_XPOS + x * SLOT_X_SPACING;
                 int ypos = PLAYER_INV_YPOS + y * SLOT_Y_SPACING;
-                addSlotToContainer(new Slot(invPlayer, slotNum, xpos, ypos));
+                addSlotToContainer(new Slot(invPlayer, slotNum, xpos + GUI_XPOS_OFFPUT, ypos));
             }
         }
     }

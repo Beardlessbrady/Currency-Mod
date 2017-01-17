@@ -27,6 +27,7 @@ import net.minecraft.util.ResourceLocation;
  */
 public class GuiWallet extends GuiContainer{
     private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/GuiWalletTexture.png");
+    public static final int GUI_XPOS_OFFPUT = -19;
 
 
 
