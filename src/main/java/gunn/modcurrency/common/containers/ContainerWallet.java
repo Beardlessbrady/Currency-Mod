@@ -1,11 +1,16 @@
 package gunn.modcurrency.common.containers;
 
 import gunn.modcurrency.client.guis.GuiWallet;
+import gunn.modcurrency.common.core.util.SlotBank;
 import gunn.modcurrency.common.items.ItemWallet;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 
 /**
  * Distributed with the Currency-Mod for Minecraft
@@ -27,7 +32,6 @@ import net.minecraft.inventory.Slot;
  * File Created on 2017-01-16
  */
 public class ContainerWallet extends Container{
-
     //Slot Index's
     //0-35 = Player Inventory's
     //36-Onwards = Wallet Slots
@@ -46,8 +50,9 @@ public class ContainerWallet extends Container{
 
     private final int GUI_XPOS_OFFPUT = GuiWallet.GUI_XPOS_OFFPUT;
 
-    public ContainerWallet(InventoryPlayer invPlayer ){
+    public ContainerWallet(InventoryPlayer invPlayer, ItemStack wallet){
         setupPlayerInv(invPlayer);
+        setupWalletInv(wallet);
     }
 
     private void setupPlayerInv(InventoryPlayer invPlayer){
@@ -71,8 +76,34 @@ public class ContainerWallet extends Container{
         }
     }
 
+    private void setupWalletInv(ItemStack wallet){
+        System.out.println(wallet.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null));
+
+        final int SLOT_X_SPACING = 18;
+        final int SLOT_Y_SPACING = 18;
+        final int WALLET_INV_XPOS = 44;
+        final int WALLET_INV_YPOS = 32;
+
+        for (int y = 0; y < WALLET_COLUMN_COUNT; y++){
+            for (int x = 0; x < WALLET_ROW_COUNT; x++){
+                int slotNum = 1 + y * WALLET_ROW_COUNT + x;
+                int xpos = WALLET_INV_XPOS + x * SLOT_X_SPACING;
+                int ypos = WALLET_INV_YPOS + y * SLOT_Y_SPACING;
+               // addSlotToContainer(new SlotBank(itemHandler, slotNum, xpos, ypos));
+            }
+        }
+    }
+
     @Override
     public boolean canInteractWith(EntityPlayer playerIn) {
         return true;
+    }
+
+    public ItemStack[] getWalletInventory(ItemStack wallet){
+        NBTTagCompound inventoryNBT = wallet.getTagCompound().getCompoundTag("inventory");
+        ItemStack[] inventoryStacks = new ItemStack[inventoryNBT.getSize()];
+        for (int i = 0; i < inventoryNBT.getSize(); i++) inventoryStacks[i].deserializeNBT((NBTTagCompound) inventoryNBT.getTag(Integer.toString(i)));
+
+        return inventoryStacks;
     }
 }

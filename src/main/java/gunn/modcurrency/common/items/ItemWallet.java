@@ -17,6 +17,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.List;
 
@@ -45,6 +46,8 @@ public class ItemWallet extends Item{
     public static final int WALLET_ROW_COUNT = 1; //TODO Modularize
     public static final int WALLET_TOTAL_INV = WALLET_COLUMN_COUNT * WALLET_ROW_COUNT;
 
+    ItemStackHandler walletStackHandler = new ItemStackHandler(WALLET_TOTAL_INV);
+
     public ItemWallet(){
         setRegistryName("wallet");
         setCreativeTab(ModCurrency.tabCurrency);
@@ -59,19 +62,9 @@ public class ItemWallet extends Item{
         }
     }
 
-
-
-
-
-
-
-
-
-
     public void openGui(EntityPlayer player, World world, BlockPos pos) {
        player.openGui(ModCurrency.instance, 32, world, pos.getX(), pos.getY(), pos.getZ());
     }
-
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World worldIn, EntityPlayer playerIn, EnumHand hand) {
@@ -98,10 +91,6 @@ public class ItemWallet extends Item{
             NBTTagCompound inventoryNBT;
 
             inventoryNBT = compound.getCompoundTag("inventory");
-            for(int i = 0; i < WALLET_TOTAL_INV; i++) inventoryNBT.setTag(Integer.toString(i), newInventory[i].writeToNBT(new NBTTagCompound()));
         }else System.out.println("ERROR: ModCurrency, new Inventory for wallet has an invalid size");
     }
-
-
-
 }
