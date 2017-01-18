@@ -5,12 +5,15 @@ import gunn.modcurrency.common.core.util.SlotBank;
 import gunn.modcurrency.common.items.ItemWallet;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+
+import javax.annotation.Nullable;
 
 /**
  * Distributed with the Currency-Mod for Minecraft
@@ -51,7 +54,6 @@ public class ContainerWallet extends Container{
     private final int GUI_XPOS_OFFPUT = GuiWallet.GUI_XPOS_OFFPUT;
 
     private ItemStackHandler itemStackHandler;
-    private ItemStack currentWallet;
 
     public ContainerWallet(InventoryPlayer invPlayer, ItemStack wallet){
         if(!wallet.hasTagCompound()){
@@ -59,8 +61,6 @@ public class ContainerWallet extends Container{
             wallet.setTagCompound(compound);
             writeInventoryTag(wallet, new ItemStackHandler(WALLET_TOTAL_COUNT));
         }
-
-        currentWallet = wallet;
 
         setupPlayerInv(invPlayer);
         setupWalletInv(wallet);
@@ -115,12 +115,12 @@ public class ContainerWallet extends Container{
         }
     }
 
+    @Nullable
     @Override
-    public void onContainerClosed(EntityPlayer playerIn) {
-        writeInventoryTag(currentWallet, itemStackHandler);
-        super.onContainerClosed(playerIn);
+    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
+        writeInventoryTag(player.getHeldItemMainhand(), itemStackHandler);
+        return super.slotClick(slotId, dragType, clickTypeIn, player);
     }
-
 
     @Override
     public boolean canInteractWith(EntityPlayer playerIn) {
