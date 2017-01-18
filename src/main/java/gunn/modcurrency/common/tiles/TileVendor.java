@@ -8,6 +8,8 @@ import gunn.modcurrency.common.items.ModItems;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -57,6 +59,9 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
     private ItemStackHandler bufferStackHandler = new ItemStackHandler(BUFFER_SLOT_COUNT);
     private EntityPlayer playerUsing = null;
 
+    public static Item[] specialSlotItems = new Item[2];
+
+
 
     public TileVendor() {
         bank = 0;
@@ -72,6 +77,10 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
         gearExtended = false;
 
         for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = 0;
+
+        //Setting items allowed in special slot
+        specialSlotItems[0] = ModItems.itemBanknote;
+        specialSlotItems[1] = ModItems.itemWallet;
     }
 
 
@@ -85,34 +94,36 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
     public void update() {
         if (!worldObj.isRemote) {
             if (inputStackHandler.getStackInSlot(0) != null) {
-                int amount;
-                switch (inputStackHandler.getStackInSlot(0).getItemDamage()) {
-                    case 0:
-                        amount = 1;
-                        break;
-                    case 1:
-                        amount = 5;
-                        break;
-                    case 2:
-                        amount = 10;
-                        break;
-                    case 3:
-                        amount = 20;
-                        break;
-                    case 4:
-                        amount = 50;
-                        break;
-                    case 5:
-                        amount = 100;
-                        break;
-                    default:
-                        amount = -1;
-                        break;
+                if (inputStackHandler.getStackInSlot(0).getItem() == ModItems.itemBanknote) {
+                    int amount;
+                    switch (inputStackHandler.getStackInSlot(0).getItemDamage()) {
+                        case 0:
+                            amount = 1;
+                            break;
+                        case 1:
+                            amount = 5;
+                            break;
+                        case 2:
+                            amount = 10;
+                            break;
+                        case 3:
+                            amount = 20;
+                            break;
+                        case 4:
+                            amount = 50;
+                            break;
+                        case 5:
+                            amount = 100;
+                            break;
+                        default:
+                            amount = -1;
+                            break;
+                    }
+                    amount = amount * inputStackHandler.getStackInSlot(0).stackSize;
+                    inputStackHandler.setStackInSlot(0, null);
+                    bank = bank + amount;
+                    markDirty();
                 }
-                amount = amount * inputStackHandler.getStackInSlot(0).stackSize;
-                inputStackHandler.setStackInSlot(0, null);
-                bank = bank + amount;
-                markDirty();
             }
 
             if(profit >= 20){

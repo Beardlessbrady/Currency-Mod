@@ -6,6 +6,7 @@ import gunn.modcurrency.common.items.ModItems;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -55,6 +56,8 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
     private ItemStackHandler bufferStackHandler = new ItemStackHandler(BUFFER_SLOT_COUNT);
     private EntityPlayer playerUsing = null;
 
+    public static Item[] specialSlotItems = new Item[2];
+
     public TileSeller() {
         bank = 0;
         selectedSlot = 37;
@@ -68,6 +71,10 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
         gearExtended = false;
 
         for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = 0;
+
+        //Setting items allowed in special slot
+        specialSlotItems[0] = ModItems.itemBanknote;
+        specialSlotItems[1] = ModItems.itemWallet;
     }
 
     public void openGui(EntityPlayer player, World world, BlockPos pos){

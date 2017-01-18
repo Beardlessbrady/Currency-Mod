@@ -38,7 +38,7 @@ public class SlotCustomizable extends SlotItemHandler {
     public SlotCustomizable(IItemHandler itemHandler, int index, int xPosition, int yPosition, Item[] onlyItemsAllowed) {
         super(itemHandler, index, xPosition, yPosition);
         itemsAllowed= onlyItemsAllowed.clone();
-        boolean multiple = true;
+        multiple = true;
     }
 
     @Override

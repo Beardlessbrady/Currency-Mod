@@ -104,11 +104,11 @@ public class ContainerBuySell extends Container {
             int xpos = 0;
             if(tile.getField(2) == 0) xpos = 152;
             if(tile.getField(2) == 1) xpos = -1000;
-            addSlotToContainer(new SlotCustomizable(itemHandler, 0, xpos,9, ModItems.itemBanknote));
+            addSlotToContainer(new SlotCustomizable(itemHandler, 0, xpos,9, ((TileVendor) tile).specialSlotItems));
         }
         if(tile instanceof TileSeller){
             if(tile.getField(2) == 0) addSlotToContainer(new SlotItemHandler(itemHandler, 0, 152, 9));
-            if(tile.getField(2) == 1) addSlotToContainer(new SlotCustomizable(itemHandler, 0, 152, 9, ModItems.itemBanknote));
+            if(tile.getField(2) == 1) addSlotToContainer(new SlotCustomizable(itemHandler, 0, 152, 9, ((TileVendor) tile).specialSlotItems));
         }
 
         final int SLOT_X_SPACING = 18;
@@ -133,7 +133,7 @@ public class ContainerBuySell extends Container {
             if(tile.getField(2) == 1) xpos = 15;
             if(tile.getField(2) == 0) xpos = -1000;
             int ypos = 32 + x * 18;
-            if(tile instanceof TileVendor) addSlotToContainer(new SlotCustomizable(itemHandler,slotNum,xpos,ypos, ModItems.itemBanknote));
+            if(tile instanceof TileVendor) addSlotToContainer(new SlotCustomizable(itemHandler,slotNum,xpos,ypos, ((TileVendor) tile).specialSlotItems));
             if(tile instanceof TileSeller) addSlotToContainer(new SlotItemHandler(itemHandler,slotNum,xpos,ypos));
         }
     }
@@ -380,9 +380,5 @@ public class ContainerBuySell extends Container {
     @Override
     public void updateProgressBar(int id, int data) {
         tile.setField(id, data);
-    }
-
-    public void attemptChangeToInv(){
-
     }
 }
