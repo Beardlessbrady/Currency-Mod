@@ -3,6 +3,7 @@ package gunn.modcurrency.common.containers;
 import gunn.modcurrency.client.guis.GuiWallet;
 import gunn.modcurrency.common.core.util.SlotBank;
 import gunn.modcurrency.common.items.ItemWallet;
+import gunn.modcurrency.common.items.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
@@ -115,13 +116,6 @@ public class ContainerWallet extends Container{
         }
     }
 
-    @Nullable
-    @Override
-    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-        writeInventoryTag(player.getHeldItemMainhand(), itemStackHandler);
-        return super.slotClick(slotId, dragType, clickTypeIn, player);
-    }
-
     @Override
     public boolean canInteractWith(EntityPlayer playerIn) {
         return true;
@@ -139,5 +133,41 @@ public class ContainerWallet extends Container{
         itemStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("inventory"));
 
         return itemStackHandler;
+    }
+
+    @Nullable
+    @Override
+    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
+        writeInventoryTag(player.getHeldItemMainhand(), itemStackHandler);
+        return super.slotClick(slotId, dragType, clickTypeIn, player);
+    }
+
+    @Nullable
+    @Override
+    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
+        ItemStack sourceStack = null;
+        Slot slot = this.inventorySlots.get(index);
+
+        if(slot != null && slot.getHasStack()){
+            ItemStack copyStack = slot.getStack();
+            sourceStack = copyStack.copy();
+
+            if(index < PLAYER_TOTAL_COUNT) {     //Player Inventory Slots
+                if(slot.getStack().getItem() == ModItems.itemBanknote){
+                    if(!this.mergeItemStack(copyStack, WALLET_FIRST_SLOT_INDEX, WALLET_FIRST_SLOT_INDEX + WALLET_TOTAL_COUNT, false)){
+                        return null;
+                    }
+                }else{
+                    return null;
+                }
+            }else if(index >= WALLET_FIRST_SLOT_INDEX && index < WALLET_FIRST_SLOT_INDEX + WALLET_TOTAL_COUNT) {     //Wallet Inventory
+                if(!this.mergeItemStack(copyStack, 0, PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT, false)){
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        }
+        return sourceStack;
     }
 }
