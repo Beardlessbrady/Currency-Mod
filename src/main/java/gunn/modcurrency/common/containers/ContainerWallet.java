@@ -1,7 +1,7 @@
 package gunn.modcurrency.common.containers;
 
 import gunn.modcurrency.client.guis.GuiWallet;
-import gunn.modcurrency.common.core.util.SlotBank;
+import gunn.modcurrency.common.core.util.SlotCustomizable;
 import gunn.modcurrency.common.items.ItemWallet;
 import gunn.modcurrency.common.items.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,7 +11,6 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
@@ -103,13 +102,13 @@ public class ContainerWallet extends Container{
                 switch(y) {
                     default:
                     case 0:
-                    case 1: addSlotToContainer(new SlotBank(itemStackHandler, slotNum, xpos, ypos + 35));
+                    case 1: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, ypos + 35, ModItems.itemBanknote));
                         break;
-                    case 2: addSlotToContainer(new SlotBank(itemStackHandler, slotNum, xpos, ypos + 54));
+                    case 2: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, ypos + 54, ModItems.itemBanknote));
                         break;
-                    case 3: addSlotToContainer(new SlotBank(itemStackHandler, slotNum, xpos, ypos + 18));
+                    case 3: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, ypos + 18, ModItems.itemBanknote));
                         break;
-                    case 4: addSlotToContainer(new SlotBank(itemStackHandler, slotNum, xpos, ypos + 72));
+                    case 4: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, ypos + 72, ModItems.itemBanknote));
                         break;
                 }
             }

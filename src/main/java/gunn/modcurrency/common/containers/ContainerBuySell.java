@@ -4,7 +4,7 @@ import gunn.modcurrency.common.items.ModItems;
 import gunn.modcurrency.api.ModTile;
 import gunn.modcurrency.common.tiles.TileSeller;
 import gunn.modcurrency.common.tiles.TileVendor;
-import gunn.modcurrency.common.core.util.SlotBank;
+import gunn.modcurrency.common.core.util.SlotCustomizable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
@@ -104,11 +104,11 @@ public class ContainerBuySell extends Container {
             int xpos = 0;
             if(tile.getField(2) == 0) xpos = 152;
             if(tile.getField(2) == 1) xpos = -1000;
-            addSlotToContainer(new SlotBank(itemHandler, 0, xpos,9));
+            addSlotToContainer(new SlotCustomizable(itemHandler, 0, xpos,9, ModItems.itemBanknote));
         }
         if(tile instanceof TileSeller){
             if(tile.getField(2) == 0) addSlotToContainer(new SlotItemHandler(itemHandler, 0, 152, 9));
-            if(tile.getField(2) == 1) addSlotToContainer(new SlotBank(itemHandler, 0, 152, 9));
+            if(tile.getField(2) == 1) addSlotToContainer(new SlotCustomizable(itemHandler, 0, 152, 9, ModItems.itemBanknote));
         }
 
         final int SLOT_X_SPACING = 18;
@@ -133,7 +133,7 @@ public class ContainerBuySell extends Container {
             if(tile.getField(2) == 1) xpos = 15;
             if(tile.getField(2) == 0) xpos = -1000;
             int ypos = 32 + x * 18;
-            if(tile instanceof TileVendor) addSlotToContainer(new SlotBank(itemHandler,slotNum,xpos,ypos));
+            if(tile instanceof TileVendor) addSlotToContainer(new SlotCustomizable(itemHandler,slotNum,xpos,ypos, ModItems.itemBanknote));
             if(tile instanceof TileSeller) addSlotToContainer(new SlotItemHandler(itemHandler,slotNum,xpos,ypos));
         }
     }
