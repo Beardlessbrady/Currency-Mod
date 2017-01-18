@@ -138,8 +138,14 @@ public class ContainerWallet extends Container{
     @Nullable
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-        writeInventoryTag(player.getHeldItemMainhand(), itemStackHandler);
-        return super.slotClick(slotId, dragType, clickTypeIn, player);
+        if(slotId >= 0 && slotId <= WALLET_FIRST_SLOT_INDEX + WALLET_TOTAL_COUNT) {
+            if(player.getHeldItemMainhand() != inventorySlots.get(slotId).getStack()) {
+                ItemStack stack = super.slotClick(slotId, dragType, clickTypeIn, player);
+                writeInventoryTag(player.getHeldItemMainhand(), itemStackHandler);
+                return stack;
+            }
+        }
+        return null;
     }
 
     @Nullable
@@ -148,24 +154,26 @@ public class ContainerWallet extends Container{
         ItemStack sourceStack = null;
         Slot slot = this.inventorySlots.get(index);
 
-        if(slot != null && slot.getHasStack()){
-            ItemStack copyStack = slot.getStack();
-            sourceStack = copyStack.copy();
+        if(playerIn.getHeldItemMainhand() != inventorySlots.get(index).getStack()) {
+            if (slot != null && slot.getHasStack()) {
+                ItemStack copyStack = slot.getStack();
+                sourceStack = copyStack.copy();
 
-            if(index < PLAYER_TOTAL_COUNT) {     //Player Inventory Slots
-                if(slot.getStack().getItem() == ModItems.itemBanknote){
-                    if(!this.mergeItemStack(copyStack, WALLET_FIRST_SLOT_INDEX, WALLET_FIRST_SLOT_INDEX + WALLET_TOTAL_COUNT, false)){
+                if (index < PLAYER_TOTAL_COUNT) {     //Player Inventory Slots
+                    if (slot.getStack().getItem() == ModItems.itemBanknote) {
+                        if (!this.mergeItemStack(copyStack, WALLET_FIRST_SLOT_INDEX, WALLET_FIRST_SLOT_INDEX + WALLET_TOTAL_COUNT, false)) {
+                            return null;
+                        }
+                    } else {
                         return null;
                     }
-                }else{
+                } else if (index >= WALLET_FIRST_SLOT_INDEX && index < WALLET_FIRST_SLOT_INDEX + WALLET_TOTAL_COUNT) {     //Wallet Inventory
+                    if (!this.mergeItemStack(copyStack, 0, PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT, false)) {
+                        return null;
+                    }
+                } else {
                     return null;
                 }
-            }else if(index >= WALLET_FIRST_SLOT_INDEX && index < WALLET_FIRST_SLOT_INDEX + WALLET_TOTAL_COUNT) {     //Wallet Inventory
-                if(!this.mergeItemStack(copyStack, 0, PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT, false)){
-                    return null;
-                }
-            } else {
-                return null;
             }
         }
         return sourceStack;
