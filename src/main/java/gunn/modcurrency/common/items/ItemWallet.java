@@ -46,13 +46,11 @@ public class ItemWallet extends Item{
     public static final int WALLET_ROW_COUNT = 1; //TODO Modularize
     public static final int WALLET_TOTAL_INV = WALLET_COLUMN_COUNT * WALLET_ROW_COUNT;
 
-    ItemStackHandler walletStackHandler = new ItemStackHandler(WALLET_TOTAL_INV);
-
     public ItemWallet(){
         setRegistryName("wallet");
         setCreativeTab(ModCurrency.tabCurrency);
         setUnlocalizedName(getRegistryName().toString());
-        GameRegistry.register(this);
+        GameRegistry.register(this);;
     }
 
     @SideOnly(Side.CLIENT)
@@ -68,29 +66,7 @@ public class ItemWallet extends Item{
 
     @Override
     public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-        //If new adds the inventory tags
-        if(stack.getTagCompound() == null) createTags(stack);
-
         openGui(playerIn, worldIn, playerIn.getPosition());
         return super.onItemRightClick(stack, worldIn, playerIn, hand);
-    }
-
-    public void createTags(ItemStack stack){
-        NBTTagCompound compound = new NBTTagCompound();
-        NBTTagCompound inventoryNBT = new NBTTagCompound();
-
-        for (int i = 0; i < WALLET_TOTAL_INV; i++) inventoryNBT.setTag(Integer.toString(i), new ItemStack(Blocks.AIR).writeToNBT(new NBTTagCompound()));
-        compound.setTag("inventory", inventoryNBT);
-
-        stack.setTagCompound(compound);
-    }
-
-    public void setInventoryTag(ItemStack stack, ItemStack[] newInventory){
-        if(newInventory.length == WALLET_TOTAL_INV){
-            NBTTagCompound compound = stack.getTagCompound();
-            NBTTagCompound inventoryNBT;
-
-            inventoryNBT = compound.getCompoundTag("inventory");
-        }else System.out.println("ERROR: ModCurrency, new Inventory for wallet has an invalid size");
     }
 }

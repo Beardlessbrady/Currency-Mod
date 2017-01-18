@@ -46,14 +46,14 @@ public class GuiWallet extends GuiContainer{
         switch(ItemWallet.WALLET_ROW_COUNT){
             default:
             case 4:     //4 Rows
-                drawTexturedModalRect(guiLeft + GUI_XPOS_OFFPUT + 26, guiTop + 70,0 ,152 ,162 , 18);
+                drawTexturedModalRect(guiLeft + GUI_XPOS_OFFPUT + 25, guiTop + 70,0 ,152 ,162 , 18);
             case 3:     //3 Rows
-                drawTexturedModalRect(guiLeft + GUI_XPOS_OFFPUT + 26, guiTop + 16,0 ,98 ,162 , 18);
+                drawTexturedModalRect(guiLeft + GUI_XPOS_OFFPUT + 25, guiTop + 16,0 ,98 ,162 , 18);
             case 2:     //2 Rows
-                drawTexturedModalRect(guiLeft + GUI_XPOS_OFFPUT + 26, guiTop + 52,0 ,134 ,162 , 18);
+                drawTexturedModalRect(guiLeft + GUI_XPOS_OFFPUT + 25, guiTop + 52,0 ,134 ,162 , 18);
             case 0:
             case 1:     //1 Row
-                drawTexturedModalRect(guiLeft + GUI_XPOS_OFFPUT + 26, guiTop + 34,0 ,116 ,162 , 18);
+                drawTexturedModalRect(guiLeft + GUI_XPOS_OFFPUT + 25, guiTop + 34,0 ,116 ,162 , 18);
         }
 
     }

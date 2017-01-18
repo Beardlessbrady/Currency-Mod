@@ -10,7 +10,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 
 /**
  * Distributed with the Currency-Mod for Minecraft
@@ -50,7 +50,18 @@ public class ContainerWallet extends Container{
 
     private final int GUI_XPOS_OFFPUT = GuiWallet.GUI_XPOS_OFFPUT;
 
+    private ItemStackHandler itemStackHandler;
+    private ItemStack currentWallet;
+
     public ContainerWallet(InventoryPlayer invPlayer, ItemStack wallet){
+        if(!wallet.hasTagCompound()){
+            NBTTagCompound compound = new NBTTagCompound();
+            wallet.setTagCompound(compound);
+            writeInventoryTag(wallet, new ItemStackHandler(WALLET_TOTAL_COUNT));
+        }
+
+        currentWallet = wallet;
+
         setupPlayerInv(invPlayer);
         setupWalletInv(wallet);
     }
@@ -77,33 +88,56 @@ public class ContainerWallet extends Container{
     }
 
     private void setupWalletInv(ItemStack wallet){
-        System.out.println(wallet.hasCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null));
+        itemStackHandler = readInventoryTag(wallet);
 
         final int SLOT_X_SPACING = 18;
         final int SLOT_Y_SPACING = 18;
-        final int WALLET_INV_XPOS = 44;
-        final int WALLET_INV_YPOS = 32;
 
-        for (int y = 0; y < WALLET_COLUMN_COUNT; y++){
-            for (int x = 0; x < WALLET_ROW_COUNT; x++){
-                int slotNum = 1 + y * WALLET_ROW_COUNT + x;
-                int xpos = WALLET_INV_XPOS + x * SLOT_X_SPACING;
-                int ypos = WALLET_INV_YPOS + y * SLOT_Y_SPACING;
-               // addSlotToContainer(new SlotBank(itemHandler, slotNum, xpos, ypos));
+        for (int y = 0; y < WALLET_ROW_COUNT; y++){
+            for (int x = 0; x < 9; x++){
+                int slotNum = y * WALLET_ROW_COUNT + x;
+                int xpos =  7 + x * SLOT_X_SPACING;
+                int ypos =  y * SLOT_Y_SPACING;
+
+                switch(y) {
+                    default:
+                    case 0:
+                    case 1: addSlotToContainer(new SlotBank(itemStackHandler, slotNum, xpos, ypos + 35));
+                        break;
+                    case 2: addSlotToContainer(new SlotBank(itemStackHandler, slotNum, xpos, ypos + 54));
+                        break;
+                    case 3: addSlotToContainer(new SlotBank(itemStackHandler, slotNum, xpos, ypos + 18));
+                        break;
+                    case 4: addSlotToContainer(new SlotBank(itemStackHandler, slotNum, xpos, ypos + 72));
+                        break;
+                }
             }
         }
     }
+
+    @Override
+    public void onContainerClosed(EntityPlayer playerIn) {
+        writeInventoryTag(currentWallet, itemStackHandler);
+        super.onContainerClosed(playerIn);
+    }
+
 
     @Override
     public boolean canInteractWith(EntityPlayer playerIn) {
         return true;
     }
 
-    public ItemStack[] getWalletInventory(ItemStack wallet){
-        NBTTagCompound inventoryNBT = wallet.getTagCompound().getCompoundTag("inventory");
-        ItemStack[] inventoryStacks = new ItemStack[inventoryNBT.getSize()];
-        for (int i = 0; i < inventoryNBT.getSize(); i++) inventoryStacks[i].deserializeNBT((NBTTagCompound) inventoryNBT.getTag(Integer.toString(i)));
+    public void writeInventoryTag(ItemStack stack, ItemStackHandler inventory){
+        NBTTagCompound compound = stack.getTagCompound();
+        compound.setTag("inventory", inventory.serializeNBT());
+        stack.setTagCompound(compound);
+    }
 
-        return inventoryStacks;
+    public ItemStackHandler readInventoryTag(ItemStack stack){
+        NBTTagCompound compound = stack.getTagCompound();
+        ItemStackHandler itemStackHandler = new ItemStackHandler(WALLET_TOTAL_COUNT);
+        itemStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("inventory"));
+
+        return itemStackHandler;
     }
 }
