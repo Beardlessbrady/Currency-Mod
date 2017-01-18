@@ -11,6 +11,7 @@ import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -59,11 +60,16 @@ public class ContainerBuySell extends Container {
 
     private final int TE_BUFFER_TOTAL_COUNT = 6;
 
+    private Item[] specialSlotItems;
+
     private ModTile tile;
     private int[] cachedFields;
 
     public ContainerBuySell(InventoryPlayer invPlayer, ModTile te) {
         tile = te;
+
+        if(tile instanceof TileVendor) specialSlotItems= ((TileVendor) tile).specialSlotItems;
+        if(tile instanceof TileSeller) specialSlotItems= ((TileSeller) tile).specialSlotItems;
 
         setupPlayerInv(invPlayer);
         setupTeInv();
@@ -104,11 +110,11 @@ public class ContainerBuySell extends Container {
             int xpos = 0;
             if(tile.getField(2) == 0) xpos = 152;
             if(tile.getField(2) == 1) xpos = -1000;
-            addSlotToContainer(new SlotCustomizable(itemHandler, 0, xpos,9, ((TileVendor) tile).specialSlotItems));
+            addSlotToContainer(new SlotCustomizable(itemHandler, 0, xpos,9, specialSlotItems));
         }
         if(tile instanceof TileSeller){
             if(tile.getField(2) == 0) addSlotToContainer(new SlotItemHandler(itemHandler, 0, 152, 9));
-            if(tile.getField(2) == 1) addSlotToContainer(new SlotCustomizable(itemHandler, 0, 152, 9, ((TileVendor) tile).specialSlotItems));
+            if(tile.getField(2) == 1) addSlotToContainer(new SlotCustomizable(itemHandler, 0, 152, 9, specialSlotItems));
         }
 
         final int SLOT_X_SPACING = 18;
@@ -133,7 +139,7 @@ public class ContainerBuySell extends Container {
             if(tile.getField(2) == 1) xpos = 15;
             if(tile.getField(2) == 0) xpos = -1000;
             int ypos = 32 + x * 18;
-            if(tile instanceof TileVendor) addSlotToContainer(new SlotCustomizable(itemHandler,slotNum,xpos,ypos, ((TileVendor) tile).specialSlotItems));
+            if(tile instanceof TileVendor) addSlotToContainer(new SlotCustomizable(itemHandler,slotNum,xpos,ypos, specialSlotItems));
             if(tile instanceof TileSeller) addSlotToContainer(new SlotItemHandler(itemHandler,slotNum,xpos,ypos));
         }
     }

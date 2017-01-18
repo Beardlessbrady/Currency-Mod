@@ -56,7 +56,7 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
     private ItemStackHandler bufferStackHandler = new ItemStackHandler(BUFFER_SLOT_COUNT);
     private EntityPlayer playerUsing = null;
 
-    public static Item[] specialSlotItems = new Item[2];
+    public static Item[] specialSlotItems = new Item[1];
 
     public TileSeller() {
         bank = 0;
@@ -74,7 +74,6 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
 
         //Setting items allowed in special slot
         specialSlotItems[0] = ModItems.itemBanknote;
-        specialSlotItems[1] = ModItems.itemWallet;
     }
 
     public void openGui(EntityPlayer player, World world, BlockPos pos){
