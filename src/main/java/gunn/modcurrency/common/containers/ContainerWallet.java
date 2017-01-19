@@ -1,6 +1,7 @@
 package gunn.modcurrency.common.containers;
 
 import gunn.modcurrency.client.guis.GuiWallet;
+import gunn.modcurrency.common.core.util.INBTInventory;
 import gunn.modcurrency.common.core.util.SlotCustomizable;
 import gunn.modcurrency.common.items.ItemWallet;
 import gunn.modcurrency.common.items.ModItems;
@@ -37,7 +38,7 @@ import javax.annotation.Nullable;
  *
  * File Created on 2017-01-16
  */
-public class ContainerWallet extends Container{
+public class ContainerWallet extends Container implements INBTInventory {
     //Slot Index's
     //0-35 = Player Inventory's
     //36-Onwards = Wallet Slots
@@ -93,7 +94,7 @@ public class ContainerWallet extends Container{
     }
 
     private void setupWalletInv(ItemStack wallet){
-        itemStackHandler = readInventoryTag(wallet);
+        itemStackHandler = readInventoryTag(wallet, WALLET_TOTAL_COUNT);
 
         final int SLOT_X_SPACING = 18;
         final int SLOT_Y_SPACING = 18;
@@ -121,20 +122,6 @@ public class ContainerWallet extends Container{
     @Override
     public boolean canInteractWith(EntityPlayer playerIn) {
         return true;
-    }
-
-    public void writeInventoryTag(ItemStack stack, ItemStackHandler inventory){
-        NBTTagCompound compound = stack.getTagCompound();
-        compound.setTag("inventory", inventory.serializeNBT());
-        stack.setTagCompound(compound);
-    }
-
-    public ItemStackHandler readInventoryTag(ItemStack stack){
-        NBTTagCompound compound = stack.getTagCompound();
-        ItemStackHandler itemStackHandler = new ItemStackHandler(WALLET_TOTAL_COUNT);
-        itemStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("inventory"));
-
-        return itemStackHandler;
     }
 
     @Nullable
@@ -182,7 +169,7 @@ public class ContainerWallet extends Container{
     }
 
     public void didInventorySizeChange(ItemStack stack, EntityPlayer player){
-        ItemStackHandler handler = readInventoryTag(stack);
+        ItemStackHandler handler = readInventoryTag(stack, WALLET_TOTAL_COUNT);
         int oldSize= handler.getSlots();
 
         if(oldSize != WALLET_TOTAL_COUNT){

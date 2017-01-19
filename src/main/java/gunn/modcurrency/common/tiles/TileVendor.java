@@ -4,6 +4,8 @@ package gunn.modcurrency.common.tiles;
 import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.api.ModTile;
 import gunn.modcurrency.common.core.handler.PacketHandler;
+import gunn.modcurrency.common.core.util.INBTInventory;
+import gunn.modcurrency.common.items.ItemWallet;
 import gunn.modcurrency.common.items.ModItems;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -45,7 +47,7 @@ import javax.annotation.Nullable;
  *
  * File Created on 2016-10-30.
  */
-public class TileVendor extends ModTile implements ICapabilityProvider, ITickable{
+public class TileVendor extends ModTile implements ICapabilityProvider, ITickable, INBTInventory{
     private static final int INPUT_SLOT_COUNT = 1;
     private static final int VEND_SLOT_COUNT = 30;
     private static final int BUFFER_SLOT_COUNT = 6;
@@ -123,6 +125,8 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
                     inputStackHandler.setStackInSlot(0, null);
                     bank = bank + amount;
                     markDirty();
+                }else  if (inputStackHandler.getStackInSlot(0).getItem() == ModItems.itemWallet) {
+                    System.out.println(getTotalCash(inputStackHandler.getStackInSlot(0)));
                 }
             }
 
@@ -230,6 +234,40 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
     @Override
     public boolean canInteractWith(EntityPlayer player) {
         return !isInvalid() && player.getDistanceSq(pos.add(0.5D, 0.5D, 0.5D)) <= 64D;
+    }
+
+    public int getTotalCash(ItemStack stack){
+        ItemStackHandler itemStackHandler = readInventoryTag(stack, ItemWallet.WALLET_TOTAL_COUNT);
+
+        int totalCash = 0;
+        for(int i=0; i<itemStackHandler.getSlots(); i++) {
+            if (itemStackHandler.getStackInSlot(i) != null) {
+                switch (itemStackHandler.getStackInSlot(i).getItemDamage()) {
+                    case 0:
+                        totalCash = totalCash + 1 * itemStackHandler.getStackInSlot(i).stackSize;
+                        break;
+                    case 1:
+                        totalCash = totalCash + 5 * itemStackHandler.getStackInSlot(i).stackSize;
+                        break;
+                    case 2:
+                        totalCash = totalCash + 10 * itemStackHandler.getStackInSlot(i).stackSize;
+                        break;
+                    case 3:
+                        totalCash = totalCash + 20 * itemStackHandler.getStackInSlot(i).stackSize;
+                        break;
+                    case 4:
+                        totalCash = totalCash + 50 * itemStackHandler.getStackInSlot(i).stackSize;
+                        break;
+                    case 5:
+                        totalCash = totalCash + 100 * itemStackHandler.getStackInSlot(i).stackSize;
+                        break;
+                    default:
+                        totalCash = -1;
+                        break;
+                }
+            }
+        }
+        return totalCash;
     }
 
 
