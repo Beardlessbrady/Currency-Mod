@@ -43,8 +43,7 @@ import java.util.List;
 public class ItemWallet extends Item{
     public static final int walletLength = 4;
     public static final int WALLET_COLUMN_COUNT = 9;
-    public static final int WALLET_ROW_COUNT = 1; //TODO Modularize
-    public static final int WALLET_TOTAL_INV = WALLET_COLUMN_COUNT * WALLET_ROW_COUNT;
+    public static final int WALLET_ROW_COUNT = 1;
 
     public ItemWallet(){
         setRegistryName("wallet");

@@ -94,21 +94,19 @@ public class ContainerWallet extends Container{
         final int SLOT_Y_SPACING = 18;
 
         for (int y = 0; y < WALLET_ROW_COUNT; y++){
-            for (int x = 0; x < 9; x++){
-                int slotNum = y * WALLET_ROW_COUNT + x;
+            for (int x = 0; x < WALLET_COLUMN_COUNT; x++){
+                int slotNum = y * WALLET_COLUMN_COUNT + x;
                 int xpos =  7 + x * SLOT_X_SPACING;
-                int ypos =  y * SLOT_Y_SPACING;
 
                 switch(y) {
                     default:
-                    case 0:
-                    case 1: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, ypos + 35, ModItems.itemBanknote));
+                    case 0: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, 35, ModItems.itemBanknote));
                         break;
-                    case 2: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, ypos + 54, ModItems.itemBanknote));
+                    case 1: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, 54, ModItems.itemBanknote));
                         break;
-                    case 3: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, ypos + 18, ModItems.itemBanknote));
+                    case 2: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, 18, ModItems.itemBanknote));
                         break;
-                    case 4: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, ypos + 72, ModItems.itemBanknote));
+                    case 3: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, 72, ModItems.itemBanknote));
                         break;
                 }
             }
