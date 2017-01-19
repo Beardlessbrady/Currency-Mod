@@ -18,6 +18,8 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -112,31 +114,40 @@ public class GuiBuySell extends GuiContainer {
         int i = (mouseX - (this.width - this.xSize) / 2);
         int j = (mouseY - (this.height - this.ySize) / 2);
 
+        IItemHandler itemHandler  = this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        TileVendor tileVendor = (TileVendor) tile;
+
         fontRendererObj.drawString(I18n.format(header), 5, 6, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("tile.modcurrency:gui.playerinventory"), 4, 142, Color.darkGray.getRGB());
 
-        if(tile.getField(2) == 0){
+        if (tile.getField(2) == 0) {
+            //<editor-fold desc="Sell Mode">
             fontRendererObj.drawString(I18n.format("Cash") + ": $" + tile.getField(0), 5, 15, Color.darkGray.getRGB());
 
+            if(tile instanceof TileVendor){
+                System.out.println(tileVendor.getField(10));
+                if(tile.getField(9) == 1) fontRendererObj.drawString(I18n.format("Wallet") + ": $" + tile.getField(10), 5, 23, Integer.parseInt("3abd0c", 16));
+            }
+
+
             String fundAmount = Integer.toString(tile.getField(4));
-            if(tile.getField(6) == 1) fundAmount = "Infinite";
-            if(tile instanceof TileSeller) fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.funds") + ": " + "$" + fundAmount, 5, 23, Color.darkGray.getRGB());
+            if (tile.getField(6) == 1) fundAmount = "Infinite";
+            if (tile instanceof TileSeller)
+                fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.funds") + ": " + "$" + fundAmount, 5, 23, Color.darkGray.getRGB());
 
-        }
-
-        if (tile.getField(2) == 0){
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
             drawTexturedModalRect(14, 31, 177, 21, 18, 108);
-        }
-        if (tile.getField(2) == 1) {
+            //</editor-fold>
+        } else {
+            //<editor-fold desc="Edit Mode">
             drawIcons();
 
             String profitName = "tile.modcurrency:guisell.profit";
             String profitAmnt = Integer.toString(tile.getField(4));
-            if(tile instanceof TileSeller){
+            if (tile instanceof TileSeller) {
                 profitName = "tile.modcurrency:guisell.funds";
-                if(tile.getField(6)==1) profitAmnt = "Infinite";
+                if (tile.getField(6) == 1) profitAmnt = "Infinite";
             }
             fontRendererObj.drawString(I18n.format(profitName) + ": $" + profitAmnt, 5, 16, Color.darkGray.getRGB());
 
@@ -146,28 +157,25 @@ public class GuiBuySell extends GuiContainer {
                 fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.cost"), -84, 73, Integer.parseInt("211d1b", 16));
                 fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.cost"), -83, 72, Color.lightGray.getRGB());
                 fontRendererObj.drawString(I18n.format("$"), -57, 72, Integer.parseInt("0099ff", 16));
-                
+
                 String selectedName = tile.getSelectedName();
-                
+
                 GL11.glPushMatrix();
-                    GL11.glScaled(0.7, 0.7, 0.7);
-                    fontRendererObj.drawString(I18n.format("[" + selectedName + "]"), -117, 91, Integer.parseInt("001f33", 16));
-                    fontRendererObj.drawString(I18n.format("[" + selectedName + "]"), -118, 90, Integer.parseInt("0099ff", 16));
+                GL11.glScaled(0.7, 0.7, 0.7);
+                fontRendererObj.drawString(I18n.format("[" + selectedName + "]"), -117, 91, Integer.parseInt("001f33", 16));
+                fontRendererObj.drawString(I18n.format("[" + selectedName + "]"), -118, 90, Integer.parseInt("0099ff", 16));
                 GL11.glPopMatrix();
             }
-            if(creativeExtended){
-                if(!gearExtended) {
+            if (creativeExtended) {
+                if (!gearExtended) {
                     fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.tabs.infinity.infinitestock"), -86, 73, Integer.parseInt("42401c", 16));
                     fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.tabs.infinity.infinitestock"), -85, 72, Integer.parseInt("fff200", 16));
-                }else{
+                } else {
                     fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.tabs.infinity.infinitestock"), -86, 99, Integer.parseInt("42401c", 16));
                     fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.tabs.infinity.infinitestock"), -85, 98, Integer.parseInt("fff200", 16));
                 }
             }
-        }
 
-        //Draw Tab Tooltips
-        if(tile.getField(2) == 1) {
             if (j <= 41 && j >= 21 && i < 0 && i >= -21) {      //Lock Tab
                 List<String> list = new ArrayList<>();
                 list.add("Lock Tab");
@@ -175,8 +183,8 @@ public class GuiBuySell extends GuiContainer {
                 list.add("hopper interaction");
 
                 int ypos = 0;
-                if(tile.getField(8) == 0) ypos = 28;
-                if(tile.getField(8) == 1) ypos = 20;
+                if (tile.getField(8) == 0) ypos = 28;
+                if (tile.getField(8) == 1) ypos = 20;
 
                 this.drawHoveringText(list, -132, ypos, fontRendererObj);
             }
@@ -187,30 +195,30 @@ public class GuiBuySell extends GuiContainer {
                 list.add("Set items costs");
 
                 int ypos = 0;
-                if(tile.getField(8) == 0) ypos = 54;
-                if(tile.getField(8) == 1) ypos = 30;
+                if (tile.getField(8) == 0) ypos = 54;
+                if (tile.getField(8) == 1) ypos = 30;
 
                 this.drawHoveringText(list, -114, ypos, fontRendererObj);
             }
 
-            if(tile.getField(5) == 1){
+            if (tile.getField(5) == 1) {
                 if (j <= 85 && j >= 65 && i < 0 && i >= -21 && tile.getField(8) == 0) {
                     List<String> list = new ArrayList<>();
                     list.add("Creative Tab");
 
                     int xpos = 0;
-                    if(tile instanceof TileVendor){
+                    if (tile instanceof TileVendor) {
                         list.add("Infinite Stock");
                         xpos = -104;
                     }
-                    if(tile instanceof TileSeller){
+                    if (tile instanceof TileSeller) {
                         list.add("Infinite Funds");
                         xpos = -107;
                     }
 
                     int ypos = 0;
-                    if(!creativeExtended) ypos = 78;
-                    if(creativeExtended) ypos = 128;
+                    if (!creativeExtended) ypos = 78;
+                    if (creativeExtended) ypos = 128;
 
                     this.drawHoveringText(list, xpos, ypos, fontRendererObj);
                 }
@@ -220,22 +228,23 @@ public class GuiBuySell extends GuiContainer {
                     list.add("Creative Tab");
 
                     int xpos = 0;
-                    if(tile instanceof TileVendor){
+                    if (tile instanceof TileVendor) {
                         list.add("Infinite Stock");
                         xpos = -104;
                     }
-                    if(tile instanceof TileSeller){
+                    if (tile instanceof TileSeller) {
                         list.add("Infinite Funds");
                         xpos = -107;
                     }
 
                     int ypos = 0;
-                    if(!creativeExtended) ypos = 107;
-                    if(creativeExtended) ypos = 154;
+                    if (!creativeExtended) ypos = 107;
+                    if (creativeExtended) ypos = 154;
 
                     this.drawHoveringText(list, xpos, ypos, fontRendererObj);
                 }
             }
+            //</editor-fold>
         }
     }
 

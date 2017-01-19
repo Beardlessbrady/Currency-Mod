@@ -52,17 +52,15 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
     private static final int VEND_SLOT_COUNT = 30;
     private static final int BUFFER_SLOT_COUNT = 6;
 
-    private int bank, profit, selectedSlot, face;
+    private int bank, profit, selectedSlot, face, walletTotal;
     private String owner, selectedName;
-    private boolean locked, mode, creative, infinite, gearExtended;
+    private boolean locked, mode, creative, infinite, gearExtended, walletIn;
     private int[] itemCosts = new int[VEND_SLOT_COUNT];
     private ItemStackHandler inputStackHandler = new ItemStackHandler(INPUT_SLOT_COUNT);
     private ItemStackHandler vendStackHandler = new ItemStackHandler(VEND_SLOT_COUNT);
     private ItemStackHandler bufferStackHandler = new ItemStackHandler(BUFFER_SLOT_COUNT);
     private EntityPlayer playerUsing = null;
-
     public static Item[] specialSlotItems = new Item[2];
-
 
 
     public TileVendor() {
@@ -70,6 +68,7 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
         profit = 0;
         selectedSlot = 37;
         face = 0;
+        walletTotal = 0;
         owner = "";
         selectedName = "No Item";
         locked = false;
@@ -77,6 +76,7 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
         creative = false;
         infinite = false;
         gearExtended = false;
+        walletIn = false;
 
         for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = 0;
 
@@ -84,8 +84,6 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
         specialSlotItems[0] = ModItems.itemBanknote;
         specialSlotItems[1] = ModItems.itemWallet;
     }
-
-
 
     public void openGui(EntityPlayer player, World world, BlockPos pos) {
         player.openGui(ModCurrency.instance, 30, world, pos.getX(), pos.getY(), pos.getZ());
@@ -97,6 +95,7 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
         if (!worldObj.isRemote) {
             if (inputStackHandler.getStackInSlot(0) != null) {
                 if (inputStackHandler.getStackInSlot(0).getItem() == ModItems.itemBanknote) {
+                    //<editor-fold desc="Dealing with a Banknote">
                     int amount;
                     switch (inputStackHandler.getStackInSlot(0).getItemDamage()) {
                         case 0:
@@ -125,12 +124,15 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
                     inputStackHandler.setStackInSlot(0, null);
                     bank = bank + amount;
                     markDirty();
+                    //</editor-fold>  M
                 }else  if (inputStackHandler.getStackInSlot(0).getItem() == ModItems.itemWallet) {
-                    System.out.println(getTotalCash(inputStackHandler.getStackInSlot(0)));
+                    walletIn = true;
+                    walletTotal = getTotalCash();
                 }
-            }
+            }else if (walletIn == true) walletIn = false;
 
             if(profit >= 20){
+                //<editor-fold desc="Dealing with Buffer Slots">
                 Loop:
                 for(int i = 0; i < BUFFER_SLOT_COUNT; i++){
                     if(bufferStackHandler.getStackInSlot(i) != null){
@@ -147,6 +149,7 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
                         break Loop;
                     }
                 }
+                //</editor-fold>
             }
         }
     }
@@ -236,8 +239,9 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
         return !isInvalid() && player.getDistanceSq(pos.add(0.5D, 0.5D, 0.5D)) <= 64D;
     }
 
-    public int getTotalCash(ItemStack stack){
-        ItemStackHandler itemStackHandler = readInventoryTag(stack, ItemWallet.WALLET_TOTAL_COUNT);
+    //<editor-fold desc="Wallet Interaction--------------------------------------------------------------------------------------------------">
+    public int getTotalCash(){
+        ItemStackHandler itemStackHandler = readInventoryTag(inputStackHandler.getStackInSlot(0), ItemWallet.WALLET_TOTAL_COUNT);
 
         int totalCash = 0;
         for(int i=0; i<itemStackHandler.getSlots(); i++) {
@@ -270,6 +274,20 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
         return totalCash;
     }
 
+    public int getTotalOfBill(ItemStack stack, int billDamage){
+        ItemStackHandler itemStackHandler = readInventoryTag(stack, ItemWallet.WALLET_TOTAL_COUNT);
+
+        int totalOfBill = 0;
+        for(int i=0; i<itemStackHandler.getSlots(); i++) {
+            if (itemStackHandler.getStackInSlot(i) != null) {
+                if(itemStackHandler.getStackInSlot(i).getItemDamage() == billDamage){
+                    totalOfBill = totalOfBill + 1 * itemStackHandler.getStackInSlot(i).stackSize;
+                }
+            }
+        }
+        return totalOfBill;
+    }
+    //</editor-fold>
 
     //<editor-fold desc="NBT & Packet Stoof--------------------------------------------------------------------------------------------------">
     @Override
@@ -281,11 +299,13 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
         compound.setInteger("bank", bank);
         compound.setInteger("profit", profit);
         compound.setInteger("face", face);
+        compound.setInteger("walletTotal", walletTotal);
         compound.setBoolean("locked", locked);
         compound.setBoolean("mode", mode);
         compound.setBoolean("creative", creative);
         compound.setBoolean("infinite", infinite);
         compound.setBoolean("gearExtended", gearExtended);
+        compound.setBoolean("walletIn", walletIn);
         compound.setInteger("selectedSlot", selectedSlot);
         compound.setString("selectedName", selectedName);
         compound.setString("owner", owner);
@@ -306,11 +326,13 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
         if (compound.hasKey("bank")) bank = compound.getInteger("bank");
         if (compound.hasKey("profit")) profit = compound.getInteger("profit");
         if (compound.hasKey("face")) face = compound.getInteger("face");
+        if (compound.hasKey("walletTotal")) walletTotal = compound.getInteger("walletTotal");
         if (compound.hasKey("locked")) locked = compound.getBoolean("locked");
         if (compound.hasKey("mode")) mode = compound.getBoolean("mode");
         if (compound.hasKey("creative")) creative = compound.getBoolean("creative");
         if (compound.hasKey("infinite")) infinite = compound.getBoolean("infinite");
         if (compound.hasKey("gearExtended")) gearExtended = compound.getBoolean("gearExtended");
+        if (compound.hasKey("walletIn")) walletIn = compound.getBoolean("walletIn");
         if (compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
         if (compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
         if (compound.hasKey("owner")) owner = compound.getString("owner");
@@ -333,11 +355,13 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
         tag.setInteger("bank", bank);
         tag.setInteger("profit", profit);
         tag.setInteger("face", face);
+        tag.setInteger("walletTotal", walletTotal);
         tag.setBoolean("locked", locked);
         tag.setBoolean("mode", mode);
         tag.setBoolean("creative", creative);
         tag.setBoolean("infinite", infinite);
         tag.setBoolean("gearExtended", gearExtended);
+        tag.setBoolean("walletIn", walletIn);
         tag.setInteger("selectedSlot", selectedSlot);
         tag.setString("selectedName", selectedName);
         tag.setString("owner", owner);
@@ -355,11 +379,13 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
         bank = pkt.getNbtCompound().getInteger("bank");
         profit = pkt.getNbtCompound().getInteger("profit");
         face = pkt.getNbtCompound().getInteger("face");
+        walletTotal = pkt.getNbtCompound().getInteger("walletTotal");
         locked = pkt.getNbtCompound().getBoolean("locked");
         mode = pkt.getNbtCompound().getBoolean("mode");
         creative = pkt.getNbtCompound().getBoolean("creative");
         infinite = pkt.getNbtCompound().getBoolean("infinite");
         gearExtended = pkt.getNbtCompound().getBoolean("gearExtended");
+        walletIn = pkt.getNbtCompound().getBoolean("walletIn");
         selectedSlot = pkt.getNbtCompound().getInteger("selectedSlot");
         selectedName = pkt.getNbtCompound().getString("selectedName");
         owner = pkt.getNbtCompound().getString("owner");
@@ -400,7 +426,7 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
     //<editor-fold desc="Getter & Setter Methods---------------------------------------------------------------------------------------------">
     @Override
     public int getFieldCount() {
-        return 9;
+        return 11;
     }
 
     @Override
@@ -432,6 +458,12 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
                 break;
             case 8:
                 gearExtended = (value == 1);
+                break;
+            case 9:
+                walletIn = (value == 1);
+                break;
+            case 10:
+                break;
         }
     }
 
@@ -460,6 +492,10 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
                 return face;
             case 8:
                 return (gearExtended) ? 1 : 0;
+            case 9:
+                return (walletIn) ? 1 : 0;
+            case 10:
+                return walletTotal;
         }
         return -1;
     }
