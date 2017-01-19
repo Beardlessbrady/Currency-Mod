@@ -4,6 +4,7 @@ import gunn.modcurrency.common.containers.ContainerWallet;
 import gunn.modcurrency.common.items.ItemWallet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -32,8 +33,8 @@ public class GuiWallet extends GuiContainer{
     private static final ResourceLocation EXTRA_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/GuiWalletExtraTexture.png");
     public static final int GUI_XPOS_OFFPUT = -19;
 
-    public GuiWallet(InventoryPlayer invPlayer, ItemStack wallet) {
-        super(new ContainerWallet(invPlayer, wallet));
+    public GuiWallet(EntityPlayer player, ItemStack wallet) {
+        super(new ContainerWallet(player, wallet));
     }
 
     @Override

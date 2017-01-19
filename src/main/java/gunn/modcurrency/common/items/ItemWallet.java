@@ -49,7 +49,7 @@ public class ItemWallet extends Item{
         setRegistryName("wallet");
         setCreativeTab(ModCurrency.tabCurrency);
         setUnlocalizedName(getRegistryName().toString());
-        GameRegistry.register(this);;
+        GameRegistry.register(this);
     }
 
     @SideOnly(Side.CLIENT)

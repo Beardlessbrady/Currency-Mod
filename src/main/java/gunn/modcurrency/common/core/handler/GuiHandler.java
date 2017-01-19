@@ -54,7 +54,7 @@ public class GuiHandler implements IGuiHandler{
         }
 
         if(ID == 32 && player.getHeldItemMainhand().getItem().equals(ModItems.itemWallet)){
-            return new ContainerWallet(player.inventory, player.getHeldItemMainhand());
+            return new ContainerWallet(player, player.getHeldItemMainhand());
         }
         return null;
     }
@@ -75,7 +75,7 @@ public class GuiHandler implements IGuiHandler{
         }
 
         if(ID == 32 && player.getHeldItemMainhand().getItem().equals(ModItems.itemWallet)){
-            return new GuiWallet(player.inventory, player.getHeldItemMainhand());
+            return new GuiWallet(player, player.getHeldItemMainhand());
         }
         return null;
     }

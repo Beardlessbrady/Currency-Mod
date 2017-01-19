@@ -4,6 +4,7 @@ import gunn.modcurrency.client.guis.GuiWallet;
 import gunn.modcurrency.common.core.util.SlotCustomizable;
 import gunn.modcurrency.common.items.ItemWallet;
 import gunn.modcurrency.common.items.ModItems;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
@@ -11,6 +12,8 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
@@ -55,14 +58,16 @@ public class ContainerWallet extends Container{
 
     private ItemStackHandler itemStackHandler;
 
-    public ContainerWallet(InventoryPlayer invPlayer, ItemStack wallet){
+    public ContainerWallet(EntityPlayer player, ItemStack wallet){
         if(!wallet.hasTagCompound()){
             NBTTagCompound compound = new NBTTagCompound();
             wallet.setTagCompound(compound);
             writeInventoryTag(wallet, new ItemStackHandler(WALLET_TOTAL_COUNT));
         }
 
-        setupPlayerInv(invPlayer);
+        didInventorySizeChange(wallet, player);
+
+        setupPlayerInv(player.inventory);
         setupWalletInv(wallet);
     }
 
@@ -175,4 +180,67 @@ public class ContainerWallet extends Container{
         }
         return sourceStack;
     }
+
+    public void didInventorySizeChange(ItemStack stack, EntityPlayer player){
+        ItemStackHandler handler = readInventoryTag(stack);
+        int oldSize= handler.getSlots();
+
+        if(oldSize != WALLET_TOTAL_COUNT){
+
+            //Saving Inventory of old inventory
+            ItemStack[] oldInventory = new ItemStack[oldSize];
+            for(int i=0; i < oldSize; i++){
+                oldInventory[i] = handler.getStackInSlot(i);
+            }
+            handler.setSize(WALLET_TOTAL_COUNT);
+
+            //If inventory got bigger
+            if(oldSize < WALLET_TOTAL_COUNT){
+                //Putting old inventory back in
+                for(int i=0; i < oldSize; i++){
+                    handler.setStackInSlot(i, oldInventory[i]);
+                }
+                writeInventoryTag(stack, handler);
+
+            //If inventory got smaller
+            }else{
+                //Putting old inventory back in that can fit
+                for(int i=0; i < WALLET_TOTAL_COUNT; i++){
+                    handler.setStackInSlot(i, oldInventory[i]);
+                }
+                writeInventoryTag(stack, handler);
+
+                //Spawning items ingame that don't fit
+                for(int i=WALLET_TOTAL_COUNT; i < oldSize; i++){
+                    if(oldInventory[i] != null) {
+                        World world = player.getEntityWorld();
+                        BlockPos pos = player.getPosition();
+                        world.spawnEntityInWorld(new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), oldInventory[i]));
+                    }
+                }
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 }
