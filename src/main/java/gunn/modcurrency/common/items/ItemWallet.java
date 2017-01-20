@@ -42,7 +42,7 @@ import java.util.List;
  * File Created on 2017-01-16
  */
 public class ItemWallet extends Item{
-    public static final int walletLength = 4;
+    public static final int walletLength = 6;
     public static final int WALLET_COLUMN_COUNT = 9;
     public static final int WALLET_ROW_COUNT = 1;
     public static final int WALLET_TOTAL_COUNT = WALLET_COLUMN_COUNT * WALLET_ROW_COUNT;
@@ -52,6 +52,7 @@ public class ItemWallet extends Item{
         setCreativeTab(ModCurrency.tabCurrency);
         setUnlocalizedName(getRegistryName().toString());
         GameRegistry.register(this);
+        setHasSubtypes(true);
     }
 
     @SideOnly(Side.CLIENT)

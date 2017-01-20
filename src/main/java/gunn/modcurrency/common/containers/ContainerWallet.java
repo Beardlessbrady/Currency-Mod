@@ -70,6 +70,8 @@ public class ContainerWallet extends Container implements INBTInventory {
 
         setupPlayerInv(player.inventory);
         setupWalletInv(wallet);
+
+        checkmetadataOpen(wallet);
     }
 
     private void setupPlayerInv(InventoryPlayer invPlayer){
@@ -131,6 +133,7 @@ public class ContainerWallet extends Container implements INBTInventory {
             if(player.getHeldItemMainhand() != inventorySlots.get(slotId).getStack()) {
                 ItemStack stack = super.slotClick(slotId, dragType, clickTypeIn, player);
                 writeInventoryTag(player.getHeldItemMainhand(), itemStackHandler);
+                checkmetadataOpen(player.getHeldItemMainhand());
                 return stack;
             }
         }
@@ -207,6 +210,45 @@ public class ContainerWallet extends Container implements INBTInventory {
                 }
             }
         }
+    }
+
+    @Override
+    public void onContainerClosed(EntityPlayer playerIn) {
+        super.onContainerClosed(playerIn);
+        if(playerIn.getHeldItemMainhand().getItem() == ModItems.itemWallet) checkMetadataClosed(playerIn.getHeldItemMainhand());
+    }
+
+    public int checkMetadataClosed(ItemStack stack){
+        int slotsFilled = 0;
+        for(int i = 0; i < itemStackHandler.getSlots(); i++){
+            if(itemStackHandler.getStackInSlot(i) != null) slotsFilled++;
+        }
+
+        int meta = 0;
+        if(slotsFilled == 0){
+        }else if (slotsFilled >= 1 && slotsFilled < (4 * ItemWallet.WALLET_ROW_COUNT)){
+            meta = 1;
+        }else if (slotsFilled >= (4 * ItemWallet.WALLET_ROW_COUNT) && slotsFilled < (7 * ItemWallet.WALLET_ROW_COUNT)){
+            meta = 2;
+        }else if (slotsFilled >= (7 * ItemWallet.WALLET_ROW_COUNT) && slotsFilled <= (9 * ItemWallet.WALLET_ROW_COUNT)){
+            meta = 3;
+        }
+
+        stack.setItemDamage(meta);
+        return meta;
+    }
+
+    public int checkmetadataOpen(ItemStack stack){
+        int slotsFilled = 0;
+        for(int i = 0; i < itemStackHandler.getSlots(); i++){
+            if(itemStackHandler.getStackInSlot(i) != null) slotsFilled++;
+        }
+
+        int meta = 4;
+        if(slotsFilled > 0) meta = 5;
+
+        stack.setItemDamage(meta);
+        return meta;
     }
 
 
