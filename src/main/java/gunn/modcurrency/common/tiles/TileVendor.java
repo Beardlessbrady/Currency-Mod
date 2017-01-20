@@ -124,8 +124,8 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
                     inputStackHandler.setStackInSlot(0, null);
                     bank = bank + amount;
                     markDirty();
-                    //</editor-fold>  M
-                }else  if (inputStackHandler.getStackInSlot(0).getItem() == ModItems.itemWallet) {
+                    //</editor-fold>
+                }else  if (inputStackHandler.getStackInSlot(0).getItem() == ModItems.itemWallet) {      //Wallet
                     walletIn = true;
                     walletTotal = getTotalCash();
                 }
@@ -239,7 +239,10 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
         return !isInvalid() && player.getDistanceSq(pos.add(0.5D, 0.5D, 0.5D)) <= 64D;
     }
 
-    //<editor-fold desc="Wallet Interaction--------------------------------------------------------------------------------------------------">
+    /**
+     * If the wallet is present returns the total amount of cash in it
+     * @return TotalCash
+     */
     public int getTotalCash(){
         ItemStackHandler itemStackHandler = readInventoryTag(inputStackHandler.getStackInSlot(0), ItemWallet.WALLET_TOTAL_COUNT);
 
@@ -273,21 +276,6 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
         }
         return totalCash;
     }
-
-    public int getTotalOfBill(ItemStack stack, int billDamage){
-        ItemStackHandler itemStackHandler = readInventoryTag(stack, ItemWallet.WALLET_TOTAL_COUNT);
-
-        int totalOfBill = 0;
-        for(int i=0; i<itemStackHandler.getSlots(); i++) {
-            if (itemStackHandler.getStackInSlot(i) != null) {
-                if(itemStackHandler.getStackInSlot(i).getItemDamage() == billDamage){
-                    totalOfBill = totalOfBill + 1 * itemStackHandler.getStackInSlot(i).stackSize;
-                }
-            }
-        }
-        return totalOfBill;
-    }
-    //</editor-fold>
 
     //<editor-fold desc="NBT & Packet Stoof--------------------------------------------------------------------------------------------------">
     @Override

@@ -115,7 +115,7 @@ public class GuiBuySell extends GuiContainer {
         int j = (mouseY - (this.height - this.ySize) / 2);
 
         IItemHandler itemHandler  = this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-        TileVendor tileVendor = (TileVendor) tile;
+        TileVendor tileVendor;
 
         fontRendererObj.drawString(I18n.format(header), 5, 6, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("tile.modcurrency:gui.playerinventory"), 4, 142, Color.darkGray.getRGB());
@@ -125,7 +125,7 @@ public class GuiBuySell extends GuiContainer {
             fontRendererObj.drawString(I18n.format("Cash") + ": $" + tile.getField(0), 5, 15, Color.darkGray.getRGB());
 
             if(tile instanceof TileVendor){
-                System.out.println(tileVendor.getField(10));
+                tileVendor = (TileVendor) tile;
                 if(tile.getField(9) == 1) fontRendererObj.drawString(I18n.format("Wallet") + ": $" + tile.getField(10), 5, 23, Integer.parseInt("3abd0c", 16));
             }
 
