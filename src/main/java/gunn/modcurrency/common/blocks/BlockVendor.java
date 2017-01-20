@@ -38,7 +38,6 @@ import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-
 /**
  * Distributed with the Currency-Mod for Minecraft.
  * Copyright (C) 2016  Brady Gunn

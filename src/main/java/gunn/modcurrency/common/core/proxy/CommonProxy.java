@@ -1,16 +1,22 @@
 package gunn.modcurrency.common.core.proxy;
 
+import gunn.modcurrency.ModConfig;
 import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.common.blocks.ModBlocks;
 import gunn.modcurrency.common.core.handler.EventHandlerCommon;
 import gunn.modcurrency.common.core.handler.GuiHandler;
 import gunn.modcurrency.common.core.handler.PacketHandler;
+import net.minecraftforge.common.config.Config;
+import net.minecraftforge.common.config.Configuration;
 import gunn.modcurrency.common.items.ModItems;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+
+import java.io.File;
 
 /**
  * Distributed with the Currency-Mod for Minecraft.
@@ -32,7 +38,13 @@ import net.minecraftforge.fml.common.network.NetworkRegistry;
  * File Created on 2016-10-28.
  */
 public class CommonProxy {
+    public static Configuration config;
+
     public void preInit(FMLPreInitializationEvent e){
+        File directory = e.getModConfigurationDirectory();
+        config = new Configuration(new File(directory.getPath(), "GoodOlCurrency.cfg"));
+        ModConfig.readConfig();
+
         ModItems.preInit();
         ModBlocks.preInit();
 

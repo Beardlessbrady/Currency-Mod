@@ -1,5 +1,7 @@
 package gunn.modcurrency.common.blocks;
 
+import gunn.modcurrency.ModConfig;
+
 /**
  * Distributed with the Currency-Mod for Minecraft.
  * Copyright (C) 2016  Brady Gunn
@@ -29,18 +31,18 @@ public class ModBlocks {
     }
 
     private static void setupBlocks(){
-        blockTop = new BlockTop();
-        blockVendor = new BlockVendor();
-        blockSeller = new BlockSeller();
+        if(ModConfig.enableVendor) blockVendor = new BlockVendor();
+        if(ModConfig.enableSeller) blockSeller = new BlockSeller();
+        if(ModConfig.enableVendor || ModConfig.enableSeller) blockTop = new BlockTop();
     }
 
     public static void ItemModels(){
-        blockVendor.initModel();
-        blockSeller.initModel();
+        if(ModConfig.enableVendor) blockVendor.initModel();
+        if(ModConfig.enableSeller) blockSeller.initModel();
     }
     
     public static void addRecipes(){
-        blockVendor.recipe();
-        blockSeller.recipe();
+        if(ModConfig.enableVendor) if(ModConfig.recipeVendor) blockVendor.recipe();
+        if(ModConfig.enableSeller) if(ModConfig.recipeSeller) blockSeller.recipe();
     }
 }

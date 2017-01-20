@@ -1,5 +1,6 @@
 package gunn.modcurrency.common.items;
 
+import gunn.modcurrency.ModConfig;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -33,12 +34,12 @@ public class ModItems {
 
     private static void setupItems(){
         itemBanknote = new ItemBanknote();
-        itemWallet = new ItemWallet();
+        if(ModConfig.enableWallet) itemWallet = new ItemWallet();
     }
 
     @SideOnly(Side.CLIENT)
     public static void ItemModels(){
         itemBanknote.initModel();
-        itemWallet.initModel();
+        if(ModConfig.enableWallet) itemWallet.initModel();
     }
 }

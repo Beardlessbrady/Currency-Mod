@@ -1,5 +1,6 @@
 package gunn.modcurrency.common.items;
 
+import gunn.modcurrency.ModConfig;
 import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.common.core.util.INBTInventory;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
@@ -44,7 +45,7 @@ import java.util.List;
 public class ItemWallet extends Item{
     public static final int walletLength = 6;
     public static final int WALLET_COLUMN_COUNT = 9;
-    public static final int WALLET_ROW_COUNT = 1;
+    public static final int WALLET_ROW_COUNT = ModConfig.walletSize;
     public static final int WALLET_TOTAL_COUNT = WALLET_COLUMN_COUNT * WALLET_ROW_COUNT;
 
     public ItemWallet(){

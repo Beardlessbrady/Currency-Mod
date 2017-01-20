@@ -81,70 +81,72 @@ public class BlockTop extends Block{
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (getTile(world, pos).getPlayerUsing() == null) {      //Client and Server
-            getTile(world, pos).setField(5, player.isCreative() ? 1 : 0);
+        if (world.getBlockState(pos.down()).getBlock() == ModBlocks.blockVendor || world.getBlockState(pos.down()).getBlock() == ModBlocks.blockSeller) {
+            if (getTile(world, pos).getPlayerUsing() == null) {      //Client and Server
+                getTile(world, pos).setField(5, player.isCreative() ? 1 : 0);
 
-            if (heldItem != null && !world.isRemote) {      //Just Server
-                if (heldItem.getItem() == Items.DYE) {
-                    //<editor-fold desc="Saving Tile Variables">
-                    ModTile tile = getTile(world, pos);
+                if (heldItem != null && !world.isRemote) {      //Just Server
+                    if (heldItem.getItem() == Items.DYE) {
+                        //<editor-fold desc="Saving Tile Variables">
+                        ModTile tile = getTile(world, pos);
 
-                    ItemStackHandler inputStackHandler = tile.getInputHandler();
-                    ItemStackHandler vendStackHandler = tile.getVendHandler();
-                    ItemStackHandler buffStackHandler = tile.getBufferHandler();
+                        ItemStackHandler inputStackHandler = tile.getInputHandler();
+                        ItemStackHandler vendStackHandler = tile.getVendHandler();
+                        ItemStackHandler buffStackHandler = tile.getBufferHandler();
 
-                    int bank = tile.getField(0);
-                    int face = tile.getField(7);
-                    int four = tile.getField(4);
-                    int locked = tile.getField(1);
-                    int mode = tile.getField(2);
-                    int infinite = tile.getField(6);
-                    String owner = tile.getOwner();
-                    int[] itemCosts = tile.getAllItemCosts();
-                    //</editor-fold>
+                        int bank = tile.getField(0);
+                        int face = tile.getField(7);
+                        int four = tile.getField(4);
+                        int locked = tile.getField(1);
+                        int mode = tile.getField(2);
+                        int infinite = tile.getField(6);
+                        String owner = tile.getOwner();
+                        int[] itemCosts = tile.getAllItemCosts();
+                        //</editor-fold>
 
-                    world.setBlockState(pos, state.withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())), 3);
-                    world.setBlockState(pos.down(), world.getBlockState(pos.down()).withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())), 3);
+                        world.setBlockState(pos, state.withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())), 3);
+                        world.setBlockState(pos.down(), world.getBlockState(pos.down()).withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())), 3);
 
-                    //<editor-fold desc="Setting Tile Variables">
-                    tile = getTile(world, pos);
+                        //<editor-fold desc="Setting Tile Variables">
+                        tile = getTile(world, pos);
 
-                    tile.setStackHandlers(inputStackHandler, buffStackHandler, vendStackHandler);
-                    tile.setField(0, bank);
-                    tile.setField(7, face);
-                    tile.setField(4, four);
-                    tile.setField(1, locked);
-                    tile.setField(2, mode);
-                    tile.setField(6, infinite);
-                    tile.setOwner(owner);
-                    tile.setAllItemCosts(itemCosts);
-                    //</editor-fold>
+                        tile.setStackHandlers(inputStackHandler, buffStackHandler, vendStackHandler);
+                        tile.setField(0, bank);
+                        tile.setField(7, face);
+                        tile.setField(4, four);
+                        tile.setField(1, locked);
+                        tile.setField(2, mode);
+                        tile.setField(6, infinite);
+                        tile.setOwner(owner);
+                        tile.setAllItemCosts(itemCosts);
+                        //</editor-fold>
 
-                    if (!player.isCreative()) heldItem.stackSize--;
+                        if (!player.isCreative()) heldItem.stackSize--;
+                        return true;
+                    }
+                } else if (heldItem != null && world.isRemote) return true;
+
+                if ((player.isSneaking() && player.getUniqueID().toString().equals(getTile(world, pos).getOwner())) || (player.isSneaking() && player.isCreative())) {      //Client and Server
+                    if (getTile(world, pos).getField(2) == 1) {
+                        getTile(world, pos).setField(2, 0);
+                    } else {
+                        getTile(world, pos).setField(2, 1);
+                    }
+                    getTile(world, pos).getWorld().notifyBlockUpdate(getTile(world, pos).getPos(), getTile(world, pos).getBlockType().getDefaultState(), getTile(world, pos).getBlockType().getDefaultState(), 3);
                     return true;
                 }
-            } else if (heldItem != null && world.isRemote) return true;
 
-            if ((player.isSneaking() && player.getUniqueID().toString().equals(getTile(world, pos).getOwner())) || (player.isSneaking() && player.isCreative())) {      //Client and Server
-                if (getTile(world, pos).getField(2) == 1) {
-                    getTile(world, pos).setField(2, 0);
-                } else {
-                    getTile(world, pos).setField(2, 1);
-                }
-                getTile(world, pos).getWorld().notifyBlockUpdate(getTile(world, pos).getPos(), getTile(world, pos).getBlockType().getDefaultState(), getTile(world, pos).getBlockType().getDefaultState(), 3);
-                return true;
+                if (!world.isRemote) {    //Just Server
+                    if (whatBlock(world, pos) == 0) {
+                        TileVendor te = (TileVendor) getTile(world, pos);
+                        te.openGui(player, world, pos.down());
+                    } else if (whatBlock(world, pos) == 1) {
+                        TileSeller te = (TileSeller) getTile(world, pos);
+                        te.openGui(player, world, pos.down());
+                    }
+                    return true;
+                } else return true;
             }
-
-            if(!world.isRemote) {    //Just Server
-                if (whatBlock(world, pos) == 0) {
-                    TileVendor te = (TileVendor) getTile(world, pos);
-                    te.openGui(player, world, pos.down());
-                } else if (whatBlock(world, pos) == 1) {
-                    TileSeller te = (TileSeller) getTile(world, pos);
-                    te.openGui(player, world, pos.down());
-                }
-                return true;
-            } else return true;
         }
         return false;
     }
@@ -185,42 +187,45 @@ public class BlockTop extends Block{
 
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
-        int faceData = 0;
+        if (worldIn.getBlockState(pos.down()).getBlock() == ModBlocks.blockVendor || worldIn.getBlockState(pos.down()).getBlock() == ModBlocks.blockSeller) {
+            int faceData = 0;
 
-        ModTile tile = (ModTile) worldIn.getTileEntity(pos.down());
-        faceData = tile.getField(7);
+            ModTile tile = (ModTile) worldIn.getTileEntity(pos.down());
+            faceData = tile.getField(7);
 
-        EnumFacing face = EnumFacing.NORTH;
-        switch(faceData) {
-        case 1:
-            face = EnumFacing.EAST;
-            break;
-        case 2:
-            face = EnumFacing.SOUTH;
-            break;
-        case 3:
-            face = EnumFacing.WEST;
-            break;
-        }
+            EnumFacing face = EnumFacing.NORTH;
+            switch (faceData) {
+                case 1:
+                    face = EnumFacing.EAST;
+                    break;
+                case 2:
+                    face = EnumFacing.SOUTH;
+                    break;
+                case 3:
+                    face = EnumFacing.WEST;
+                    break;
+            }
 
-    StateHandler.EnumTopTypes type = StateHandler.EnumTopTypes.VENDOR;
-        switch(whatBlock(worldIn, pos)) {
-            case 0:
-                if(getTile(worldIn,pos).getField(2) == 1) type = StateHandler.EnumTopTypes.VENDOROPEN;
-                break;
-            case 1:
-                if(getTile(worldIn,pos).getField(2) == 1){
-                    type = StateHandler.EnumTopTypes.SELLEROPEN;
-                }else {
-                    type = StateHandler.EnumTopTypes.SELLER;
-                }
-                break;
-        }
+            StateHandler.EnumTopTypes type = StateHandler.EnumTopTypes.VENDOR;
+            switch (whatBlock(worldIn, pos)) {
+                case 0:
+                    if (getTile(worldIn, pos).getField(2) == 1) type = StateHandler.EnumTopTypes.VENDOROPEN;
+                    break;
+                case 1:
+                    if (getTile(worldIn, pos).getField(2) == 1) {
+                        type = StateHandler.EnumTopTypes.SELLEROPEN;
+                    } else {
+                        type = StateHandler.EnumTopTypes.SELLER;
+                    }
+                    break;
+            }
 
 
             return getDefaultState().withProperty(StateHandler.FACING, face)
                     .withProperty(StateHandler.COLOR, worldIn.getBlockState(pos.down()).getValue(StateHandler.COLOR))
                     .withProperty(StateHandler.TOP, type);
+        }
+        return getDefaultState();
     }
     //</editor-fold>
 }

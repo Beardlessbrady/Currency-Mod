@@ -218,7 +218,7 @@ public class ContainerWallet extends Container implements INBTInventory {
         if(playerIn.getHeldItemMainhand().getItem() == ModItems.itemWallet) checkMetadataClosed(playerIn.getHeldItemMainhand());
     }
 
-    public int checkMetadataClosed(ItemStack stack){
+    public void checkMetadataClosed(ItemStack stack){
         int slotsFilled = 0;
         for(int i = 0; i < itemStackHandler.getSlots(); i++){
             if(itemStackHandler.getStackInSlot(i) != null) slotsFilled++;
@@ -235,10 +235,9 @@ public class ContainerWallet extends Container implements INBTInventory {
         }
 
         stack.setItemDamage(meta);
-        return meta;
     }
 
-    public int checkmetadataOpen(ItemStack stack){
+    public void checkmetadataOpen(ItemStack stack){
         int slotsFilled = 0;
         for(int i = 0; i < itemStackHandler.getSlots(); i++){
             if(itemStackHandler.getStackInSlot(i) != null) slotsFilled++;
@@ -246,9 +245,23 @@ public class ContainerWallet extends Container implements INBTInventory {
 
         int meta = 4;
         if(slotsFilled > 0) meta = 5;
-
         stack.setItemDamage(meta);
-        return meta;
+
+
+        //Now Setting Tag for client to read
+        if(slotsFilled == 0){
+            meta = 0;
+        }else if (slotsFilled >= 1 && slotsFilled < (4 * ItemWallet.WALLET_ROW_COUNT)){
+            meta = 1;
+        }else if (slotsFilled >= (4 * ItemWallet.WALLET_ROW_COUNT) && slotsFilled < (7 * ItemWallet.WALLET_ROW_COUNT)){
+            meta = 2;
+        }else if (slotsFilled >= (7 * ItemWallet.WALLET_ROW_COUNT) && slotsFilled <= (9 * ItemWallet.WALLET_ROW_COUNT)){
+            meta = 3;
+        }
+
+        NBTTagCompound compound = stack.getTagCompound();
+        compound.setInteger("full", meta);
+        stack.setTagCompound(compound);
     }
 
 
