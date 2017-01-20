@@ -158,6 +158,7 @@ public class ContainerBuySell extends Container implements INBTInventory{
     @Nullable
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
+        if(clickTypeIn == ClickType.PICKUP_ALL) return null;
         if (tile instanceof TileVendor) {
             //<editor-fold desc="Vendor Slot Click">
             if (tile.getField(2) == 1) {               //EDIT MODE
@@ -534,7 +535,6 @@ public class ContainerBuySell extends Container implements INBTInventory{
 
         writeInventoryTag(wallet, itemHandler);
     }
-
 
     /**
      * Get the total AMOUNT of a bill (not the total of what its worth) from a wallet
