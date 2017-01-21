@@ -2,6 +2,7 @@ package gunn.modcurrency.common.items;
 
 import gunn.modcurrency.ModConfig;
 import gunn.modcurrency.ModCurrency;
+import gunn.modcurrency.common.blocks.ModBlocks;
 import gunn.modcurrency.common.core.util.INBTInventory;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -54,6 +55,15 @@ public class ItemWallet extends Item{
         setUnlocalizedName(getRegistryName().toString());
         GameRegistry.register(this);
         setHasSubtypes(true);
+    }
+
+    public void recipe(){
+        GameRegistry.addRecipe(new ItemStack(ModItems.itemWallet, 1, 0),
+                "A.A",
+                "ABA",
+                ".A.",
+                'A', Items.LEATHER,
+                'B', new ItemStack (ModItems.itemBanknote, 1, 0));
     }
 
     @SideOnly(Side.CLIENT)

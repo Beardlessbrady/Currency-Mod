@@ -42,4 +42,8 @@ public class ModItems {
         itemBanknote.initModel();
         if(ModConfig.enableWallet) itemWallet.initModel();
     }
+
+    public static void addRecipes(){
+        if(ModConfig.enableWallet) if(ModConfig.recipeWallet) itemWallet.recipe();
+    }
 }

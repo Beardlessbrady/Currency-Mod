@@ -215,7 +215,7 @@
 			"faces": {
 				"down": { "uv": [ 3, 11.5, 3.5, 12 ], "texture": "#screenTexture", "rotation": 270 },
 				"up": { "uv": [ 2.5, 12.5, 3, 12 ], "texture": "#screenTexture", "rotation": 90 },
-				"north": { "uv": [ 0, 0, 11, 7 ], "texture": "#screenTexture" },
+				"north": { "uv": [ 0, 7.5, 11, 14.5 ], "texture": "#screenTexture" },
 				"west": { "uv": [ 9, 12.5, 9.5, 13.5 ], "texture": "#screenTexture" },
 				"east": { "uv": [ 8.5, 13, 8, 14 ], "texture": "#screenTexture" }
 			}
