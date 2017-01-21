@@ -54,6 +54,7 @@ public class EventHandlerCommon {
         }
     }
 
+    /*
     @SubscribeEvent
     public void onModelBake(ModelBakeEvent e){
         ModelResourceLocation base = new ModelResourceLocation(ModCurrency.MODID + ":blockvendor","color=blue,facing=north,item=false,open=true");
@@ -61,4 +62,5 @@ public class EventHandlerCommon {
 
         e.getModelRegistry().putObject(base, new BakedModelVendor(basicVendor));
     }
+    */
 }
