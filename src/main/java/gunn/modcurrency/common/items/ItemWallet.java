@@ -78,8 +78,9 @@ public class ItemWallet extends Item{
     }
 
     @Override
-    public ActionResult<ItemStack> onItemRightClick(ItemStack stack, World worldIn, EntityPlayer playerIn, EnumHand hand) {
-        openGui(playerIn, worldIn, playerIn.getPosition());
-        return super.onItemRightClick(stack, worldIn, playerIn, hand);
+    public ActionResult<ItemStack> onItemRightClick(World itemStackIn, EntityPlayer worldIn, EnumHand playerIn) {
+        openGui(worldIn, itemStackIn, worldIn.getPosition());
+        return super.onItemRightClick(itemStackIn, worldIn, playerIn);
     }
+
 }

@@ -80,13 +80,13 @@ public class BlockTop extends Block{
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing heldItem, float side, float hitX, float hitY) {
         if (world.getBlockState(pos.down()).getBlock() == ModBlocks.blockVendor || world.getBlockState(pos.down()).getBlock() == ModBlocks.blockSeller) {
             if (getTile(world, pos).getPlayerUsing() == null) {      //Client and Server
                 getTile(world, pos).setField(5, player.isCreative() ? 1 : 0);
 
                 if (heldItem != null && !world.isRemote) {      //Just Server
-                    if (heldItem.getItem() == Items.DYE) {
+                    if (player.getHeldItemMainhand().getItem() == Items.DYE) {
                         //<editor-fold desc="Saving Tile Variables">
                         ModTile tile = getTile(world, pos);
 
@@ -104,8 +104,8 @@ public class BlockTop extends Block{
                         int[] itemCosts = tile.getAllItemCosts();
                         //</editor-fold>
 
-                        world.setBlockState(pos, state.withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())), 3);
-                        world.setBlockState(pos.down(), world.getBlockState(pos.down()).withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())), 3);
+                        world.setBlockState(pos, state.withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(player.getHeldItemMainhand().getItemDamage())), 3);
+                        world.setBlockState(pos.down(), world.getBlockState(pos.down()).withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(player.getHeldItemMainhand().getItemDamage())), 3);
 
                         //<editor-fold desc="Setting Tile Variables">
                         tile = getTile(world, pos);
@@ -121,7 +121,7 @@ public class BlockTop extends Block{
                         tile.setAllItemCosts(itemCosts);
                         //</editor-fold>
 
-                        if (!player.isCreative()) heldItem.stackSize--;
+                        if (!player.isCreative()) player.getHeldItemMainhand().func_190920_e(player.getHeldItemMainhand().func_190916_E() -1);
                         return true;
                     }
                 } else if (heldItem != null && world.isRemote) return true;

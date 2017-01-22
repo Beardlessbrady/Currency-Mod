@@ -120,7 +120,7 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
                             amount = -1;
                             break;
                     }
-                    amount = amount * inputStackHandler.getStackInSlot(0).stackSize;
+                    amount = amount * inputStackHandler.getStackInSlot(0).func_190916_E(); //.func_190916_E() == get StackSize
                     inputStackHandler.setStackInSlot(0, null);
                     bank = bank + amount;
                     markDirty();
@@ -136,9 +136,9 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
                 Loop:
                 for(int i = 0; i < BUFFER_SLOT_COUNT; i++){
                     if(bufferStackHandler.getStackInSlot(i) != null){
-                        if(bufferStackHandler.getStackInSlot(i).getItemDamage() == 3 && bufferStackHandler.getStackInSlot(i).stackSize < bufferStackHandler.getStackInSlot(i).getMaxStackSize()){
+                        if(bufferStackHandler.getStackInSlot(i).getItemDamage() == 3 && bufferStackHandler.getStackInSlot(i).func_190916_E() < bufferStackHandler.getStackInSlot(i).getMaxStackSize()){
                             profit = profit - 20;
-                            bufferStackHandler.getStackInSlot(i).stackSize++;
+                            bufferStackHandler.getStackInSlot(i).func_190920_e(bufferStackHandler.getStackInSlot(i).func_190916_E() + 1);
                             break Loop;
                         }
                     }else if(bufferStackHandler.getStackInSlot(i) == null){
@@ -183,7 +183,7 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
                 if (out[i] != 0) {
                     ItemStack item = new ItemStack(ModItems.itemBanknote);
                     item.setItemDamage(i);
-                    item.stackSize = out[i];
+                    item.func_190920_e(out[i]);
 
                     if (mode) {
                         profit = 0;
@@ -265,22 +265,22 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
             if (itemStackHandler.getStackInSlot(i) != null) {
                 switch (itemStackHandler.getStackInSlot(i).getItemDamage()) {
                     case 0:
-                        totalCash = totalCash + 1 * itemStackHandler.getStackInSlot(i).stackSize;
+                        totalCash = totalCash + 1 * itemStackHandler.getStackInSlot(i).func_190916_E();
                         break;
                     case 1:
-                        totalCash = totalCash + 5 * itemStackHandler.getStackInSlot(i).stackSize;
+                        totalCash = totalCash + 5 * itemStackHandler.getStackInSlot(i).func_190916_E();
                         break;
                     case 2:
-                        totalCash = totalCash + 10 * itemStackHandler.getStackInSlot(i).stackSize;
+                        totalCash = totalCash + 10 * itemStackHandler.getStackInSlot(i).func_190916_E();
                         break;
                     case 3:
-                        totalCash = totalCash + 20 * itemStackHandler.getStackInSlot(i).stackSize;
+                        totalCash = totalCash + 20 * itemStackHandler.getStackInSlot(i).func_190916_E();
                         break;
                     case 4:
-                        totalCash = totalCash + 50 * itemStackHandler.getStackInSlot(i).stackSize;
+                        totalCash = totalCash + 50 * itemStackHandler.getStackInSlot(i).func_190916_E();
                         break;
                     case 5:
-                        totalCash = totalCash + 100 * itemStackHandler.getStackInSlot(i).stackSize;
+                        totalCash = totalCash + 100 * itemStackHandler.getStackInSlot(i).func_190916_E();
                         break;
                     default:
                         totalCash = -1;

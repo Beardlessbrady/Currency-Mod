@@ -120,12 +120,12 @@ public class BlockSeller extends Block implements ITileEntityProvider{
     }
 
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, @Nullable ItemStack heldItem, EnumFacing side, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing heldItem, float side, float hitX, float hitY) {
         if (getTile(world, pos).getPlayerUsing() == null) {      //Client and Server
             getTile(world, pos).setField(5, player.isCreative() ? 1 : 0);
 
             if (heldItem != null && !world.isRemote) {       //Just Server
-                if (heldItem.getItem() == Items.DYE) {
+                if (player.getHeldItemMainhand().getItem() == Items.DYE) {
                     //<editor-fold desc="Saving Tile Variables">
                     ModTile tile = getTile(world, pos);
 
@@ -143,8 +143,8 @@ public class BlockSeller extends Block implements ITileEntityProvider{
                     int[] itemCosts = tile.getAllItemCosts();
                     //</editor-fold>
 
-                    world.setBlockState(pos, state.withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())), 3);
-                    world.setBlockState(pos.up(), world.getBlockState(pos.up()).withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(heldItem.getItemDamage())), 3);
+                    world.setBlockState(pos, state.withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(player.getHeldItemMainhand().getItemDamage())), 3);
+                    world.setBlockState(pos.up(), world.getBlockState(pos.up()).withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(player.getHeldItemMainhand().getItemDamage())), 3);
 
                     //<editor-fold desc="Setting Tile Variables">
                     tile = getTile(world, pos);
@@ -160,7 +160,7 @@ public class BlockSeller extends Block implements ITileEntityProvider{
                     tile.setAllItemCosts(itemCosts);
                     //</editor-fold>
 
-                    if (!player.isCreative()) heldItem.stackSize--;
+                    if (!player.isCreative()) player.getHeldItemMainhand().func_190920_e(player.getHeldItemMainhand().func_190916_E() -1);
                     return true;
                 } else if (heldItem != null && world.isRemote) return true;
             }

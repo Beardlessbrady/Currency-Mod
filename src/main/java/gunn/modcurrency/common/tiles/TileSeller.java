@@ -98,7 +98,7 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
                                 for(int j = 0; j < BUFFER_SLOT_COUNT; j++){
                                     if(bufferStackHandler.getStackInSlot(j) != null){
                                         if((bufferStackHandler.getStackInSlot(j).getUnlocalizedName().equals(inputStackHandler.getStackInSlot(0).getUnlocalizedName())
-                                                && (bufferStackHandler.getStackInSlot(j).stackSize < bufferStackHandler.getStackInSlot(j).getMaxStackSize()))) isThereRoom = true;
+                                                && (bufferStackHandler.getStackInSlot(j).func_190916_E() < bufferStackHandler.getStackInSlot(j).getMaxStackSize()))) isThereRoom = true;
                                     }else isThereRoom = true;
                                     if(isThereRoom){
                                         buffSlot = j;
@@ -112,19 +112,19 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
                                     bank = bank + cost;
                                     if(!infinite){
                                         cashRegister = cashRegister - cost;
-                                        if(bufferStackHandler.getStackInSlot(buffSlot) != null) bufferStackHandler.getStackInSlot(buffSlot).stackSize++;
+                                        if(bufferStackHandler.getStackInSlot(buffSlot) != null) bufferStackHandler.getStackInSlot(buffSlot).func_190920_e(bufferStackHandler.getStackInSlot(buffSlot).func_190916_E() +1);
                                         if(bufferStackHandler.getStackInSlot(buffSlot) == null){
                                             ItemStack newStack = inputItem.copy();
-                                            newStack.stackSize = 1;
+                                            newStack.func_190920_e(1);
                                             bufferStackHandler.setStackInSlot(buffSlot, newStack);
                                         }
                                     }
-                                    inputItem.stackSize--;
+                                    inputItem.func_190920_e(inputItem.func_190916_E() -1);
                                     isThereRoom = false;
                                 }
                             }
                         }
-                        if(inputStackHandler.getStackInSlot(0).stackSize == 0) {
+                        if(inputStackHandler.getStackInSlot(0).func_190916_E() == 0) {
                             inputStackHandler.setStackInSlot(0, null);
                             break searchLoop;
                         }
@@ -157,7 +157,7 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
                                 amount = -1;
                                 break;
                         }
-                        amount = amount * inputStackHandler.getStackInSlot(0).stackSize;
+                        amount = amount * inputStackHandler.getStackInSlot(0).func_190916_E();
                         inputStackHandler.setStackInSlot(0, null);
                         cashRegister = cashRegister + amount;
                     }
@@ -196,7 +196,7 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
                 if (out[i] != 0) {
                     ItemStack item = new ItemStack(ModItems.itemBanknote);
                     item.setItemDamage(i);
-                    item.stackSize = out[i];
+                    item.func_190920_e(out[i]);
 
                     if(mode){
                         cashRegister = 0;
