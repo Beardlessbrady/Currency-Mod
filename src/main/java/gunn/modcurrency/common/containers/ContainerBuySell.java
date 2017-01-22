@@ -83,8 +83,8 @@ public class ContainerBuySell extends Container implements INBTInventory{
 
     @Override
     public void onContainerClosed(EntityPlayer playerIn) {
-        super.onContainerClosed(playerIn);
         tile.voidPlayerUsing();
+        super.onContainerClosed(playerIn);
     }
 
     private void setupPlayerInv(InventoryPlayer invPlayer) {
@@ -202,15 +202,15 @@ public class ContainerBuySell extends Container implements INBTInventory{
                 } else if ((slotId >= 37 && slotId < 67 && tile.getField(8) == 0)) {    //Vend Slots, not in Selection mode
                     InventoryPlayer inventoryPlayer = player.inventory;
                     Slot ghostSlot = this.inventorySlots.get(slotId);
-                    if (dragType == 0 && clickTypeIn == ClickType.PICKUP) {      //LEFT
-                        if (inventoryPlayer.getItemStack() != null) {
+                    if (clickTypeIn == ClickType.PICKUP) {      //LEFT
+                        if (inventoryPlayer.getItemStack() != null &&  inventorySlots.get(slotId).getStack() == null) {
                             ItemStack ghostStack = inventoryPlayer.getItemStack().copy();
 
                             ghostStack.stackSize = 1;
                             ghostSlot.putStack(ghostStack);
+                        }else{
+                            ghostSlot.putStack(null);
                         }
-                    } else if (dragType == 1 && clickTypeIn == ClickType.PICKUP) {  //RIGHT
-                        ghostSlot.putStack(null);
                     }
                     return inventoryPlayer.getItemStack();
                 } else if (slotId >= 37 && slotId < 67 && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 0) {

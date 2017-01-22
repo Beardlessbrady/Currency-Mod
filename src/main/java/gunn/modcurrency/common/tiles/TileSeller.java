@@ -204,24 +204,38 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
                         bank = 0;
                     }
 
-                    InventoryPlayer inventoryPlayer = playerUsing.inventory;
-                    if(inventoryPlayer.getFirstEmptyStack() != -1){     //If Players Inventory has room
-                        inventoryPlayer.setInventorySlotContents(inventoryPlayer.getFirstEmptyStack(), item);
-                    }else{          //If no room, spawn
+                    boolean playerInGui= false;
+                    if (playerUsing != null) playerInGui = true;
+
+
+                    if (playerInGui) {
+                        InventoryPlayer inventoryPlayer = playerUsing.inventory;
+                        if (inventoryPlayer.getFirstEmptyStack() != -1) {     //If Players Inventory has room
+                            inventoryPlayer.setInventorySlotContents(inventoryPlayer.getFirstEmptyStack(), item);
+                        } else {
+                            playerInGui = false;
+                        }
+                    }
+
+                    if (!playerInGui) {       //If no room, spawn
                         int x = getPos().getX();
                         int z = getPos().getZ();
 
-                        switch(face){
-                            case 0: z = z -2; //North
+                        switch (face) {
+                            case 0:
+                                z = z - 2; //North
                                 break;
-                            case 1: x = x +2; //East
+                            case 1:
+                                x = x + 2; //East
                                 break;
-                            case 2: z = z +2; //South
+                            case 2:
+                                z = z + 2; //South
                                 break;
-                            case 3: x = x -2;//West
+                            case 3:
+                                x = x - 2;//West
                                 break;
                         }
-                        worldObj.spawnEntityInWorld(new EntityItem(worldObj,x, getPos().up().getY(), z, item));
+                        worldObj.spawnEntityInWorld(new EntityItem(worldObj, x, getPos().up().getY(), z, item));
                     }
                 }
             }
