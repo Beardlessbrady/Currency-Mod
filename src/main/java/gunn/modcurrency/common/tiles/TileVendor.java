@@ -93,7 +93,7 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
     @Override
     public void update() {
         if (!worldObj.isRemote) {
-            if (inputStackHandler.getStackInSlot(0) != null) {
+            if (inputStackHandler.getStackInSlot(0) != ItemStack.field_190927_a) {
                 if (inputStackHandler.getStackInSlot(0).getItem() == ModItems.itemBanknote) {
                     //<editor-fold desc="Dealing with a Banknote">
                     int amount;
@@ -121,7 +121,7 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
                             break;
                     }
                     amount = amount * inputStackHandler.getStackInSlot(0).func_190916_E(); //.func_190916_E() == get StackSize
-                    inputStackHandler.setStackInSlot(0, null);
+                    inputStackHandler.setStackInSlot(0, ItemStack.field_190927_a);
                     bank = bank + amount;
                     markDirty();
                     //</editor-fold>
@@ -135,13 +135,13 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
                 //<editor-fold desc="Dealing with Buffer Slots">
                 Loop:
                 for(int i = 0; i < BUFFER_SLOT_COUNT; i++){
-                    if(bufferStackHandler.getStackInSlot(i) != null){
+                    if(bufferStackHandler.getStackInSlot(i) != ItemStack.field_190927_a){
                         if(bufferStackHandler.getStackInSlot(i).getItemDamage() == 3 && bufferStackHandler.getStackInSlot(i).func_190916_E() < bufferStackHandler.getStackInSlot(i).getMaxStackSize()){
                             profit = profit - 20;
                             bufferStackHandler.getStackInSlot(i).func_190920_e(bufferStackHandler.getStackInSlot(i).func_190916_E() + 1);
                             break Loop;
                         }
-                    }else if(bufferStackHandler.getStackInSlot(i) == null){
+                    }else if(bufferStackHandler.getStackInSlot(i) == ItemStack.field_190927_a){
                         ItemStack newStack = new ItemStack(ModItems.itemBanknote);
                         newStack.setItemDamage(3);
                         bufferStackHandler.setStackInSlot(i, newStack);
@@ -233,16 +233,16 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
     public void dropItems() {
         for (int i = 0; i < vendStackHandler.getSlots(); i++) {
             ItemStack item = vendStackHandler.getStackInSlot(i);
-            if (item != null) {
+            if (item != ItemStack.field_190927_a) {
                 worldObj.spawnEntityInWorld(new EntityItem(worldObj, getPos().getX(), getPos().getY(), getPos().getZ(), item));
-                vendStackHandler.setStackInSlot(i, null);   //Just in case
+                vendStackHandler.setStackInSlot(i, ItemStack.field_190927_a);   //Just in case
             }
         }
         for (int i = 0; i < bufferStackHandler.getSlots(); i++){
             ItemStack item = bufferStackHandler.getStackInSlot(i);
-            if (item != null) {
+            if (item != ItemStack.field_190927_a) {
                 worldObj.spawnEntityInWorld(new EntityItem(worldObj, getPos().getX(), getPos().getY(), getPos().getZ(), item));
-                vendStackHandler.setStackInSlot(i, null);   //Just in case
+                vendStackHandler.setStackInSlot(i, ItemStack.field_190927_a);   //Just in case
             }
         }
     }
@@ -262,7 +262,7 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
 
         int totalCash = 0;
         for(int i=0; i<itemStackHandler.getSlots(); i++) {
-            if (itemStackHandler.getStackInSlot(i) != null) {
+            if (itemStackHandler.getStackInSlot(i) != ItemStack.field_190927_a) {
                 switch (itemStackHandler.getStackInSlot(i).getItemDamage()) {
                     case 0:
                         totalCash = totalCash + 1 * itemStackHandler.getStackInSlot(i).func_190916_E();

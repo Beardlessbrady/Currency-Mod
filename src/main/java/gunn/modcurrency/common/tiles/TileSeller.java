@@ -246,9 +246,9 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
     public void dropItems(){
         for (int i = 0; i < bufferStackHandler.getSlots(); i++){
             ItemStack item = bufferStackHandler.getStackInSlot(i);
-            if (item != null) {
+            if (item != ItemStack.field_190927_a) {
                 worldObj.spawnEntityInWorld(new EntityItem(worldObj, getPos().getX(), getPos().getY(), getPos().getZ(), item));
-                vendStackHandler.setStackInSlot(i, null);   //Just in case
+                vendStackHandler.setStackInSlot(i, ItemStack.field_190927_a);   //Just in case
             }
         }
     }

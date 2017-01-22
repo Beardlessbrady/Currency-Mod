@@ -126,7 +126,7 @@ public class BlockVendor extends Block implements ITileEntityProvider {
         if(getTile(world, pos).getPlayerUsing() == null) {      //Client and Server
             getTile(world, pos).setField(5, player.isCreative() ? 1 : 0);
 
-            if (heldItem != null && !world.isRemote) {      //Just Server
+            if (player.getHeldItemMainhand() != ItemStack.field_190927_a && !world.isRemote) {      //Just Server
                 if (player.getHeldItemMainhand().getItem() == Items.DYE) {
                     //<editor-fold desc="Saving Tile Variables">
                     ModTile tile = getTile(world, pos);
@@ -164,7 +164,7 @@ public class BlockVendor extends Block implements ITileEntityProvider {
 
                     if (!player.isCreative()) player.getHeldItemMainhand().func_190920_e(player.getHeldItemMainhand().func_190916_E() -1);
                     return true;
-                } else if (heldItem != null && world.isRemote) return true;
+                } else if (player.getHeldItemMainhand() != ItemStack.field_190927_a && world.isRemote) return true;
             }
 
             if ((player.isSneaking() && player.getUniqueID().toString().equals(getTile(world, pos).getOwner())) || (player.isSneaking() && player.isCreative())) {      //Client and Server

@@ -172,7 +172,7 @@ public class ContainerBuySell extends Container implements INBTInventory{
                         tile.setSelectedName("No Item");
                     }
                     tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
-                    return null;
+                    return ItemStack.field_190927_a;
                 } else if (slotId >= 37 && slotId < 67 && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 1) {
                     return super.slotClick(slotId, 0, clickTypeIn, player);
                 } else {
@@ -189,7 +189,7 @@ public class ContainerBuySell extends Container implements INBTInventory{
                     } else if (clickTypeIn == ClickType.QUICK_MOVE) {
                         return checkAfford(slotId, 64, player);
                     } else {
-                        return null;
+                        return ItemStack.field_190927_a;
                     }
                 }
             }
@@ -205,13 +205,13 @@ public class ContainerBuySell extends Container implements INBTInventory{
                     InventoryPlayer inventoryPlayer = player.inventory;
                     Slot ghostSlot = this.inventorySlots.get(slotId);
                     if (clickTypeIn == ClickType.PICKUP) {      //LEFT
-                        if (inventoryPlayer.getItemStack() != null &&  inventorySlots.get(slotId).getStack() == null) {
+                        if (inventoryPlayer.getItemStack() != ItemStack.field_190927_a &&  inventorySlots.get(slotId).getStack() == ItemStack.field_190927_a) {
                             ItemStack ghostStack = inventoryPlayer.getItemStack().copy();
 
                             ghostStack.func_190920_e(1);
                             ghostSlot.putStack(ghostStack);
                         }else{
-                            ghostSlot.putStack(null);
+                            ghostSlot.putStack(ItemStack.field_190927_a);
                         }
                     }
                     return inventoryPlayer.getItemStack();
@@ -223,20 +223,20 @@ public class ContainerBuySell extends Container implements INBTInventory{
                         tile.setSelectedName("No Item");
                     }
                     tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
-                    return null;
+                    return ItemStack.field_190927_a;
                 } else if (slotId > 66 && slotId < 73){
                     return super.slotClick(slotId, dragType, clickTypeIn, player); //Buffer Slots
-                } else return null;
+                } else return ItemStack.field_190927_a;
             } else {  //Sell Mode
                 if (slotId >= 0 && slotId <= 36) {           //Is Players Inv or Input Slot
                     return super.slotClick(slotId, dragType, clickTypeIn, player);
                 } else if (slotId >= 37 && slotId < 67) {  //Is TE Inv
-                    return null;
+                    return ItemStack.field_190927_a;
                 }
             }
             //</editor-fold>
         }
-        return null;
+        return ItemStack.field_190927_a;
     }
 
     /**
@@ -256,7 +256,7 @@ public class ContainerBuySell extends Container implements INBTInventory{
             boolean wallet = false;
             int bank = 0;
 
-            if (itemHandler.getStackInSlot(0) != null) {
+            if (itemHandler.getStackInSlot(0) != ItemStack.field_190927_a) {
                 if (itemHandler.getStackInSlot(0).getItem() == ModItems.itemWallet) {
                     wallet = true;
                     bank = tile.getField(10);
@@ -264,11 +264,11 @@ public class ContainerBuySell extends Container implements INBTInventory{
             } else bank = tile.getField(0);
             int cost = tile.getItemCost(slotId - PLAYER_TOTAL_COUNT - 1);
 
-            if (slotStack != null) {
-                if (playStack != null) {
+            if (slotStack != ItemStack.field_190927_a) {
+                if (playStack != ItemStack.field_190927_a) {
                     if (!((playStack.getDisplayName().equals(slotStack.getDisplayName())) &&
                             (playStack.getItem().getUnlocalizedName().equals(slotStack.getItem().getUnlocalizedName())))) {
-                        return null; //Checks if player is holding stack, if its different then one being clicked do nothing
+                        return ItemStack.field_190927_a; //Checks if player is holding stack, if its different then one being clicked do nothing
                     }
                 }
                 if (tile.getField(6) == 0)
@@ -280,7 +280,7 @@ public class ContainerBuySell extends Container implements INBTInventory{
                         playBuyStack = slotStack.copy();
                         playBuyStack.func_190920_e(amnt);
 
-                        if (player.inventory.getItemStack() != null) {       //Holding Item
+                        if (player.inventory.getItemStack() != ItemStack.field_190927_a) {       //Holding Item
                             playBuyStack.func_190920_e(amnt + playStack.func_190916_E());
                         }
                         player.inventory.setItemStack(playBuyStack);
@@ -298,7 +298,7 @@ public class ContainerBuySell extends Container implements INBTInventory{
                 return slotStack;
             }
         }
-        return null;
+        return ItemStack.field_190927_a;
     }
 
     @Nullable
@@ -306,7 +306,7 @@ public class ContainerBuySell extends Container implements INBTInventory{
     public ItemStack transferStackInSlot(EntityPlayer player, int index) {
         if (tile instanceof TileVendor) {
             //<editor-fold desc="Vendor Shifting">
-            ItemStack sourceStack = null;
+            ItemStack sourceStack = ItemStack.field_190927_a;
             Slot slot = this.inventorySlots.get(index);
 
             if (slot != null && slot.getHasStack()) {
@@ -317,30 +317,30 @@ public class ContainerBuySell extends Container implements INBTInventory{
                     if (inventorySlots.get(index).getStack().getItem() == ModItems.itemBanknote) {
                         if(tile.getField(2) == 0) {
                             if (!this.mergeItemStack(copyStack, TE_MONEY_FIRST_SLOT_INDEX, TE_MONEY_FIRST_SLOT_INDEX + 1, false)) {
-                                return null;
+                                return ItemStack.field_190927_a;
                             }
                         }else{
-                            return null;
+                            return ItemStack.field_190927_a;
                         }
                     } else {
                         if (tile.getField(2) == 1) {     //Only allow shift clicking from player inv in edit mode
                             if (!this.mergeItemStack(copyStack, TE_VEND_FIRST_SLOT_INDEX, TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT, false)) {
-                                return null;
+                                return ItemStack.field_190927_a;
                             }
                         } else {
-                            return null;
+                            return ItemStack.field_190927_a;
                         }
                     }
                 } else if (index >= TE_VEND_FIRST_SLOT_INDEX && index < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT + TE_BUFFER_TOTAL_COUNT) {  //TE Inventory
                     if (!this.mergeItemStack(copyStack, 0, PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT, false)) {
-                        return null;
+                        return ItemStack.field_190927_a;
                     }
                 } else {
-                   return null;
+                   return ItemStack.field_190927_a;
                 }
 
                 if (copyStack.func_190916_E() == 0) {
-                    slot.putStack(null);
+                    slot.putStack(ItemStack.field_190927_a);
                 } else {
                     slot.onSlotChanged();
                 }
@@ -349,7 +349,7 @@ public class ContainerBuySell extends Container implements INBTInventory{
             //</editor-fold>
         } else {
             //<editor-fold desc="Seller Shifting">
-            ItemStack sourceStack = null;
+            ItemStack sourceStack = ItemStack.field_190927_a;
             Slot slot = this.inventorySlots.get(index);
 
             if (slot != null && slot.getHasStack()) {
@@ -359,31 +359,31 @@ public class ContainerBuySell extends Container implements INBTInventory{
                 if (index < PLAYER_TOTAL_COUNT) {        //Player Inventory Slots
                     if (tile.getField(2) == 0) {     //SELL MODE
                         if (!this.mergeItemStack(copyStack, TE_MONEY_FIRST_SLOT_INDEX, TE_MONEY_FIRST_SLOT_INDEX + 1, false)) {
-                            return null;
+                            return ItemStack.field_190927_a;
                         }
                     } else {
                         if (tile.getField(2) == 1) {
                             if (inventorySlots.get(index).getStack().getItem() == ModItems.itemBanknote) {
                                 if (!this.mergeItemStack(copyStack, TE_MONEY_FIRST_SLOT_INDEX, TE_MONEY_FIRST_SLOT_INDEX + 1, false)) {
-                                    return null;
+                                    return ItemStack.field_190927_a;
                                 }
-                            }else return null;
+                            }else return ItemStack.field_190927_a;
                         } else {
-                            return null;
+                            return ItemStack.field_190927_a;
                         }
                     }
                 } else if (index >= TE_VEND_FIRST_SLOT_INDEX && index < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT + TE_BUFFER_TOTAL_COUNT) {  //TE Inventory
                     if (!this.mergeItemStack(copyStack, 0, PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT, false)) {
-                        return null;
+                        return ItemStack.field_190927_a;
                     }
                 } else if (index == TE_MONEY_FIRST_SLOT_INDEX) {
                     if (!this.mergeItemStack(copyStack, 0, PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT, false)) {
-                        return null;
+                        return ItemStack.field_190927_a;
                     }
                 }
 
                 if (copyStack.func_190916_E() == 0) {
-                    slot.putStack(null);
+                    slot.putStack(ItemStack.field_190927_a);
                 } else {
                     slot.onSlotChanged();
                 }
@@ -468,7 +468,7 @@ public class ContainerBuySell extends Container implements INBTInventory{
             for(int j = 0; j < itemHandler.getSlots(); j++){
                 ItemStack stack = itemHandler.getStackInSlot(j);
 
-                if(stack != null){
+                if(stack != ItemStack.field_190927_a){
                     if(stack.getItemDamage() == i){
                         if(stack.func_190916_E() >= out[i]){  //If Stack size can handle all amount of bill
                             itemHandler.getStackInSlot(j).func_190920_e(stack.func_190916_E() - out[i]);
@@ -477,11 +477,11 @@ public class ContainerBuySell extends Container implements INBTInventory{
                             break searchLoop;
                         }else{  //If Stack size is smaller then amount of bills
                             out[i] = out[i] - stack.func_190916_E();
-                            itemHandler.setStackInSlot(j, null);
+                            itemHandler.setStackInSlot(j, ItemStack.field_190927_a);
                         }
                     }
 
-                    if(stack.func_190916_E() == 0) itemHandler.setStackInSlot(j, null);  //Removes stack is 0
+                    if(stack.func_190916_E() == 0) itemHandler.setStackInSlot(j, ItemStack.field_190927_a);  //Removes stack is 0
                 }
             }
         }
@@ -495,12 +495,12 @@ public class ContainerBuySell extends Container implements INBTInventory{
             searchLoop:
             //Searches wallet for the first highest bill that can handle rest of amount
             for (int i = 0; i < itemHandler.getSlots(); i++) {
-                if (itemHandler.getStackInSlot(i) != null) {
+                if (itemHandler.getStackInSlot(i) != ItemStack.field_190927_a) {
                     int billWorth = getBillWorth(itemHandler.getStackInSlot(i).getItemDamage(), itemHandler.getStackInSlot(i).func_190916_E());
                     if (billWorth > amount) {
                         billDamage = itemHandler.getStackInSlot(i).getItemDamage();
                         if (itemHandler.getStackInSlot(i).func_190916_E() == 1) {
-                            itemHandler.setStackInSlot(i, null);
+                            itemHandler.setStackInSlot(i, ItemStack.field_190927_a);
                         } else {
                             itemHandler.getStackInSlot(i).func_190920_e(itemHandler.getStackInSlot(i).func_190916_E() -1);
                         }
@@ -549,7 +549,7 @@ public class ContainerBuySell extends Container implements INBTInventory{
 
         int totalOfBill = 0;
         for(int i=0; i<itemStackHandler.getSlots(); i++) {
-            if (itemStackHandler.getStackInSlot(i) != null) {
+            if (itemStackHandler.getStackInSlot(i) != ItemStack.field_190927_a) {
                 if(itemStackHandler.getStackInSlot(i).getItemDamage() == billDamage){
                     totalOfBill = totalOfBill + 1 * itemStackHandler.getStackInSlot(i).func_190916_E();
                 }

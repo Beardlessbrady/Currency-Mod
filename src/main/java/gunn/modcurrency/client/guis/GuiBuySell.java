@@ -47,8 +47,8 @@ import java.util.List;
  * File Created on 2016-11-02.
  */
 public class GuiBuySell extends GuiContainer {
-    private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/GuiVendorTexture.png");
-    private static final ResourceLocation TAB_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/GuiVendorTabTexture.png");
+    private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/guivendortexture.png");
+    private static final ResourceLocation TAB_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/guivendortabtexture.png");
     private ModTile tile;
     private GuiTextField nameField;
     private boolean creativeExtended;
@@ -381,7 +381,6 @@ public class GuiBuySell extends GuiContainer {
     
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        System.out.println(tile.getField(8) + "_________MOUSEX:" + Integer.toString(mouseX) + "   MOUSEY:" + Integer.toString(mouseY));
         if(tile.getField(2) == 1) {
             super.mouseClicked(mouseX, mouseY, mouseButton);
             nameField.mouseClicked(mouseX, mouseY, mouseButton);
