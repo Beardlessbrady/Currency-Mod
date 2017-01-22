@@ -1,13 +1,13 @@
 package gunn.modcurrency.client.guis;
 
+import gunn.modcurrency.api.ModTile;
 import gunn.modcurrency.common.containers.ContainerBuySell;
 import gunn.modcurrency.common.core.handler.PacketHandler;
 import gunn.modcurrency.common.core.network.PacketSendIntData;
 import gunn.modcurrency.common.core.network.PacketSendItemToServer;
-import gunn.modcurrency.api.ModTile;
+import gunn.modcurrency.common.core.util.CustomButton;
 import gunn.modcurrency.common.tiles.TileSeller;
 import gunn.modcurrency.common.tiles.TileVendor;
-import gunn.modcurrency.common.core.util.CustomButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -18,13 +18,11 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -378,17 +376,12 @@ public class GuiBuySell extends GuiContainer {
            super.keyTyped(typedChar, keyCode);
         }
     }
-    
+
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        if(tile.getField(2) == 1) {
-            super.mouseClicked(mouseX, mouseY, mouseButton);
-            nameField.mouseClicked(mouseX, mouseY, mouseButton);
-            if (tile.getField(8) == 1 && mouseButton == 0) updateTextField();
-        }else {
-            super.mouseClicked(mouseX, mouseY, mouseButton);
-        }
+        super.mouseClicked(mouseX, mouseY, mouseButton);
     }
+
     //</editor-fold>
 
     @Override
