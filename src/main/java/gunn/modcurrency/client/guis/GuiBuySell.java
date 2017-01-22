@@ -51,7 +51,7 @@ public class GuiBuySell extends GuiContainer {
     private static final ResourceLocation TAB_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/GuiVendorTabTexture.png");
     private ModTile tile;
     private GuiTextField nameField;
-    private boolean gearExtended, creativeExtended;
+    private boolean creativeExtended;
     
     private String header;
 
@@ -60,7 +60,6 @@ public class GuiBuySell extends GuiContainer {
         tile = te;
         xSize = 176;
         ySize = 235;
-        gearExtended = false;
         creativeExtended = false;
 
         if(tile instanceof TileVendor) header = "tile.modcurrency:blockvendor.name";
@@ -89,7 +88,7 @@ public class GuiBuySell extends GuiContainer {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
-        if (gearExtended) nameField.drawTextBox();
+        if (tile.getField(8) == 1) nameField.drawTextBox();
     }
 
     @Override
@@ -114,9 +113,6 @@ public class GuiBuySell extends GuiContainer {
         int i = (mouseX - (this.width - this.xSize) / 2);
         int j = (mouseY - (this.height - this.ySize) / 2);
 
-        IItemHandler itemHandler  = this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-        TileVendor tileVendor;
-
         fontRendererObj.drawString(I18n.format(header), 5, 6, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("tile.modcurrency:gui.playerinventory"), 4, 142, Color.darkGray.getRGB());
 
@@ -125,7 +121,6 @@ public class GuiBuySell extends GuiContainer {
             fontRendererObj.drawString(I18n.format("Cash") + ": $" + tile.getField(0), 5, 15, Color.darkGray.getRGB());
 
             if(tile instanceof TileVendor){
-                tileVendor = (TileVendor) tile;
                 if(tile.getField(9) == 1) fontRendererObj.drawString(I18n.format("Wallet") + ": $" + tile.getField(10), 5, 23, Integer.parseInt("3abd0c", 16));
             }
 
@@ -151,7 +146,7 @@ public class GuiBuySell extends GuiContainer {
             }
             fontRendererObj.drawString(I18n.format(profitName) + ": $" + profitAmnt, 5, 16, Color.darkGray.getRGB());
 
-            if (gearExtended) {
+            if (tile.getField(8) == 1) {
                 fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.slotsettings"), -81, 51, Integer.parseInt("42401c", 16));
                 fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.slotsettings"), -80, 50, Integer.parseInt("fff200", 16));
                 fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.cost"), -84, 73, Integer.parseInt("211d1b", 16));
@@ -167,7 +162,7 @@ public class GuiBuySell extends GuiContainer {
                 GL11.glPopMatrix();
             }
             if (creativeExtended) {
-                if (!gearExtended) {
+                if (tile.getField(8) == 0) {
                     fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.tabs.infinity.infinitestock"), -86, 73, Integer.parseInt("42401c", 16));
                     fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.tabs.infinity.infinitestock"), -85, 72, Integer.parseInt("fff200", 16));
                 } else {
@@ -292,12 +287,12 @@ public class GuiBuySell extends GuiContainer {
         }
         
         //Draw Gear Icon and Extended Background
-        if (gearExtended) drawTexturedModalRect(-91, 43, 27, 0, 91, 47);
+        if (tile.getField(8) == 1) drawTexturedModalRect(-91, 43, 27, 0, 91, 47);
         drawTexturedModalRect(-21, 46, 237, 32, 19, 15);
 
         //Draw Creative Icon
         if(tile.getField(5) == 1) {
-            if(!gearExtended) {
+            if(tile.getField(8) == 0) {
                 this.buttonList.set(3,(new CustomButton(3, i - 21, j + 65, 0, 44, 21, 21, "", TAB_TEXTURE)));   //Creative Tab
                 if(creativeExtended && tile.getField(5) == 1) {
                     this.buttonList.set(4,(new GuiButton(4, i - 69, j + 85, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
@@ -314,7 +309,7 @@ public class GuiBuySell extends GuiContainer {
             }
         }
 
-        if(gearExtended) {
+        if(tile.getField(8) == 1) {
             //Draw Selected Slot Overlay
             int slotId = tile.getField(3) - 37;
             int slotColumn, slotRow;
@@ -386,10 +381,11 @@ public class GuiBuySell extends GuiContainer {
     
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        System.out.println(tile.getField(8) + "_________MOUSEX:" + Integer.toString(mouseX) + "   MOUSEY:" + Integer.toString(mouseY));
         if(tile.getField(2) == 1) {
             super.mouseClicked(mouseX, mouseY, mouseButton);
             nameField.mouseClicked(mouseX, mouseY, mouseButton);
-            if (gearExtended && mouseButton == 0) updateTextField();
+            if (tile.getField(8) == 1 && mouseButton == 0) updateTextField();
         }else {
             super.mouseClicked(mouseX, mouseY, mouseButton);
         }
@@ -399,6 +395,7 @@ public class GuiBuySell extends GuiContainer {
     @Override
     //Button Actions
     protected void actionPerformed(GuiButton button) throws IOException {
+
         switch (button.id) {
             case 0:         //Change Button
                 PacketSendItemToServer pack0 = new PacketSendItemToServer();
@@ -412,10 +409,12 @@ public class GuiBuySell extends GuiContainer {
 
                 tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
                 break;
-            case 2:
-                gearExtended = !gearExtended;
+            case 2: //Gear Button
+                System.out.println("IVE BEEN CLICKED");
+                int newGear = 0;
+                newGear = tile.getField(8) == 1 ? 0 : 1;
                 PacketSendIntData pack2 = new PacketSendIntData();
-                pack2.setData(gearExtended ? 1 : 0, tile.getPos(), 4);
+                pack2.setData(newGear, tile.getPos(), 4);
                 PacketHandler.INSTANCE.sendToServer(pack2);
                 break;
             case 3:

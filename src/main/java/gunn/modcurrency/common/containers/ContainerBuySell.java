@@ -158,7 +158,7 @@ public class ContainerBuySell extends Container implements INBTInventory{
     @Nullable
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-        if(clickTypeIn == ClickType.PICKUP_ALL) return null;
+        if(clickTypeIn == ClickType.PICKUP_ALL || slotId == -999) return null;
         if (tile instanceof TileVendor) {
             //<editor-fold desc="Vendor Slot Click">
             if (tile.getField(2) == 1) {               //EDIT MODE
@@ -197,6 +197,8 @@ public class ContainerBuySell extends Container implements INBTInventory{
         } else if (tile instanceof TileSeller) {
             //<editor-fold desc="Seller Slot Click">
             if (tile.getField(2) == 1) {      //EDIT MODE
+                System.out.println(Integer.toString(dragType) + "_" + clickTypeIn + "___" + Integer.toString(slotId));
+                System.out.println(tile.getField(8));
                 if (slotId >= 0 && slotId <= 36) {
                     return super.slotClick(slotId, dragType, clickTypeIn, player);
                 } else if ((slotId >= 37 && slotId < 67 && tile.getField(8) == 0)) {    //Vend Slots, not in Selection mode
