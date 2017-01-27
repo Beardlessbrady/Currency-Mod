@@ -373,15 +373,9 @@ public class GuiBuySell extends GuiContainer {
         if ((tile.getField(2) == 1) && ((numChar >= 0 && numChar <= 9) || (keyCode == 14) || keyCode == 211 || (keyCode == 203) || (keyCode == 205))) { //Ensures keys input are only numbers or backspace type keys
             if (this.nameField.textboxKeyTyped(typedChar, keyCode)) setCost();
         } else {
-           super.keyTyped(typedChar, keyCode);
+            super.keyTyped(typedChar, keyCode);
         }
     }
-
-    @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        super.mouseClicked(mouseX, mouseY, mouseButton);
-    }
-
     //</editor-fold>
 
     @Override

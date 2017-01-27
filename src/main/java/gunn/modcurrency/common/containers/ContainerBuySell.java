@@ -158,7 +158,7 @@ public class ContainerBuySell extends Container implements INBTInventory{
     @Nullable
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-        if(clickTypeIn == ClickType.PICKUP_ALL || slotId == -999) return null;
+        if(clickTypeIn == ClickType.PICKUP_ALL || slotId == -999) return ItemStack.field_190927_a;
         if (tile instanceof TileVendor) {
             //<editor-fold desc="Vendor Slot Click">
             if (tile.getField(2) == 1) {               //EDIT MODE
