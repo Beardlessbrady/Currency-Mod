@@ -12,6 +12,7 @@ import gunn.modcurrency.common.tiles.TileSeller;
 import gunn.modcurrency.common.tiles.TileVendor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
@@ -264,8 +265,9 @@ public class ContainerBuySell extends Container implements INBTInventory{
             } else bank = tile.getField(0);
             int cost = tile.getItemCost(slotId - PLAYER_TOTAL_COUNT - 1);
 
+
             if (slotStack != ItemStack.field_190927_a) {
-                if (playStack != ItemStack.field_190927_a) {
+                if (playStack.getItem() != Item.getItemFromBlock(Blocks.AIR)) {
                     if (!((playStack.getDisplayName().equals(slotStack.getDisplayName())) &&
                             (playStack.getItem().getUnlocalizedName().equals(slotStack.getItem().getUnlocalizedName())))) {
                         return ItemStack.field_190927_a; //Checks if player is holding stack, if its different then one being clicked do nothing
@@ -273,6 +275,7 @@ public class ContainerBuySell extends Container implements INBTInventory{
                 }
                 if (tile.getField(6) == 0)
                     if (slotStack.func_190916_E() < amnt && slotStack.func_190916_E() != 0) amnt = slotStack.func_190916_E();
+
 
                 if ((bank >= (cost * amnt))) {   //If has enough money, buy it
                     if (slotStack.func_190916_E() >= amnt || tile.getField(6) == 1) {

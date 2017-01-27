@@ -86,7 +86,7 @@ public class GuiBuySell extends GuiContainer {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
-        if (tile.getField(8) == 1) nameField.drawTextBox();
+        if (tile.getField(8) == 1 && tile.getField(2) == 1) nameField.drawTextBox();
     }
 
     @Override
@@ -362,6 +362,17 @@ public class GuiBuySell extends GuiContainer {
             tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
         }else{
             super.renderToolTip(stack, x, y);
+        }
+    }
+
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        if(tile.getField(2) == 1) {
+            super.mouseClicked(mouseX, mouseY, mouseButton);
+            nameField.mouseClicked(mouseX, mouseY, mouseButton);
+            if (tile.getField(8) == 1 && mouseButton == 0) updateTextField();
+        }else {
+            super.mouseClicked(mouseX, mouseY, mouseButton);
         }
     }
     //</editor-fold>
