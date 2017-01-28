@@ -34,6 +34,7 @@ public class RenderTileVendor extends TileEntitySpecialRenderer<TileVendor> {
     @Override
     public void renderTileEntityAt(TileVendor te, double x, double y, double z, float partialTicks, int destroyStage) {
 
+
     }
 
 
