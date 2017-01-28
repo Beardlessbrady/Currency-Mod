@@ -1,15 +1,9 @@
 package gunn.modcurrency.common.core.handler;
 
 import gunn.modcurrency.ModConfig;
-import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.api.ModTile;
-import gunn.modcurrency.client.model.BakedModelVendor;
 import gunn.modcurrency.common.blocks.ModBlocks;
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.block.model.IBakedModel;
-import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -54,13 +48,4 @@ public class EventHandlerCommon {
         }
     }
 
-    /*
-    @SubscribeEvent
-    public void onModelBake(ModelBakeEvent e){
-        ModelResourceLocation base = new ModelResourceLocation(ModCurrency.MODID + ":blockvendor","color=blue,facing=north,item=false,open=true");
-        IBakedModel basicVendor = e.getModelRegistry().getObject(base);
-
-        e.getModelRegistry().putObject(base, new BakedModelVendor(basicVendor));
-    }
-    */
 }

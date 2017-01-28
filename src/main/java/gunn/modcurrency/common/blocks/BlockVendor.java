@@ -2,6 +2,7 @@ package gunn.modcurrency.common.blocks;
 
 import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.api.ModTile;
+import gunn.modcurrency.client.render.RenderTileVendor;
 import gunn.modcurrency.common.blocks.items.IBColored;
 import gunn.modcurrency.common.core.handler.StateHandler;
 import gunn.modcurrency.common.tiles.TileVendor;
@@ -30,6 +31,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.property.IUnlistedProperty;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.items.ItemStackHandler;
 import scala.Int;
@@ -105,6 +107,7 @@ public class BlockVendor extends Block implements ITileEntityProvider {
                 ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), i, new ModelResourceLocation(getRegistryName(), "color=" + EnumDyeColor.byDyeDamage(i) + ",facing=north,item=true,open=false"));
             }
         }
+        ClientRegistry.bindTileEntitySpecialRenderer(TileVendor.class, new RenderTileVendor());
     }
 
     @Override
