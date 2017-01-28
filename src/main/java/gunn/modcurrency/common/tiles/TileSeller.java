@@ -85,10 +85,10 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
     public void update() {
         if (!worldObj.isRemote) {
             if (!mode) {        //SELL MODE
-                if (inputStackHandler.getStackInSlot(0) != null) {
+                if (inputStackHandler.getStackInSlot(0) != ItemStack.field_190927_a) {
                     searchLoop:
                     for (int i = 0; i < vendStackHandler.getSlots(); i++) {
-                        if (vendStackHandler.getStackInSlot(i) != null) {
+                        if (vendStackHandler.getStackInSlot(i) != ItemStack.field_190927_a) {
                             if (inputStackHandler.getStackInSlot(0).getUnlocalizedName().equals(vendStackHandler.getStackInSlot(i).getUnlocalizedName())) {
                                 int cost = getItemCost(i);
                                 boolean isThereRoom = false;
@@ -96,7 +96,7 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
 
                                 RoomLoop:
                                 for(int j = 0; j < BUFFER_SLOT_COUNT; j++){
-                                    if(bufferStackHandler.getStackInSlot(j) != null){
+                                    if(bufferStackHandler.getStackInSlot(j) != ItemStack.field_190927_a){
                                         if((bufferStackHandler.getStackInSlot(j).getUnlocalizedName().equals(inputStackHandler.getStackInSlot(0).getUnlocalizedName())
                                                 && (bufferStackHandler.getStackInSlot(j).func_190916_E() < bufferStackHandler.getStackInSlot(j).getMaxStackSize()))) isThereRoom = true;
                                     }else isThereRoom = true;
@@ -112,8 +112,8 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
                                     bank = bank + cost;
                                     if(!infinite){
                                         cashRegister = cashRegister - cost;
-                                        if(bufferStackHandler.getStackInSlot(buffSlot) != null) bufferStackHandler.getStackInSlot(buffSlot).func_190920_e(bufferStackHandler.getStackInSlot(buffSlot).func_190916_E() +1);
-                                        if(bufferStackHandler.getStackInSlot(buffSlot) == null){
+                                        if(bufferStackHandler.getStackInSlot(buffSlot) != ItemStack.field_190927_a) bufferStackHandler.getStackInSlot(buffSlot).func_190920_e(bufferStackHandler.getStackInSlot(buffSlot).func_190916_E() +1);
+                                        if(bufferStackHandler.getStackInSlot(buffSlot) == ItemStack.field_190927_a){
                                             ItemStack newStack = inputItem.copy();
                                             newStack.func_190920_e(1);
                                             bufferStackHandler.setStackInSlot(buffSlot, newStack);
@@ -125,13 +125,13 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
                             }
                         }
                         if(inputStackHandler.getStackInSlot(0).func_190916_E() == 0) {
-                            inputStackHandler.setStackInSlot(0, null);
+                            inputStackHandler.setStackInSlot(0, ItemStack.field_190927_a);
                             break searchLoop;
                         }
                     }
                 }
             } else {        //EDIT MODE
-                if (inputStackHandler.getStackInSlot(0) != null) {
+                if (inputStackHandler.getStackInSlot(0) != ItemStack.field_190927_a) {
                     if (inputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemBanknote)) {
                         int amount;
                         switch (inputStackHandler.getStackInSlot(0).getItemDamage()) {
@@ -158,7 +158,7 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
                                 break;
                         }
                         amount = amount * inputStackHandler.getStackInSlot(0).func_190916_E();
-                        inputStackHandler.setStackInSlot(0, null);
+                        inputStackHandler.setStackInSlot(0, ItemStack.field_190927_a);
                         cashRegister = cashRegister + amount;
                     }
                 }
