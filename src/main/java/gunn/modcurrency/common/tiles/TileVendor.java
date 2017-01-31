@@ -92,8 +92,8 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
 
     @Override
     public void update() {
-        if (!worldObj.isRemote) {
-            if (inputStackHandler.getStackInSlot(0) != ItemStack.field_190927_a) {
+        if (!world.isRemote) {
+            if (inputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
                 if (inputStackHandler.getStackInSlot(0).getItem() == ModItems.itemBanknote) {
                     //<editor-fold desc="Dealing with a Banknote">
                     int amount;
@@ -120,8 +120,8 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
                             amount = -1;
                             break;
                     }
-                    amount = amount * inputStackHandler.getStackInSlot(0).func_190916_E(); //.func_190916_E() == get StackSize
-                    inputStackHandler.setStackInSlot(0, ItemStack.field_190927_a);
+                    amount = amount * inputStackHandler.getStackInSlot(0).getCount();
+                    inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
                     bank = bank + amount;
                     markDirty();
                     //</editor-fold>
@@ -135,13 +135,13 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
                 //<editor-fold desc="Dealing with Buffer Slots">
                 Loop:
                 for(int i = 0; i < BUFFER_SLOT_COUNT; i++){
-                    if(bufferStackHandler.getStackInSlot(i) != ItemStack.field_190927_a){
-                        if(bufferStackHandler.getStackInSlot(i).getItemDamage() == 3 && bufferStackHandler.getStackInSlot(i).func_190916_E() < bufferStackHandler.getStackInSlot(i).getMaxStackSize()){
+                    if(bufferStackHandler.getStackInSlot(i) != ItemStack.EMPTY){
+                        if(bufferStackHandler.getStackInSlot(i).getItemDamage() == 3 && bufferStackHandler.getStackInSlot(i).getCount() < bufferStackHandler.getStackInSlot(i).getMaxStackSize()){
                             profit = profit - 20;
-                            bufferStackHandler.getStackInSlot(i).func_190920_e(bufferStackHandler.getStackInSlot(i).func_190916_E() + 1);
+                            bufferStackHandler.getStackInSlot(i).grow(1);
                             break Loop;
                         }
-                    }else if(bufferStackHandler.getStackInSlot(i) == ItemStack.field_190927_a){
+                    }else if(bufferStackHandler.getStackInSlot(i) == ItemStack.EMPTY){
                         ItemStack newStack = new ItemStack(ModItems.itemBanknote);
                         newStack.setItemDamage(3);
                         bufferStackHandler.setStackInSlot(i, newStack);
@@ -178,12 +178,12 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
 
         out[0] = Math.round(amount);
 
-        if (!worldObj.isRemote) {
+        if (!world.isRemote) {
             for (int i = 0; i < out.length; i++) {
                 if (out[i] != 0) {
                     ItemStack item = new ItemStack(ModItems.itemBanknote);
                     item.setItemDamage(i);
-                    item.func_190920_e(out[i]);
+                    item.setCount(out[i]);
 
                     if (mode) {
                         profit = 0;
@@ -222,7 +222,7 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
                                 x = x - 2;//West
                                 break;
                         }
-                        worldObj.spawnEntityInWorld(new EntityItem(worldObj, x, getPos().up().getY(), z, item));
+                        world.spawnEntity(new EntityItem(world, x, getPos().up().getY(), z, item));
                     }
                 }
             }
@@ -233,16 +233,16 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
     public void dropItems() {
         for (int i = 0; i < vendStackHandler.getSlots(); i++) {
             ItemStack item = vendStackHandler.getStackInSlot(i);
-            if (item != ItemStack.field_190927_a) {
-                worldObj.spawnEntityInWorld(new EntityItem(worldObj, getPos().getX(), getPos().getY(), getPos().getZ(), item));
-                vendStackHandler.setStackInSlot(i, ItemStack.field_190927_a);   //Just in case
+            if (item != ItemStack.EMPTY) {
+                world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), item));
+                vendStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
             }
         }
         for (int i = 0; i < bufferStackHandler.getSlots(); i++){
             ItemStack item = bufferStackHandler.getStackInSlot(i);
-            if (item != ItemStack.field_190927_a) {
-                worldObj.spawnEntityInWorld(new EntityItem(worldObj, getPos().getX(), getPos().getY(), getPos().getZ(), item));
-                vendStackHandler.setStackInSlot(i, ItemStack.field_190927_a);   //Just in case
+            if (item != ItemStack.EMPTY) {
+                world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), item));
+                vendStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
             }
         }
     }
@@ -262,25 +262,25 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
 
         int totalCash = 0;
         for(int i=0; i<itemStackHandler.getSlots(); i++) {
-            if (itemStackHandler.getStackInSlot(i) != ItemStack.field_190927_a) {
+            if (itemStackHandler.getStackInSlot(i) != ItemStack.EMPTY) {
                 switch (itemStackHandler.getStackInSlot(i).getItemDamage()) {
                     case 0:
-                        totalCash = totalCash + 1 * itemStackHandler.getStackInSlot(i).func_190916_E();
+                        totalCash = totalCash + 1 * itemStackHandler.getStackInSlot(i).getCount();
                         break;
                     case 1:
-                        totalCash = totalCash + 5 * itemStackHandler.getStackInSlot(i).func_190916_E();
+                        totalCash = totalCash + 5 * itemStackHandler.getStackInSlot(i).getCount();
                         break;
                     case 2:
-                        totalCash = totalCash + 10 * itemStackHandler.getStackInSlot(i).func_190916_E();
+                        totalCash = totalCash + 10 * itemStackHandler.getStackInSlot(i).getCount();
                         break;
                     case 3:
-                        totalCash = totalCash + 20 * itemStackHandler.getStackInSlot(i).func_190916_E();
+                        totalCash = totalCash + 20 * itemStackHandler.getStackInSlot(i).getCount();
                         break;
                     case 4:
-                        totalCash = totalCash + 50 * itemStackHandler.getStackInSlot(i).func_190916_E();
+                        totalCash = totalCash + 50 * itemStackHandler.getStackInSlot(i).getCount();
                         break;
                     case 5:
-                        totalCash = totalCash + 100 * itemStackHandler.getStackInSlot(i).func_190916_E();
+                        totalCash = totalCash + 100 * itemStackHandler.getStackInSlot(i).getCount();
                         break;
                     default:
                         totalCash = -1;
@@ -477,9 +477,9 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
             case 1:
                 return (locked) ? 1 : 0;
             case 2:
-                worldObj.markBlockRangeForRenderUpdate(pos, pos);
-                worldObj.scheduleBlockUpdate(pos,this.getBlockType(),0,0);
-                worldObj.notifyBlockUpdate(pos, worldObj.getBlockState(pos), worldObj.getBlockState(pos), 3);
+                world.markBlockRangeForRenderUpdate(pos, pos);
+                world.scheduleBlockUpdate(pos,this.getBlockType(),0,0);
+                world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
                 markDirty();
                 return (mode) ? 1 : 0;
             case 3:

@@ -68,7 +68,7 @@ public class PacketSendIntData implements IMessage {
 
         private void handle(PacketSendIntData message, MessageContext ctx) {
             EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
-            World world = playerEntity.worldObj;
+            World world = playerEntity.world;
             switch (message.mode) {
                 case 0:     //BlockVendor set Lock [to server]
                     ModTile te0= (ModTile) world.getTileEntity(message.blockPos);

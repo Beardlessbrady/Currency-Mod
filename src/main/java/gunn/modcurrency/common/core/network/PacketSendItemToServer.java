@@ -63,7 +63,7 @@ public class PacketSendItemToServer implements IMessage{
         
         private void handle(PacketSendItemToServer message, MessageContext ctx){
             EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
-            World world = playerEntity.worldObj;
+            World world = playerEntity.world;
             ModTile tile = (ModTile) world.getTileEntity(message.blockPos);
             tile.outChange();
         }

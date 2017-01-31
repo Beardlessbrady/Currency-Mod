@@ -85,7 +85,7 @@ public class BlockTop extends Block{
             if (getTile(world, pos).getPlayerUsing() == null) {      //Client and Server
                 getTile(world, pos).setField(5, player.isCreative() ? 1 : 0);
 
-                if (player.getHeldItemMainhand() != ItemStack.field_190927_a && !world.isRemote) {      //Just Server
+                if (player.getHeldItemMainhand() != ItemStack.EMPTY && !world.isRemote) {      //Just Server
                     if (player.getHeldItemMainhand().getItem() == Items.DYE) {
                         //<editor-fold desc="Saving Tile Variables">
                         ModTile tile = getTile(world, pos);
@@ -121,10 +121,10 @@ public class BlockTop extends Block{
                         tile.setAllItemCosts(itemCosts);
                         //</editor-fold>
 
-                        if (!player.isCreative()) player.getHeldItemMainhand().func_190920_e(player.getHeldItemMainhand().func_190916_E() -1);
+                        if (!player.isCreative()) player.getHeldItemMainhand().shrink(1);
                         return true;
                     }
-                } else if (player.getHeldItemMainhand() != ItemStack.field_190927_a && world.isRemote) return true;
+                } else if (player.getHeldItemMainhand() != ItemStack.EMPTY && world.isRemote) return true;
 
                 if ((player.isSneaking() && player.getUniqueID().toString().equals(getTile(world, pos).getOwner())) || (player.isSneaking() && player.isCreative())) {      //Client and Server
                     if (getTile(world, pos).getField(2) == 1) {

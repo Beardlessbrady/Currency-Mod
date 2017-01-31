@@ -137,13 +137,13 @@ public class ContainerWallet extends Container implements INBTInventory {
                 return stack;
             }
         }
-        return ItemStack.field_190927_a;
+        return ItemStack.EMPTY;
     }
 
     @Nullable
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
-        ItemStack sourceStack = ItemStack.field_190927_a;
+        ItemStack sourceStack = ItemStack.EMPTY;
         Slot slot = this.inventorySlots.get(index);
 
         if(playerIn.getHeldItemMainhand() != inventorySlots.get(index).getStack()) {
@@ -154,17 +154,17 @@ public class ContainerWallet extends Container implements INBTInventory {
                 if (index < PLAYER_TOTAL_COUNT) {     //Player Inventory Slots
                     if (slot.getStack().getItem() == ModItems.itemBanknote) {
                         if (!this.mergeItemStack(copyStack, WALLET_FIRST_SLOT_INDEX, WALLET_FIRST_SLOT_INDEX + WALLET_TOTAL_COUNT, false)) {
-                            return ItemStack.field_190927_a;
+                            return ItemStack.EMPTY;
                         }
                     } else {
-                        return ItemStack.field_190927_a;
+                        return ItemStack.EMPTY;
                     }
                 } else if (index >= WALLET_FIRST_SLOT_INDEX && index < WALLET_FIRST_SLOT_INDEX + WALLET_TOTAL_COUNT) {     //Wallet Inventory
                     if (!this.mergeItemStack(copyStack, 0, PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT, false)) {
-                        return ItemStack.field_190927_a;
+                        return ItemStack.EMPTY;
                     }
                 } else {
-                    return ItemStack.field_190927_a;
+                    return ItemStack.EMPTY;
                 }
             }
         }
@@ -202,10 +202,10 @@ public class ContainerWallet extends Container implements INBTInventory {
 
                 //Spawning items ingame that don't fit
                 for(int i=WALLET_TOTAL_COUNT; i < oldSize; i++){
-                    if(oldInventory[i] != ItemStack.field_190927_a) {
+                    if(oldInventory[i] != ItemStack.EMPTY) {
                         World world = player.getEntityWorld();
                         BlockPos pos = player.getPosition();
-                        world.spawnEntityInWorld(new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), oldInventory[i]));
+                        world.spawnEntity(new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), oldInventory[i]));
                     }
                 }
             }
@@ -221,7 +221,7 @@ public class ContainerWallet extends Container implements INBTInventory {
     public void checkMetadataClosed(ItemStack stack){
         int slotsFilled = 0;
         for(int i = 0; i < itemStackHandler.getSlots(); i++){
-            if(itemStackHandler.getStackInSlot(i) != ItemStack.field_190927_a) slotsFilled++;
+            if(itemStackHandler.getStackInSlot(i) != ItemStack.EMPTY) slotsFilled++;
         }
 
         int meta = 0;
@@ -240,7 +240,7 @@ public class ContainerWallet extends Container implements INBTInventory {
     public void checkmetadataOpen(ItemStack stack){
         int slotsFilled = 0;
         for(int i = 0; i < itemStackHandler.getSlots(); i++){
-            if(itemStackHandler.getStackInSlot(i) != ItemStack.field_190927_a) slotsFilled++;
+            if(itemStackHandler.getStackInSlot(i) != ItemStack.EMPTY) slotsFilled++;
         }
 
         int meta = 4;
