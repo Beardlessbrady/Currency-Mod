@@ -3,11 +3,19 @@ package gunn.modcurrency.client.render;
 import gunn.modcurrency.common.tiles.TileVendor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.VertexBuffer;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.client.renderer.vertex.VertexFormat;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.client.model.animation.FastTESR;
+import scala.Array;
+
+import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Distributed with the Currency-Mod for Minecraft
@@ -15,10 +23,10 @@ import net.minecraft.item.ItemStack;
  *
  * File Created on 2017-01-28
  */
-public class RenderTileVendor extends TileEntitySpecialRenderer<TileVendor> {
+public class RenderTileVendor extends FastTESR<TileVendor> {
 
     @Override
-    public void renderTileEntityAt(TileVendor te, double x, double y, double z, float partialTicks, int destroyStage) {
+    public void renderTileEntityFast(@Nonnull TileVendor te, double x, double y, double z, float partialTicks, int destroyStage, @Nonnull VertexBuffer VertexBuffer) {
         GlStateManager.pushMatrix();
         GlStateManager.disableLighting();
 
@@ -42,15 +50,11 @@ public class RenderTileVendor extends TileEntitySpecialRenderer<TileVendor> {
                 GlStateManager.rotate(270,0,1,0);
                 break;
         }
-
-       // renderItems(te,x,y,z,partialTicks,destroyStage);
+        renderItems(te,x,y,z,partialTicks,destroyStage, VertexBuffer);
         GlStateManager.popMatrix();
     }
 
-
-    public void renderItems(TileVendor te, double x, double y, double z, float partialTicks, int destroyStage) {
-        Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.LOCATION_BLOCKS_TEXTURE);
-
+    public void renderItems(TileVendor te, double x, double y, double z, float partialTicks, int destroyStage, VertexBuffer vertexBuffer) {
         Double xStart = -2.9;
         Double yStart = 5.6;
         Double xTrans = 0.45;
@@ -62,11 +66,21 @@ public class RenderTileVendor extends TileEntitySpecialRenderer<TileVendor> {
                     GlStateManager.pushMatrix();
                     GlStateManager.scale(0.30, 0.30, 0.30);
                     GlStateManager.translate(xStart + (xTrans * row), yStart + (yTrans * column), -0.5 - (0.2 * amnt ));
-                    Minecraft.getMinecraft().getRenderItem().renderItem(new ItemStack(Items.DIAMOND_CHESTPLATE), ItemCameraTransforms.TransformType.GROUND);
+
+                    ItemStack poop = new ItemStack(Items.DIAMOND_CHESTPLATE);
+
+                    List<BakedQuad> bakedQuadList = Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(poop, getWorld(), null).getQuads(getWorld().getBlockState(te.getPos()), null, 0);
+
+                    for(int i =0; i < bakedQuadList.size(); i++) {
+                        vertexBuffer.addVertexData(bakedQuadList.get(i).getVertexData());
+                        vertexBuffer.putNormal((float)bakedQuadList.get(i).getFace().getDirectionVec().getX(), (float)bakedQuadList.get(i).getFace().getDirectionVec().getY(), (float)bakedQuadList.get(i).getFace().getDirectionVec().getZ());
+                    }
+
                     GlStateManager.popMatrix();
                 }
             }
         }
-
     }
+
+
 }

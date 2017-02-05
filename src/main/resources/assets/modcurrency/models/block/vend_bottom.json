@@ -117,8 +117,8 @@
 		},
 		{
 			"__comment": "thick plane",
-			"from": [ 0.5, 6.1, 4.99 ],
-			"to": [ 15.5, 6.5, 4.991 ],
+			"from": [ 0.889, 6.1, 4.99 ],
+			"to": [ 15.089, 6.5, 4.991 ],
 			"faces": {
 				"north": { "uv": [ 0, 0, 3.75, 0.25 ], "texture": "#texture" }
 			}
@@ -137,7 +137,7 @@
 		},
 		{
 			"__comment": "thin plane",
-			"from": [ 15.35, 1, 4.99 ],
+			"from": [ 15.1, 1, 4.99 ],
 			"to": [ 15.5, 10.5, 4.991 ],
 			"faces": {
 				"north": { "uv": [ 0, 0, 3.75, 0.25 ], "texture": "#texture" }
@@ -146,23 +146,23 @@
 		{
 			"__comment": "thin plane",
 			"from": [ 0.5, 1, 4.99 ],
-			"to": [ 0.65, 10.5, 4.991 ],
+			"to": [ 0.9, 10.5, 4.991 ],
 			"faces": {
 				"north": { "uv": [ 0, 0, 3.75, 0.25 ], "texture": "#texture" }
 			}
 		},
 		{
 			"__comment": "thin plane",
-			"from": [ 0.5, 1, 4.99 ],
-			"to": [ 15.5, 1.15, 4.991 ],
+			"from": [ 0.8787, 1, 4.99 ],
+			"to": [ 15.0787, 1.4, 4.991 ],
 			"faces": {
 				"north": { "uv": [ 0, 0, 3.75, 0.25 ], "texture": "#texture" }
 			}
 		},
 		{
 			"__comment": "thin plane",
-			"from": [ 3.5, 10.85, 4.99 ],
-			"to": [ 14.5, 11, 4.991 ],
+			"from": [ 3.49, 10.6, 4.99 ],
+			"to": [ 14.1, 11, 4.991 ],
 			"faces": {
 				"north": { "uv": [ 0, 0, 3.75, 0.25 ], "texture": "#texture" }
 			}
@@ -176,29 +176,17 @@
 			}
 		},
 		{
-			"__comment": "output board",
-			"from": [ 0.85, 7.45, 4.75 ],
-			"to": [ 2.85, 9.45, 5.3 ],
-			"faces": {
-				"down": { "uv": [ 1, 0.5, 0, 0.75 ], "texture": "#texture" },
-				"up": { "uv": [ 1, 0.5, 0, 0.75 ], "texture": "#texture" },
-				"north": { "uv": [ 2, 0.5, 1.5, 1 ], "texture": "#texture" },
-				"west": { "uv": [ 1, 0.5, 0, 0.75 ], "texture": "#texture" },
-				"east": { "uv": [ 1, 0.5, 0, 0.75 ], "texture": "#texture" }
-			}
-		},
-		{
 			"__comment": "thin side",
 			"from": [ 0.4999, 1, 5 ],
-			"to": [ 0.5009, 16, 5.15 ],
+			"to": [ 0.5009, 16, 5.4 ],
 			"faces": {
 				"west": { "uv": [ 0, 0, 3.75, 0.25 ], "texture": "#texture" }
 			}
 		},
 		{
 			"__comment": "thin side",
-			"from": [ 0.4999, 1, 16 ],
-			"to": [ 0.5009, 16, 16.15 ],
+			"from": [ 0.4999, 1, 15.6 ],
+			"to": [ 0.5009, 16, 16 ],
 			"faces": {
 				"west": { "uv": [ 0, 0, 3.75, 0.25 ], "texture": "#texture" }
 			}
@@ -206,7 +194,7 @@
 		{
 			"__comment": "thin side",
 			"from": [ 0.4999, 1, 5 ],
-			"to": [ 0.5009, 1.15, 16 ],
+			"to": [ 0.5009, 1.4, 16 ],
 			"faces": {
 				"west": { "uv": [ 0, 0, 3.75, 0.25 ], "texture": "#texture" }
 			}
@@ -214,7 +202,7 @@
 		{
 			"__comment": "thin side",
 			"from": [ 15.5, 1, 5 ],
-			"to": [ 15.501, 16, 5.15 ],
+			"to": [ 15.501, 16, 5.4 ],
 			"faces": {
 				"east": { "uv": [ 0, 0, 3.75, 0.25 ], "texture": "#texture" }
 			}
@@ -222,14 +210,14 @@
 		{
 			"__comment": "thin side",
 			"from": [ 15.5, 1, 5 ],
-			"to": [ 15.501, 1.15, 16 ],
+			"to": [ 15.501, 1.4, 16 ],
 			"faces": {
 				"east": { "uv": [ 0, 0, 3.75, 0.25 ], "texture": "#texture" }
 			}
 		},
 		{
 			"__comment": "thin side",
-			"from": [ 15.5, 1, 15.85 ],
+			"from": [ 15.5, 1, 15.6 ],
 			"to": [ 15.501, 16, 16 ],
 			"faces": {
 				"east": { "uv": [ 0, 0, 3.75, 0.25 ], "texture": "#texture" }
@@ -238,14 +226,14 @@
 		{
 			"__comment": "thin plane",
 			"from": [ 0.5, 1, 16 ],
-			"to": [ 15.5, 1.15, 16.001 ],
+			"to": [ 15.5, 1.4, 16.001 ],
 			"faces": {
 				"south": { "uv": [ 0, 0, 3.75, 0.25 ], "texture": "#texture" }
 			}
 		},
 		{
 			"__comment": "thin plane",
-			"from": [ 15.35, 1, 16 ],
+			"from": [ 15.1, 1, 16 ],
 			"to": [ 15.5, 16, 16.001 ],
 			"faces": {
 				"south": { "uv": [ 0, 0, 3.75, 0.25 ], "texture": "#texture" }
@@ -254,7 +242,7 @@
 		{
 			"__comment": "thin plane",
 			"from": [ 0.5, 1, 16 ],
-			"to": [ 0.65, 16, 16.001 ],
+			"to": [ 0.9, 16, 16.001 ],
 			"faces": {
 				"south": { "uv": [ 0, 0, 3.75, 0.25 ], "texture": "#texture" }
 			}
@@ -327,14 +315,14 @@
 		{
 			"__comment": "thin plane",
 			"from": [ 0.5, 10.5, 4.99 ],
-			"to": [ 0.65, 16, 4.991 ],
+			"to": [ 0.9, 16, 4.991 ],
 			"faces": {
 				"north": { "uv": [ 0, 0, 3.75, 0.25 ], "texture": "#texture" }
 			}
 		},
 		{
 			"__comment": "thin plane",
-			"from": [ 15.35, 10.5, 4.99 ],
+			"from": [ 15.1, 10.5, 4.99 ],
 			"to": [ 15.5, 16, 4.991 ],
 			"faces": {
 				"north": { "uv": [ 0, 0, 3.75, 0.25 ], "texture": "#texture" }
