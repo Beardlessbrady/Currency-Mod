@@ -1,12 +1,22 @@
-# Good Ol' Currency Mod
+# Good Ol' Currency Mod [![](http://cf.way2muchnoise.eu/full_254346_downloads.svg)](https://minecraft.curseforge.com/projects/good-ol-currency) [![](http://cf.way2muchnoise.eu/versions/MC%20Versions_254346_all.svg)](https://minecraft.curseforge.com/projects/good-ol-currency)
 
-Welcome to the Good Ol' Currency Mod github repoistory.
+Welcome to the Good Ol' Currency github repository!
 
-I've always wanted some sort of base economy for minecraft servers that is done through mods and not plugins. If you want to see my description of the mod (and where to download it) go here -> https://minecraft.curseforge.com/projects/good-ol-currency
+[![](https://img.shields.io/badge/1.11.2-soon-lightgrey.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
+[![](https://img.shields.io/badge/Latest%20Version-null-blue.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
+[![](https://img.shields.io/badge/Supported-Fully-brightgreen.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
+
+[![](https://img.shields.io/badge/1.10.2-beta-yellow.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
+[![](https://img.shields.io/badge/Latest%20Version-1.4.3-blue.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
+[![](https://img.shields.io/badge/Supported-Fully-brightgreen.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
+
+I've created this mod because I've always wanted some sort of base economy for minecraft. If you have any critisms, feature requests, or anything to say at all you can contact me on the 'Issues Tab' or through various places listed below.
 
 
-See my todo list here:
-https://github.com/BeardlessBrady/Currency-Mod/blob/master/Todo%20List
 
-See the license here:
- https://github.com/BeardlessBrady/Currency-Mod/blob/master/LICENSE
+#Contacts
+[![](https://img.shields.io/badge/CurseForge-Beardlessbrady-F26122.svg)](https://minecraft.curseforge.com/members/BeardlessBrady)
+
+[![](https://img.shields.io/badge/Discord-Beardlessbrady%232909-7289DA.svg)](https://discordapp.com/)
+
+[![](https://img.shields.io/badge/Twitter-__Beardlessbrady-1DA1F2.svg)](https://twitter.com/_BeardlessBrady)
