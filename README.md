@@ -16,7 +16,5 @@ I've created this mod because I've always wanted some sort of base economy for m
 
 #Contacts
 [![](https://img.shields.io/badge/CurseForge-Beardlessbrady-F26122.svg)](https://minecraft.curseforge.com/members/BeardlessBrady)
-
 [![](https://img.shields.io/badge/Discord-Beardlessbrady%232909-7289DA.svg)](https://discordapp.com/)
-
 [![](https://img.shields.io/badge/Twitter-__Beardlessbrady-1DA1F2.svg)](https://twitter.com/_BeardlessBrady)
