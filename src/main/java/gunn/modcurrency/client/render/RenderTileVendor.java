@@ -63,7 +63,6 @@ public class RenderTileVendor extends FastTESR<TileVendor> {
         for (int column = 0; column < 6; column++) {
             for (int row = 0; row < 5; row++) {
                 for(int amnt = 0; amnt < 1; amnt++) {
-                    GlStateManager.pushMatrix();
                     GlStateManager.scale(0.30, 0.30, 0.30);
                     GlStateManager.translate(xStart + (xTrans * row), yStart + (yTrans * column), -0.5 - (0.2 * amnt ));
 
@@ -72,14 +71,16 @@ public class RenderTileVendor extends FastTESR<TileVendor> {
                     List<BakedQuad> bakedQuadList = Minecraft.getMinecraft().getRenderItem().getItemModelWithOverrides(poop, getWorld(), null).getQuads(getWorld().getBlockState(te.getPos()), null, 0);
 
                     for(int i =0; i < bakedQuadList.size(); i++) {
+                        GlStateManager.pushMatrix();
                         vertexBuffer.addVertexData(bakedQuadList.get(i).getVertexData());
-                        vertexBuffer.putNormal((float)bakedQuadList.get(i).getFace().getDirectionVec().getX(), (float)bakedQuadList.get(i).getFace().getDirectionVec().getY(), (float)bakedQuadList.get(i).getFace().getDirectionVec().getZ());
-                    }
 
+                    }
                     GlStateManager.popMatrix();
                 }
+
             }
         }
+        GlStateManager.popMatrix();
     }
 
 
