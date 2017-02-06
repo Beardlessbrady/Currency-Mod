@@ -72,6 +72,7 @@ public class GuiBuySell extends GuiContainer {
     private void setAmount() {
         if (this.amountField.getText().length() > 0) {
             int newAmount = Integer.valueOf(this.amountField.getText());
+            if(Integer.valueOf(this.amountField.getText()) == 0) newAmount = -1;
 
             PacketSendIntData pack = new PacketSendIntData();
             pack.setData(newAmount, tile.getPos(), 6);
@@ -84,7 +85,13 @@ public class GuiBuySell extends GuiContainer {
     //Updates Cost text field
     private void updateTextField() {
         this.nameField.setText(String.valueOf(tile.getItemCost(tile.getField(3) -37)));
-        if(tile instanceof TileSeller) this.amountField.setText(String.valueOf(((TileSeller) tile).getItemAmount(tile.getField(3) -37)));
+        if(tile instanceof TileSeller){
+            if(((TileSeller) tile).getItemAmount(tile.getField(3) -37) == -1){
+                this.amountField.setText("∞");
+            }else {
+                this.amountField.setText(String.valueOf(((TileSeller) tile).getItemAmount(tile.getField(3) - 37)));
+            }
+        }
     }
 
     //<editor-fold desc="Drawing Gui Assets--------------------------------------------------------------------------------------------------">

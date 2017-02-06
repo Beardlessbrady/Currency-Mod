@@ -32,7 +32,7 @@ import javax.annotation.Nullable;
  *
  * File Created on 2016-11-02.
  */
-public class ContainerBuySell extends Container implements INBTInventory{
+public class ContainerBuySell extends Container implements INBTInventory {
     //Slot Index's
     //0-35 = Player Inventory's
     //36 = Money Slot
@@ -62,8 +62,8 @@ public class ContainerBuySell extends Container implements INBTInventory{
     public ContainerBuySell(InventoryPlayer invPlayer, ModTile te) {
         tile = te;
 
-        if(tile instanceof TileVendor) specialSlotItems= ((TileVendor) tile).specialSlotItems;
-        if(tile instanceof TileSeller) specialSlotItems= ((TileSeller) tile).specialSlotItems;
+        if (tile instanceof TileVendor) specialSlotItems = ((TileVendor) tile).specialSlotItems;
+        if (tile instanceof TileSeller) specialSlotItems = ((TileSeller) tile).specialSlotItems;
 
         setupPlayerInv(invPlayer);
         setupTeInv();
@@ -81,7 +81,8 @@ public class ContainerBuySell extends Container implements INBTInventory{
         final int HOTBAR_XPOS = 8;
         final int HOTBAR_YPOS = 211;
 
-        for (int x = 0; x < HOTBAR_SLOT_COUNT; x++) addSlotToContainer(new Slot(invPlayer, x, HOTBAR_XPOS + SLOT_X_SPACING * x, HOTBAR_YPOS));
+        for (int x = 0; x < HOTBAR_SLOT_COUNT; x++)
+            addSlotToContainer(new Slot(invPlayer, x, HOTBAR_XPOS + SLOT_X_SPACING * x, HOTBAR_YPOS));
 
         final int PLAYER_INV_XPOS = 8;
         final int PLAYER_INV_YPOS = 153;
@@ -97,18 +98,19 @@ public class ContainerBuySell extends Container implements INBTInventory{
     }
 
     private void setupTeInv() {
-        IItemHandler itemHandler  = this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        IItemHandler itemHandler = this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 
         //Input Slot
-        if(tile instanceof TileVendor){
+        if (tile instanceof TileVendor) {
             int xpos = 0;
-            if(tile.getField(2) == 0) xpos = 152;
-            if(tile.getField(2) == 1) xpos = -1000;
-            addSlotToContainer(new SlotCustomizable(itemHandler, 0, xpos,9, specialSlotItems));
+            if (tile.getField(2) == 0) xpos = 152;
+            if (tile.getField(2) == 1) xpos = -1000;
+            addSlotToContainer(new SlotCustomizable(itemHandler, 0, xpos, 9, specialSlotItems));
         }
-        if(tile instanceof TileSeller){
-            if(tile.getField(2) == 0) addSlotToContainer(new SlotItemHandler(itemHandler, 0, 152, 9));
-            if(tile.getField(2) == 1) addSlotToContainer(new SlotCustomizable(itemHandler, 0, 152, 9, specialSlotItems));
+        if (tile instanceof TileSeller) {
+            if (tile.getField(2) == 0) addSlotToContainer(new SlotItemHandler(itemHandler, 0, 152, 9));
+            if (tile.getField(2) == 1)
+                addSlotToContainer(new SlotCustomizable(itemHandler, 0, 152, 9, specialSlotItems));
         }
 
         final int SLOT_X_SPACING = 18;
@@ -127,14 +129,15 @@ public class ContainerBuySell extends Container implements INBTInventory{
         }
 
         //Buffer Slots
-        for (int x = 0; x < TE_BUFFER_TOTAL_COUNT; x++){
+        for (int x = 0; x < TE_BUFFER_TOTAL_COUNT; x++) {
             int slotNum = TE_VEND_MAIN_TOTAL_COUNT + 1 + x;
             int xpos = 0;
-            if(tile.getField(2) == 1) xpos = 15;
-            if(tile.getField(2) == 0) xpos = -1000;
+            if (tile.getField(2) == 1) xpos = 15;
+            if (tile.getField(2) == 0) xpos = -1000;
             int ypos = 32 + x * 18;
-            if(tile instanceof TileVendor) addSlotToContainer(new SlotCustomizable(itemHandler,slotNum,xpos,ypos, specialSlotItems));
-            if(tile instanceof TileSeller) addSlotToContainer(new SlotItemHandler(itemHandler,slotNum,xpos,ypos));
+            if (tile instanceof TileVendor)
+                addSlotToContainer(new SlotCustomizable(itemHandler, slotNum, xpos, ypos, specialSlotItems));
+            if (tile instanceof TileSeller) addSlotToContainer(new SlotItemHandler(itemHandler, slotNum, xpos, ypos));
         }
     }
 
@@ -146,7 +149,7 @@ public class ContainerBuySell extends Container implements INBTInventory{
     @Nullable
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-        if(clickTypeIn == ClickType.PICKUP_ALL || slotId == -999) return ItemStack.EMPTY;
+        if (clickTypeIn == ClickType.PICKUP_ALL || slotId == -999) return ItemStack.EMPTY;
         if (tile instanceof TileVendor) {
             //<editor-fold desc="Vendor Slot Click">
             if (tile.getField(2) == 1) {               //EDIT MODE
@@ -191,12 +194,15 @@ public class ContainerBuySell extends Container implements INBTInventory{
                     InventoryPlayer inventoryPlayer = player.inventory;
                     Slot ghostSlot = this.inventorySlots.get(slotId);
                     if (clickTypeIn == ClickType.PICKUP) {      //LEFT
-                        if (inventoryPlayer.getItemStack() != ItemStack.EMPTY &&  inventorySlots.get(slotId).getStack() == ItemStack.EMPTY) {
+                        if (inventoryPlayer.getItemStack() != ItemStack.EMPTY && inventorySlots.get(slotId).getStack() == ItemStack.EMPTY) {
                             ItemStack ghostStack = inventoryPlayer.getItemStack().copy();
+                            int gCount = 1;
+                            if (((TileSeller) tile).getItemAmount(slotId - 37) > 1)
+                                gCount = ((TileSeller) tile).getItemAmount(slotId - 37);
 
-                            ghostStack.setCount(1);
+                            ghostStack.setCount(gCount);
                             ghostSlot.putStack(ghostStack);
-                        }else{
+                        } else {
                             ghostSlot.putStack(ItemStack.EMPTY);
                         }
                     }
@@ -210,7 +216,7 @@ public class ContainerBuySell extends Container implements INBTInventory{
                     }
                     tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
                     return ItemStack.EMPTY;
-                } else if (slotId > 66 && slotId < 73){
+                } else if (slotId > 66 && slotId < 73) {
                     return super.slotClick(slotId, dragType, clickTypeIn, player); //Buffer Slots
                 } else return ItemStack.EMPTY;
             } else {  //Sell Mode
@@ -227,6 +233,7 @@ public class ContainerBuySell extends Container implements INBTInventory{
 
     /**
      * Used to see if the player attempting to buy an item can afford it, if so buy it.
+     *
      * @param slotId
      * @param amnt
      * @param player
@@ -303,11 +310,11 @@ public class ContainerBuySell extends Container implements INBTInventory{
 
                 if (index < PLAYER_TOTAL_COUNT) {        //Player Inventory Slots
                     if (inventorySlots.get(index).getStack().getItem() == ModItems.itemBanknote) {
-                        if(tile.getField(2) == 0) {
+                        if (tile.getField(2) == 0) {
                             if (!this.mergeItemStack(copyStack, TE_MONEY_FIRST_SLOT_INDEX, TE_MONEY_FIRST_SLOT_INDEX + 1, false)) {
                                 return ItemStack.EMPTY;
                             }
-                        }else{
+                        } else {
                             return ItemStack.EMPTY;
                         }
                     } else {
@@ -324,7 +331,7 @@ public class ContainerBuySell extends Container implements INBTInventory{
                         return ItemStack.EMPTY;
                     }
                 } else {
-                   return ItemStack.EMPTY;
+                    return ItemStack.EMPTY;
                 }
 
                 if (copyStack.getCount() == 0) {
@@ -355,7 +362,7 @@ public class ContainerBuySell extends Container implements INBTInventory{
                                 if (!this.mergeItemStack(copyStack, TE_MONEY_FIRST_SLOT_INDEX, TE_MONEY_FIRST_SLOT_INDEX + 1, false)) {
                                     return ItemStack.EMPTY;
                                 }
-                            }else return ItemStack.EMPTY;
+                            } else return ItemStack.EMPTY;
                         } else {
                             return ItemStack.EMPTY;
                         }
@@ -380,7 +387,7 @@ public class ContainerBuySell extends Container implements INBTInventory{
             //</editor-fold>
         }
     }
-    
+
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
@@ -409,10 +416,11 @@ public class ContainerBuySell extends Container implements INBTInventory{
 
     /**
      * Used to deduct the price of 'amountRemovable' from the wallet's inventory of bills
+     *
      * @param wallet
      * @param amountRemovable
      */
-    public void sellToWallet(ItemStack wallet, int amountRemovable){
+    public void sellToWallet(ItemStack wallet, int amountRemovable) {
         int amount = amountRemovable;
 
         int one = getTotalOfBill(wallet, 0);
@@ -425,51 +433,51 @@ public class ContainerBuySell extends Container implements INBTInventory{
         int[] out = new int[6];
 
         out[5] = Math.round(amount / 100);
-        while(out[5] > hundo) out[5]--;
+        while (out[5] > hundo) out[5]--;
         amount = amount - (out[5] * 100);
 
         out[4] = Math.round(amount / 50);
-        while(out[4] > fifty) out[4]--;
+        while (out[4] > fifty) out[4]--;
         amount = amount - (out[4] * 50);
 
         out[3] = Math.round(amount / 20);
-        while(out[3] > twenty) out[3]--;
+        while (out[3] > twenty) out[3]--;
         amount = amount - (out[3] * 20);
 
         out[2] = Math.round(amount / 10);
-        while(out[2] > ten) out[2]--;
+        while (out[2] > ten) out[2]--;
         amount = amount - (out[2] * 10);
 
         out[1] = Math.round(amount / 5);
-        while(out[1] > five) out[1]--;
+        while (out[1] > five) out[1]--;
         amount = amount - (out[1] * 5);
 
         out[0] = Math.round(amount);
-        while(out[0] > one) out[0]--;
-        amount = amount - (out[0] * 1 );
+        while (out[0] > one) out[0]--;
+        amount = amount - (out[0] * 1);
 
 
         ItemStackHandler itemHandler = readInventoryTag(wallet, ItemWallet.WALLET_TOTAL_COUNT);
 
-        for(int i = 0; i < 6; i++){
+        for (int i = 0; i < 6; i++) {
             searchLoop:
-            for(int j = 0; j < itemHandler.getSlots(); j++){
+            for (int j = 0; j < itemHandler.getSlots(); j++) {
                 ItemStack stack = itemHandler.getStackInSlot(j);
 
-                if(stack != ItemStack.EMPTY){
-                    if(stack.getItemDamage() == i){
-                        if(stack.getCount() >= out[i]){  //If Stack size can handle all amount of bill
+                if (stack != ItemStack.EMPTY) {
+                    if (stack.getItemDamage() == i) {
+                        if (stack.getCount() >= out[i]) {  //If Stack size can handle all amount of bill
                             itemHandler.getStackInSlot(j).shrink(out[i]);
                             out[0] = 0;
 
                             break searchLoop;
-                        }else{  //If Stack size is smaller then amount of bills
+                        } else {  //If Stack size is smaller then amount of bills
                             out[i] = out[i] - stack.getCount();
                             itemHandler.setStackInSlot(j, ItemStack.EMPTY);
                         }
                     }
 
-                    if(stack.getCount() == 0) itemHandler.setStackInSlot(j, ItemStack.EMPTY);  //Removes stack is 0
+                    if (stack.getCount() == 0) itemHandler.setStackInSlot(j, ItemStack.EMPTY);  //Removes stack is 0
                 }
             }
         }
@@ -500,17 +508,23 @@ public class ContainerBuySell extends Container implements INBTInventory{
             //Calculates change be deducting the bills worth with the amount deductible that was left
             int change = 0;
             switch (billDamage) {
-                case 0: change = 0;
+                case 0:
+                    change = 0;
                     break;
-                case 1: change = 5 - amount;
+                case 1:
+                    change = 5 - amount;
                     break;
-                case 2: change = 10 - amount;
+                case 2:
+                    change = 10 - amount;
                     break;
-                case 3: change = 20 - amount;
+                case 3:
+                    change = 20 - amount;
                     break;
-                case 4: change = 50 - amount;
+                case 4:
+                    change = 50 - amount;
                     break;
-                case 5: change = 100 - amount;
+                case 5:
+                    change = 100 - amount;
                     break;
             }
 
@@ -528,17 +542,18 @@ public class ContainerBuySell extends Container implements INBTInventory{
 
     /**
      * Get the total AMOUNT of a bill (not the total of what its worth) from a wallet
+     *
      * @param stack
      * @param billDamage
      * @return
      */
-    public int getTotalOfBill(ItemStack stack, int billDamage){
+    public int getTotalOfBill(ItemStack stack, int billDamage) {
         ItemStackHandler itemStackHandler = readInventoryTag(stack, ItemWallet.WALLET_TOTAL_COUNT);
 
         int totalOfBill = 0;
-        for(int i=0; i<itemStackHandler.getSlots(); i++) {
+        for (int i = 0; i < itemStackHandler.getSlots(); i++) {
             if (itemStackHandler.getStackInSlot(i) != ItemStack.EMPTY) {
-                if(itemStackHandler.getStackInSlot(i).getItemDamage() == billDamage){
+                if (itemStackHandler.getStackInSlot(i).getItemDamage() == billDamage) {
                     totalOfBill = totalOfBill + 1 * itemStackHandler.getStackInSlot(i).getCount();
                 }
             }
@@ -546,24 +561,29 @@ public class ContainerBuySell extends Container implements INBTInventory{
         return totalOfBill;
     }
 
-    public int getBillWorth(int itemDamage, int stackSize){
+    public int getBillWorth(int itemDamage, int stackSize) {
         int cash = 0;
-        switch(itemDamage){
-            case 0: cash = 1;
+        switch (itemDamage) {
+            case 0:
+                cash = 1;
                 break;
-            case 1: cash = 5;
+            case 1:
+                cash = 5;
                 break;
-            case 2: cash = 10;
+            case 2:
+                cash = 10;
                 break;
-            case 3: cash = 20;
+            case 3:
+                cash = 20;
                 break;
-            case 4: cash = 50;
+            case 4:
+                cash = 50;
                 break;
-            case 5: cash = 100;
+            case 5:
+                cash = 100;
                 break;
         }
 
         return cash * stackSize;
     }
-
 }

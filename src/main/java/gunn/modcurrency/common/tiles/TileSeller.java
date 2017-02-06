@@ -60,7 +60,7 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
 
         for (int i = 0; i < itemCosts.length; i++){
             itemCosts[i] = 0;
-            itemAmounts[i] = 0;
+            itemAmounts[i] = -1;
         }
 
         //Setting items allowed in special slot
@@ -99,7 +99,6 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
 
                                 if((cashRegister >= cost || infinite) && isThereRoom){
                                     ItemStack inputItem = inputStackHandler.getStackInSlot(0);
-                                    ItemStack stockitem = vendStackHandler.getStackInSlot(i);
                                     bank = bank + cost;
                                     if(!infinite){
                                         cashRegister = cashRegister - cost;
@@ -111,7 +110,11 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
                                         }
                                     }
                                     inputItem.shrink(1);
-                                    isThereRoom = false;
+                                    System.out.println(itemAmounts[i]);
+                                    if(itemAmounts[i] != -1){
+                                        vendStackHandler.getStackInSlot(i).shrink(1);
+                                        itemAmounts[i]--;
+                                    }
                                 }
                             }
                         }
@@ -472,15 +475,20 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
     public int getItemCost(int index) {return itemCosts[index];}
 
     @Override
-    public void setItemCost(int amount) {itemCosts[selectedSlot - 37] = amount;}
-
-    public int[] getAllItemAmounts(){return itemAmounts.clone();}
-
-    public void setAllItemAmounts(int[] copy){itemAmounts = copy.clone();}
+    public void setItemCost(int amount) {
+        itemCosts[selectedSlot - 37] = amount;
+    }
 
     public int getItemAmount(int index) {return itemAmounts[index];}
 
-    public void setItemAmount(int amount) {itemAmounts[selectedSlot - 37] = amount;}
+    public void setItemAmount(int amount) {
+        itemAmounts[selectedSlot - 37] = amount;
+        if(amount == -1){
+            vendStackHandler.getStackInSlot(selectedSlot - 37).setCount(1);
+        }else {
+            vendStackHandler.getStackInSlot(selectedSlot - 37).setCount(itemAmounts[selectedSlot - 37]);
+        }
+    }
 
     @Override
     public ItemStack getStack(int index) {
