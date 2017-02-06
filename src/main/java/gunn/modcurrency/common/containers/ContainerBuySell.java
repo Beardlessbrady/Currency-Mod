@@ -185,8 +185,6 @@ public class ContainerBuySell extends Container implements INBTInventory{
         } else if (tile instanceof TileSeller) {
             //<editor-fold desc="Seller Slot Click">
             if (tile.getField(2) == 1) {      //EDIT MODE
-                System.out.println(Integer.toString(dragType) + "_" + clickTypeIn + "___" + Integer.toString(slotId));
-                System.out.println(tile.getField(8));
                 if (slotId >= 0 && slotId <= 36) {
                     return super.slotClick(slotId, dragType, clickTypeIn, player);
                 } else if ((slotId >= 37 && slotId < 67 && tile.getField(8) == 0)) {    //Vend Slots, not in Selection mode

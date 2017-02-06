@@ -38,6 +38,7 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
     private String owner, selectedName;
     private boolean locked, mode, creative, infinite, gearExtended;
     private int[] itemCosts = new int[VEND_SLOT_COUNT];
+    private int[] itemAmounts = new int[VEND_SLOT_COUNT];
     private ItemStackHandler inputStackHandler = new ItemStackHandler(INPUT_SLOT_COUNT);
     private ItemStackHandler vendStackHandler = new ItemStackHandler(VEND_SLOT_COUNT);
     private ItemStackHandler bufferStackHandler = new ItemStackHandler(BUFFER_SLOT_COUNT);
@@ -57,7 +58,10 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
         infinite = false;
         gearExtended = false;
 
-        for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = 0;
+        for (int i = 0; i < itemCosts.length; i++){
+            itemCosts[i] = 0;
+            itemAmounts[i] = 0;
+        }
 
         //Setting items allowed in special slot
         specialSlotItems[0] = ModItems.itemBanknote;
@@ -266,8 +270,13 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
         compound.setString("owner", owner);
 
         NBTTagCompound itemCostsNBT = new NBTTagCompound();
-        for (int i = 0; i < itemCosts.length; i++) itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
+        NBTTagCompound itemAmountsNBT = new NBTTagCompound();
+        for (int i = 0; i < itemCosts.length; i++){
+            itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
+            itemAmountsNBT.setInteger("amount" + i, itemAmounts[i]);
+        }
         compound.setTag("itemCosts", itemCostsNBT);
+        compound.setTag("itemAmounts", itemAmountsNBT);
 
         return compound;
     }
@@ -293,6 +302,11 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
         if (compound.hasKey("itemCosts")) {
             NBTTagCompound itemCostsNBT = compound.getCompoundTag("itemCosts");
             for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = itemCostsNBT.getInteger("cost" + i);
+        }
+
+        if (compound.hasKey("itemAmounts")) {
+            NBTTagCompound itemAmountsNBT = compound.getCompoundTag("itemAmounts");
+            for (int i = 0; i < itemAmounts.length; i++) itemAmounts[i] = itemAmountsNBT.getInteger("amount" + i);
         }
     }
 
@@ -321,6 +335,10 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
         for (int i = 0; i < itemCosts.length; i++) itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
         tag.setTag("itemCosts", itemCostsNBT);
 
+        NBTTagCompound itemAmountsNBT = new NBTTagCompound();
+        for (int i = 0; i < itemAmounts.length; i++) itemAmountsNBT.setInteger("amount" + i, itemAmounts[i]);
+        tag.setTag("itemAmounts", itemAmountsNBT);
+
         return new SPacketUpdateTileEntity(pos, 1, tag);
     }
 
@@ -341,6 +359,9 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
 
         NBTTagCompound itemCostsNBT = pkt.getNbtCompound().getCompoundTag("itemCosts");
         for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = itemCostsNBT.getInteger("cost" + i);
+
+        NBTTagCompound itemAmountsNBT = pkt.getNbtCompound().getCompoundTag("itemAmounts");
+        for (int i = 0; i < itemAmounts.length; i++) itemAmounts[i] = itemAmountsNBT.getInteger("amount" + i);
     }
     //</editor-fold>--------------------------------
 
@@ -452,6 +473,14 @@ public class TileSeller extends ModTile implements ICapabilityProvider, ITickabl
 
     @Override
     public void setItemCost(int amount) {itemCosts[selectedSlot - 37] = amount;}
+
+    public int[] getAllItemAmounts(){return itemAmounts.clone();}
+
+    public void setAllItemAmounts(int[] copy){itemAmounts = copy.clone();}
+
+    public int getItemAmount(int index) {return itemAmounts[index];}
+
+    public void setItemAmount(int amount) {itemAmounts[selectedSlot - 37] = amount;}
 
     @Override
     public ItemStack getStack(int index) {

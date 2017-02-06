@@ -1,6 +1,7 @@
 package gunn.modcurrency.common.core.network;
 
 import gunn.modcurrency.api.ModTile;
+import gunn.modcurrency.common.tiles.TileSeller;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
@@ -80,6 +81,10 @@ public class PacketSendIntData implements IMessage {
                 case 5:     //Update Client
                     ModTile te5= (ModTile) world.getTileEntity(message.blockPos);
                     te5.update(world,message.blockPos);
+                    break;
+                case 6:     //Block Seller set Amount [to server]
+                    TileSeller te6= (TileSeller) world.getTileEntity(message.blockPos);
+                    te6.setItemAmount(message.data);
             }
         }
     }
