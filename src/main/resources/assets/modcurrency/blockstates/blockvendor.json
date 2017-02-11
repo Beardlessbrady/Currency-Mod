@@ -5,7 +5,7 @@
     "model": "modcurrency:vend_bottom",
     "textures": {
       "particle": "blocks/coal_block",
-      "texture": "modcurrency:blocks/vendor/vendortexture"
+      "texture": "modcurrency:blocks/buysell/buysell_black"
     }
   },
   "variants": {
@@ -93,7 +93,7 @@
       "blue":{
         "textures": {
           "particle": "blocks/wool_colored_blue",
-          "texture": "modcurrency:blocks/vendor/vendortexture_blue"
+          "texture": "modcurrency:blocks/buysell/buysell_blue"
         }
       },
       "brown":{
