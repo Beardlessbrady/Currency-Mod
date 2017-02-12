@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -41,7 +42,10 @@ public class BakedModelVendor implements IBakedModel {
         ItemModelMesher modelMesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
         IBakedModel model = modelMesher.getItemModel(item);
 
-        quads.addAll(model.getQuads(state, side, rand));
+
+       // ModelLoaderRegistry.getModel(model);
+
+       // quads.addAll(model.getQuads(state, side, rand));
 
 
         return quads;

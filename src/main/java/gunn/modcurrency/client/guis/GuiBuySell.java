@@ -6,6 +6,7 @@ import gunn.modcurrency.common.core.handler.PacketHandler;
 import gunn.modcurrency.common.core.network.PacketSendIntData;
 import gunn.modcurrency.common.core.network.PacketSendItemToServer;
 import gunn.modcurrency.common.core.util.CustomButton;
+import gunn.modcurrency.common.core.util.TabButtonList;
 import gunn.modcurrency.common.tiles.TileSeller;
 import gunn.modcurrency.common.tiles.TileVendor;
 import net.minecraft.client.Minecraft;
@@ -37,6 +38,7 @@ public class GuiBuySell extends GuiContainer {
     private ModTile tile;
     private GuiTextField nameField, amountField;
     private boolean creativeExtended;
+    private TabButtonList tabList;
     int yOffset = 0;
     
     private String header;
@@ -269,14 +271,19 @@ public class GuiBuySell extends GuiContainer {
 
         if(tile instanceof TileVendor) if(tile.getField(2) == 1) ChangeButton = "Profit";
         if(tile instanceof TileSeller) ChangeButton = "Cash";
-        
+
+
+        tabList = new TabButtonList(this.buttonList, i - 21, j + 20);
         this.buttonList.add(new GuiButton(0, i + 103, j + 7, 45, 20, ChangeButton));
 
         if (tile.getField(2) == 1) {
-            this.buttonList.add(new CustomButton(1, i - 21, j + 20, 0, 21, 21, 22, "", TAB_TEXTURE));   //Lock Tab
-            this.buttonList.add(new CustomButton(2, i - 21, j + 43, 0, 0, 21, 21, "", TAB_TEXTURE));   //Gear Tab
+            tabList.addTab("Lock", TAB_TEXTURE, 0, 21, 1);
+            tabList.addTab("Gear", TAB_TEXTURE, 0, 0, 2);
+            if(tile instanceof TileVendor) tabList.setOpenState("Gear", 26);
+            if(tile instanceof TileSeller) tabList.setOpenState("Gear", 31);
             if(tile.getField(5) == 1) {
-                this.buttonList.add(new CustomButton(3, i - 21, j + 65, 0, 44, 21, 21, "", TAB_TEXTURE));   //Creative Tab
+                tabList.addTab("Creative", TAB_TEXTURE, 0, 44, 3);
+                tabList.setOpenState("Creative", 26);
                 this.buttonList.add(new GuiButton(4, i + 198, j + 85, 45, 20, "BORKED"));
                 this.buttonList.get(4).visible = false;
             }
@@ -322,14 +329,12 @@ public class GuiBuySell extends GuiContainer {
         //Draw Creative Icon
         if(tile.getField(5) == 1) {
             if(tile.getField(8) == 0) {
-                this.buttonList.set(3,(new CustomButton(3, i - 21, j + 65, 0, 44, 21, 21, "", TAB_TEXTURE)));   //Creative Tab
                 if(creativeExtended && tile.getField(5) == 1) {
                     this.buttonList.set(4,(new GuiButton(4, i - 69, j + 85, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
                     drawTexturedModalRect(-91, 65, 27, 48, 91, 47);
                 }else if(!creativeExtended && tile.getField(5) == 1) this.buttonList.get(4).visible = false;
                 drawTexturedModalRect(-21, 71, 237, 48, 19, 9);
             }else{
-                this.buttonList.set(3,(new CustomButton(3, i -21, j + 91 + yOffset, 0, 44, 21, 21, "", TAB_TEXTURE)));   //Creative Tab
                  if(creativeExtended  && tile.getField(5) == 1) {
                      this.buttonList.set(4,(new GuiButton(4, i - 69, j + 111 + yOffset, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
                      drawTexturedModalRect(-91, 91 + yOffset, 27, 48, 91, 47);
@@ -440,8 +445,8 @@ public class GuiBuySell extends GuiContainer {
                 tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
                 break;
             case 2: //Gear Button
-                int newGear = 0;
-                newGear = tile.getField(8) == 1 ? 0 : 1;
+                tabList.checkOpenState("Gear", tile.getField(8) == 0);
+                int newGear = tile.getField(8) == 1 ? 0 : 1;
                 PacketSendIntData pack2 = new PacketSendIntData();
                 pack2.setData(newGear, tile.getPos(), 4);
                 PacketHandler.INSTANCE.sendToServer(pack2);
