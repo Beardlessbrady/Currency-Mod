@@ -41,7 +41,7 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
 
     private int bank, profit, selectedSlot, face, walletTotal;
     private String owner, selectedName;
-    private boolean locked, mode, creative, infinite, gearExtended, walletIn;
+    private boolean locked, mode, creative, infinite, gearExtended, walletIn, fuzzy;
     private int[] itemCosts = new int[VEND_SLOT_COUNT];
     private ItemStackHandler inputStackHandler = new ItemStackHandler(INPUT_SLOT_COUNT);
     private ItemStackHandler vendStackHandler = new ItemStackHandler(VEND_SLOT_COUNT);
@@ -64,6 +64,7 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
         infinite = false;
         gearExtended = false;
         walletIn = false;
+        fuzzy = true;
 
         for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = 0;
 
@@ -295,6 +296,7 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
         compound.setBoolean("infinite", infinite);
         compound.setBoolean("gearExtended", gearExtended);
         compound.setBoolean("walletIn", walletIn);
+        compound.setBoolean("fuzzy", fuzzy);
         compound.setInteger("selectedSlot", selectedSlot);
         compound.setString("selectedName", selectedName);
         compound.setString("owner", owner);
@@ -322,6 +324,7 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
         if (compound.hasKey("infinite")) infinite = compound.getBoolean("infinite");
         if (compound.hasKey("gearExtended")) gearExtended = compound.getBoolean("gearExtended");
         if (compound.hasKey("walletIn")) walletIn = compound.getBoolean("walletIn");
+        if (compound.hasKey("fuzzy")) fuzzy = compound.getBoolean("fuzzy");
         if (compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
         if (compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
         if (compound.hasKey("owner")) owner = compound.getString("owner");
@@ -351,6 +354,7 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
         tag.setBoolean("infinite", infinite);
         tag.setBoolean("gearExtended", gearExtended);
         tag.setBoolean("walletIn", walletIn);
+        tag.setBoolean("fuzzy", fuzzy);
         tag.setInteger("selectedSlot", selectedSlot);
         tag.setString("selectedName", selectedName);
         tag.setString("owner", owner);
@@ -375,6 +379,7 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
         infinite = pkt.getNbtCompound().getBoolean("infinite");
         gearExtended = pkt.getNbtCompound().getBoolean("gearExtended");
         walletIn = pkt.getNbtCompound().getBoolean("walletIn");
+        fuzzy = pkt.getNbtCompound().getBoolean("fuzzy");
         selectedSlot = pkt.getNbtCompound().getInteger("selectedSlot");
         selectedName = pkt.getNbtCompound().getString("selectedName");
         owner = pkt.getNbtCompound().getString("owner");
@@ -415,7 +420,7 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
     //<editor-fold desc="Getter & Setter Methods---------------------------------------------------------------------------------------------">
     @Override
     public int getFieldCount() {
-        return 11;
+        return 12;
     }
 
     @Override
@@ -453,6 +458,9 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
                 break;
             case 10:
                 break;
+            case 11:
+                fuzzy = (value == 1);
+                break;
         }
     }
 
@@ -485,6 +493,8 @@ public class TileVendor extends ModTile implements ICapabilityProvider, ITickabl
                 return (walletIn) ? 1 : 0;
             case 10:
                 return walletTotal;
+            case 11:
+                return (fuzzy) ? 1 : 0;
         }
         return -1;
     }

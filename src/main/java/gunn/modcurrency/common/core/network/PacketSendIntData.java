@@ -58,7 +58,7 @@ public class PacketSendIntData implements IMessage {
             EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
             World world = playerEntity.world;
             switch (message.mode) {
-                case 0:     //BlockVendor set Lock [to server]
+                case 0:     //BlockBuy set Lock [to server]
                     ModTile te0= (ModTile) world.getTileEntity(message.blockPos);
                     te0.setField(1, message.data);
                     break;
@@ -85,6 +85,11 @@ public class PacketSendIntData implements IMessage {
                 case 6:     //Block Seller set Amount [to server]
                     TileSeller te6= (TileSeller) world.getTileEntity(message.blockPos);
                     te6.setItemAmount(message.data);
+                    break;
+                case 7:     //BlockBuy set Fuzzy [to server]
+                    ModTile te7= (ModTile) world.getTileEntity(message.blockPos);
+                    te7.setField(11, message.data);
+                    break;
             }
         }
     }

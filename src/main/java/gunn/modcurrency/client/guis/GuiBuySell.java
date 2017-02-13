@@ -265,11 +265,20 @@ public class GuiBuySell extends GuiContainer {
 
         //Draw Fuzzy Icons
         if(tile.getField(8) == 0){
-            drawTexturedModalRect(-17, 69, 241, 70, 15, 13);
+            if(tile.getField(11) == 1) {
+                drawTexturedModalRect(-17, 69, 241, 70, 15, 13);
+            } else {
+                drawTexturedModalRect(-16, 70, 243, 58, 13, 12);
+
+            }
         }else{
             int yPos = 100;
-            if(tile instanceof TileVendor) yPos = 95;
-            drawTexturedModalRect(-17, yPos, 241, 70, 15, 13);
+            if (tile instanceof TileVendor) yPos = 95;
+            if(tile.getField(11) == 1) {
+                drawTexturedModalRect(-17, yPos, 241, 70, 15, 13);
+            } else {
+                drawTexturedModalRect(-16, yPos +1, 243, 58, 13, 12);
+            }
         }
 
         //Draw Creative Icon
@@ -480,7 +489,6 @@ public class GuiBuySell extends GuiContainer {
                 PacketSendIntData pack1 = new PacketSendIntData();
                 pack1.setData((tile.getField(1) == 1) ? 0 : 1, tile.getPos(), 0);
                 PacketHandler.INSTANCE.sendToServer(pack1);
-
                 tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
                 break;
             case 2: //Gear Button
@@ -498,6 +506,10 @@ public class GuiBuySell extends GuiContainer {
                 pack4.setData((tile.getField(6) == 1) ? 0 : 1, tile.getPos(), 3);
                 PacketHandler.INSTANCE.sendToServer(pack4);
                 break;
+            case 5:
+                PacketSendIntData pack5 = new PacketSendIntData();
+                pack5.setData((tile.getField(11) == 1) ? 0 : 1, tile.getPos(), 7);
+                PacketHandler.INSTANCE.sendToServer(pack5);
         }
     }
 }
