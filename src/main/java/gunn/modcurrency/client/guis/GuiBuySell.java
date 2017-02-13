@@ -96,6 +96,16 @@ public class GuiBuySell extends GuiContainer {
         }
     }
 
+    @Override
+    public void onResize(Minecraft mcIn, int w, int h) {
+        super.onResize(mcIn, w, h);
+        PacketSendIntData pack2 = new PacketSendIntData();
+        pack2.setData(0, tile.getPos(), 4);
+        PacketHandler.INSTANCE.sendToServer(pack2);
+
+        creativeExtended = false;
+    }
+
     //<editor-fold desc="Drawing Gui Assets--------------------------------------------------------------------------------------------------">
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
@@ -277,12 +287,12 @@ public class GuiBuySell extends GuiContainer {
         this.buttonList.add(new GuiButton(0, i + 103, j + 7, 45, 20, ChangeButton));
 
         if (tile.getField(2) == 1) {
-            tabList.addTab("Lock", TAB_TEXTURE, 0, 21, 1);
-            tabList.addTab("Gear", TAB_TEXTURE, 0, 0, 2);
+            tabList.addTab("Lock", TAB_TEXTURE, 0, 21, 1, j);
+            tabList.addTab("Gear", TAB_TEXTURE, 0, 0, 2, j);
             if(tile instanceof TileVendor) tabList.setOpenState("Gear", 26);
             if(tile instanceof TileSeller) tabList.setOpenState("Gear", 31);
             if(tile.getField(5) == 1) {
-                tabList.addTab("Creative", TAB_TEXTURE, 0, 44, 3);
+                tabList.addTab("Creative", TAB_TEXTURE, 0, 44, 3, j);
                 tabList.setOpenState("Creative", 26);
                 this.buttonList.add(new GuiButton(4, i + 198, j + 85, 45, 20, "BORKED"));
                 this.buttonList.get(4).visible = false;
@@ -430,6 +440,7 @@ public class GuiBuySell extends GuiContainer {
     @Override
     //Button Actions
     protected void actionPerformed(GuiButton button) throws IOException {
+        int j = (this.height - this.ySize) / 2;
 
         switch (button.id) {
             case 0:         //Change Button

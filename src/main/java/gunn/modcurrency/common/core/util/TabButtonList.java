@@ -2,6 +2,7 @@ package gunn.modcurrency.common.core.util;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.ResourceLocation;
+import scala.Int;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,13 +14,13 @@ import java.util.List;
  * File Created on 2017-02-12
  */
 public class TabButtonList {
-    ArrayList<TabButton> tabButtonList = new ArrayList<TabButton>();
     int startX, startY;
     int nextY = 0;
     int tabAmnt = 0;
     List<GuiButton> buttonList;
-    ArrayList<String> tabOrder = new ArrayList<String>();   //Top to Bottom
-    ArrayList<Integer> tabExt = new ArrayList<Integer>();   //Top to Bottom
+    ArrayList<String> tabOrder = new ArrayList();   //Top to Bottom
+    ArrayList<Integer> tabExt = new ArrayList();   //Top to Bottom
+    ArrayList<Integer> tabDefaultY = new ArrayList();
 
     public TabButtonList(List<GuiButton> buttonList, int startX, int startY){
         this.startX = startX;
@@ -27,10 +28,11 @@ public class TabButtonList {
         this.buttonList = buttonList;
     }
 
-    public void addTab(String name, ResourceLocation textureLoc, int textureX, int textureY, int buttonId){
+    public void addTab(String name, ResourceLocation textureLoc, int textureX, int textureY, int buttonId, int yScreenSize){
         if(nextY == 0) nextY = startY;
 
         this.buttonList.add(new TabButton(name, buttonId, startX, nextY, textureX, textureY, 21, 22, "", textureLoc));
+        tabDefaultY.add(nextY - startY);
 
         tabAmnt++;
         if(tabAmnt == 1){
@@ -57,11 +59,13 @@ public class TabButtonList {
                             currentButton = ((TabButton) buttonList.get(k));
 
                             if (currentButton.name == nextTab) {
-                                System.out.println(tabExt.get(i));
+                                System.out.println(tabDefaultY.get(i));
                                 if (booleanVar) {
-                                    buttonList.set(k, new TabButton(currentButton.name, currentButton.buttonid, currentButton.xPosition, currentButton.yPosition + tabExt.get(i), currentButton.minU, currentButton.minV, 21, 22, "", currentButton.textureLoc));
+                                    buttonList.set(k, new TabButton(currentButton.name, currentButton.buttonid, currentButton.xPosition, tabDefaultY.get(j) + startY + tabExt.get(i), currentButton.minU, currentButton.minV, 21, 22, "", currentButton.textureLoc));
                                 } else {
-                                    buttonList.set(k, new TabButton(currentButton.name, currentButton.buttonid, currentButton.xPosition, currentButton.yPosition - tabExt.get(i), currentButton.minU, currentButton.minV, 21, 22, "", currentButton.textureLoc));
+                                    System.out.println(j + "Tab");
+
+                                    buttonList.set(k, new TabButton(currentButton.name, currentButton.buttonid, currentButton.xPosition, tabDefaultY.get(j) + startY, currentButton.minU, currentButton.minV, 21, 22, "", currentButton.textureLoc));
                                 }
                             }
                         }
@@ -69,7 +73,6 @@ public class TabButtonList {
                 }
             }
         }
-
     }
 
     public void setOpenState(String buttonName, int height){
@@ -77,5 +80,4 @@ public class TabButtonList {
             if(tabOrder.get(i) == buttonName) tabExt.set(i, height);
         }
     }
-
 }
