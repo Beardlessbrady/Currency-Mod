@@ -28,7 +28,7 @@ public class TabButtonList {
         this.buttonList = buttonList;
     }
 
-    public void addTab(String name, ResourceLocation textureLoc, int textureX, int textureY, int buttonId, int yScreenSize){
+    public void addTab(String name, ResourceLocation textureLoc, int textureX, int textureY, int buttonId){
         if(nextY == 0) nextY = startY;
 
         this.buttonList.add(new TabButton(name, buttonId, startX, nextY, textureX, textureY, 21, 22, "", textureLoc));
@@ -59,12 +59,9 @@ public class TabButtonList {
                             currentButton = ((TabButton) buttonList.get(k));
 
                             if (currentButton.name == nextTab) {
-                                System.out.println(tabDefaultY.get(i));
                                 if (booleanVar) {
                                     buttonList.set(k, new TabButton(currentButton.name, currentButton.buttonid, currentButton.xPosition, tabDefaultY.get(j) + startY + tabExt.get(i), currentButton.minU, currentButton.minV, 21, 22, "", currentButton.textureLoc));
                                 } else {
-                                    System.out.println(j + "Tab");
-
                                     buttonList.set(k, new TabButton(currentButton.name, currentButton.buttonid, currentButton.xPosition, tabDefaultY.get(j) + startY, currentButton.minU, currentButton.minV, 21, 22, "", currentButton.textureLoc));
                                 }
                             }

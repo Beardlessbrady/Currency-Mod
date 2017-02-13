@@ -53,7 +53,6 @@ public class GuiBuySell extends GuiContainer {
         if(tile instanceof TileVendor) header = "tile.modcurrency:blockvendor.name";
         if(tile instanceof TileSeller){
             header = "tile.modcurrency:blockseller.name";
-            yOffset = yOffset + 5;
         }
 
     }
@@ -145,15 +144,11 @@ public class GuiBuySell extends GuiContainer {
             //<editor-fold desc="Sell Mode">
             fontRendererObj.drawString(I18n.format("Cash") + ": $" + tile.getField(0), 5, 15, Color.darkGray.getRGB());
 
-            if(tile instanceof TileVendor){
-                if(tile.getField(9) == 1) fontRendererObj.drawString(I18n.format("Wallet") + ": $" + tile.getField(10), 5, 23, Integer.parseInt("3abd0c", 16));
-            }
-
+            if(tile instanceof TileVendor) if(tile.getField(9) == 1) fontRendererObj.drawString(I18n.format("Wallet") + ": $" + tile.getField(10), 5, 23, Integer.parseInt("3abd0c", 16));
 
             String fundAmount = Integer.toString(tile.getField(4));
             if (tile.getField(6) == 1) fundAmount = "Infinite";
-            if (tile instanceof TileSeller)
-                fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.funds") + ": " + "$" + fundAmount, 5, 23, Color.darkGray.getRGB());
+            if (tile instanceof TileSeller) fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.funds") + ": " + "$" + fundAmount, 5, 23, Color.darkGray.getRGB());
 
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
@@ -165,14 +160,17 @@ public class GuiBuySell extends GuiContainer {
 
             String profitName = "tile.modcurrency:guisell.profit";
             String profitAmnt = Integer.toString(tile.getField(4));
+
             if (tile instanceof TileSeller) {
                 profitName = "tile.modcurrency:guisell.funds";
                 if (tile.getField(6) == 1) profitAmnt = "Infinite";
                 if(tile.getField(8) == 1){
+                    yOffset = 31;
                     fontRendererObj.drawString(I18n.format("Amount:"), -84, 83, Integer.parseInt("211d1b", 16));
                     fontRendererObj.drawString(I18n.format("Amount:"), -83, 82, Color.lightGray.getRGB());
-                }
+                }else yOffset = 0;
             }
+
             fontRendererObj.drawString(I18n.format(profitName) + ": $" + profitAmnt, 5, 16, Color.darkGray.getRGB());
 
             if (tile.getField(8) == 1) {
@@ -191,13 +189,8 @@ public class GuiBuySell extends GuiContainer {
                 GL11.glPopMatrix();
             }
             if (creativeExtended) {
-                if (tile.getField(8) == 0) {
-                    fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.tabs.infinity.infinitestock"), -86, 73, Integer.parseInt("42401c", 16));
-                    fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.tabs.infinity.infinitestock"), -85, 72, Integer.parseInt("fff200", 16));
-                } else {
-                    fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.tabs.infinity.infinitestock"), -86, 99, Integer.parseInt("42401c", 16));
-                    fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.tabs.infinity.infinitestock"), -85, 98, Integer.parseInt("fff200", 16));
-                }
+                fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.tabs.infinity.infinitestock"), -86, 94 + yOffset, Integer.parseInt("42401c", 16));
+                fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.tabs.infinity.infinitestock"), -85, 93 + yOffset, Integer.parseInt("fff200", 16));
             }
 
             if (j <= 41 && j >= 21 && i < 0 && i >= -21) {      //Lock Tab
@@ -213,7 +206,7 @@ public class GuiBuySell extends GuiContainer {
                 this.drawHoveringText(list, -132, ypos, fontRendererObj);
             }
 
-            if (j <= 63 && j >= 43 && i < 0 && i >= -21) {
+            if (j <= 63 && j >= 43 && i < 0 && i >= -21) {  //Gear Tab
                 List<String> list = new ArrayList<>();
                 list.add("Settings Tab");
                 list.add("Set items costs");
@@ -225,8 +218,24 @@ public class GuiBuySell extends GuiContainer {
                 this.drawHoveringText(list, -114, ypos, fontRendererObj);
             }
 
+            if (j <= 85 && j >= 65 && i < 0 && i >= -21 && tile.getField(8) == 0) {
+                List<String> list = new ArrayList<>();
+                list.add("NBT Tab");
+                list.add("Fuzzy/Specific");
+
+                this.drawHoveringText(list, -113, 77, fontRendererObj);
+            }
+
+            if (j <= 112 && j >= 92 && i < 0 && i >= -21 && tile.getField(8) == 1) {
+                List<String> list = new ArrayList<>();
+                list.add("NBT Tab");
+                list.add("Fuzzy/Specific");
+
+                this.drawHoveringText(list, -113, 112, fontRendererObj);
+            }
+
             if (tile.getField(5) == 1) {
-                if (j <= 85 && j >= 65 && i < 0 && i >= -21 && tile.getField(8) == 0) {
+                if (j <= 108 && j >= 88 && i < 0 && i >= -21 && tile.getField(8) == 0) {
                     List<String> list = new ArrayList<>();
                     list.add("Creative Tab");
 
@@ -241,13 +250,13 @@ public class GuiBuySell extends GuiContainer {
                     }
 
                     int ypos = 0;
-                    if (!creativeExtended) ypos = 78;
+                    if (!creativeExtended) ypos = 98;
                     if (creativeExtended) ypos = 128;
 
                     this.drawHoveringText(list, xpos, ypos, fontRendererObj);
                 }
 
-                if (j <= 112 && j >= 92 && i < 0 && i >= -21 && tile.getField(8) == 1) {
+                if (j <= 139 && j >= 119 && i < 0 && i >= -21 && tile.getField(8) == 1) {
                     List<String> list = new ArrayList<>();
                     list.add("Creative Tab");
 
@@ -266,6 +275,7 @@ public class GuiBuySell extends GuiContainer {
                     if (creativeExtended) ypos = 154;
 
                     this.drawHoveringText(list, xpos, ypos, fontRendererObj);
+
                 }
             }
             //</editor-fold>
@@ -287,15 +297,16 @@ public class GuiBuySell extends GuiContainer {
         this.buttonList.add(new GuiButton(0, i + 103, j + 7, 45, 20, ChangeButton));
 
         if (tile.getField(2) == 1) {
-            tabList.addTab("Lock", TAB_TEXTURE, 0, 21, 1, j);
-            tabList.addTab("Gear", TAB_TEXTURE, 0, 0, 2, j);
+            tabList.addTab("Lock", TAB_TEXTURE, 0, 21, 1);
+            tabList.addTab("Gear", TAB_TEXTURE, 0, 0, 2);
+            tabList.addTab("Fuzzy", TAB_TEXTURE, 0, 66, 5);
             if(tile instanceof TileVendor) tabList.setOpenState("Gear", 26);
             if(tile instanceof TileSeller) tabList.setOpenState("Gear", 31);
             if(tile.getField(5) == 1) {
-                tabList.addTab("Creative", TAB_TEXTURE, 0, 44, 3, j);
+                tabList.addTab("Creative", TAB_TEXTURE, 0, 44, 3);
                 tabList.setOpenState("Creative", 26);
                 this.buttonList.add(new GuiButton(4, i + 198, j + 85, 45, 20, "BORKED"));
-                this.buttonList.get(4).visible = false;
+                this.buttonList.get(5).visible = false;
             }
             this.nameField = new GuiTextField(0, fontRendererObj, i -50, j + 72, 45, 10);        //Setting Costs
             this.nameField.setTextColor(Integer.parseInt("0099ff", 16));
@@ -338,19 +349,11 @@ public class GuiBuySell extends GuiContainer {
 
         //Draw Creative Icon
         if(tile.getField(5) == 1) {
-            if(tile.getField(8) == 0) {
-                if(creativeExtended && tile.getField(5) == 1) {
-                    this.buttonList.set(4,(new GuiButton(4, i - 69, j + 85, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
-                    drawTexturedModalRect(-91, 65, 27, 48, 91, 47);
-                }else if(!creativeExtended && tile.getField(5) == 1) this.buttonList.get(4).visible = false;
-                drawTexturedModalRect(-21, 71, 237, 48, 19, 9);
-            }else{
                  if(creativeExtended  && tile.getField(5) == 1) {
-                     this.buttonList.set(4,(new GuiButton(4, i - 69, j + 111 + yOffset, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
-                     drawTexturedModalRect(-91, 91 + yOffset, 27, 48, 91, 47);
-                 }else if (!creativeExtended && tile.getField(5) == 1) this.buttonList.get(4).visible = false;
-                 drawTexturedModalRect(-21, 97 + yOffset, 237, 48, 19, 9);
-            }
+                     this.buttonList.set(5,(new GuiButton(4, i - 69, j + 107 + yOffset, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
+                     drawTexturedModalRect(-91, 87 + yOffset, 27, 48, 91, 47);
+                 }else if (!creativeExtended && tile.getField(5) == 1) this.buttonList.get(5).visible = false;
+                 drawTexturedModalRect(-21, 93 + yOffset, 237, 48, 19, 9);
         }
 
         if(tile.getField(8) == 1) {
