@@ -108,6 +108,49 @@ public class GuiBuySell extends GuiContainer {
 
     //<editor-fold desc="Drawing Gui Assets--------------------------------------------------------------------------------------------------">
     @Override
+    public void initGui() {
+        super.initGui();
+        int i = (this.width - this.xSize) / 2;
+        int j = (this.height - this.ySize) / 2;
+        String ChangeButton = "Change";
+
+        if(tile instanceof TileVendor) if(tile.getField(2) == 1) ChangeButton = "Profit";
+        if(tile instanceof TileSeller) ChangeButton = "Cash";
+
+
+        tabList = new TabButtonList(this.buttonList, i - 21, j + 20);
+        this.buttonList.add(new GuiButton(0, i + 103, j + 7, 45, 20, ChangeButton));
+
+        if (tile.getField(2) == 1) {
+            tabList.addTab("Name", TAB_TEXTURE, 0, 88, 6);
+            tabList.addTab("Lock", TAB_TEXTURE, 0, 22, 1);
+            tabList.addTab("Gear", TAB_TEXTURE, 0, 0, 2);
+            tabList.addTab("Fuzzy", TAB_TEXTURE, 0, 66, 5);
+            tabList.setOpenState("Gear", 26);
+            if(tile.getField(5) == 1) {
+                tabList.addTab("Creative", TAB_TEXTURE, 0, 44, 3);
+                tabList.setOpenState("Creative", 26);
+                this.buttonList.add(new GuiButton(4, i + 198, j + 85, 45, 20, "BORKED"));
+                this.buttonList.get(6).visible = false;
+            }
+            this.nameField = new GuiTextField(0, fontRendererObj, i -50, j + 88, 45, 10);        //Setting Costs
+            this.nameField.setTextColor(Integer.parseInt("0099ff", 16));
+            this.nameField.setEnableBackgroundDrawing(false);
+            this.nameField.setMaxStringLength(7);
+            this.nameField.setEnabled(true);
+
+            if(tile instanceof TileSeller){
+                this.amountField = new GuiTextField(0, fontRendererObj, i -45, j + 97, 45, 10);        //Setting Costs
+                this.amountField.setTextColor(Integer.parseInt("0099ff", 16));
+                this.amountField.setEnableBackgroundDrawing(false);
+                this.amountField.setMaxStringLength(7);
+                this.amountField.setEnabled(true);
+            }
+            updateTextField();
+        }
+    }
+
+    @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
         if (tile.getField(8) == 1 && tile.getField(2) == 1) {
@@ -161,8 +204,6 @@ public class GuiBuySell extends GuiContainer {
             //<editor-fold desc="Edit Mode">
             drawIcons();
             drawSelectionOverlay();
-            drawToolTips(i, j);
-            /*
 
             String profitName = "tile.modcurrency:guisell.profit";
             String profitAmnt = Integer.toString(tile.getField(4));
@@ -170,40 +211,37 @@ public class GuiBuySell extends GuiContainer {
             if (tile instanceof TileSeller) {
                 profitName = "tile.modcurrency:guisell.funds";
                 if (tile.getField(6) == 1) profitAmnt = "Infinite";
-                if(tile.getField(8) == 1){
-                    fontRendererObj.drawString(I18n.format("Amount:"), -84, 83, Integer.parseInt("211d1b", 16));
-                    fontRendererObj.drawString(I18n.format("Amount:"), -83, 82, Color.lightGray.getRGB());
+                if (tile.getField(8) == 1){
+                    fontRendererObj.drawString(I18n.format("Amount:"), -84, 98, Integer.parseInt("211d1b", 16));
+                    fontRendererObj.drawString(I18n.format("Amount:"), -83, 97, Color.lightGray.getRGB());
                 }
             }
 
             fontRendererObj.drawString(I18n.format(profitName) + ": $" + profitAmnt, 5, 16, Color.darkGray.getRGB());
 
             if (tile.getField(8) == 1) {
-                yOffset = 31;
-                fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.slotsettings"), -81, 51, Integer.parseInt("42401c", 16));
-                fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.slotsettings"), -80, 50, Integer.parseInt("fff200", 16));
-                fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.cost"), -84, 73, Integer.parseInt("211d1b", 16));
-                fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.cost"), -83, 72, Color.lightGray.getRGB());
-                fontRendererObj.drawString(I18n.format("$"), -57, 72, Integer.parseInt("0099ff", 16));
+                yOffset = 26;
+                fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.slotsettings"), -81, 71, Integer.parseInt("42401c", 16));
+                fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.slotsettings"), -80, 70, Integer.parseInt("fff200", 16));
+                fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.cost"), -84, 88, Integer.parseInt("211d1b", 16));
+                fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.cost"), -83, 87, Color.lightGray.getRGB());
+                fontRendererObj.drawString(I18n.format("$"), -57, 88, Integer.parseInt("0099ff", 16));
 
                 String selectedName = tile.getSelectedName();
 
                 GL11.glPushMatrix();
                 GL11.glScaled(0.7, 0.7, 0.7);
-                fontRendererObj.drawString(I18n.format("[" + selectedName + "]"), -117, 91, Integer.parseInt("001f33", 16));
-                fontRendererObj.drawString(I18n.format("[" + selectedName + "]"), -118, 90, Integer.parseInt("0099ff", 16));
+                fontRendererObj.drawString(I18n.format("[" + selectedName + "]"), -117, 115, Integer.parseInt("001f33", 16));
+                fontRendererObj.drawString(I18n.format("[" + selectedName + "]"), -118, 114, Integer.parseInt("0099ff", 16));
                 GL11.glPopMatrix();
             }else yOffset = 0;
             if (creativeExtended) {
-                int yPos = 93;
-                if(tile instanceof TileVendor) yPos = yPos -5;
-                fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.tabs.infinity.infinitestock"), -86, yPos +1 + yOffset, Integer.parseInt("42401c", 16));
-                fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.tabs.infinity.infinitestock"), -85, yPos + yOffset, Integer.parseInt("fff200", 16));
+                fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.tabs.infinity.infinitestock"), -86, 115 + yOffset, Integer.parseInt("42401c", 16));
+                fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.tabs.infinity.infinitestock"), -85, 114 + yOffset, Integer.parseInt("fff200", 16));
             }
 
-
+            drawToolTips(i, j);
             //</editor-fold>
-            */
         }
 
     }
@@ -218,10 +256,8 @@ public class GuiBuySell extends GuiContainer {
             int tabLoc = 22 * (k + 1);
 
             int offSet2 = 0;
-            int vendOffset = 0;
             if (tile.getField(8) == 1){
-                offSet2 = 31;
-                if(tile instanceof TileVendor) vendOffset = -5;
+                offSet2 = 26;
             }
 
             switch (k) {
@@ -237,27 +273,26 @@ public class GuiBuySell extends GuiContainer {
                 case 2:
                     if (tile.getField(8) == 1) {
                         drawTexturedModalRect(-91, tabLoc - 2, 27, 0, 91, 47);
-                        if (tile instanceof TileSeller) drawTexturedModalRect(-91, tabLoc + 41, 27, 38, 91, 9);
                     }
                     drawTexturedModalRect(-19, tabLoc, 236, 19, 19, 16); //Icon
                     break;
                 case 3:
                     if (tile.getField(11) == 1) {
-                        drawTexturedModalRect(-19, tabLoc + offSet2 + vendOffset, 236, 55, 19, 16);
-                    } else drawTexturedModalRect(-19, tabLoc + offSet2 + vendOffset, 216, 55, 19, 16);
+                        drawTexturedModalRect(-19, tabLoc + offSet2, 236, 55, 19, 16);
+                    } else drawTexturedModalRect(-19, tabLoc + offSet2, 216, 55, 19, 16);
                     break;
                 case 4:
                     if (tile.getField(5) == 1) {
                         if(tile.getField(8) == 1){
-                            yOffset = 31;
+                            yOffset = 26;
                         }else yOffset = 0;
                         if (creativeExtended) {
-                            drawTexturedModalRect(-91, tabLoc - 2 + yOffset + vendOffset, 27, 48, 91, 47);
-                            this.buttonList.set(6, (new GuiButton(4, i - 69, tabLoc + 47 + yOffset + vendOffset, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
+                            drawTexturedModalRect(-91, tabLoc + yOffset -2, 27, 48, 91, 47);
+                            this.buttonList.set(6, (new GuiButton(4, i - 69, tabLoc + 47 + yOffset, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
                         } else {
                             this.buttonList.get(6).visible = false;
                         }
-                        drawTexturedModalRect(-19, tabLoc + offSet2 + vendOffset, 236, 37, 19, 16);
+                        drawTexturedModalRect(-19, tabLoc + offSet2, 236, 37, 19, 16);
                     }
                     break;
             }
@@ -382,52 +417,6 @@ public class GuiBuySell extends GuiContainer {
     }
 
     @Override
-    public void initGui() {
-        super.initGui();
-        int i = (this.width - this.xSize) / 2;
-        int j = (this.height - this.ySize) / 2;
-        String ChangeButton = "Change";
-
-        if(tile instanceof TileVendor) if(tile.getField(2) == 1) ChangeButton = "Profit";
-        if(tile instanceof TileSeller) ChangeButton = "Cash";
-
-
-        tabList = new TabButtonList(this.buttonList, i - 21, j + 20);
-        this.buttonList.add(new GuiButton(0, i + 103, j + 7, 45, 20, ChangeButton));
-
-        if (tile.getField(2) == 1) {
-            tabList.addTab("Name", TAB_TEXTURE, 0, 88, 6);
-            tabList.addTab("Lock", TAB_TEXTURE, 0, 22, 1);
-            tabList.addTab("Gear", TAB_TEXTURE, 0, 0, 2);
-            tabList.addTab("Fuzzy", TAB_TEXTURE, 0, 66, 5);
-            if(tile instanceof TileVendor) tabList.setOpenState("Gear", 26);
-            if(tile instanceof TileSeller) tabList.setOpenState("Gear", 31);
-            if(tile.getField(5) == 1) {
-                tabList.addTab("Creative", TAB_TEXTURE, 0, 44, 3);
-                tabList.setOpenState("Creative", 26);
-                this.buttonList.add(new GuiButton(4, i + 198, j + 85, 45, 20, "BORKED"));
-                this.buttonList.get(6).visible = false;
-            }
-            this.nameField = new GuiTextField(0, fontRendererObj, i -50, j + 72, 45, 10);        //Setting Costs
-            this.nameField.setTextColor(Integer.parseInt("0099ff", 16));
-            this.nameField.setEnableBackgroundDrawing(false);
-            this.nameField.setMaxStringLength(7);
-            this.nameField.setEnabled(true);
-
-            if(tile instanceof TileSeller){
-                this.amountField = new GuiTextField(0, fontRendererObj, i -45, j + 82, 45, 10);        //Setting Costs
-                this.amountField.setTextColor(Integer.parseInt("0099ff", 16));
-                this.amountField.setEnableBackgroundDrawing(false);
-                this.amountField.setMaxStringLength(7);
-                this.amountField.setEnabled(true);
-            }
-            updateTextField();
-        }
-    }
-
-
-
-    @Override
     protected void renderToolTip(ItemStack stack, int x, int y) {
         int i = (x - (this.width - this.xSize) / 2);
         int j = (y - (this.height - this.ySize) / 2);
@@ -474,7 +463,7 @@ public class GuiBuySell extends GuiContainer {
         int numChar = Character.getNumericValue(typedChar);
         if ((tile.getField(2) == 1) && ((numChar >= 0 && numChar <= 9) || (keyCode == 14) || keyCode == 211 || (keyCode == 203) || (keyCode == 205))) { //Ensures keys input are only numbers or backspace type keys
             if (this.nameField.textboxKeyTyped(typedChar, keyCode)) setCost();
-            if (this.amountField.textboxKeyTyped(typedChar, keyCode)) setAmount();
+            if(tile instanceof TileSeller) if (this.amountField.textboxKeyTyped(typedChar, keyCode)) setAmount();
         } else {
             super.keyTyped(typedChar, keyCode);
         }
