@@ -13,6 +13,7 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -23,6 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -32,7 +34,9 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.items.ItemStackHandler;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Distributed with the Currency-Mod for Minecraft.
@@ -40,7 +44,11 @@ import java.util.ArrayList;
  *
  * File Created on 2016-10-30.
  */
-public class BlockVendor extends Block implements ITileEntityProvider {
+public class BlockVendor extends Block implements ITileEntityProvider{
+    private static final AxisAlignedBB BOUND_BOX_N = new AxisAlignedBB(0.03125, 0, 0.28125, 0.96875, 1, 1);
+    private static final AxisAlignedBB BOUND_BOX_E = new AxisAlignedBB(0.03125, 0, 0.71875, 0.96875, 1, 0);
+    private static final AxisAlignedBB BOUND_BOX_S = new AxisAlignedBB(0.03125, 0, 0.71875, 0.96875, 1, 0);
+    private static final AxisAlignedBB BOUND_BOX_W = new AxisAlignedBB(0.03125, 0, 0.71875, 0.96875, 1, 0);
     
     public BlockVendor() {
         super(Material.ROCK);
@@ -88,6 +96,41 @@ public class BlockVendor extends Block implements ITileEntityProvider {
                 ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), i, new ModelResourceLocation(getRegistryName(), "color=" + EnumDyeColor.byDyeDamage(i) + ",facing=north,item=true,open=false"));
             }
         }
+    }
+
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos){
+        EnumFacing facing = state.getValue(StateHandler.FACING);
+        System.out.println(facing);
+
+        switch(facing){
+            default:
+            case NORTH: return BOUND_BOX_N;
+            case EAST: return BOUND_BOX_E;
+            case SOUTH: return BOUND_BOX_S;
+            case WEST: return BOUND_BOX_W;
+        }
+    }
+
+    @Override
+    public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, Entity entityIn, boolean p_185477_7_) {
+        EnumFacing facing = state.getValue(StateHandler.FACING);
+        System.out.println(facing);
+
+        switch(facing){
+            case NORTH: super.addCollisionBoxToList(pos, entityBox, collidingBoxes, BOUND_BOX_N);
+                break;
+            case EAST: super.addCollisionBoxToList(pos, entityBox, collidingBoxes, BOUND_BOX_E);
+                break;
+            case SOUTH: super.addCollisionBoxToList(pos, entityBox, collidingBoxes, BOUND_BOX_S);
+                break;
+            case WEST: super.addCollisionBoxToList(pos, entityBox, collidingBoxes, BOUND_BOX_W);
+        }
+    }
+
+    @Override
+    public boolean isFullCube(IBlockState state) {
+        return false;
     }
 
     @Override
@@ -215,6 +258,7 @@ public class BlockVendor extends Block implements ITileEntityProvider {
     public int damageDropped(IBlockState state) {
         return getMetaFromState(state);
     }
+
     //<editor-fold desc="Block States--------------------------------------------------------------------------------------------------------">
     @Override
     protected BlockStateContainer createBlockState() {
