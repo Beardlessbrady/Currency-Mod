@@ -36,10 +36,10 @@ public class GuiBuySell extends GuiContainer {
     private static final ResourceLocation TAB_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/guivendortabtexture.png");
     private ModTile tile;
     private GuiTextField nameField, amountField;
-    private boolean creativeExtended;
+    private boolean creativeExtended, nameExtended;
     private TabButtonList tabList;
     int yOffset = 0;
-    
+
     private String header;
 
     public GuiBuySell(InventoryPlayer invPlayer, ModTile te) {
@@ -48,14 +48,15 @@ public class GuiBuySell extends GuiContainer {
         xSize = 176;
         ySize = 235;
         creativeExtended = false;
+        nameExtended = false;
 
-        if(tile instanceof TileVendor) header = "tile.modcurrency:blockvendor.name";
-        if(tile instanceof TileSeller){
+        if (tile instanceof TileVendor) header = "tile.modcurrency:blockvendor.name";
+        if (tile instanceof TileSeller) {
             header = "tile.modcurrency:blockseller.name";
         }
 
     }
-    
+
     //Sends packet of new cost to server
     private void setCost() {
         if (this.nameField.getText().length() > 0) {
@@ -72,7 +73,7 @@ public class GuiBuySell extends GuiContainer {
     private void setAmount() {
         if (this.amountField.getText().length() > 0) {
             int newAmount = Integer.valueOf(this.amountField.getText());
-            if(Integer.valueOf(this.amountField.getText()) == 0) newAmount = -1;
+            if (Integer.valueOf(this.amountField.getText()) == 0) newAmount = -1;
 
             PacketSendIntData pack = new PacketSendIntData();
             pack.setData(newAmount, tile.getPos(), 6);
@@ -84,11 +85,11 @@ public class GuiBuySell extends GuiContainer {
 
     //Updates Cost text field
     private void updateTextField() {
-        this.nameField.setText(String.valueOf(tile.getItemCost(tile.getField(3) -37)));
-        if(tile instanceof TileSeller){
-            if(((TileSeller) tile).getItemAmount(tile.getField(3) -37) == -1){
+        this.nameField.setText(String.valueOf(tile.getItemCost(tile.getField(3) - 37)));
+        if (tile instanceof TileSeller) {
+            if (((TileSeller) tile).getItemAmount(tile.getField(3) - 37) == -1) {
                 this.amountField.setText("∞");
-            }else {
+            } else {
                 this.amountField.setText(String.valueOf(((TileSeller) tile).getItemAmount(tile.getField(3) - 37)));
             }
         }
@@ -102,15 +103,16 @@ public class GuiBuySell extends GuiContainer {
         PacketHandler.INSTANCE.sendToServer(pack2);
 
         creativeExtended = false;
+        nameExtended = false;
     }
 
     //<editor-fold desc="Drawing Gui Assets--------------------------------------------------------------------------------------------------">
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
-        if (tile.getField(8) == 1 && tile.getField(2) == 1){
+        if (tile.getField(8) == 1 && tile.getField(2) == 1) {
             nameField.drawTextBox();
-            if(tile instanceof TileSeller) amountField.drawTextBox();
+            if (tile instanceof TileSeller) amountField.drawTextBox();
         }
     }
 
@@ -120,13 +122,13 @@ public class GuiBuySell extends GuiContainer {
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
         //Draw Input Icons
-        if(tile instanceof TileVendor){
-            if(tile.getField(2) == 0) drawTexturedModalRect(guiLeft + 152, guiTop + 9, 198, 0, 15,15);
-            if(tile.getField(2) == 1) drawTexturedModalRect(guiLeft + 152, guiTop + 9, 215, 0, 15,15);
+        if (tile instanceof TileVendor) {
+            if (tile.getField(2) == 0) drawTexturedModalRect(guiLeft + 152, guiTop + 9, 198, 0, 15, 15);
+            if (tile.getField(2) == 1) drawTexturedModalRect(guiLeft + 152, guiTop + 9, 215, 0, 15, 15);
         }
-        if(tile instanceof TileSeller){
-            if(tile.getField(2) == 0) drawTexturedModalRect(guiLeft + 152, guiTop + 9, 198, 17, 15,15);
-            if(tile.getField(2) == 1) drawTexturedModalRect(guiLeft + 152, guiTop + 9, 198, 0, 15,15);
+        if (tile instanceof TileSeller) {
+            if (tile.getField(2) == 0) drawTexturedModalRect(guiLeft + 152, guiTop + 9, 198, 17, 15, 15);
+            if (tile.getField(2) == 1) drawTexturedModalRect(guiLeft + 152, guiTop + 9, 198, 0, 15, 15);
         }
     }
 
@@ -143,11 +145,13 @@ public class GuiBuySell extends GuiContainer {
             //<editor-fold desc="Sell Mode">
             fontRendererObj.drawString(I18n.format("Cash") + ": $" + tile.getField(0), 5, 15, Color.darkGray.getRGB());
 
-            if(tile instanceof TileVendor) if(tile.getField(9) == 1) fontRendererObj.drawString(I18n.format("Wallet") + ": $" + tile.getField(10), 5, 23, Integer.parseInt("3abd0c", 16));
+            if (tile instanceof TileVendor) if (tile.getField(9) == 1)
+                fontRendererObj.drawString(I18n.format("Wallet") + ": $" + tile.getField(10), 5, 23, Integer.parseInt("3abd0c", 16));
 
             String fundAmount = Integer.toString(tile.getField(4));
             if (tile.getField(6) == 1) fundAmount = "Infinite";
-            if (tile instanceof TileSeller) fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.funds") + ": " + "$" + fundAmount, 5, 23, Color.darkGray.getRGB());
+            if (tile instanceof TileSeller)
+                fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.funds") + ": " + "$" + fundAmount, 5, 23, Color.darkGray.getRGB());
 
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
@@ -157,6 +161,7 @@ public class GuiBuySell extends GuiContainer {
             //<editor-fold desc="Edit Mode">
             drawIcons();
             drawSelectionOverlay();
+            drawToolTips(i, j);
             /*
 
             String profitName = "tile.modcurrency:guisell.profit";
@@ -196,11 +201,184 @@ public class GuiBuySell extends GuiContainer {
                 fontRendererObj.drawString(I18n.format("tile.modcurrency:guisell.tabs.infinity.infinitestock"), -85, yPos + yOffset, Integer.parseInt("fff200", 16));
             }
 
-            drawToolTips(i,j);
+
             //</editor-fold>
             */
         }
 
+    }
+
+    private void drawIcons() {
+        int i = (this.width - this.xSize) / 2;
+        int j = (this.height - this.ySize) / 2;
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
+
+        for (int k = 0; k < tabList.getSize(); k++) {
+            int tabLoc = 22 * (k + 1);
+
+            int offSet2 = 0;
+            int vendOffset = 0;
+            if (tile.getField(8) == 1){
+                offSet2 = 31;
+                if(tile instanceof TileVendor) vendOffset = -5;
+            }
+
+            switch (k) {
+                case 0:
+                    if(nameExtended) drawTexturedModalRect(-91, tabLoc - 2, 27, 96, 91, 21);
+                    drawTexturedModalRect(-19, tabLoc, 236, 73, 19, 16);
+                    break;
+                case 1:
+                    if (tile.getField(1) == 1) {
+                        drawTexturedModalRect(-19, tabLoc, 236, 1, 19, 16);
+                    } else drawTexturedModalRect(-19, tabLoc, 216, 1, 19, 16);
+                    break;
+                case 2:
+                    if (tile.getField(8) == 1) {
+                        drawTexturedModalRect(-91, tabLoc - 2, 27, 0, 91, 47);
+                        if (tile instanceof TileSeller) drawTexturedModalRect(-91, tabLoc + 41, 27, 38, 91, 9);
+                    }
+                    drawTexturedModalRect(-19, tabLoc, 236, 19, 19, 16); //Icon
+                    break;
+                case 3:
+                    if (tile.getField(11) == 1) {
+                        drawTexturedModalRect(-19, tabLoc + offSet2 + vendOffset, 236, 55, 19, 16);
+                    } else drawTexturedModalRect(-19, tabLoc + offSet2 + vendOffset, 216, 55, 19, 16);
+                    break;
+                case 4:
+                    if (tile.getField(5) == 1) {
+                        if(tile.getField(8) == 1){
+                            yOffset = 31;
+                        }else yOffset = 0;
+                        if (creativeExtended) {
+                            drawTexturedModalRect(-91, tabLoc - 2 + yOffset + vendOffset, 27, 48, 91, 47);
+                            this.buttonList.set(6, (new GuiButton(4, i - 69, tabLoc + 47 + yOffset + vendOffset, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
+                        } else {
+                            this.buttonList.get(6).visible = false;
+                        }
+                        drawTexturedModalRect(-19, tabLoc + offSet2 + vendOffset, 236, 37, 19, 16);
+                    }
+                    break;
+            }
+        }
+    }
+
+    private void drawSelectionOverlay() {
+        if (tile.getField(8) == 1) {
+            int slotId = tile.getField(3) - 37;
+            int slotColumn, slotRow;
+
+            if (slotId >= 0 && slotId <= 4) {
+                slotColumn = 0;
+                slotRow = slotId + 1;
+            } else if (slotId >= 5 && slotId <= 9) {
+                slotColumn = 1;
+                slotRow = (slotId + 1) - 5;
+            } else if (slotId >= 10 && slotId <= 14) {
+                slotColumn = 2;
+                slotRow = (slotId + 1) - 10;
+            } else if (slotId >= 15 && slotId <= 19) {
+                slotColumn = 3;
+                slotRow = (slotId + 1) - 15;
+            } else if (slotId >= 20 && slotId <= 24) {
+                slotColumn = 4;
+                slotRow = (slotId + 1) - 20;
+            } else {
+                slotColumn = 5;
+                slotRow = (slotId + 1) - 25;
+            }
+
+            Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
+            drawTexturedModalRect(24 + (18 * slotRow), 30 + (18 * slotColumn), 177, 0, 20, 20); //Selection Box
+        }
+    }
+
+    private void drawToolTips(int i, int j) {
+        int xMin = -21;
+        int xMax = 0;
+        int yMin, yMax;
+        int yOffset = 0;
+        int xOffset = 0;
+        int vendOffset = 0;
+        if (tile.getField(8) == 1) {
+            if (tile instanceof TileVendor) vendOffset = -5;
+        }
+
+        for (int k = 0; k < tabList.getSize(); k++) {
+            yMin = (22 * (k)) + 20;
+            yMax = yMin + 21;
+
+            if (((i >= xMin && i <= xMax) && (j >= yMin && j <= yMax) && ((tile.getField(8) == 0) || k <= 2)) || ((k > 2 && j >= yMin + 31 && j <= yMax + 31) && tile.getField(8) == 1)) {
+                List<String> list = new ArrayList<>();
+                switch (k) {
+                    case 0:
+                        if (nameExtended) yOffset = -27;
+                        /*
+                        list.add("Title Tab");
+                        list.add("Name shows up");
+                        list.add("above store");
+                        */
+
+                        //Temp till feature complete
+                        list.add("WIP");
+                        list.add("Please Ignore,");
+                        list.add("...k?");
+                        ///
+
+                        this.drawHoveringText(list, -111, 24 * (k + 1) + yOffset, fontRendererObj);
+                    break;
+                    case 1:
+                        if (tile.getField(8) == 1) yOffset = -7;
+                        list.add("Lock Tab");
+                        list.add("Enable/Disable");
+                        list.add("pipe interaction");
+                        this.drawHoveringText(list, -116, 24 * (k + 1) + yOffset, fontRendererObj);
+                    break;
+                    case 2:
+                        if (tile.getField(8) == 1) yOffset = -31;
+                        list.add("Settings Tab");
+                        list.add("Set items costs");
+                        list.add("and prices");
+                        this.drawHoveringText(list, -114, 24 * (k + 1) + yOffset, fontRendererObj);
+                    break;
+                    case 3:
+                        if (tile.getField(8) == 1) yOffset = 41;
+                        /*
+                        list.add("NBT Tab");
+                        list.add("Set Fuzzy/Specific");
+                        list.add("for slots");
+                        */
+
+                        //Temp till feature complete
+                        list.add("WIP");
+                        list.add("Please Ignore,");
+                        list.add("...k?");
+                        ///
+
+                        this.drawHoveringText(list, /*-133*/ -111, 23 * (k + 1) + yOffset + vendOffset, fontRendererObj);
+                    break;
+                    case 4:
+                        if(creativeExtended) yOffset= -25;
+                        if(tile.getField(8) == 1){
+                            yOffset= 13;
+                            if(tile instanceof TileVendor) yOffset= yOffset + 13;
+                        }
+                        if(tile.getField(8) == 1 && creativeExtended){
+                            yOffset= 9;
+                            if(tile instanceof TileVendor) yOffset= yOffset - 5;
+                        }
+                        if(tile instanceof TileVendor) xOffset= 3;
+
+                        list.add("Creative Tab");
+                        if (tile instanceof TileVendor) {
+                            list.add("Infinite Stock");
+                        } else list.add("Infinite Funds");
+                        this.drawHoveringText(list, -107 + xOffset, 24 * (k + 1) + yOffset, fontRendererObj);
+                    break;
+                }
+            }
+        }
     }
 
     @Override
@@ -247,179 +425,7 @@ public class GuiBuySell extends GuiContainer {
         }
     }
 
-    private void drawIcons() {
-        int i = (this.width - this.xSize) / 2;
-        int j = (this.height - this.ySize) / 2;
-        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
 
-        for(int k=0;k < tabList.getSize(); k++){
-            int tabLoc = 22 * (k+1);
-
-            int offSet2 = 0;
-            if(tile.getField(8) == 1) offSet2 = 31;
-
-            switch(k){
-                case 0:
-                    drawTexturedModalRect(-19, tabLoc, 236, 73, 19, 16);
-                    break;
-                case 1:
-                    if (tile.getField(1) == 1) {
-                        drawTexturedModalRect(-19, tabLoc, 236, 1, 19, 16);
-                    } else drawTexturedModalRect(-19, tabLoc, 216, 1, 19, 16);
-                    break;
-                case 2:
-                    drawTexturedModalRect(-19, tabLoc, 236, 19, 19, 16); //Icon
-                    if(tile.getField(8) == 1){
-                        drawTexturedModalRect(-91, tabLoc -2, 27, 0, 91, 47);
-                        if(tile instanceof TileSeller) drawTexturedModalRect(-91, tabLoc + 41, 27, 38, 91, 9);
-                    }
-                    break;
-                case 3:
-                    if(tile.getField(11) == 1) {
-                        drawTexturedModalRect(-19, tabLoc + offSet2, 236, 55, 19, 16);
-                    }else drawTexturedModalRect(-19, tabLoc + offSet2, 216, 55, 19, 16);
-                    break;
-                case 4:
-                    if(tile.getField(5) == 1) {
-                        if(creativeExtended){
-                            drawTexturedModalRect(-91, tabLoc -2, 27, 48, 91, 47);
-                            this.buttonList.set(6, (new GuiButton(4, i - 69, tabLoc + 47, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
-                        }else{
-                            this.buttonList.get(6).visible = false;
-                        }
-                        drawTexturedModalRect(-19, tabLoc + offSet2, 236, 37, 19, 16);
-                    }
-                    break;
-            }
-        }
-    }
-
-    private void drawSelectionOverlay(){
-        if (tile.getField(8) == 1) {
-            //Draw Selected Slot Overlay
-            int slotId = tile.getField(3) - 37;
-            int slotColumn, slotRow;
-
-            if (slotId >= 0 && slotId <= 4) {
-                slotColumn = 0;
-                slotRow = slotId + 1;
-            } else if (slotId >= 5 && slotId <= 9) {
-                slotColumn = 1;
-                slotRow = (slotId + 1) - 5;
-            } else if (slotId >= 10 && slotId <= 14) {
-                slotColumn = 2;
-                slotRow = (slotId + 1) - 10;
-            } else if (slotId >= 15 && slotId <= 19) {
-                slotColumn = 3;
-                slotRow = (slotId + 1) - 15;
-            } else if (slotId >= 20 && slotId <= 24) {
-                slotColumn = 4;
-                slotRow = (slotId + 1) - 20;
-            } else {
-                slotColumn = 5;
-                slotRow = (slotId + 1) - 25;
-            }
-
-            Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
-            drawTexturedModalRect(24 + (18 * slotRow), 30 + (18 * slotColumn), 177, 0, 20, 20); //Selection Box
-        }
-    }
-
-    private void drawToolTips(int i, int j){
-        if (j <= 41 && j >= 21 && i < 0 && i >= -21) {      //Lock Tab
-            List<String> list = new ArrayList<>();
-            list.add("Lock Tab");
-            list.add("Enable/Disable");
-            list.add("hopper interaction");
-
-            int ypos = 0;
-            if (tile.getField(8) == 0) ypos = 28;
-            if (tile.getField(8) == 1) ypos = 20;
-
-            this.drawHoveringText(list, -132, ypos, fontRendererObj);
-        }
-
-        if (j <= 63 && j >= 43 && i < 0 && i >= -21) {  //Gear Tab
-            List<String> list = new ArrayList<>();
-            list.add("Settings Tab");
-            list.add("Set items costs");
-
-            int ypos = 0;
-            if (tile.getField(8) == 0) ypos = 54;
-            if (tile.getField(8) == 1) ypos = 30;
-
-            this.drawHoveringText(list, -114, ypos, fontRendererObj);
-        }
-
-        if (j <= 85 && j >= 65 && i < 0 && i >= -21 && tile.getField(8) == 0) {     //Fuzzy Tab ,gear closed
-            List<String> list = new ArrayList<>();
-            list.add("NBT Tab");
-            list.add("Fuzzy/Specific");
-
-            int ypos = 77;
-            if(creativeExtended) ypos = 74;
-
-            this.drawHoveringText(list, -113, ypos, fontRendererObj);
-        }
-
-        if (j <= 112 && j >= 92 && i < 0 && i >= -21 && tile.getField(8) == 1) {    //Fuzzy Tab ,gear open
-            List<String> list = new ArrayList<>();
-            list.add("NBT Tab");
-            list.add("Fuzzy/Specific");
-
-            int yPos = 112;
-            if(tile instanceof TileVendor) yPos = 107;
-            if(creativeExtended) yPos = 108;
-            if(tile instanceof TileVendor && creativeExtended) yPos = 103;
-
-            this.drawHoveringText(list, -113, yPos, fontRendererObj);
-        }
-
-        if (tile.getField(5) == 1) {
-            if (j <= 108 && j >= 88 && i < 0 && i >= -21 && tile.getField(8) == 0) { //Creative Tab, gear closed
-                List<String> list = new ArrayList<>();
-                list.add("Creative Tab");
-
-                int xpos = 0;
-                if (tile instanceof TileVendor) {
-                    list.add("Infinite Stock");
-                    xpos = -104;
-                }
-                if (tile instanceof TileSeller) {
-                    list.add("Infinite Funds");
-                    xpos = -107;
-                }
-
-                int ypos = 98;
-                if (creativeExtended) ypos = 74;
-
-                this.drawHoveringText(list, xpos, ypos, fontRendererObj);
-            }
-
-            if (j <= 139 && j >= 119 && i < 0 && i >= -21 && tile.getField(8) == 1) {   //Creative Tab, gear open
-                List<String> list = new ArrayList<>();
-                list.add("Creative Tab");
-
-                int yPos = 130;
-                if (creativeExtended) yPos = 108;
-
-                int xpos = 0;
-                if (tile instanceof TileVendor) {
-                    list.add("Infinite Stock");
-                    xpos = -104;
-                    if(tile.getField(8) == 1) yPos = 125;
-                }
-                if (tile instanceof TileSeller) {
-                    list.add("Infinite Funds");
-                    xpos = -107;
-                }
-                if(tile instanceof TileVendor && creativeExtended) yPos = 103;
-
-                this.drawHoveringText(list, xpos, yPos, fontRendererObj);
-            }
-        }
-    }
 
     @Override
     protected void renderToolTip(ItemStack stack, int x, int y) {
@@ -511,6 +517,9 @@ public class GuiBuySell extends GuiContainer {
                 PacketSendIntData pack5 = new PacketSendIntData();
                 pack5.setData((tile.getField(11) == 1) ? 0 : 1, tile.getPos(), 7);
                 PacketHandler.INSTANCE.sendToServer(pack5);
+                break;
+            case 6:
+                nameExtended = !nameExtended;
         }
     }
 }
