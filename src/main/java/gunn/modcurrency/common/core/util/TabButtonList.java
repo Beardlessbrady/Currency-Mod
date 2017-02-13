@@ -29,17 +29,11 @@ public class TabButtonList {
     }
 
     public void addTab(String name, ResourceLocation textureLoc, int textureX, int textureY, int buttonId){
-        if(nextY == 0) nextY = startY;
-
-        this.buttonList.add(new TabButton(name, buttonId, startX, nextY, textureX, textureY, 21, 22, "", textureLoc));
-        tabDefaultY.add(nextY - startY);
-
+        nextY = startY + (22*tabAmnt);
         tabAmnt++;
-        if(tabAmnt == 1){
-            nextY = startY + 23;
-        }else {
-            nextY = nextY + 22;
-        }
+
+        this.buttonList.add(new TabButton(name, buttonId, startX, nextY, textureX, textureY, 21, 21, "", textureLoc));
+        tabDefaultY.add(nextY - startY);
 
         this.tabOrder.add(name);
         this.tabExt.add(0);
@@ -76,5 +70,9 @@ public class TabButtonList {
         for(int i = 0; i < tabOrder.size(); i ++){
             if(tabOrder.get(i) == buttonName) tabExt.set(i, height);
         }
+    }
+
+    public int getSize(){
+        return tabOrder.size();
     }
 }

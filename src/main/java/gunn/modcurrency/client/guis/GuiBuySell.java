@@ -5,7 +5,6 @@ import gunn.modcurrency.common.containers.ContainerBuySell;
 import gunn.modcurrency.common.core.handler.PacketHandler;
 import gunn.modcurrency.common.core.network.PacketSendIntData;
 import gunn.modcurrency.common.core.network.PacketSendItemToServer;
-import gunn.modcurrency.common.core.util.CustomButton;
 import gunn.modcurrency.common.core.util.TabButtonList;
 import gunn.modcurrency.common.tiles.TileSeller;
 import gunn.modcurrency.common.tiles.TileVendor;
@@ -157,6 +156,8 @@ public class GuiBuySell extends GuiContainer {
         } else {
             //<editor-fold desc="Edit Mode">
             drawIcons();
+            drawSelectionOverlay();
+            /*
 
             String profitName = "tile.modcurrency:guisell.profit";
             String profitAmnt = Integer.toString(tile.getField(4));
@@ -197,7 +198,9 @@ public class GuiBuySell extends GuiContainer {
 
             drawToolTips(i,j);
             //</editor-fold>
+            */
         }
+
     }
 
     @Override
@@ -215,7 +218,8 @@ public class GuiBuySell extends GuiContainer {
         this.buttonList.add(new GuiButton(0, i + 103, j + 7, 45, 20, ChangeButton));
 
         if (tile.getField(2) == 1) {
-            tabList.addTab("Lock", TAB_TEXTURE, 0, 21, 1);
+            tabList.addTab("Name", TAB_TEXTURE, 0, 88, 6);
+            tabList.addTab("Lock", TAB_TEXTURE, 0, 22, 1);
             tabList.addTab("Gear", TAB_TEXTURE, 0, 0, 2);
             tabList.addTab("Fuzzy", TAB_TEXTURE, 0, 66, 5);
             if(tile instanceof TileVendor) tabList.setOpenState("Gear", 26);
@@ -224,7 +228,7 @@ public class GuiBuySell extends GuiContainer {
                 tabList.addTab("Creative", TAB_TEXTURE, 0, 44, 3);
                 tabList.setOpenState("Creative", 26);
                 this.buttonList.add(new GuiButton(4, i + 198, j + 85, 45, 20, "BORKED"));
-                this.buttonList.get(5).visible = false;
+                this.buttonList.get(6).visible = false;
             }
             this.nameField = new GuiTextField(0, fontRendererObj, i -50, j + 72, 45, 10);        //Setting Costs
             this.nameField.setTextColor(Integer.parseInt("0099ff", 16));
@@ -249,52 +253,49 @@ public class GuiBuySell extends GuiContainer {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
 
-        //Draw Lock Icon
-        if (tile.getField(1) == 1) {
-            drawTexturedModalRect(-15, 23, 245, 15, 11, 16);
-        } else {
-            drawTexturedModalRect(-15, 25, 245, 0, 11, 14);
-        }
-        
-        //Draw Gear Icon and Extended Background
-        if (tile.getField(8) == 1){
-            drawTexturedModalRect(-91, 43, 27, 0, 91, 47);
-            if(tile instanceof TileSeller) drawTexturedModalRect(-91, 85, 27, 37, 91, 10);
-        }
-        drawTexturedModalRect(-21, 46, 237, 32, 19, 15);
+        for(int k=0;k < tabList.getSize(); k++){
+            int tabLoc = 22 * (k+1);
 
-        //Draw Fuzzy Icons
-        if(tile.getField(8) == 0){
-            if(tile.getField(11) == 1) {
-                drawTexturedModalRect(-17, 69, 241, 70, 15, 13);
-            } else {
-                drawTexturedModalRect(-16, 70, 243, 58, 13, 12);
+            int offSet2 = 0;
+            if(tile.getField(8) == 1) offSet2 = 31;
 
+            switch(k){
+                case 0:
+                    drawTexturedModalRect(-19, tabLoc, 236, 73, 19, 16);
+                    break;
+                case 1:
+                    if (tile.getField(1) == 1) {
+                        drawTexturedModalRect(-19, tabLoc, 236, 1, 19, 16);
+                    } else drawTexturedModalRect(-19, tabLoc, 216, 1, 19, 16);
+                    break;
+                case 2:
+                    drawTexturedModalRect(-19, tabLoc, 236, 19, 19, 16); //Icon
+                    if(tile.getField(8) == 1){
+                        drawTexturedModalRect(-91, tabLoc -2, 27, 0, 91, 47);
+                        if(tile instanceof TileSeller) drawTexturedModalRect(-91, tabLoc + 41, 27, 38, 91, 9);
+                    }
+                    break;
+                case 3:
+                    if(tile.getField(11) == 1) {
+                        drawTexturedModalRect(-19, tabLoc + offSet2, 236, 55, 19, 16);
+                    }else drawTexturedModalRect(-19, tabLoc + offSet2, 216, 55, 19, 16);
+                    break;
+                case 4:
+                    if(tile.getField(5) == 1) {
+                        if(creativeExtended){
+                            drawTexturedModalRect(-91, tabLoc -2, 27, 48, 91, 47);
+                            this.buttonList.set(6, (new GuiButton(4, i - 69, tabLoc + 47, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
+                        }else{
+                            this.buttonList.get(6).visible = false;
+                        }
+                        drawTexturedModalRect(-19, tabLoc + offSet2, 236, 37, 19, 16);
+                    }
+                    break;
             }
-        }else{
-            int yPos = 100;
-            if (tile instanceof TileVendor) yPos = 95;
-            if(tile.getField(11) == 1) {
-                drawTexturedModalRect(-17, yPos, 241, 70, 15, 13);
-            } else {
-                drawTexturedModalRect(-16, yPos +1, 243, 58, 13, 12);
-            }
         }
+    }
 
-        //Draw Creative Icon
-        if (tile.getField(5) == 1) {
-            if (creativeExtended && tile.getField(5) == 1) {
-                int yPosSub = 0;
-                if(tile instanceof TileVendor && tile.getField(8) == 1) yPosSub = yPosSub -5;
-                this.buttonList.set(5, (new GuiButton(4, i - 69, j + 107 + yPosSub + yOffset, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
-                drawTexturedModalRect(-91, 87 + yPosSub + yOffset, 27, 48, 91, 47);
-            } else if (!creativeExtended && tile.getField(5) == 1) this.buttonList.get(5).visible = false;
-            int yPos = 93;
-            if(tile instanceof TileVendor && tile.getField(8) == 1) yPos = yPos -5;
-
-            drawTexturedModalRect(-20, yPos + yOffset, 237, 48, 19, 9);
-        }
-
+    private void drawSelectionOverlay(){
         if (tile.getField(8) == 1) {
             //Draw Selected Slot Overlay
             int slotId = tile.getField(3) - 37;
