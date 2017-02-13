@@ -265,9 +265,11 @@ public class GuiBuySell extends GuiContainer {
 
         //Draw Fuzzy Icons
         if(tile.getField(8) == 0){
-
+            drawTexturedModalRect(-17, 69, 241, 70, 15, 13);
         }else{
-
+            int yPos = 100;
+            if(tile instanceof TileVendor) yPos = 95;
+            drawTexturedModalRect(-17, yPos, 241, 70, 15, 13);
         }
 
         //Draw Creative Icon
