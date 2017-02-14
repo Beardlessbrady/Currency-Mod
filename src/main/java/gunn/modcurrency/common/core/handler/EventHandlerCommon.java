@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -41,6 +42,7 @@ public class EventHandlerCommon {
         }
     }
 
+        /* MAKE A CLIENT ONLY EVENT HANLDER, THROW IN THERE
         @SubscribeEvent
         public void onModelBake(ModelBakeEvent e){
             ModelResourceLocation base = new ModelResourceLocation(ModCurrency.MODID + ":blockvendor","color=blue,facing=north,item=false,open=true");
@@ -48,4 +50,5 @@ public class EventHandlerCommon {
 
             e.getModelRegistry().putObject(base, new BakedModelVendor(basicVendor));
         }
+        */
 }
