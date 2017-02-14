@@ -1,7 +1,7 @@
 # Good Ol' Currency Mod [![](http://cf.way2muchnoise.eu/full_254346_downloads.svg)](https://minecraft.curseforge.com/projects/good-ol-currency) [![](http://cf.way2muchnoise.eu/versions/MC%20Versions_254346_all.svg)](https://minecraft.curseforge.com/projects/good-ol-currency)
 
-[![](https://img.shields.io/badge/1.11.2-soon-lightgrey.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
-[![](https://img.shields.io/badge/Latest%20Version-null-blue.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
+[![](https://img.shields.io/badge/1.11.2-beta-yellow.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
+[![](https://img.shields.io/badge/Latest%20Version-1.0.0-blue.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
 [![](https://img.shields.io/badge/Supported-Fully-brightgreen.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
 
 [![](https://img.shields.io/badge/1.10.2-beta-yellow.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
