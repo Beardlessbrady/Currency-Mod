@@ -1,7 +1,6 @@
 {
 	"__comment": "Designed by Beardlessbrady with Cubik Studio - https://cubik.studio",
 	"textures": {
-		"particle": "blocks/particle",
 		"texture": "#texture",
 		"screen": "modcurrency:blocks/buysell/sellscreen"
 	},

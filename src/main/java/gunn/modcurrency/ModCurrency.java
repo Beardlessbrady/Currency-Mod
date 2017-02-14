@@ -22,7 +22,7 @@ public class ModCurrency {
     public static CreativeTabs tabCurrency = new TabCurrency(CreativeTabs.getNextID(),"Currency Mod");
     public static final String MODID = "modcurrency";
     public static final String MODNAME = "Currency Mod";
-    public static final String VERSION = "1.11.2-1.0.0";
+    public static final String VERSION = "1.11.2-1.0.0-Beta";
 
     @SidedProxy(clientSide = "gunn.modcurrency.common.core.proxy.ClientProxy", serverSide = "gunn.modcurrency.common.core.proxy.CommonProxy")
     public static CommonProxy proxy;
