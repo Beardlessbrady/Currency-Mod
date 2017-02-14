@@ -29,8 +29,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.common.property.IUnlistedProperty;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -46,9 +44,9 @@ import java.util.List;
  */
 public class BlockVendor extends Block implements ITileEntityProvider{
     private static final AxisAlignedBB BOUND_BOX_N = new AxisAlignedBB(0.03125, 0, 0.28125, 0.96875, 1, 1);
-    private static final AxisAlignedBB BOUND_BOX_E = new AxisAlignedBB(0.03125, 0, 0.71875, 0.96875, 1, 0);
+    private static final AxisAlignedBB BOUND_BOX_E = new AxisAlignedBB(0.71875, 0, 0.03125, 0, 1, 0.96875);
     private static final AxisAlignedBB BOUND_BOX_S = new AxisAlignedBB(0.03125, 0, 0.71875, 0.96875, 1, 0);
-    private static final AxisAlignedBB BOUND_BOX_W = new AxisAlignedBB(0.03125, 0, 0.71875, 0.96875, 1, 0);
+    private static final AxisAlignedBB BOUND_BOX_W = new AxisAlignedBB(0.28125, 0, 0.03125, 1, 1, 0.96875);
     
     public BlockVendor() {
         super(Material.ROCK);
@@ -96,6 +94,46 @@ public class BlockVendor extends Block implements ITileEntityProvider{
                 ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), i, new ModelResourceLocation(getRegistryName(), "color=" + EnumDyeColor.byDyeDamage(i) + ",facing=north,item=true,open=false"));
             }
         }
+    }
+
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        try {
+            int face = ((ModTile) source.getTileEntity(pos)).getField(7);
+
+            switch (face) {
+                default:
+                case 0: return BOUND_BOX_N;
+                case 1: return BOUND_BOX_E;
+                case 2: return BOUND_BOX_S;
+                case 3: return BOUND_BOX_W;
+            }
+        } catch (NullPointerException n) {
+            return super.getBoundingBox(state, source, pos);
+        }
+    }
+
+    @Nullable
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
+        try {
+            int face = ((ModTile) worldIn.getTileEntity(pos)).getField(7);
+
+            switch (face) {
+                default:
+                case 0: return BOUND_BOX_N;
+                case 1: return BOUND_BOX_E;
+                case 2: return BOUND_BOX_S;
+                case 3: return BOUND_BOX_W;
+            }
+        } catch (NullPointerException n) {
+            return super.getCollisionBoundingBox(blockState, worldIn, pos);
+        }
+    }
+
+    @Override
+    public boolean isFullCube(IBlockState state) {
+        return false;
     }
 
     @Override
@@ -199,6 +237,7 @@ public class BlockVendor extends Block implements ITileEntityProvider{
             String playerName = player.getUniqueID().toString();
             getTile(worldIn, pos).setOwner(playerName);
         }
+        worldIn.scheduleBlockUpdate(pos, worldIn.getBlockState(pos).getBlock(), 0, 0);
     }
 
     @Override
@@ -266,14 +305,5 @@ public class BlockVendor extends Block implements ITileEntityProvider{
         return state.withProperty(StateHandler.FACING, face).withProperty(StateHandler.ITEM, false)
                 .withProperty(StateHandler.OPEN, tile.getField(2) == 1);
     }
-
-    @Override
-    public IBlockState getExtendedState(IBlockState state, IBlockAccess world, BlockPos pos) {
-        IUnlistedProperty prop;
-
-
-        return state;
-    }
-
     //</editor-fold>
 }

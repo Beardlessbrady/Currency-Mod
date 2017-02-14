@@ -38,9 +38,9 @@ import java.util.Random;
  */
 public class BlockTop extends Block{
     private static final AxisAlignedBB BOUND_BOX_N = new AxisAlignedBB(0.03125, 0, 0.28125, 0.96875, 1, 1);
-    private static final AxisAlignedBB BOUND_BOX_E = new AxisAlignedBB(0.03125, 0, 0.71875, 0.96875, 1, 0);
+    private static final AxisAlignedBB BOUND_BOX_E = new AxisAlignedBB(0.71875, 0, 0.03125, 0, 1, 0.96875);
     private static final AxisAlignedBB BOUND_BOX_S = new AxisAlignedBB(0.03125, 0, 0.71875, 0.96875, 1, 0);
-    private static final AxisAlignedBB BOUND_BOX_W = new AxisAlignedBB(0.03125, 0, 0.71875, 0.96875, 1, 0);
+    private static final AxisAlignedBB BOUND_BOX_W = new AxisAlignedBB(0.28125, 0, 0.03125, 1, 1, 0.96875);
     
     public BlockTop() {
         super(Material.ROCK);
@@ -55,6 +55,64 @@ public class BlockTop extends Block{
 
     @Override
     public boolean isOpaqueCube(IBlockState state) {
+        return false;
+    }
+
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        try {
+            int face = ((ModTile) source.getTileEntity(pos.down())).getField(7);
+            double y = (source.getTileEntity(pos.down()) instanceof TileVendor) ? 0 : 0.0625;
+            AxisAlignedBB box;
+            AxisAlignedBB newBox;
+
+            switch (face) {
+                default:
+                case 0: box = BOUND_BOX_N;
+                break;
+                case 1: box = BOUND_BOX_E;
+                break;
+                case 2: box = BOUND_BOX_S;
+                break;
+                case 3: box = BOUND_BOX_W;
+            }
+
+            newBox = new AxisAlignedBB(box.minX, box.minY, box.minZ, box.maxX, box.maxY - y, box.maxZ);
+            return newBox;
+        } catch (NullPointerException n) {
+            return super.getBoundingBox(state, source, pos);
+        }
+    }
+
+    @Nullable
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
+        try {
+            int face = ((ModTile) worldIn.getTileEntity(pos)).getField(7);
+            double y = (worldIn.getTileEntity(pos.down()) instanceof TileVendor) ? 0 : 0.0625;
+            AxisAlignedBB box;
+            AxisAlignedBB newBox;
+
+            switch (face) {
+                default:
+                case 0: box = BOUND_BOX_N;
+                    break;
+                case 1: box = BOUND_BOX_E;
+                    break;
+                case 2: box = BOUND_BOX_S;
+                    break;
+                case 3: box = BOUND_BOX_W;
+            }
+
+            newBox = new AxisAlignedBB(box.minX, box.minY, box.minZ, box.maxX, box.maxY - y, box.maxZ);
+            return newBox;
+        } catch (NullPointerException n) {
+            return super.getCollisionBoundingBox(blockState, worldIn, pos);
+        }
+    }
+
+    @Override
+    public boolean isFullCube(IBlockState state) {
         return false;
     }
 

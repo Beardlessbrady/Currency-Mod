@@ -46,7 +46,10 @@ import java.util.List;
  * File Created on 2016-12-19
  */
 public class BlockSeller extends Block implements ITileEntityProvider{
-    private static final AxisAlignedBB BOUND_BOX = new AxisAlignedBB(0.0625, 0, 0, 0.9375, 1, 0.75);
+    private static final AxisAlignedBB BOUND_BOX_N = new AxisAlignedBB(0.03125, 0, 0.28125, 0.96875, 1, 1);
+    private static final AxisAlignedBB BOUND_BOX_E = new AxisAlignedBB(0.71875, 0, 0.03125, 0, 1, 0.96875);
+    private static final AxisAlignedBB BOUND_BOX_S = new AxisAlignedBB(0.03125, 0, 0.71875, 0.96875, 1, 0);
+    private static final AxisAlignedBB BOUND_BOX_W = new AxisAlignedBB(0.28125, 0, 0.03125, 1, 1, 0.96875);
 
     public BlockSeller() {
         super(Material.ROCK);
@@ -94,6 +97,46 @@ public class BlockSeller extends Block implements ITileEntityProvider{
                 ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), i, new ModelResourceLocation(getRegistryName(), "color=" + EnumDyeColor.byDyeDamage(i) + ",facing=north,item=true,open=false"));
             }
         }
+    }
+
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        try {
+            int face = ((ModTile) source.getTileEntity(pos)).getField(7);
+
+            switch (face) {
+                default:
+                case 0: return BOUND_BOX_N;
+                case 1: return BOUND_BOX_E;
+                case 2: return BOUND_BOX_S;
+                case 3: return BOUND_BOX_W;
+            }
+        } catch (NullPointerException n) {
+            return super.getBoundingBox(state, source, pos);
+        }
+    }
+
+    @Nullable
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
+        try {
+            int face = ((ModTile) worldIn.getTileEntity(pos)).getField(7);
+
+            switch (face) {
+                default:
+                case 0: return BOUND_BOX_N;
+                case 1: return BOUND_BOX_E;
+                case 2: return BOUND_BOX_S;
+                case 3: return BOUND_BOX_W;
+            }
+        } catch (NullPointerException n) {
+            return super.getCollisionBoundingBox(blockState, worldIn, pos);
+        }
+    }
+
+    @Override
+    public boolean isFullCube(IBlockState state) {
+        return false;
     }
 
     @Override
