@@ -54,40 +54,6 @@ public class BlockTop extends Block{
     }
 
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos){
-        EnumFacing facing = state.getValue(StateHandler.FACING);
-
-        switch(facing){
-            default:
-            case NORTH: return BOUND_BOX_N;
-            case EAST: return BOUND_BOX_E;
-            case SOUTH: return BOUND_BOX_S;
-            case WEST: return BOUND_BOX_W;
-        }
-    }
-
-
-    @Override
-    public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, Entity entityIn, boolean p_185477_7_) {
-        EnumFacing facing = state.getValue(StateHandler.FACING);
-
-        switch(facing){
-            case NORTH: super.addCollisionBoxToList(pos, entityBox, collidingBoxes, BOUND_BOX_N);
-                break;
-            case EAST: super.addCollisionBoxToList(pos, entityBox, collidingBoxes, BOUND_BOX_E);
-                break;
-            case SOUTH: super.addCollisionBoxToList(pos, entityBox, collidingBoxes, BOUND_BOX_S);
-                break;
-            case WEST: super.addCollisionBoxToList(pos, entityBox, collidingBoxes, BOUND_BOX_W);
-        }
-    }
-
-    @Override
-    public boolean isFullCube(IBlockState state) {
-        return false;
-    }
-
-    @Override
     public boolean isOpaqueCube(IBlockState state) {
         return false;
     }
