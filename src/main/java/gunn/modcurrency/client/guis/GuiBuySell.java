@@ -266,7 +266,7 @@ public class GuiBuySell extends GuiContainer {
                     drawTexturedModalRect(-19, tabLoc, 236, 73, 19, 16);
                     break;
                 case 1:
-                    if (tile.getField(1) == 1) {
+                    if (tile.getField(1) == 0) {
                         drawTexturedModalRect(-19, tabLoc, 236, 1, 19, 16);
                     } else drawTexturedModalRect(-19, tabLoc, 216, 1, 19, 16);
                     break;
