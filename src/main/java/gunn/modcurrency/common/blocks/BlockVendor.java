@@ -1,7 +1,7 @@
 package gunn.modcurrency.common.blocks;
 
 import gunn.modcurrency.ModCurrency;
-import gunn.modcurrency.api.ModTile;
+import gunn.modcurrency.api.TileBuy;
 import gunn.modcurrency.common.blocks.items.IBColored;
 import gunn.modcurrency.common.core.handler.StateHandler;
 import gunn.modcurrency.common.tiles.TileVendor;
@@ -13,7 +13,6 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -34,7 +33,6 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Distributed with the Currency-Mod for Minecraft.
@@ -97,47 +95,6 @@ public class BlockVendor extends Block implements ITileEntityProvider{
     }
 
     @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        if(source.getTileEntity(pos) != null){
-            Integer face = ((ModTile) source.getTileEntity(pos)).getField(7);
-            switch (face) {
-                default:
-                case 0: return BOUND_BOX_N;
-                case 1: return BOUND_BOX_E;
-                case 2: return BOUND_BOX_S;
-                case 3: return BOUND_BOX_W;
-            }
-        }
-        return super.getBoundingBox(state, source, pos);
-    }
-
-    @Nullable
-    @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
-        if(worldIn.getTileEntity(pos) != null){
-            Integer face = ((ModTile) worldIn.getTileEntity(pos)).getField(7);
-            switch (face) {
-                default:
-                case 0: return BOUND_BOX_N;
-                case 1: return BOUND_BOX_E;
-                case 2: return BOUND_BOX_S;
-                case 3: return BOUND_BOX_W;
-            }
-        }
-        return super.getCollisionBoundingBox(blockState, worldIn, pos);
-    }
-
-    @Override
-    public boolean isFullCube(IBlockState state) {
-        return false;
-    }
-
-    @Override
-    public boolean isOpaqueCube(IBlockState state) {
-        return false;
-    }
-
-    @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
         return new TileVendor();
     }
@@ -154,7 +111,7 @@ public class BlockVendor extends Block implements ITileEntityProvider{
             if (player.getHeldItemMainhand() != ItemStack.EMPTY && !world.isRemote) {      //Just Server
                 if (player.getHeldItemMainhand().getItem() == Items.DYE) {
                     //<editor-fold desc="Saving Tile Variables">
-                    ModTile tile = getTile(world, pos);
+                    TileBuy tile = getTile(world, pos);
 
                     ItemStackHandler inputStackHandler = tile.getInputHandler();
                     ItemStackHandler vendStackHandler = tile.getVendHandler();
@@ -300,6 +257,49 @@ public class BlockVendor extends Block implements ITileEntityProvider{
 
         return state.withProperty(StateHandler.FACING, face).withProperty(StateHandler.ITEM, false)
                 .withProperty(StateHandler.OPEN, tile.getField(2) == 1);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Rendering-----------------------------------------------------------------------------------------------------------">
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        if(source.getTileEntity(pos) != null){
+            Integer face = ((TileBuy) source.getTileEntity(pos)).getField(7);
+            switch (face) {
+                default:
+                case 0: return BOUND_BOX_N;
+                case 1: return BOUND_BOX_E;
+                case 2: return BOUND_BOX_S;
+                case 3: return BOUND_BOX_W;
+            }
+        }
+        return super.getBoundingBox(state, source, pos);
+    }
+
+    @Nullable
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
+        if(worldIn.getTileEntity(pos) != null){
+            Integer face = ((TileBuy) worldIn.getTileEntity(pos)).getField(7);
+            switch (face) {
+                default:
+                case 0: return BOUND_BOX_N;
+                case 1: return BOUND_BOX_E;
+                case 2: return BOUND_BOX_S;
+                case 3: return BOUND_BOX_W;
+            }
+        }
+        return super.getCollisionBoundingBox(blockState, worldIn, pos);
+    }
+
+    @Override
+    public boolean isFullCube(IBlockState state) {
+        return false;
+    }
+
+    @Override
+    public boolean isOpaqueCube(IBlockState state) {
+        return false;
     }
     //</editor-fold>
 }

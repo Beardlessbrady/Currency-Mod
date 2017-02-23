@@ -1,11 +1,10 @@
 package gunn.modcurrency.common.blocks;
 
 import gunn.modcurrency.ModCurrency;
-import gunn.modcurrency.api.ModTile;
+import gunn.modcurrency.api.TileBuy;
 import gunn.modcurrency.common.blocks.items.IBColored;
 import gunn.modcurrency.common.core.handler.StateHandler;
 import gunn.modcurrency.common.tiles.TileSeller;
-import gunn.modcurrency.common.tiles.TileVendor;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
@@ -14,7 +13,6 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -30,14 +28,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
-import java.util.List;
 
 /**
  * Distributed with the Currency-Mod for Minecraft.
@@ -102,7 +96,7 @@ public class BlockSeller extends Block implements ITileEntityProvider{
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         if(source.getTileEntity(pos) != null){
-            Integer face = ((ModTile) source.getTileEntity(pos)).getField(7);
+            Integer face = ((TileBuy) source.getTileEntity(pos)).getField(7);
             switch (face) {
                 default:
                 case 0: return BOUND_BOX_N;
@@ -118,7 +112,7 @@ public class BlockSeller extends Block implements ITileEntityProvider{
     @Override
     public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
         if(worldIn.getTileEntity(pos) != null){
-            Integer face = ((ModTile) worldIn.getTileEntity(pos)).getField(7);
+            Integer face = ((TileBuy) worldIn.getTileEntity(pos)).getField(7);
             switch (face) {
                 default:
                 case 0: return BOUND_BOX_N;
@@ -157,7 +151,7 @@ public class BlockSeller extends Block implements ITileEntityProvider{
             if (player.getHeldItemMainhand() != ItemStack.EMPTY && !world.isRemote) {       //Just Server
                 if (player.getHeldItemMainhand().getItem() == Items.DYE) {
                     //<editor-fold desc="Saving Tile Variables">
-                    ModTile tile = getTile(world, pos);
+                    TileBuy tile = getTile(world, pos);
 
                     ItemStackHandler inputStackHandler = tile.getInputHandler();
                     ItemStackHandler vendStackHandler = tile.getVendHandler();

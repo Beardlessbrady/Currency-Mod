@@ -1,8 +1,7 @@
 package gunn.modcurrency.common.containers;
 
-import gunn.modcurrency.api.ModTile;
+import gunn.modcurrency.api.TileBuy;
 import gunn.modcurrency.common.core.handler.PacketHandler;
-import gunn.modcurrency.common.core.network.PacketSendIntData;
 import gunn.modcurrency.common.core.network.PacketSendItemToServer;
 import gunn.modcurrency.common.core.util.INBTInventory;
 import gunn.modcurrency.common.core.util.SlotCustomizable;
@@ -56,10 +55,10 @@ public class ContainerBuySell extends Container implements INBTInventory {
 
     private Item[] specialSlotItems;
 
-    private ModTile tile;
+    private TileBuy tile;
     private int[] cachedFields;
 
-    public ContainerBuySell(InventoryPlayer invPlayer, ModTile te) {
+    public ContainerBuySell(InventoryPlayer invPlayer, TileBuy te) {
         tile = te;
 
         if (tile instanceof TileVendor) specialSlotItems = ((TileVendor) tile).specialSlotItems;

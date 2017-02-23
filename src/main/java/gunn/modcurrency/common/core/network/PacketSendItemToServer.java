@@ -1,14 +1,11 @@
 package gunn.modcurrency.common.core.network;
 
-import gunn.modcurrency.api.ModTile;
-import gunn.modcurrency.common.blocks.BlockVendor;
-import gunn.modcurrency.common.blocks.ModBlocks;
+import gunn.modcurrency.api.TileBuy;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -51,7 +48,7 @@ public class PacketSendItemToServer implements IMessage{
         private void handle(PacketSendItemToServer message, MessageContext ctx){
             EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
             World world = playerEntity.world;
-            ModTile tile = (ModTile) world.getTileEntity(message.blockPos);
+            TileBuy tile = (TileBuy) world.getTileEntity(message.blockPos);
             tile.outChange();
         }
     }

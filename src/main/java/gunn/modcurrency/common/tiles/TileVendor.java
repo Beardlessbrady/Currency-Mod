@@ -2,15 +2,13 @@
 package gunn.modcurrency.common.tiles;
 
 import gunn.modcurrency.ModCurrency;
-import gunn.modcurrency.api.ModTile;
-import gunn.modcurrency.common.core.handler.PacketHandler;
+import gunn.modcurrency.api.TileBuy;
 import gunn.modcurrency.common.core.util.INBTInventory;
 import gunn.modcurrency.common.items.ItemWallet;
 import gunn.modcurrency.common.items.ModItems;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -34,7 +32,7 @@ import javax.annotation.Nullable;
  *
  * File Created on 2016-10-30.
  */
-public class TileVendor extends ModTile implements ICapabilityProvider, ITickable, INBTInventory{
+public class TileVendor extends TileBuy implements ICapabilityProvider, ITickable, INBTInventory{
     private static final int INPUT_SLOT_COUNT = 1;
     private static final int VEND_SLOT_COUNT = 30;
     private static final int BUFFER_SLOT_COUNT = 6;

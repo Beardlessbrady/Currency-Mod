@@ -12,6 +12,7 @@ public class ModBlocks {
     public static BlockTop blockTop;
     public static BlockVendor blockVendor;
     public static BlockSeller blockSeller;
+    public static BlockShopMob blockShopMob;
 
     public static void preInit(){
         setupBlocks();
@@ -21,6 +22,8 @@ public class ModBlocks {
         if(ModConfig.enableVendor) blockVendor = new BlockVendor();
         if(ModConfig.enableSeller) blockSeller = new BlockSeller();
         if(ModConfig.enableVendor || ModConfig.enableSeller) blockTop = new BlockTop();
+
+        blockShopMob = new BlockShopMob();
     }
 
     public static void ItemModels(){

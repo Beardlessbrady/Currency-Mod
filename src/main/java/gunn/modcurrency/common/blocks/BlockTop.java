@@ -1,8 +1,7 @@
 package gunn.modcurrency.common.blocks;
 
-import gunn.modcurrency.api.ModTile;
+import gunn.modcurrency.api.TileBuy;
 import gunn.modcurrency.common.core.handler.StateHandler;
-import gunn.modcurrency.common.items.ModItems;
 import gunn.modcurrency.common.tiles.TileSeller;
 import gunn.modcurrency.common.tiles.TileVendor;
 import net.minecraft.block.Block;
@@ -11,7 +10,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
@@ -27,8 +25,6 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Random;
 
 /**
  * Distributed with the Currency-Mod for Minecraft.
@@ -61,7 +57,7 @@ public class BlockTop extends Block{
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         if(source.getTileEntity(pos.down()) != null){
-            Integer face = ((ModTile) source.getTileEntity(pos.down())).getField(7);
+            Integer face = ((TileBuy) source.getTileEntity(pos.down())).getField(7);
             double y = (source.getTileEntity(pos.down()) instanceof TileVendor) ? 0 : 0.0625;
             AxisAlignedBB box;
             AxisAlignedBB newBox;
@@ -87,7 +83,7 @@ public class BlockTop extends Block{
     @Override
     public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
         if(worldIn.getTileEntity(pos.down()) != null){
-            Integer face = ((ModTile) worldIn.getTileEntity(pos.down())).getField(7);
+            Integer face = ((TileBuy) worldIn.getTileEntity(pos.down())).getField(7);
             double y = (worldIn.getTileEntity(pos.down()) instanceof TileVendor) ? 0 : 0.0625;
             AxisAlignedBB box;
             AxisAlignedBB newBox;
@@ -126,12 +122,12 @@ public class BlockTop extends Block{
         return -1;
     }
 
-    public ModTile getTile(World world, BlockPos pos) {
-        return (ModTile) world.getTileEntity(pos.down());
+    public TileBuy getTile(World world, BlockPos pos) {
+        return (TileBuy) world.getTileEntity(pos.down());
     }
 
-    public ModTile getTile(IBlockAccess world, BlockPos pos) {
-        return (ModTile) world.getTileEntity(pos.down());
+    public TileBuy getTile(IBlockAccess world, BlockPos pos) {
+        return (TileBuy) world.getTileEntity(pos.down());
     }
 
     @Override
@@ -143,7 +139,7 @@ public class BlockTop extends Block{
                 if (player.getHeldItemMainhand() != ItemStack.EMPTY && !world.isRemote) {      //Just Server
                     if (player.getHeldItemMainhand().getItem() == Items.DYE) {
                         //<editor-fold desc="Saving Tile Variables">
-                        ModTile tile = getTile(world, pos);
+                        TileBuy tile = getTile(world, pos);
 
                         ItemStackHandler inputStackHandler = tile.getInputHandler();
                         ItemStackHandler vendStackHandler = tile.getVendHandler();
@@ -240,7 +236,7 @@ public class BlockTop extends Block{
         if (worldIn.getBlockState(pos.down()).getBlock() == ModBlocks.blockVendor || worldIn.getBlockState(pos.down()).getBlock() == ModBlocks.blockSeller) {
             int faceData = 0;
 
-            ModTile tile = (ModTile) worldIn.getTileEntity(pos.down());
+            TileBuy tile = (TileBuy) worldIn.getTileEntity(pos.down());
             faceData = tile.getField(7);
 
             EnumFacing face = EnumFacing.NORTH;

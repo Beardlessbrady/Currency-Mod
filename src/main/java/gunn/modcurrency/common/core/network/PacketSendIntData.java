@@ -1,6 +1,6 @@
 package gunn.modcurrency.common.core.network;
 
-import gunn.modcurrency.api.ModTile;
+import gunn.modcurrency.api.TileBuy;
 import gunn.modcurrency.common.tiles.TileSeller;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -59,27 +59,27 @@ public class PacketSendIntData implements IMessage {
             World world = playerEntity.world;
             switch (message.mode) {
                 case 0:     //BlockBuy set Lock [to server]
-                    ModTile te0= (ModTile) world.getTileEntity(message.blockPos);
+                    TileBuy te0= (TileBuy) world.getTileEntity(message.blockPos);
                     te0.setField(1, message.data);
                     break;
                 case 1:     //Block Vendor set Cost [to server]
-                    ModTile te1= (ModTile) world.getTileEntity(message.blockPos);
+                    TileBuy te1= (TileBuy) world.getTileEntity(message.blockPos);
                     te1.setItemCost(message.data);
                     break;
                 case 2:     //Block Vendor, updated cost [to Client]
-                    ModTile te2= (ModTile) world.getTileEntity(message.blockPos);
+                    TileBuy te2= (TileBuy) world.getTileEntity(message.blockPos);
                     te2.setItemCost(message.data);
                     break;
                 case 3:     //Enable/Disable Creative Button [to server]
-                    ModTile te3= (ModTile) world.getTileEntity(message.blockPos);
+                    TileBuy te3= (TileBuy) world.getTileEntity(message.blockPos);
                     te3.setField(6, message.data);
                     break;
                 case 4:     //Send Gear Tab State [to server]
-                    ModTile te4= (ModTile) world.getTileEntity(message.blockPos);
+                    TileBuy te4= (TileBuy) world.getTileEntity(message.blockPos);
                     te4.setField(8, message.data);
                     break;
                 case 5:     //Update Client
-                    ModTile te5= (ModTile) world.getTileEntity(message.blockPos);
+                    TileBuy te5= (TileBuy) world.getTileEntity(message.blockPos);
                     te5.update(world,message.blockPos);
                     break;
                 case 6:     //Block Seller set Amount [to server]
@@ -87,7 +87,7 @@ public class PacketSendIntData implements IMessage {
                     te6.setItemAmount(message.data);
                     break;
                 case 7:     //BlockBuy set Fuzzy [to server]
-                    ModTile te7= (ModTile) world.getTileEntity(message.blockPos);
+                    TileBuy te7= (TileBuy) world.getTileEntity(message.blockPos);
                     te7.setField(11, message.data);
                     break;
             }
