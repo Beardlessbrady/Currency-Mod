@@ -15,7 +15,7 @@ import net.minecraftforge.items.ItemStackHandler;
  *
  * File Created on 2016-12-17
  */
-public class ModTile extends TileEntity implements ICapabilityProvider {
+public class TileBuy extends TileEntity implements ICapabilityProvider {
 
     public void outChange(){}
 
