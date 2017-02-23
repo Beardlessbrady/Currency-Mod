@@ -288,7 +288,7 @@ public class GuiBuySell extends GuiContainer {
                         }else yOffset = 0;
                         if (creativeExtended) {
                             drawTexturedModalRect(-91, tabLoc + yOffset -2, 27, 48, 91, 47);
-                            this.buttonList.set(6, (new GuiButton(4, i - 69, tabLoc + 47 + yOffset, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
+                            this.buttonList.set(6, (new GuiButton(4, i - 69, j + tabLoc + 18 + yOffset, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
                         } else {
                             this.buttonList.get(6).visible = false;
                         }

@@ -238,9 +238,9 @@ public class TileSeller extends TileBuy implements ICapabilityProvider, ITickabl
         }
     }
 
-    public void outInputSlot(){
-        if(!world.isRemote) {
-            if (inputStackHandler.getStackInSlot(0).getItem() != Item.getItemFromBlock(Blocks.AIR)) {
+    public void outInputSlot() {
+        if (inputStackHandler.getStackInSlot(0).getItem() != Item.getItemFromBlock(Blocks.AIR)) {
+            if (!world.isRemote) {
                 ItemStack item = inputStackHandler.getStackInSlot(0);
                 inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
 

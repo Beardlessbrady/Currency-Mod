@@ -11,6 +11,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -18,6 +19,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -218,8 +220,8 @@ public class TileVendor extends TileBuy implements ICapabilityProvider, ITickabl
     }
 
     public void outInputSlot(){
-        if(!world.isRemote) {
-            if (inputStackHandler.getStackInSlot(0).getItem() != Item.getItemFromBlock(Blocks.AIR)) {
+        if (inputStackHandler.getStackInSlot(0).getItem() != Item.getItemFromBlock(Blocks.AIR)) {
+            if (!world.isRemote) {
                 ItemStack item = inputStackHandler.getStackInSlot(0);
                 inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
 
@@ -274,37 +276,41 @@ public class TileVendor extends TileBuy implements ICapabilityProvider, ITickabl
      * @return TotalCash
      */
     public int getTotalCash(){
-        ItemStackHandler itemStackHandler = readInventoryTag(inputStackHandler.getStackInSlot(0), ItemWallet.WALLET_TOTAL_COUNT);
+        ItemStack item = inputStackHandler.getStackInSlot(0);
+        if(item.hasTagCompound()) {
+            ItemStackHandler itemStackHandler = readInventoryTag(inputStackHandler.getStackInSlot(0), ItemWallet.WALLET_TOTAL_COUNT);
 
-        int totalCash = 0;
-        for(int i=0; i<itemStackHandler.getSlots(); i++) {
-            if (itemStackHandler.getStackInSlot(i) != ItemStack.EMPTY) {
-                switch (itemStackHandler.getStackInSlot(i).getItemDamage()) {
-                    case 0:
-                        totalCash = totalCash + 1 * itemStackHandler.getStackInSlot(i).getCount();
-                        break;
-                    case 1:
-                        totalCash = totalCash + 5 * itemStackHandler.getStackInSlot(i).getCount();
-                        break;
-                    case 2:
-                        totalCash = totalCash + 10 * itemStackHandler.getStackInSlot(i).getCount();
-                        break;
-                    case 3:
-                        totalCash = totalCash + 20 * itemStackHandler.getStackInSlot(i).getCount();
-                        break;
-                    case 4:
-                        totalCash = totalCash + 50 * itemStackHandler.getStackInSlot(i).getCount();
-                        break;
-                    case 5:
-                        totalCash = totalCash + 100 * itemStackHandler.getStackInSlot(i).getCount();
-                        break;
-                    default:
-                        totalCash = -1;
-                        break;
+            int totalCash = 0;
+            for (int i = 0; i < itemStackHandler.getSlots(); i++) {
+                if (itemStackHandler.getStackInSlot(i) != ItemStack.EMPTY) {
+                    switch (itemStackHandler.getStackInSlot(i).getItemDamage()) {
+                        case 0:
+                            totalCash = totalCash + 1 * itemStackHandler.getStackInSlot(i).getCount();
+                            break;
+                        case 1:
+                            totalCash = totalCash + 5 * itemStackHandler.getStackInSlot(i).getCount();
+                            break;
+                        case 2:
+                            totalCash = totalCash + 10 * itemStackHandler.getStackInSlot(i).getCount();
+                            break;
+                        case 3:
+                            totalCash = totalCash + 20 * itemStackHandler.getStackInSlot(i).getCount();
+                            break;
+                        case 4:
+                            totalCash = totalCash + 50 * itemStackHandler.getStackInSlot(i).getCount();
+                            break;
+                        case 5:
+                            totalCash = totalCash + 100 * itemStackHandler.getStackInSlot(i).getCount();
+                            break;
+                        default:
+                            totalCash = -1;
+                            break;
+                    }
                 }
             }
+            return totalCash;
         }
-        return totalCash;
+        return 0;
     }
 
     //<editor-fold desc="NBT & Packet Stoof--------------------------------------------------------------------------------------------------">

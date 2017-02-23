@@ -12,11 +12,13 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -47,67 +49,6 @@ public class BlockTop extends Block{
         setSoundType(SoundType.METAL);
 
         GameRegistry.register(this);
-    }
-
-    @Override
-    public boolean isOpaqueCube(IBlockState state) {
-        return false;
-    }
-
-    @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        if(source.getTileEntity(pos.down()) != null){
-            Integer face = ((TileBuy) source.getTileEntity(pos.down())).getField(7);
-            double y = (source.getTileEntity(pos.down()) instanceof TileVendor) ? 0 : 0.0625;
-            AxisAlignedBB box;
-            AxisAlignedBB newBox;
-
-            switch (face) {
-                default:
-                case 0: box = BOUND_BOX_N;
-                break;
-                case 1: box = BOUND_BOX_E;
-                break;
-                case 2: box = BOUND_BOX_S;
-                break;
-                case 3: box = BOUND_BOX_W;
-            }
-
-            newBox = new AxisAlignedBB(box.minX, box.minY, box.minZ, box.maxX, box.maxY - y, box.maxZ);
-            return newBox;
-        }
-        return super.getBoundingBox(state, source, pos);
-    }
-
-    @Nullable
-    @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
-        if(worldIn.getTileEntity(pos.down()) != null){
-            Integer face = ((TileBuy) worldIn.getTileEntity(pos.down())).getField(7);
-            double y = (worldIn.getTileEntity(pos.down()) instanceof TileVendor) ? 0 : 0.0625;
-            AxisAlignedBB box;
-            AxisAlignedBB newBox;
-
-            switch (face) {
-                default:
-                case 0: box = BOUND_BOX_N;
-                    break;
-                case 1: box = BOUND_BOX_E;
-                    break;
-                case 2: box = BOUND_BOX_S;
-                    break;
-                case 3: box = BOUND_BOX_W;
-            }
-
-            newBox = new AxisAlignedBB(box.minX, box.minY, box.minZ, box.maxX, box.maxY - y, box.maxZ);
-            return newBox;
-        }
-        return super.getCollisionBoundingBox(blockState, worldIn, pos);
-    }
-
-    @Override
-    public boolean isFullCube(IBlockState state) {
-        return false;
     }
 
     public int whatBlock(World world, BlockPos pos){
@@ -180,8 +121,10 @@ public class BlockTop extends Block{
                 if ((player.isSneaking() && player.getUniqueID().toString().equals(getTile(world, pos).getOwner())) || (player.isSneaking() && player.isCreative())) {      //Client and Server
                     if (getTile(world, pos).getField(2) == 1) {
                         getTile(world, pos).setField(2, 0);
+                        world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_IRON_DOOR_CLOSE, SoundCategory.BLOCKS, 1.0F, -9.0F, false);
                     } else {
                         getTile(world, pos).setField(2, 1);
+                        world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_IRON_DOOR_OPEN, SoundCategory.BLOCKS, 1.0F, -9.0F, false);
                     }
                     getTile(world, pos).getWorld().notifyBlockUpdate(getTile(world, pos).getPos(), getTile(world, pos).getBlockType().getDefaultState(), getTile(world, pos).getBlockType().getDefaultState(), 3);
                     return true;
@@ -272,6 +215,69 @@ public class BlockTop extends Block{
                     .withProperty(StateHandler.TOP, type);
         }
         return getDefaultState();
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Render--------------------------------------------------------------------------------------------------------------">
+    @Override
+    public boolean isOpaqueCube(IBlockState state) {
+        return false;
+    }
+
+    @Override
+    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
+        if(source.getTileEntity(pos.down()) != null){
+            Integer face = ((TileBuy) source.getTileEntity(pos.down())).getField(7);
+            double y = (source.getTileEntity(pos.down()) instanceof TileVendor) ? 0 : 0.0625;
+            AxisAlignedBB box;
+            AxisAlignedBB newBox;
+
+            switch (face) {
+                default:
+                case 0: box = BOUND_BOX_N;
+                    break;
+                case 1: box = BOUND_BOX_E;
+                    break;
+                case 2: box = BOUND_BOX_S;
+                    break;
+                case 3: box = BOUND_BOX_W;
+            }
+
+            newBox = new AxisAlignedBB(box.minX, box.minY, box.minZ, box.maxX, box.maxY - y, box.maxZ);
+            return newBox;
+        }
+        return super.getBoundingBox(state, source, pos);
+    }
+
+    @Nullable
+    @Override
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
+        if(worldIn.getTileEntity(pos.down()) != null){
+            Integer face = ((TileBuy) worldIn.getTileEntity(pos.down())).getField(7);
+            double y = (worldIn.getTileEntity(pos.down()) instanceof TileVendor) ? 0 : 0.0625;
+            AxisAlignedBB box;
+            AxisAlignedBB newBox;
+
+            switch (face) {
+                default:
+                case 0: box = BOUND_BOX_N;
+                    break;
+                case 1: box = BOUND_BOX_E;
+                    break;
+                case 2: box = BOUND_BOX_S;
+                    break;
+                case 3: box = BOUND_BOX_W;
+            }
+
+            newBox = new AxisAlignedBB(box.minX, box.minY, box.minZ, box.maxX, box.maxY - y, box.maxZ);
+            return newBox;
+        }
+        return super.getCollisionBoundingBox(blockState, worldIn, pos);
+    }
+
+    @Override
+    public boolean isFullCube(IBlockState state) {
+        return false;
     }
     //</editor-fold>
 }
