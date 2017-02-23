@@ -72,6 +72,7 @@ public class ContainerBuySell extends Container implements INBTInventory {
     public void onContainerClosed(EntityPlayer playerIn) {
         tile.voidPlayerUsing();
         tile.setField(8, 0);
+        tile.outInputSlot();
         super.onContainerClosed(playerIn);
     }
 

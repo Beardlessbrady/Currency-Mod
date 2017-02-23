@@ -6,6 +6,7 @@ import gunn.modcurrency.common.items.ModItems;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -233,6 +234,34 @@ public class TileSeller extends TileBuy implements ICapabilityProvider, ITickabl
                         world.spawnEntity(new EntityItem(world, x, getPos().up().getY(), z, item));
                     }
                 }
+            }
+        }
+    }
+
+    public void outInputSlot(){
+        if(!world.isRemote) {
+            if (inputStackHandler.getStackInSlot(0).getItem() != Item.getItemFromBlock(Blocks.AIR)) {
+                ItemStack item = inputStackHandler.getStackInSlot(0);
+                inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
+
+                int x = getPos().getX();
+                int z = getPos().getZ();
+                switch (face) {
+                    case 0:
+                        z = z - 2; //North
+                        break;
+                    case 1:
+                        x = x + 2; //East
+                        break;
+                    case 2:
+                        z = z + 2; //South
+                        break;
+                    case 3:
+                        x = x - 2;//West
+                        break;
+                }
+
+                world.spawnEntity(new EntityItem(world, x, getPos().up().getY(), z, item));
             }
         }
     }

@@ -19,6 +19,8 @@ public class TileBuy extends TileEntity implements ICapabilityProvider {
 
     public void outChange(){}
 
+    public void outInputSlot(){}
+
     public void dropItems(){}
 
     public void update(World world, BlockPos pos){
