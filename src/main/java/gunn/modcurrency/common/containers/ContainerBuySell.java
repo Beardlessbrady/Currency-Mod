@@ -309,7 +309,7 @@ public class ContainerBuySell extends Container implements INBTInventory {
                 sourceStack = copyStack.copy();
 
                 if (index < PLAYER_TOTAL_COUNT) {        //Player Inventory Slots
-                    if (inventorySlots.get(index).getStack().getItem() == ModItems.itemBanknote) {
+                    if (inventorySlots.get(index).getStack().getItem() == ModItems.itemBanknote || inventorySlots.get(index).getStack().getItem() == ModItems.itemWallet) {
                         if (tile.getField(2) == 0) {
                             if (!this.mergeItemStack(copyStack, TE_MONEY_FIRST_SLOT_INDEX, TE_MONEY_FIRST_SLOT_INDEX + 1, false)) {
                                 return ItemStack.EMPTY;
@@ -324,6 +324,14 @@ public class ContainerBuySell extends Container implements INBTInventory {
                             }
                         } else {
                             return ItemStack.EMPTY;
+                        }
+                    }
+                } else if (index == TE_MONEY_FIRST_SLOT_INDEX) {
+                    if (tile.getField(2) == 0) {
+                        if (index == 36) {
+                            if (!this.mergeItemStack(copyStack, PLAYER_FIRST_SLOT_INDEX, PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT, false)) {
+                                return ItemStack.EMPTY;
+                            }
                         }
                     }
                 } else if (index >= TE_VEND_FIRST_SLOT_INDEX && index < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT + TE_BUFFER_TOTAL_COUNT) {  //TE Inventory
