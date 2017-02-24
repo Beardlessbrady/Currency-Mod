@@ -18,6 +18,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -431,7 +432,16 @@ public class GuiBuySell extends GuiContainer {
 
             List<String> list = new ArrayList<>();
             list.add(String.valueOf(currStack.getDisplayName()));
-            list.add("$" + (String.valueOf(tile.getItemCost(slot))));
+
+            if(tile instanceof TileVendor && tile.getField(2) == 0){
+                if(((TileVendor) tile).canAfford(slot)){
+                    list.add(TextFormatting.RED + "$" + (String.valueOf(tile.getItemCost(slot))));
+                }else{
+                    list.add("$" + (String.valueOf(tile.getItemCost(slot))));
+                }
+            }else{
+                list.add("$" + (String.valueOf(tile.getItemCost(slot))));
+            }
 
             FontRenderer font = stack.getItem().getFontRenderer(stack);
             net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(stack);

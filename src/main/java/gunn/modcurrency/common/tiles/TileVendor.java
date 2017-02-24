@@ -144,6 +144,84 @@ public class TileVendor extends TileBuy implements ICapabilityProvider, ITickabl
         }
     }
 
+    //Drop Items
+    public void dropItems() {
+        for (int i = 0; i < vendStackHandler.getSlots(); i++) {
+            ItemStack item = vendStackHandler.getStackInSlot(i);
+            if (item != ItemStack.EMPTY) {
+                world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), item));
+                vendStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
+            }
+        }
+        for (int i = 0; i < bufferStackHandler.getSlots(); i++){
+            ItemStack item = bufferStackHandler.getStackInSlot(i);
+            if (item != ItemStack.EMPTY) {
+                world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), item));
+                vendStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
+            }
+        }
+    }
+
+    //Player must be in certain range to open GUI
+    @Override
+    public boolean canInteractWith(EntityPlayer player) {
+        return !isInvalid() && player.getDistanceSq(pos.add(0.5D, 0.5D, 0.5D)) <= 64D;
+    }
+
+    public void unsucessfulNoise(){
+        world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 1.0F, 10.0F, false);
+    }
+
+    //<editor-fold desc="Money Methods-------------------------------------------------------------------------------------------------------">
+    /**
+     * If the wallet is present returns the total amount of cash in it
+     * @return TotalCash
+     */
+    public int getTotalCash(){
+        ItemStack item = inputStackHandler.getStackInSlot(0);
+        if(item.hasTagCompound()) {
+            ItemStackHandler itemStackHandler = readInventoryTag(inputStackHandler.getStackInSlot(0), ItemWallet.WALLET_TOTAL_COUNT);
+
+            int totalCash = 0;
+            for (int i = 0; i < itemStackHandler.getSlots(); i++) {
+                if (itemStackHandler.getStackInSlot(i) != ItemStack.EMPTY) {
+                    switch (itemStackHandler.getStackInSlot(i).getItemDamage()) {
+                        case 0:
+                            totalCash = totalCash + 1 * itemStackHandler.getStackInSlot(i).getCount();
+                            break;
+                        case 1:
+                            totalCash = totalCash + 5 * itemStackHandler.getStackInSlot(i).getCount();
+                            break;
+                        case 2:
+                            totalCash = totalCash + 10 * itemStackHandler.getStackInSlot(i).getCount();
+                            break;
+                        case 3:
+                            totalCash = totalCash + 20 * itemStackHandler.getStackInSlot(i).getCount();
+                            break;
+                        case 4:
+                            totalCash = totalCash + 50 * itemStackHandler.getStackInSlot(i).getCount();
+                            break;
+                        case 5:
+                            totalCash = totalCash + 100 * itemStackHandler.getStackInSlot(i).getCount();
+                            break;
+                        default:
+                            totalCash = -1;
+                            break;
+                    }
+                }
+            }
+            return totalCash;
+        }
+        return 0;
+    }
+
+    public boolean canAfford(int slot){
+        if(walletIn){
+            return getItemCost(slot) >= getTotalCash();
+        }
+        return getItemCost(slot) >= bank;
+    }
+
     //Outputs change in least amount of bills
     public void outChange() {
         int amount = bank;
@@ -246,72 +324,7 @@ public class TileVendor extends TileBuy implements ICapabilityProvider, ITickabl
             }
         }
     }
-
-    //Drop Items
-    public void dropItems() {
-        for (int i = 0; i < vendStackHandler.getSlots(); i++) {
-            ItemStack item = vendStackHandler.getStackInSlot(i);
-            if (item != ItemStack.EMPTY) {
-                world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), item));
-                vendStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
-            }
-        }
-        for (int i = 0; i < bufferStackHandler.getSlots(); i++){
-            ItemStack item = bufferStackHandler.getStackInSlot(i);
-            if (item != ItemStack.EMPTY) {
-                world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), item));
-                vendStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
-            }
-        }
-    }
-
-    //Player must be in certain range to open GUI
-    @Override
-    public boolean canInteractWith(EntityPlayer player) {
-        return !isInvalid() && player.getDistanceSq(pos.add(0.5D, 0.5D, 0.5D)) <= 64D;
-    }
-
-    /**
-     * If the wallet is present returns the total amount of cash in it
-     * @return TotalCash
-     */
-    public int getTotalCash(){
-        ItemStack item = inputStackHandler.getStackInSlot(0);
-        if(item.hasTagCompound()) {
-            ItemStackHandler itemStackHandler = readInventoryTag(inputStackHandler.getStackInSlot(0), ItemWallet.WALLET_TOTAL_COUNT);
-
-            int totalCash = 0;
-            for (int i = 0; i < itemStackHandler.getSlots(); i++) {
-                if (itemStackHandler.getStackInSlot(i) != ItemStack.EMPTY) {
-                    switch (itemStackHandler.getStackInSlot(i).getItemDamage()) {
-                        case 0:
-                            totalCash = totalCash + 1 * itemStackHandler.getStackInSlot(i).getCount();
-                            break;
-                        case 1:
-                            totalCash = totalCash + 5 * itemStackHandler.getStackInSlot(i).getCount();
-                            break;
-                        case 2:
-                            totalCash = totalCash + 10 * itemStackHandler.getStackInSlot(i).getCount();
-                            break;
-                        case 3:
-                            totalCash = totalCash + 20 * itemStackHandler.getStackInSlot(i).getCount();
-                            break;
-                        case 4:
-                            totalCash = totalCash + 50 * itemStackHandler.getStackInSlot(i).getCount();
-                            break;
-                        case 5:
-                            totalCash = totalCash + 100 * itemStackHandler.getStackInSlot(i).getCount();
-                            break;
-                        default:
-                            totalCash = -1;
-                            break;
-                    }
-                }
-            }
-            return totalCash;
-        }
-        return 0;
-    }
+    //</editor-fold>
 
     //<editor-fold desc="NBT & Packet Stoof--------------------------------------------------------------------------------------------------">
     @Override

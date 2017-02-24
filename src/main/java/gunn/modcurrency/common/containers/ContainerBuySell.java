@@ -290,6 +290,9 @@ public class ContainerBuySell extends Container implements INBTInventory {
 
                         tile.setField(4, tile.getField(4) + cost * amnt);
                     }
+                }else{
+                    if(tile instanceof TileVendor) ((TileVendor) tile).unsucessfulNoise();
+
                 }
                 return slotStack;
             }

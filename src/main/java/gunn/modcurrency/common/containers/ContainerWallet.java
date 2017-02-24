@@ -115,6 +115,20 @@ public class ContainerWallet extends Container implements INBTInventory {
 
     @Nullable
     @Override
+    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
+        if(slotId >= 0 && slotId <= WALLET_FIRST_SLOT_INDEX + WALLET_TOTAL_COUNT) {
+            if(player.getHeldItemMainhand() != inventorySlots.get(slotId).getStack()) {
+                ItemStack stack = super.slotClick(slotId, dragType, clickTypeIn, player);
+                writeInventoryTag(player.getHeldItemMainhand(), itemStackHandler);
+                checkmetadataOpen(player.getHeldItemMainhand());
+                return stack;
+            }
+        }
+        return ItemStack.EMPTY;
+    }
+
+    @Nullable
+    @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
         ItemStack sourceStack = ItemStack.EMPTY;
         Slot slot = this.inventorySlots.get(index);
