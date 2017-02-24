@@ -110,7 +110,6 @@ public class BlockVendor extends Block implements ITileEntityProvider{
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing heldItem, float side, float hitX, float hitY) {
         if(getTile(world, pos).getPlayerUsing() == null) {      //Client and Server
             getTile(world, pos).setField(5, player.isCreative() ? 1 : 0);
-
             if (player.getHeldItemMainhand() != ItemStack.EMPTY && !world.isRemote) {      //Just Server
                 if (player.getHeldItemMainhand().getItem() == Items.DYE) {
                     //<editor-fold desc="Saving Tile Variables">

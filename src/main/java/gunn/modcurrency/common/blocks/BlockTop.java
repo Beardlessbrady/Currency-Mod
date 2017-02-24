@@ -228,7 +228,6 @@ public class BlockTop extends Block{
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         if(source.getTileEntity(pos.down()) != null){
             Integer face = ((TileBuy) source.getTileEntity(pos.down())).getField(7);
-            double y = (source.getTileEntity(pos.down()) instanceof TileVendor) ? 0 : 0.0625;
             AxisAlignedBB box;
             AxisAlignedBB newBox;
 
@@ -243,7 +242,7 @@ public class BlockTop extends Block{
                 case 3: box = BOUND_BOX_W;
             }
 
-            newBox = new AxisAlignedBB(box.minX, box.minY, box.minZ, box.maxX, box.maxY - y, box.maxZ);
+            newBox = new AxisAlignedBB(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ);
             return newBox;
         }
         return super.getBoundingBox(state, source, pos);
@@ -254,7 +253,6 @@ public class BlockTop extends Block{
     public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
         if(worldIn.getTileEntity(pos.down()) != null){
             Integer face = ((TileBuy) worldIn.getTileEntity(pos.down())).getField(7);
-            double y = (worldIn.getTileEntity(pos.down()) instanceof TileVendor) ? 0 : 0.0625;
             AxisAlignedBB box;
             AxisAlignedBB newBox;
 
@@ -269,7 +267,7 @@ public class BlockTop extends Block{
                 case 3: box = BOUND_BOX_W;
             }
 
-            newBox = new AxisAlignedBB(box.minX, box.minY, box.minZ, box.maxX, box.maxY - y, box.maxZ);
+            newBox = new AxisAlignedBB(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ);
             return newBox;
         }
         return super.getCollisionBoundingBox(blockState, worldIn, pos);
