@@ -46,9 +46,9 @@ public class TileVendor extends TileBuy implements ICapabilityProvider, ITickabl
     private String owner, selectedName;
     private boolean locked, mode, creative, infinite, gearExtended, walletIn, fuzzy;
     private int[] itemCosts = new int[VEND_SLOT_COUNT];
-    private ItemHandlerVendor inputStackHandler = new ItemHandlerVendor(INPUT_SLOT_COUNT);
+    private ItemStackHandler inputStackHandler = new ItemStackHandler(INPUT_SLOT_COUNT);
     private ItemHandlerVendor vendStackHandler = new ItemHandlerVendor(VEND_SLOT_COUNT);
-    private ItemHandlerVendor bufferStackHandler = new ItemHandlerVendor(BUFFER_SLOT_COUNT);
+    private ItemStackHandler bufferStackHandler = new ItemStackHandler(BUFFER_SLOT_COUNT);
     private EntityPlayer playerUsing = null;
     public static Item[] specialSlotItems = new Item[2];
 
@@ -609,9 +609,9 @@ public class TileVendor extends TileBuy implements ICapabilityProvider, ITickabl
 
     @Override
     public void setStackHandlers(ItemStackHandler inputCopy, ItemStackHandler buffCopy, ItemStackHandler vendCopy) {
-        inputStackHandler = ((ItemHandlerVendor) inputCopy);
+        inputStackHandler = inputCopy;
         vendStackHandler = ((ItemHandlerVendor) vendCopy);
-        bufferStackHandler = ((ItemHandlerVendor) buffCopy);
+        bufferStackHandler = buffCopy;
     }
 
     public EntityPlayer getPlayerUsing(){

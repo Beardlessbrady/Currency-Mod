@@ -112,7 +112,6 @@ public class TileSeller extends TileBuy implements ICapabilityProvider, ITickabl
                                         }
                                     }
                                     inputItem.shrink(1);
-                                    System.out.println(itemAmounts[i]);
                                     if(itemAmounts[i] != -1){
                                         vendStackHandler.getStackInSlot(i).shrink(1);
                                         itemAmounts[i]--;

@@ -1,6 +1,7 @@
 package gunn.modcurrency.common.containers;
 
 import gunn.modcurrency.api.TileBuy;
+import gunn.modcurrency.common.containers.slots.SlotVendor;
 import gunn.modcurrency.common.core.handler.PacketHandler;
 import gunn.modcurrency.common.core.network.PacketSendItemToServer;
 import gunn.modcurrency.common.core.util.INBTInventory;
@@ -125,7 +126,7 @@ public class ContainerBuySell extends Container implements INBTInventory {
                 int slotNum = 1 + y * TE_VEND_ROW_COUNT + x;
                 int xpos = TE_INV_XPOS + x * SLOT_X_SPACING;
                 int ypos = TE_INV_YPOS + y * SLOT_Y_SPACING;
-                addSlotToContainer(new SlotItemHandler(itemHandler, slotNum, xpos, ypos));
+                addSlotToContainer(new SlotVendor(itemHandler, slotNum, xpos, ypos));
             }
         }
 
@@ -198,8 +199,9 @@ public class ContainerBuySell extends Container implements INBTInventory {
                         if (inventoryPlayer.getItemStack() != ItemStack.EMPTY && inventorySlots.get(slotId).getStack() == ItemStack.EMPTY) {
                             ItemStack ghostStack = inventoryPlayer.getItemStack().copy();
                             int gCount = 1;
-                            if (((TileSeller) tile).getItemAmount(slotId - 37) > 1)
+                            if (((TileSeller) tile).getItemAmount(slotId - 37) > 1) {
                                 gCount = ((TileSeller) tile).getItemAmount(slotId - 37);
+                            }
 
                             ghostStack.setCount(gCount);
                             ghostSlot.putStack(ghostStack);
@@ -261,8 +263,7 @@ public class ContainerBuySell extends Container implements INBTInventory {
 
             if (slotStack != ItemStack.EMPTY) {
                 if (playStack.getItem() != Item.getItemFromBlock(Blocks.AIR)) {
-                    if (!((playStack.getDisplayName().equals(slotStack.getDisplayName())) &&
-                            (playStack.getItem().getUnlocalizedName().equals(slotStack.getItem().getUnlocalizedName())))) {
+                    if (!((playStack.getDisplayName().equals(slotStack.getDisplayName())) && (playStack.getItem().getUnlocalizedName().equals(slotStack.getItem().getUnlocalizedName())))) {
                         return ItemStack.EMPTY; //Checks if player is holding stack, if its different then one being clicked do nothing
                     }
                 }
@@ -272,14 +273,15 @@ public class ContainerBuySell extends Container implements INBTInventory {
 
                 if ((bank >= (cost * amnt))) {   //If has enough money, buy it
                     if (slotStack.getCount() >= amnt || tile.getField(6) == 1) {
-                        if (tile.getField(6) == 0) slotStack.splitStack(amnt);
                         playBuyStack = slotStack.copy();
                         playBuyStack.setCount(amnt);
 
-                        if (player.inventory.getItemStack() != ItemStack.EMPTY) {       //Holding Item
-                            playBuyStack.grow(amnt);
+                        if (!player.inventory.getItemStack().isEmpty()) {       //Holding Item
+                            playBuyStack.setCount(amnt + playStack.getCount());
                         }
                         player.inventory.setItemStack(playBuyStack);
+
+                        if (tile.getField(6) == 0) slotStack.splitStack(amnt);
 
 
                         if (wallet) {
