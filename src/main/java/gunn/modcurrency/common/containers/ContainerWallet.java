@@ -2,7 +2,7 @@ package gunn.modcurrency.common.containers;
 
 import gunn.modcurrency.client.guis.GuiWallet;
 import gunn.modcurrency.common.core.util.INBTInventory;
-import gunn.modcurrency.common.core.util.SlotCustomizable;
+import gunn.modcurrency.common.containers.slots.SlotCustomizable;
 import gunn.modcurrency.common.items.ItemWallet;
 import gunn.modcurrency.common.items.ModItems;
 import net.minecraft.entity.item.EntityItem;

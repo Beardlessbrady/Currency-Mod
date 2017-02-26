@@ -3,6 +3,7 @@ package gunn.modcurrency.common.tiles;
 
 import gunn.modcurrency.ModCurrency;
 import gunn.modcurrency.api.TileBuy;
+import gunn.modcurrency.common.containers.itemhandlers.ItemHandlerVendor;
 import gunn.modcurrency.common.core.util.INBTInventory;
 import gunn.modcurrency.common.items.ItemWallet;
 import gunn.modcurrency.common.items.ModItems;
@@ -45,9 +46,9 @@ public class TileVendor extends TileBuy implements ICapabilityProvider, ITickabl
     private String owner, selectedName;
     private boolean locked, mode, creative, infinite, gearExtended, walletIn, fuzzy;
     private int[] itemCosts = new int[VEND_SLOT_COUNT];
-    private ItemStackHandler inputStackHandler = new ItemStackHandler(INPUT_SLOT_COUNT);
-    private ItemStackHandler vendStackHandler = new ItemStackHandler(VEND_SLOT_COUNT);
-    private ItemStackHandler bufferStackHandler = new ItemStackHandler(BUFFER_SLOT_COUNT);
+    private ItemHandlerVendor inputStackHandler = new ItemHandlerVendor(INPUT_SLOT_COUNT);
+    private ItemHandlerVendor vendStackHandler = new ItemHandlerVendor(VEND_SLOT_COUNT);
+    private ItemHandlerVendor bufferStackHandler = new ItemHandlerVendor(BUFFER_SLOT_COUNT);
     private EntityPlayer playerUsing = null;
     public static Item[] specialSlotItems = new Item[2];
 
@@ -608,9 +609,9 @@ public class TileVendor extends TileBuy implements ICapabilityProvider, ITickabl
 
     @Override
     public void setStackHandlers(ItemStackHandler inputCopy, ItemStackHandler buffCopy, ItemStackHandler vendCopy) {
-        inputStackHandler = inputCopy;
-        vendStackHandler = vendCopy;
-        bufferStackHandler = buffCopy;
+        inputStackHandler = ((ItemHandlerVendor) inputCopy);
+        vendStackHandler = ((ItemHandlerVendor) vendCopy);
+        bufferStackHandler = ((ItemHandlerVendor) buffCopy);
     }
 
     public EntityPlayer getPlayerUsing(){

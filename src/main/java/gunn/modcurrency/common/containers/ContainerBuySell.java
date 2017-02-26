@@ -4,7 +4,7 @@ import gunn.modcurrency.api.TileBuy;
 import gunn.modcurrency.common.core.handler.PacketHandler;
 import gunn.modcurrency.common.core.network.PacketSendItemToServer;
 import gunn.modcurrency.common.core.util.INBTInventory;
-import gunn.modcurrency.common.core.util.SlotCustomizable;
+import gunn.modcurrency.common.containers.slots.SlotCustomizable;
 import gunn.modcurrency.common.items.ItemWallet;
 import gunn.modcurrency.common.items.ModItems;
 import gunn.modcurrency.common.tiles.TileSeller;

@@ -1,4 +1,4 @@
-package gunn.modcurrency.common.core.util;
+package gunn.modcurrency.common.containers.slots;
 
 import gunn.modcurrency.common.items.ModItems;
 import net.minecraft.item.Item;
