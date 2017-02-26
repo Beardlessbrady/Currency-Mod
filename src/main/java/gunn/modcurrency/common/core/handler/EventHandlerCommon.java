@@ -35,14 +35,4 @@ public class EventHandlerCommon {
             }
         }
     }
-
-        /* MAKE A CLIENT ONLY EVENT HANLDER, THROW IN THERE
-        @SubscribeEvent
-        public void onModelBake(ModelBakeEvent e){
-            ModelResourceLocation base = new ModelResourceLocation(ModCurrency.MODID + ":blockvendor","color=blue,facing=north,item=false,open=true");
-            IBakedModel basicVendor = e.getModelRegistry().getObject(base);
-
-            e.getModelRegistry().putObject(base, new BakedModelVendor(basicVendor));
-        }
-        */
 }

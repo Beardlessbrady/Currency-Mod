@@ -434,10 +434,13 @@ public class GuiBuySell extends GuiContainer {
             list.add(String.valueOf(currStack.getDisplayName()));
 
             if(tile instanceof TileVendor && tile.getField(2) == 0){
-                if(((TileVendor) tile).canAfford(slot)){
+                if(!((TileVendor) tile).canAfford(slot)){
                     list.add(TextFormatting.RED + "$" + (String.valueOf(tile.getItemCost(slot))));
                 }else{
                     list.add("$" + (String.valueOf(tile.getItemCost(slot))));
+                }
+                if(((TileVendor) tile).isItemGhost(slot)){
+                    list.add(TextFormatting.RED + "OUT OF STOCK");
                 }
             }else{
                 list.add("$" + (String.valueOf(tile.getItemCost(slot))));

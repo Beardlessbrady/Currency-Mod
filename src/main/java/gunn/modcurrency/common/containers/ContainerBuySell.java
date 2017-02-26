@@ -1,11 +1,11 @@
 package gunn.modcurrency.common.containers;
 
 import gunn.modcurrency.api.TileBuy;
+import gunn.modcurrency.common.containers.slots.SlotCustomizable;
 import gunn.modcurrency.common.containers.slots.SlotVendor;
 import gunn.modcurrency.common.core.handler.PacketHandler;
 import gunn.modcurrency.common.core.network.PacketSendItemToServer;
 import gunn.modcurrency.common.core.util.INBTInventory;
-import gunn.modcurrency.common.containers.slots.SlotCustomizable;
 import gunn.modcurrency.common.items.ItemWallet;
 import gunn.modcurrency.common.items.ModItems;
 import gunn.modcurrency.common.tiles.TileSeller;
@@ -234,14 +234,7 @@ public class ContainerBuySell extends Container implements INBTInventory {
         return ItemStack.EMPTY;
     }
 
-    /**
-     * Used to see if the player attempting to buy an item can afford it, if so buy it.
-     *
-     * @param slotId
-     * @param amnt
-     * @param player
-     * @return
-     */
+
     public ItemStack checkAfford(int slotId, int amnt, EntityPlayer player) {
         if (tile instanceof TileVendor) {
             IItemHandler itemHandler = this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
@@ -260,8 +253,10 @@ public class ContainerBuySell extends Container implements INBTInventory {
             } else bank = tile.getField(0);
             int cost = tile.getItemCost(slotId - PLAYER_TOTAL_COUNT - 1);
 
-
+            skip:
             if (slotStack != ItemStack.EMPTY) {
+                if(tile instanceof TileVendor) if(((TileVendor) tile).isItemGhost(slotId - PLAYER_TOTAL_COUNT - 1)) break skip;
+
                 if (playStack.getItem() != Item.getItemFromBlock(Blocks.AIR)) {
                     if (!((playStack.getDisplayName().equals(slotStack.getDisplayName())) && (playStack.getItem().getUnlocalizedName().equals(slotStack.getItem().getUnlocalizedName())))) {
                         return ItemStack.EMPTY; //Checks if player is holding stack, if its different then one being clicked do nothing
@@ -281,7 +276,14 @@ public class ContainerBuySell extends Container implements INBTInventory {
                         }
                         player.inventory.setItemStack(playBuyStack);
 
-                        if (tile.getField(6) == 0) slotStack.splitStack(amnt);
+                        if (tile.getField(6) == 0){
+                                if (slotStack.getCount() - amnt == 0 && tile instanceof TileVendor) {
+                                    ((TileVendor) tile).setGhost(slotId - PLAYER_TOTAL_COUNT - 1, true);
+                                    slotStack.setCount(1);
+                                } else {
+                                    slotStack.splitStack(amnt);
+                                }
+                        }
 
 
                         if (wallet) {

@@ -48,9 +48,10 @@ public class TileVendor extends TileBuy implements ICapabilityProvider, ITickabl
     private int[] itemCosts = new int[VEND_SLOT_COUNT];
     private ItemStackHandler inputStackHandler = new ItemStackHandler(INPUT_SLOT_COUNT);
     private ItemHandlerVendor vendStackHandler = new ItemHandlerVendor(VEND_SLOT_COUNT);
-    private ItemStackHandler bufferStackHandler = new ItemStackHandler(BUFFER_SLOT_COUNT);
+    private ItemStackHandler bufferStackHandler = new ItemHandlerVendor(BUFFER_SLOT_COUNT);
     private EntityPlayer playerUsing = null;
     public static Item[] specialSlotItems = new Item[2];
+
 
 
     public TileVendor() {
@@ -220,7 +221,7 @@ public class TileVendor extends TileBuy implements ICapabilityProvider, ITickabl
         if(walletIn){
             return getItemCost(slot) >= getTotalCash();
         }
-        return getItemCost(slot) >= bank;
+        return bank >= getItemCost(slot);
     }
 
     //Outputs change in least amount of bills
@@ -353,6 +354,10 @@ public class TileVendor extends TileBuy implements ICapabilityProvider, ITickabl
         for (int i = 0; i < itemCosts.length; i++) itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
         compound.setTag("itemCosts", itemCostsNBT);
 
+        NBTTagCompound ghostItemNBT = new NBTTagCompound();
+        for (int i = 0; i < vendStackHandler.getSlots(); i++) ghostItemNBT.setBoolean("ghost" + i, vendStackHandler.isGhost(i));
+        compound.setTag("ghostItems", ghostItemNBT);
+
         return compound;
     }
 
@@ -380,6 +385,11 @@ public class TileVendor extends TileBuy implements ICapabilityProvider, ITickabl
         if (compound.hasKey("itemCosts")) {
             NBTTagCompound itemCostsNBT = compound.getCompoundTag("itemCosts");
             for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = itemCostsNBT.getInteger("cost" + i);
+        }
+
+        if(compound.hasKey("ghostItems")) {
+            NBTTagCompound ghostItemsNBT = compound.getCompoundTag("ghostItems");
+            for (int i = 0; i < vendStackHandler.getSlots(); i++) vendStackHandler.setGhost(i, ghostItemsNBT.getBoolean("ghost" + i));
         }
     }
 
@@ -411,6 +421,10 @@ public class TileVendor extends TileBuy implements ICapabilityProvider, ITickabl
         for (int i = 0; i < itemCosts.length; i++) itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
         tag.setTag("itemCosts", itemCostsNBT);
 
+        NBTTagCompound ghostItemsNBT = new NBTTagCompound();
+        for (int i = 0; i < vendStackHandler.getSlots(); i++) ghostItemsNBT.setBoolean("ghost" + i, vendStackHandler.isGhost(i));
+        tag.setTag("ghostItems", ghostItemsNBT);
+
         return new SPacketUpdateTileEntity(pos, 1, tag);
     }
 
@@ -434,6 +448,10 @@ public class TileVendor extends TileBuy implements ICapabilityProvider, ITickabl
 
         NBTTagCompound itemCostsNBT = pkt.getNbtCompound().getCompoundTag("itemCosts");
         for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = itemCostsNBT.getInteger("cost" + i);
+
+        NBTTagCompound ghostItemsNBT = pkt.getNbtCompound().getCompoundTag("ghostItems");
+        for (int i = 0; i < vendStackHandler.getSlots(); i ++) vendStackHandler.setGhost(i, ghostItemsNBT.getBoolean("ghost" + 1));
+
     }
     //</editor-fold>--------------------------------
 
@@ -620,6 +638,14 @@ public class TileVendor extends TileBuy implements ICapabilityProvider, ITickabl
 
     public void voidPlayerUsing(){
         playerUsing = null;
+    }
+
+    public boolean isItemGhost(int slot){
+        return vendStackHandler.isGhost(slot);
+    }
+
+    public void setGhost(int slot, boolean bool){
+        vendStackHandler.setGhost(slot, bool);
     }
 
     //</editor-fold>
