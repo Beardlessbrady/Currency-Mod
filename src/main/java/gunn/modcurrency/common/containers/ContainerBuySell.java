@@ -4,6 +4,8 @@ import gunn.modcurrency.api.TileBuy;
 import gunn.modcurrency.common.containers.slots.SlotCustomizable;
 import gunn.modcurrency.common.containers.slots.SlotVendor;
 import gunn.modcurrency.common.core.handler.PacketHandler;
+import gunn.modcurrency.common.core.network.PacketSendIntDataToClient;
+import gunn.modcurrency.common.core.network.PacketSendIntDataToServer;
 import gunn.modcurrency.common.core.network.PacketSendItemToServer;
 import gunn.modcurrency.common.core.util.INBTInventory;
 import gunn.modcurrency.common.items.ItemWallet;
@@ -253,9 +255,9 @@ public class ContainerBuySell extends Container implements INBTInventory {
             } else bank = tile.getField(0);
             int cost = tile.getItemCost(slotId - PLAYER_TOTAL_COUNT - 1);
 
-            skip:
             if (slotStack != ItemStack.EMPTY) {
-                if(tile instanceof TileVendor) if(((TileVendor) tile).isItemGhost(slotId - PLAYER_TOTAL_COUNT - 1)) break skip;
+                System.out.println(((TileVendor) tile).isItemGhost(slotId - PLAYER_TOTAL_COUNT -1));
+                if(tile instanceof TileVendor) if(((TileVendor) tile).isItemGhost(slotId - PLAYER_TOTAL_COUNT - 1)) return ItemStack.EMPTY;
 
                 if (playStack.getItem() != Item.getItemFromBlock(Blocks.AIR)) {
                     if (!((playStack.getDisplayName().equals(slotStack.getDisplayName())) && (playStack.getItem().getUnlocalizedName().equals(slotStack.getItem().getUnlocalizedName())))) {
@@ -280,6 +282,11 @@ public class ContainerBuySell extends Container implements INBTInventory {
                                 if (slotStack.getCount() - amnt == 0 && tile instanceof TileVendor) {
                                     ((TileVendor) tile).setGhost(slotId - PLAYER_TOTAL_COUNT - 1, true);
                                     slotStack.setCount(1);
+
+                                    //Send to Client
+                                    PacketSendIntDataToClient pack = new PacketSendIntDataToClient();
+                                    pack.setData(slotId - PLAYER_TOTAL_COUNT - 1, tile.getPos(), 0);
+                                    PacketHandler.INSTANCE.sendToAll(pack);
                                 } else {
                                     slotStack.splitStack(amnt);
                                 }

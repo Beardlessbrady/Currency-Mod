@@ -3,7 +3,7 @@ package gunn.modcurrency.client.guis;
 import gunn.modcurrency.api.TileBuy;
 import gunn.modcurrency.common.containers.ContainerBuySell;
 import gunn.modcurrency.common.core.handler.PacketHandler;
-import gunn.modcurrency.common.core.network.PacketSendIntData;
+import gunn.modcurrency.common.core.network.PacketSendIntDataToServer;
 import gunn.modcurrency.common.core.network.PacketSendItemToServer;
 import gunn.modcurrency.common.core.util.TabButtonList;
 import gunn.modcurrency.common.tiles.TileSeller;
@@ -63,7 +63,7 @@ public class GuiBuySell extends GuiContainer {
         if (this.nameField.getText().length() > 0) {
             int newCost = Integer.valueOf(this.nameField.getText());
 
-            PacketSendIntData pack = new PacketSendIntData();
+            PacketSendIntDataToServer pack = new PacketSendIntDataToServer();
             pack.setData(newCost, tile.getPos(), 1);
 
             PacketHandler.INSTANCE.sendToServer(pack);
@@ -76,7 +76,7 @@ public class GuiBuySell extends GuiContainer {
             int newAmount = Integer.valueOf(this.amountField.getText());
             if (Integer.valueOf(this.amountField.getText()) == 0) newAmount = -1;
 
-            PacketSendIntData pack = new PacketSendIntData();
+            PacketSendIntDataToServer pack = new PacketSendIntDataToServer();
             pack.setData(newAmount, tile.getPos(), 6);
 
             PacketHandler.INSTANCE.sendToServer(pack);
@@ -99,7 +99,7 @@ public class GuiBuySell extends GuiContainer {
     @Override
     public void onResize(Minecraft mcIn, int w, int h) {
         super.onResize(mcIn, w, h);
-        PacketSendIntData pack2 = new PacketSendIntData();
+        PacketSendIntDataToServer pack2 = new PacketSendIntDataToServer();
         pack2.setData(0, tile.getPos(), 4);
         PacketHandler.INSTANCE.sendToServer(pack2);
 
@@ -495,7 +495,7 @@ public class GuiBuySell extends GuiContainer {
                 PacketHandler.INSTANCE.sendToServer(pack0);
                 break;
             case 1: //Lock Button
-                PacketSendIntData pack1 = new PacketSendIntData();
+                PacketSendIntDataToServer pack1 = new PacketSendIntDataToServer();
                 pack1.setData((tile.getField(1) == 1) ? 0 : 1, tile.getPos(), 0);
                 PacketHandler.INSTANCE.sendToServer(pack1);
                 tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
@@ -503,7 +503,7 @@ public class GuiBuySell extends GuiContainer {
             case 2: //Gear Button
                 tabList.checkOpenState("Gear", tile.getField(8) == 0);
                 int newGear = tile.getField(8) == 1 ? 0 : 1;
-                PacketSendIntData pack2 = new PacketSendIntData();
+                PacketSendIntDataToServer pack2 = new PacketSendIntDataToServer();
                 pack2.setData(newGear, tile.getPos(), 4);
                 PacketHandler.INSTANCE.sendToServer(pack2);
                 break;
@@ -511,12 +511,12 @@ public class GuiBuySell extends GuiContainer {
                 creativeExtended = !creativeExtended;
                 break;
             case 4:
-                PacketSendIntData pack4 = new PacketSendIntData();
+                PacketSendIntDataToServer pack4 = new PacketSendIntDataToServer();
                 pack4.setData((tile.getField(6) == 1) ? 0 : 1, tile.getPos(), 3);
                 PacketHandler.INSTANCE.sendToServer(pack4);
                 break;
             case 5:
-                PacketSendIntData pack5 = new PacketSendIntData();
+                PacketSendIntDataToServer pack5 = new PacketSendIntDataToServer();
                 pack5.setData((tile.getField(11) == 1) ? 0 : 1, tile.getPos(), 7);
                 PacketHandler.INSTANCE.sendToServer(pack5);
                 break;

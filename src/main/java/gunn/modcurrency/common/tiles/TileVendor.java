@@ -645,7 +645,7 @@ public class TileVendor extends TileBuy implements ICapabilityProvider, ITickabl
     }
 
     public void setGhost(int slot, boolean bool){
-        vendStackHandler.setGhost(slot, bool);
+            vendStackHandler.setGhost(slot, bool);
     }
 
     //</editor-fold>
