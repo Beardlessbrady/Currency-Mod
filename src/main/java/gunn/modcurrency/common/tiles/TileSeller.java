@@ -43,6 +43,7 @@ public class TileSeller extends TileBuy implements ICapabilityProvider, ITickabl
     private ItemStackHandler inputStackHandler = new ItemStackHandler(INPUT_SLOT_COUNT);
     private ItemStackHandler vendStackHandler = new ItemStackHandler(VEND_SLOT_COUNT);
     private ItemStackHandler bufferStackHandler = new ItemStackHandler(BUFFER_SLOT_COUNT);
+    private ItemStackHandler automationInputStackHandler = new ItemStackHandler(1);
     private EntityPlayer playerUsing = null;
 
     public static Item[] specialSlotItems = new Item[1];
@@ -77,6 +78,38 @@ public class TileSeller extends TileBuy implements ICapabilityProvider, ITickabl
     @Override
     public void update() {
         if (!world.isRemote) {
+            if (automationInputStackHandler.getStackInSlot(0) != ItemStack.EMPTY){
+                if (automationInputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemBanknote)) {
+                    int amount;
+                    switch (automationInputStackHandler.getStackInSlot(0).getItemDamage()) {
+                        case 0:
+                            amount = 1;
+                            break;
+                        case 1:
+                            amount = 5;
+                            break;
+                        case 2:
+                            amount = 10;
+                            break;
+                        case 3:
+                            amount = 20;
+                            break;
+                        case 4:
+                            amount = 50;
+                            break;
+                        case 5:
+                            amount = 100;
+                            break;
+                        default:
+                            amount = -1;
+                            break;
+                    }
+                    amount = amount * automationInputStackHandler.getStackInSlot(0).getCount();
+                    automationInputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
+                    cashRegister = cashRegister + amount;
+                }
+            }
+
             if (!mode) {        //SELL MODE
                 if (inputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
                     searchLoop:
@@ -289,6 +322,7 @@ public class TileSeller extends TileBuy implements ICapabilityProvider, ITickabl
         compound.setTag("items", vendStackHandler.serializeNBT());
         compound.setTag("buffer", bufferStackHandler.serializeNBT());
         compound.setTag("input", inputStackHandler.serializeNBT());
+        compound.setTag("autoInput", automationInputStackHandler.serializeNBT());
         compound.setInteger("bank", bank);
         compound.setInteger("face", face);
         compound.setInteger("cashRegister", cashRegister);
@@ -320,6 +354,7 @@ public class TileSeller extends TileBuy implements ICapabilityProvider, ITickabl
         if (compound.hasKey("items")) vendStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("items"));
         if (compound.hasKey("buffer")) bufferStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("buffer"));
         if (compound.hasKey("input")) inputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("input"));
+        if (compound.hasKey("autoInput")) automationInputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("autoInput"));
         if (compound.hasKey("bank")) bank = compound.getInteger("bank");
         if (compound.hasKey("face")) face = compound.getInteger("face");
         if (compound.hasKey("cashRegister")) cashRegister = compound.getInteger("cashRegister");
@@ -406,13 +441,8 @@ public class TileSeller extends TileBuy implements ICapabilityProvider, ITickabl
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             if(facing == null) return true;
-            if(facing != EnumFacing.DOWN) return false;
-            if(!locked){
-                if(facing == EnumFacing.DOWN) return false;
-            }else{
-                if(facing == EnumFacing.DOWN) return true;
-            }
-            return false;
+            if(!locked) return false;
+            return true;
         }
         return super.hasCapability(capability, facing);
     }
@@ -422,6 +452,7 @@ public class TileSeller extends TileBuy implements ICapabilityProvider, ITickabl
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             if (facing == null) return (T) new CombinedInvWrapper(inputStackHandler, vendStackHandler, bufferStackHandler); //Inside Itself
             if (facing == EnumFacing.DOWN) return (T) bufferStackHandler;
+            if (facing != EnumFacing.DOWN) return (T) automationInputStackHandler;
         }
         return super.getCapability(capability, facing);
     }
