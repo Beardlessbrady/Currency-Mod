@@ -1,6 +1,5 @@
 package gunn.modcurrency.common.core.handler;
 
-import gunn.modcurrency.common.core.network.PacketSendIntDataToClient;
 import gunn.modcurrency.common.core.network.PacketSendIntDataToServer;
 import gunn.modcurrency.common.core.network.PacketSendItemToServer;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -31,6 +30,5 @@ public class PacketHandler {
     public static void registerMessages(){
         INSTANCE.registerMessage(PacketSendItemToServer.Handler.class, PacketSendItemToServer.class, nextID(), Side.SERVER);
         INSTANCE.registerMessage(PacketSendIntDataToServer.Handler.class, PacketSendIntDataToServer.class, nextID(), Side.SERVER);
-        INSTANCE.registerMessage(PacketSendIntDataToClient.Handler.class, PacketSendIntDataToClient.class, nextID(), Side.CLIENT);
     }
 }

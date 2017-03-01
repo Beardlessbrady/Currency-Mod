@@ -24,21 +24,9 @@ public class ItemHandlerVendor extends ItemStackHandler{
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         if(this.getStackInSlot(slot).getItem() == stack.getItem()) {
-            if(isGhost(slot)){
-                setGhost(slot, false);
-                stack.shrink(1);
-            }
             return super.insertItem(slot, stack, simulate);
         }else{
             return stack;
         }
-    }
-
-    public boolean isGhost(int slot){
-        return ghostItems[slot];
-    }
-
-    public void setGhost(int slot, boolean bool){
-        ghostItems[slot] = bool;
     }
 }
