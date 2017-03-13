@@ -71,7 +71,7 @@ public class ContainerBuySell extends Container implements INBTInventory {
 
     @Override
     public void onContainerClosed(EntityPlayer playerIn) {
-        if(tile.getField(2) == 1) checkGhostStacks();
+        if(tile.getField(2) == 1 && tile instanceof TileVendor) checkGhostStacks();
         tile.voidPlayerUsing();
         tile.setField(8, 0);
         tile.outInputSlot();
