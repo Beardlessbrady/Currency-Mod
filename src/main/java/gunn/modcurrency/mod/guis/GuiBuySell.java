@@ -437,6 +437,9 @@ public class GuiBuySell extends GuiContainer {
                 }else{
                     list.add("$" + (String.valueOf(tile.getItemCost(slot))));
                 }
+                if(((TileVendor) tile).isGhostSlot(slot)) {
+                    list.add(TextFormatting.RED + "OUT OF STOCK");
+                }
             }else{
                 list.add("$" + (String.valueOf(tile.getItemCost(slot))));
             }

@@ -71,6 +71,7 @@ public class ContainerBuySell extends Container implements INBTInventory {
 
     @Override
     public void onContainerClosed(EntityPlayer playerIn) {
+        if(tile.getField(2) == 1) checkGhostStacks();
         tile.voidPlayerUsing();
         tile.setField(8, 0);
         tile.outInputSlot();
@@ -169,21 +170,27 @@ public class ContainerBuySell extends Container implements INBTInventory {
                 } else if (slotId >= 37 && slotId < 67 && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 1) {
                     return super.slotClick(slotId, 0, clickTypeIn, player);
                 } else {
+                    if(((TileVendor) tile).isGhostSlot(slotId - PLAYER_TOTAL_COUNT - 1)){
+                        this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).getStackInSlot(slotId - PLAYER_TOTAL_COUNT).shrink(1);
+                        ((TileVendor) tile).setGhostSlot( slotId - PLAYER_TOTAL_COUNT -1, false);
+                    }
                     return super.slotClick(slotId, dragType, clickTypeIn, player);
                 }
             } else {  //Sell Mode
                 if (slotId >= 0 && slotId <= 36) {           //Is Players Inv or Input Slot
                     return super.slotClick(slotId, dragType, clickTypeIn, player);
                 } else if (slotId >= 37 && slotId < 67) {  //Is TE Inv
-                    if (clickTypeIn == ClickType.PICKUP && dragType == 0) {   //Left Click = 1 item
-                        return checkAfford(slotId, 1, player);
-                    } else if (clickTypeIn == ClickType.PICKUP && dragType == 1) {   //Right Click = 10 item
-                        return checkAfford(slotId, 10, player);
-                    } else if (clickTypeIn == ClickType.QUICK_MOVE) {
-                        return checkAfford(slotId, 64, player);
-                    } else {
-                        return ItemStack.EMPTY;
-                    }
+                    if (!((TileVendor) tile).isGhostSlot( slotId -PLAYER_TOTAL_COUNT -1)) {
+                        if (clickTypeIn == ClickType.PICKUP && dragType == 0) {   //Left Click = 1 item
+                            return checkAfford(slotId, 1, player);
+                        } else if (clickTypeIn == ClickType.PICKUP && dragType == 1) {   //Right Click = 10 item
+                            return checkAfford(slotId, 10, player);
+                        } else if (clickTypeIn == ClickType.QUICK_MOVE) {
+                            return checkAfford(slotId, 64, player);
+                        } else {
+                            return ItemStack.EMPTY;
+                        }
+                    }else return ItemStack.EMPTY;
                 }
             }
             //</editor-fold>
@@ -274,7 +281,10 @@ public class ContainerBuySell extends Container implements INBTInventory {
                         player.inventory.setItemStack(playBuyStack);
 
                         if (tile.getField(6) == 0){
-                            slotStack.splitStack(amnt);
+                            if(slotStack.getCount() - amnt == 0){
+                                ((TileVendor) tile).setGhostSlot( slotId - PLAYER_TOTAL_COUNT -1, true);
+                                slotStack.setCount(1);
+                            }else slotStack.splitStack(amnt);
                         }
 
 
@@ -593,5 +603,15 @@ public class ContainerBuySell extends Container implements INBTInventory {
         }
 
         return cash * stackSize;
+    }
+
+    public void checkGhostStacks(){
+        IItemHandler itemHandler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        for(int i=0; i < TE_VEND_MAIN_TOTAL_COUNT; i++){
+            if(((TileVendor)tile).isGhostSlot(i) && itemHandler.getStackInSlot(i+1).getCount() > 1){
+                itemHandler.getStackInSlot(i+1).shrink(1);
+                ((TileVendor) tile).setGhostSlot(i, false);
+            }
+        }
     }
 }
