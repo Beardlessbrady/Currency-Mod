@@ -1,5 +1,6 @@
 package gunn.modcurrency.mod.items;
 
+import gunn.modcurrency.mod.ModConfig;
 import gunn.modcurrency.mod.ModCurrency;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
@@ -29,8 +30,14 @@ public class ItemBanknote extends Item {
 
     @SideOnly(Side.CLIENT)
     public void initModel(){
-        for(int i =0; i < noteLength; i++){
-            ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName() + "_" + i, "inventory"));
+        if(ModConfig.shitTextures){
+            for (int i = 0; i < noteLength; i++) {
+                ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName()+ "16" + "_" + i, "inventory"));
+            }
+        }else {
+            for (int i = 0; i < noteLength; i++) {
+                ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName() + "_" + i, "inventory"));
+            }
         }
     }
 

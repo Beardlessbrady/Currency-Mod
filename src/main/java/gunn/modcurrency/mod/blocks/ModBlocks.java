@@ -23,7 +23,7 @@ public class ModBlocks {
         if(ModConfig.enableSeller) blockSeller = new BlockSeller();
         if(ModConfig.enableVendor || ModConfig.enableSeller) blockTop = new BlockTop();
 
-        blockShopMob = new BlockShopMob();
+        //blockShopMob = new BlockShopMob();
     }
 
     public static void ItemModels(){

@@ -22,6 +22,7 @@ public class ModConfig {
     public static boolean recipeVendor = true;
     public static boolean recipeSeller = true;
     public static boolean recipeWallet = true;
+    public static boolean shitTextures = false;
 
     public static boolean invincibleVendSell = true;
     public static int walletSize = 4;
@@ -60,8 +61,10 @@ public class ModConfig {
     }
 
     private static void initgeneralConfig(Configuration cfg){
-        cfg.addCustomCategoryComment(CATEGORY_GENERAL, "These configs modify the balance of some items and blocks in the mod");
+        cfg.addCustomCategoryComment(CATEGORY_GENERAL, "These configs modify the balance/experience of the mod");
         invincibleVendSell = cfg.getBoolean("Invincible Machine", CATEGORY_GENERAL, invincibleVendSell, "Enabling this makes it so only the player who placed the machine can break it");
         walletSize = cfg.getInt("Wallet Size", CATEGORY_GENERAL, walletSize, 0, 4, "This changes how many rows of inventory slots there are in the wallet");
+        shitTextures = cfg.getBoolean("16x16 Textures", Configuration.CATEGORY_GENERAL, shitTextures, "Some textures are 32x32 (like the money). If you are stingy and want 16x16 enable this");
+
     }
 }
