@@ -5,7 +5,7 @@
 [![](https://img.shields.io/badge/Supported-Fully-brightgreen.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
 
 [![](https://img.shields.io/badge/1.10.2-beta-yellow.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
-[![](https://img.shields.io/badge/Latest%20Version-1.4.3-blue.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
+[![](https://img.shields.io/badge/Latest%20Version-1.0.1-blue.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
 [![](https://img.shields.io/badge/Supported-Fully-brightgreen.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
 
 Welcome to the Good Ol' Currency github repository!
