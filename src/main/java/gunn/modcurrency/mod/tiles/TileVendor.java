@@ -83,64 +83,66 @@ public class TileVendor extends TileBuy implements ICapabilityProvider, ITickabl
 
     @Override
     public void update() {
-        if (!world.isRemote) {
-            if (inputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
-                if (inputStackHandler.getStackInSlot(0).getItem() == ModItems.itemBanknote) {
-                    //<editor-fold desc="Dealing with a Banknote">
-                    int amount;
-                    switch (inputStackHandler.getStackInSlot(0).getItemDamage()) {
-                        case 0:
-                            amount = 1;
-                            break;
-                        case 1:
-                            amount = 5;
-                            break;
-                        case 2:
-                            amount = 10;
-                            break;
-                        case 3:
-                            amount = 20;
-                            break;
-                        case 4:
-                            amount = 50;
-                            break;
-                        case 5:
-                            amount = 100;
-                            break;
-                        default:
-                            amount = -1;
-                            break;
+        if(playerUsing != null) {
+            if (!world.isRemote) {
+                if (inputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
+                    if (inputStackHandler.getStackInSlot(0).getItem() == ModItems.itemBanknote) {
+                        //<editor-fold desc="Dealing with a Banknote">
+                        int amount;
+                        switch (inputStackHandler.getStackInSlot(0).getItemDamage()) {
+                            case 0:
+                                amount = 1;
+                                break;
+                            case 1:
+                                amount = 5;
+                                break;
+                            case 2:
+                                amount = 10;
+                                break;
+                            case 3:
+                                amount = 20;
+                                break;
+                            case 4:
+                                amount = 50;
+                                break;
+                            case 5:
+                                amount = 100;
+                                break;
+                            default:
+                                amount = -1;
+                                break;
+                        }
+                        amount = amount * inputStackHandler.getStackInSlot(0).getCount();
+                        inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
+                        bank = bank + amount;
+                        markDirty();
+                        //</editor-fold>
+                    } else if (inputStackHandler.getStackInSlot(0).getItem() == ModItems.itemWallet) {      //Wallet
+                        walletIn = true;
+                        walletTotal = getTotalCash();
                     }
-                    amount = amount * inputStackHandler.getStackInSlot(0).getCount();
-                    inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
-                    bank = bank + amount;
-                    markDirty();
-                    //</editor-fold>
-                }else  if (inputStackHandler.getStackInSlot(0).getItem() == ModItems.itemWallet) {      //Wallet
-                    walletIn = true;
-                    walletTotal = getTotalCash();
-                }
-            }else if (walletIn == true) walletIn = false;
+                } else if (walletIn == true) walletIn = false;
 
-            if(profit >= 20){
-                //<editor-fold desc="Dealing with Buffer Slots">
-                Loop:
-                for(int i = 0; i < BUFFER_SLOT_COUNT; i++){
-                    if(bufferStackHandler.getStackInSlot(i) != ItemStack.EMPTY){
-                        if(bufferStackHandler.getStackInSlot(i).getItemDamage() == 3 && bufferStackHandler.getStackInSlot(i).getCount() < bufferStackHandler.getStackInSlot(i).getMaxStackSize()){
+                if (profit >= 20) {
+                    //<editor-fold desc="Dealing with Buffer Slots">
+                    Loop:
+                    for (int i = 0; i < BUFFER_SLOT_COUNT; i++) {
+                        if (bufferStackHandler.getStackInSlot(i) != ItemStack.EMPTY) {
+                            if (bufferStackHandler.getStackInSlot(i).getItemDamage() == 3 && bufferStackHandler.getStackInSlot(i).getCount() < bufferStackHandler.getStackInSlot(i).getMaxStackSize()) {
+                                profit = profit - 20;
+                                bufferStackHandler.getStackInSlot(i).grow(1);
+                                break Loop;
+                            }
+                        } else if (bufferStackHandler.getStackInSlot(i) == ItemStack.EMPTY) {
+                            ItemStack newStack = new ItemStack(ModItems.itemBanknote);
+                            newStack.setItemDamage(3);
+                            bufferStackHandler.setStackInSlot(i, newStack);
                             profit = profit - 20;
-                            bufferStackHandler.getStackInSlot(i).grow(1);
                             break Loop;
                         }
-                    }else if(bufferStackHandler.getStackInSlot(i) == ItemStack.EMPTY){
-                        ItemStack newStack = new ItemStack(ModItems.itemBanknote);
-                        newStack.setItemDamage(3);
-                        bufferStackHandler.setStackInSlot(i, newStack);
-                        profit = profit - 20;
-                        break Loop;
                     }
+                    //</editor-fold>
                 }
-                //</editor-fold>
             }
         }
     }

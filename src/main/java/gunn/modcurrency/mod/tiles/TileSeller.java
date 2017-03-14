@@ -77,92 +77,12 @@ public class TileSeller extends TileBuy implements ICapabilityProvider, ITickabl
 
     @Override
     public void update() {
-        if (!world.isRemote) {
-            if (automationInputStackHandler.getStackInSlot(0) != ItemStack.EMPTY){
-                if (automationInputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemBanknote)) {
-                    int amount;
-                    switch (automationInputStackHandler.getStackInSlot(0).getItemDamage()) {
-                        case 0:
-                            amount = 1;
-                            break;
-                        case 1:
-                            amount = 5;
-                            break;
-                        case 2:
-                            amount = 10;
-                            break;
-                        case 3:
-                            amount = 20;
-                            break;
-                        case 4:
-                            amount = 50;
-                            break;
-                        case 5:
-                            amount = 100;
-                            break;
-                        default:
-                            amount = -1;
-                            break;
-                    }
-                    amount = amount * automationInputStackHandler.getStackInSlot(0).getCount();
-                    automationInputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
-                    cashRegister = cashRegister + amount;
-                }
-            }
-
-            if (!mode) {        //SELL MODE
-                if (inputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
-                    searchLoop:
-                    for (int i = 0; i < vendStackHandler.getSlots(); i++) {
-                        if (vendStackHandler.getStackInSlot(i) != ItemStack.EMPTY) {
-                            if (inputStackHandler.getStackInSlot(0).getUnlocalizedName().equals(vendStackHandler.getStackInSlot(i).getUnlocalizedName())) {
-                                int cost = getItemCost(i);
-                                boolean isThereRoom = false;
-                                int buffSlot = 0;
-
-                                RoomLoop:
-                                for(int j = 0; j < BUFFER_SLOT_COUNT; j++){
-                                    if(bufferStackHandler.getStackInSlot(j) != ItemStack.EMPTY){
-                                        if((bufferStackHandler.getStackInSlot(j).getUnlocalizedName().equals(inputStackHandler.getStackInSlot(0).getUnlocalizedName())
-                                                && (bufferStackHandler.getStackInSlot(j).getCount() < bufferStackHandler.getStackInSlot(j).getMaxStackSize()))) isThereRoom = true;
-                                    }else isThereRoom = true;
-                                    if(isThereRoom){
-                                        buffSlot = j;
-                                        break RoomLoop;
-                                    }
-                                }
-
-                                if((cashRegister >= cost || infinite) && isThereRoom){
-                                    ItemStack inputItem = inputStackHandler.getStackInSlot(0);
-                                    bank = bank + cost;
-                                    if(!infinite){
-                                        cashRegister = cashRegister - cost;
-                                        if(bufferStackHandler.getStackInSlot(buffSlot) != ItemStack.EMPTY) bufferStackHandler.getStackInSlot(buffSlot).grow(1);
-                                        if(bufferStackHandler.getStackInSlot(buffSlot) == ItemStack.EMPTY){
-                                            ItemStack newStack = inputItem.copy();
-                                            newStack.setCount(1);
-                                            bufferStackHandler.setStackInSlot(buffSlot, newStack);
-                                        }
-                                    }
-                                    inputItem.shrink(1);
-                                    if(itemAmounts[i] != -1){
-                                        vendStackHandler.getStackInSlot(i).shrink(1);
-                                        itemAmounts[i]--;
-                                    }
-                                }
-                            }
-                        }
-                        if(inputStackHandler.getStackInSlot(0).getCount() == 0) {
-                            inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
-                            break searchLoop;
-                        }
-                    }
-                }
-            } else {        //EDIT MODE
-                if (inputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
-                    if (inputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemBanknote)) {
+        if(playerUsing != null) {
+            if (!world.isRemote) {
+                if (automationInputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
+                    if (automationInputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemBanknote)) {
                         int amount;
-                        switch (inputStackHandler.getStackInSlot(0).getItemDamage()) {
+                        switch (automationInputStackHandler.getStackInSlot(0).getItemDamage()) {
                             case 0:
                                 amount = 1;
                                 break;
@@ -185,14 +105,98 @@ public class TileSeller extends TileBuy implements ICapabilityProvider, ITickabl
                                 amount = -1;
                                 break;
                         }
-                        amount = amount * inputStackHandler.getStackInSlot(0).getCount();
-                        inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
+                        amount = amount * automationInputStackHandler.getStackInSlot(0).getCount();
+                        automationInputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
                         cashRegister = cashRegister + amount;
                     }
                 }
+
+                if (!mode) {        //SELL MODE
+                    if (inputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
+                        searchLoop:
+                        for (int i = 0; i < vendStackHandler.getSlots(); i++) {
+                            if (vendStackHandler.getStackInSlot(i) != ItemStack.EMPTY) {
+                                if (inputStackHandler.getStackInSlot(0).getUnlocalizedName().equals(vendStackHandler.getStackInSlot(i).getUnlocalizedName())) {
+                                    int cost = getItemCost(i);
+                                    boolean isThereRoom = false;
+                                    int buffSlot = 0;
+
+                                    RoomLoop:
+                                    for (int j = 0; j < BUFFER_SLOT_COUNT; j++) {
+                                        if (bufferStackHandler.getStackInSlot(j) != ItemStack.EMPTY) {
+                                            if ((bufferStackHandler.getStackInSlot(j).getUnlocalizedName().equals(inputStackHandler.getStackInSlot(0).getUnlocalizedName())
+                                                    && (bufferStackHandler.getStackInSlot(j).getCount() < bufferStackHandler.getStackInSlot(j).getMaxStackSize())))
+                                                isThereRoom = true;
+                                        } else isThereRoom = true;
+                                        if (isThereRoom) {
+                                            buffSlot = j;
+                                            break RoomLoop;
+                                        }
+                                    }
+
+                                    if ((cashRegister >= cost || infinite) && isThereRoom) {
+                                        ItemStack inputItem = inputStackHandler.getStackInSlot(0);
+                                        bank = bank + cost;
+                                        if (!infinite) {
+                                            cashRegister = cashRegister - cost;
+                                            if (bufferStackHandler.getStackInSlot(buffSlot) != ItemStack.EMPTY)
+                                                bufferStackHandler.getStackInSlot(buffSlot).grow(1);
+                                            if (bufferStackHandler.getStackInSlot(buffSlot) == ItemStack.EMPTY) {
+                                                ItemStack newStack = inputItem.copy();
+                                                newStack.setCount(1);
+                                                bufferStackHandler.setStackInSlot(buffSlot, newStack);
+                                            }
+                                        }
+                                        inputItem.shrink(1);
+                                        if (itemAmounts[i] != -1) {
+                                            vendStackHandler.getStackInSlot(i).shrink(1);
+                                            itemAmounts[i]--;
+                                        }
+                                    }
+                                }
+                            }
+                            if (inputStackHandler.getStackInSlot(0).getCount() == 0) {
+                                inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
+                                break searchLoop;
+                            }
+                        }
+                    }
+                } else {        //EDIT MODE
+                    if (inputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
+                        if (inputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemBanknote)) {
+                            int amount;
+                            switch (inputStackHandler.getStackInSlot(0).getItemDamage()) {
+                                case 0:
+                                    amount = 1;
+                                    break;
+                                case 1:
+                                    amount = 5;
+                                    break;
+                                case 2:
+                                    amount = 10;
+                                    break;
+                                case 3:
+                                    amount = 20;
+                                    break;
+                                case 4:
+                                    amount = 50;
+                                    break;
+                                case 5:
+                                    amount = 100;
+                                    break;
+                                default:
+                                    amount = -1;
+                                    break;
+                            }
+                            amount = amount * inputStackHandler.getStackInSlot(0).getCount();
+                            inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
+                            cashRegister = cashRegister + amount;
+                        }
+                    }
+                }
             }
+            markDirty();
         }
-        markDirty();
     }
 
     //Outputs change in least amount of bills
