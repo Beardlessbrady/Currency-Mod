@@ -75,6 +75,7 @@
 			"from": [ 1, 2, 3 ],
 			"to": [ 15, 3.5, 4 ],
 			"faces": {
+				"up": { "uv": [ 7, 3.75, 0, 4.5 ], "texture": "#screen" },
 				"north": { "uv": [ 7, 3.75, 0, 4.5 ], "texture": "#screen" }
 			}
 		},
