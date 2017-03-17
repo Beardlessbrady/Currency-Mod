@@ -12,6 +12,7 @@ public class ModBlocks {
     public static BlockTop blockTop;
     public static BlockVendor blockVendor;
     public static BlockSeller blockSeller;
+    public static BlockATM blockATM;
     public static BlockShopMob blockShopMob;
 
     public static void preInit(){
@@ -22,6 +23,7 @@ public class ModBlocks {
         if(ModConfig.enableVendor) blockVendor = new BlockVendor();
         if(ModConfig.enableSeller) blockSeller = new BlockSeller();
         if(ModConfig.enableVendor || ModConfig.enableSeller) blockTop = new BlockTop();
+        blockATM = new BlockATM();
 
         //blockShopMob = new BlockShopMob();
     }
@@ -29,6 +31,7 @@ public class ModBlocks {
     public static void ItemModels(){
         if(ModConfig.enableVendor) blockVendor.initModel();
         if(ModConfig.enableSeller) blockSeller.initModel();
+        blockATM.initModel();
     }
     
     public static void addRecipes(){

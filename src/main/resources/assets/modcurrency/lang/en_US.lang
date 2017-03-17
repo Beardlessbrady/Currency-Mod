@@ -23,3 +23,6 @@ tile.modcurrency:guisell.cash=Cash
 tile.modcurrency:guisell.tabs.infinity.infinitestock=Infinite Stock
 tile.modcurrency:guisell.tabs.lock.name=Lock Tab
 
+//ATM Gui Stuff
+tile.modcurrency:guiatm.name=Automatic Teller Machine
+
