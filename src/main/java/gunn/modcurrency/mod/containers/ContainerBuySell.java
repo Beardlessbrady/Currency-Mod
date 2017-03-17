@@ -213,6 +213,7 @@ public class ContainerBuySell extends Container implements INBTInventory {
                             ghostStack.setCount(gCount);
                             ghostSlot.putStack(ghostStack);
                         } else {
+                            ((TileSeller) tile).setItemAmount(-1, slotId - 37);
                             ghostSlot.putStack(ItemStack.EMPTY);
                         }
                     }

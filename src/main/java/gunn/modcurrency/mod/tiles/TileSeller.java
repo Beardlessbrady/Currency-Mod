@@ -148,9 +148,12 @@ public class TileSeller extends TileBuy implements ICapabilityProvider, ITickabl
                                             }
                                         }
                                         inputItem.shrink(1);
-                                        if (itemAmounts[i] != -1) {
+                                        if (itemAmounts[i] > 1) {
                                             vendStackHandler.getStackInSlot(i).shrink(1);
                                             itemAmounts[i]--;
+                                        }else if (itemAmounts[i] == 1){
+                                            vendStackHandler.setStackInSlot(i, ItemStack.EMPTY);
+                                            itemAmounts[i] = -1;
                                         }
                                     }
                                 }
@@ -555,12 +558,13 @@ public class TileSeller extends TileBuy implements ICapabilityProvider, ITickabl
 
     public int getItemAmount(int index) {return itemAmounts[index];}
 
-    public void setItemAmount(int amount) {
-        itemAmounts[selectedSlot - 37] = amount;
+
+    public void setItemAmount(int amount, int index){
+        itemAmounts[index] = amount;
         if(amount == -1){
-            vendStackHandler.getStackInSlot(selectedSlot - 37).setCount(1);
+            vendStackHandler.getStackInSlot(index).setCount(1);
         }else {
-            vendStackHandler.getStackInSlot(selectedSlot - 37).setCount(itemAmounts[selectedSlot - 37]);
+            vendStackHandler.getStackInSlot(index).setCount(itemAmounts[index]);
         }
     }
 

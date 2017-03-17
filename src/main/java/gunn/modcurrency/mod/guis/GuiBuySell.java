@@ -70,15 +70,17 @@ public class GuiBuySell extends GuiContainer {
     }
 
     private void setAmount() {
-        if (this.amountField.getText().length() > 0) {
-            int newAmount = Integer.valueOf(this.amountField.getText());
-            if (Integer.valueOf(this.amountField.getText()) == 0) newAmount = -1;
+        if (tile.getField(2)== 1) {
+            if (this.amountField.getText().length() > 0) {
+                int newAmount = Integer.valueOf(this.amountField.getText());
+                if (Integer.valueOf(this.amountField.getText()) == 0) newAmount = -1;
 
-            PacketSetItemAmountToServer pack = new PacketSetItemAmountToServer();
-            pack.setData(newAmount, tile.getPos());
+                PacketSetItemAmountToServer pack = new PacketSetItemAmountToServer();
+                pack.setData(newAmount, tile.getPos(), tile.getField(3) - 37);
 
-            PacketHandler.INSTANCE.sendToServer(pack);
-            tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
+                PacketHandler.INSTANCE.sendToServer(pack);
+                tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
+            }
         }
     }
 

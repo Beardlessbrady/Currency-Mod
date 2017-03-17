@@ -1,6 +1,7 @@
 package gunn.modcurrency.mod.network;
 
 import gunn.modcurrency.api.TileBuy;
+import gunn.modcurrency.mod.tiles.TileSeller;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
@@ -19,19 +20,21 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class PacketSetItemAmountToServer implements IMessage {
     //Seller: Uses player input and sets amount of item, sends to server
     private BlockPos blockPos;
-    private int data;
+    private int data, slot;
 
     public PacketSetItemAmountToServer(){}
 
-    public void setData(int data, BlockPos pos) {
+    public void setData(int data, BlockPos pos, int slot) {
         this.blockPos = pos;
         this.data = data;
+        this.slot = slot;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         blockPos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
         data = buf.readInt();
+        slot = buf.readInt();
     }
 
     @Override
@@ -40,6 +43,7 @@ public class PacketSetItemAmountToServer implements IMessage {
         buf.writeInt(blockPos.getY());
         buf.writeInt(blockPos.getZ());
         buf.writeInt(data);
+        buf.writeInt(slot);
     }
 
     public static class Handler implements IMessageHandler<PacketSetItemAmountToServer, IMessage> {
@@ -53,7 +57,7 @@ public class PacketSetItemAmountToServer implements IMessage {
         private void handle(PacketSetItemAmountToServer message, MessageContext ctx){
             EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
             World world = playerEntity.world;
-            ((TileBuy) world.getTileEntity(message.blockPos)).setField(11, message.data);
+            ((TileSeller) world.getTileEntity(message.blockPos)).setItemAmount(message.data, message.slot);
         }
     }
 }
