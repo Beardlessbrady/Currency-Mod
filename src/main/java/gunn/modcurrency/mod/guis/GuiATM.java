@@ -9,6 +9,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 
 import java.awt.*;
 import java.io.IOException;
@@ -33,12 +34,10 @@ public class GuiATM extends GuiContainer{
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
 
-        this.buttonList.add(new GuiButton(0, i + 68, j + 74, 45, 20, "Deposit"));
-        this.buttonList.add(new GuiButton(1, i + 65, j + 32, 48, 20, "Withdraw"));
+        this.buttonList.add(new GuiButton(0, i + 107, j + 51, 45, 20, "Deposit"));
+        this.buttonList.add(new GuiButton(1, i + 21, j + 51, 48, 20, "Withdraw"));
 
-        this.withdrawField = new GuiTextField(0, fontRendererObj, i + 60, j + 39, 45, 10);
-        this.withdrawField.setEnableBackgroundDrawing(false);
-        this.withdrawField.setTextColor(Integer.parseInt("0099ff", 16));
+        this.withdrawField = new GuiTextField(0, fontRendererObj, i + 65, j + 75, 46, 10);
         this.withdrawField.setEnabled(true);
         this.withdrawField.setText("$100");
     }
@@ -61,6 +60,8 @@ public class GuiATM extends GuiContainer{
         fontRendererObj.drawString(I18n.format("tile.modcurrency:gui.playerinventory"), 7, 100, Color.darkGray.getRGB());
 
         fontRendererObj.drawString(I18n.format("Balance: $10000"), 5,15, Color.darkGray.getRGB());
+        fontRendererObj.drawString(I18n.format(TextFormatting.DARK_RED + "Fee: $23"), 68, 40, Integer.parseInt("9a3120", 16));
+        fontRendererObj.drawString(I18n.format("Fee: $23"), 67, 40, Integer.parseInt("df462d", 16));
     }
 
     @Override
