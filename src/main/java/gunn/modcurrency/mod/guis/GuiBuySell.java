@@ -89,7 +89,7 @@ public class GuiBuySell extends GuiContainer {
         this.nameField.setText(String.valueOf(tile.getItemCost(tile.getField(3) - 37)));
         if (tile instanceof TileSeller) {
             if (((TileSeller) tile).getItemAmount(tile.getField(3) - 37) == -1) {
-                this.amountField.setText("∞");
+                this.amountField.setText("0");
             } else {
                 this.amountField.setText(String.valueOf(((TileSeller) tile).getItemAmount(tile.getField(3) - 37)));
             }
