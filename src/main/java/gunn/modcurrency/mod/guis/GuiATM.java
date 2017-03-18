@@ -38,8 +38,8 @@ public class GuiATM extends GuiContainer{
         this.buttonList.add(new GuiButton(1, i + 21, j + 51, 48, 20, "Withdraw"));
 
         this.withdrawField = new GuiTextField(0, fontRendererObj, i + 65, j + 75, 46, 10);
-        this.withdrawField.setEnabled(true);
-        this.withdrawField.setText("$100");
+        this.withdrawField.setMaxStringLength(6);
+        this.withdrawField.setText("$");
     }
 
     @Override
@@ -59,9 +59,9 @@ public class GuiATM extends GuiContainer{
         fontRendererObj.drawString(I18n.format("tile.modcurrency:guiatm.name"), 5, 6, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("tile.modcurrency:gui.playerinventory"), 7, 100, Color.darkGray.getRGB());
 
-        fontRendererObj.drawString(I18n.format("Balance: $10000"), 5,15, Color.darkGray.getRGB());
-        fontRendererObj.drawString(I18n.format(TextFormatting.DARK_RED + "Fee: $23"), 68, 40, Integer.parseInt("9a3120", 16));
-        fontRendererObj.drawString(I18n.format("Fee: $23"), 67, 40, Integer.parseInt("df462d", 16));
+        fontRendererObj.drawString(I18n.format("Balance: $0"), 5,15, Color.darkGray.getRGB());
+        fontRendererObj.drawString(I18n.format("Fee: $23"), 68, 40, Integer.parseInt("8c0000", 16));
+        fontRendererObj.drawString(I18n.format("Fee: $23"), 67, 40, Integer.parseInt("a71717", 16));
     }
 
     @Override
@@ -71,7 +71,23 @@ public class GuiATM extends GuiContainer{
     }
 
     @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+        withdrawField.mouseClicked(mouseX, mouseY, mouseButton);
+    }
+
+    @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        super.keyTyped(typedChar, keyCode);
+        int numChar = Character.getNumericValue(typedChar);
+        System.out.println(withdrawField.getText().length());
+        System.out.println(keyCode);
+        if (((numChar >= 0 && numChar <= 9) || (keyCode == 203) || (keyCode == 205) ||
+                (keyCode == 14 && withdrawField.getText().length() > 1) || (keyCode == 211 && withdrawField.getText().length() > 1))) { //Ensures keys input are only numbers or backspace type keys
+            if (this.withdrawField.textboxKeyTyped(typedChar, keyCode)){
+
+            }
+        } else {
+            super.keyTyped(typedChar, keyCode);
+        }
     }
 }
