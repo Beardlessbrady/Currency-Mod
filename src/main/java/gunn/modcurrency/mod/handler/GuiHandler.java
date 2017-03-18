@@ -50,7 +50,7 @@ public class GuiHandler implements IGuiHandler{
 
         if(tileEntity instanceof TileATM && ID == 33){
             TileATM tileATM = (TileATM) tileEntity;
-            return new ContainerATM();
+            return new ContainerATM(player.inventory, tileATM);
         }
         return null;
     }

@@ -61,7 +61,6 @@ public class ContainerBuySell extends Container implements INBTInventory {
 
     public ContainerBuySell(InventoryPlayer invPlayer, TileBuy te) {
         tile = te;
-
         if (tile instanceof TileVendor) specialSlotItems = ((TileVendor) tile).specialSlotItems;
         if (tile instanceof TileSeller) specialSlotItems = ((TileSeller) tile).specialSlotItems;
 

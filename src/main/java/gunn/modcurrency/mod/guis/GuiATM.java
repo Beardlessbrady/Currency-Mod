@@ -25,7 +25,7 @@ public class GuiATM extends GuiContainer{
     private GuiTextField withdrawField;
 
     public GuiATM(InventoryPlayer invPlayer, TileATM te) {
-        super(new ContainerATM());
+        super(new ContainerATM(invPlayer, te));
     }
 
     @Override
@@ -79,8 +79,6 @@ public class GuiATM extends GuiContainer{
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         int numChar = Character.getNumericValue(typedChar);
-        System.out.println(withdrawField.getText().length());
-        System.out.println(keyCode);
         if (((numChar >= 0 && numChar <= 9) || (keyCode == 203) || (keyCode == 205) ||
                 (keyCode == 14 && withdrawField.getText().length() > 1) || (keyCode == 211 && withdrawField.getText().length() > 1))) { //Ensures keys input are only numbers or backspace type keys
             if (this.withdrawField.textboxKeyTyped(typedChar, keyCode)){
