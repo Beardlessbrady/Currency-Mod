@@ -56,7 +56,7 @@ public class GuiATM extends GuiContainer{
         int i = (mouseX - (this.width - this.xSize) / 2);
         int j = (mouseY - (this.height - this.ySize) / 2);
 
-        fontRendererObj.drawString(I18n.format("tile.modcurrency:guiatm.name"), 5, 6, Color.darkGray.getRGB());
+        fontRendererObj.drawString(I18n.format("tile.modcurrency:blockatm.name"), 5, 6, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("tile.modcurrency:gui.playerinventory"), 7, 100, Color.darkGray.getRGB());
 
         fontRendererObj.drawString(I18n.format("Balance: $0"), 5,15, Color.darkGray.getRGB());

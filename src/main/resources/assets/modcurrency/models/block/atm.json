@@ -4,6 +4,48 @@
 		"texture": "modcurrency:blocks/atm",
 		"screen": "modcurrency:blocks/atmscreens"
 	},
+	"display": {
+		"thirdperson_righthand": {
+			"rotation": [50, 0, 0],
+			"translation": [0.00, 0.00, 0.00],
+			"scale": [0.40, 0.40, 0.40]
+		},
+		"thirdperson_lefthand": {
+			"rotation": [50, 0, 0],
+			"translation": [0.00, 0.00, 0.00],
+			"scale": [0.40, 0.40, 0.40]
+		},
+		"firstperson_righthand": {
+			"rotation": [0, 20, 0],
+			"translation": [0.00, 1.50, 0.00],
+			"scale": [0.40, 0.40, 0.40]
+		},
+		"firstperson_lefthand": {
+			"rotation": [0, 20, 0],
+			"translation": [0.00, 1.50, 0.00],
+			"scale": [0.40, 0.40, 0.40]
+		},
+		"gui": {
+			"rotation": [20, 158, 0],
+			"translation": [0.00, 0.00, 0.00],
+			"scale": [0.60, 0.60, 0.60]
+		},
+		"head": {
+			"rotation": [0, 0, 0],
+			"translation": [0.00, 0.00, 0.00],
+			"scale": [1.00, 1.00, 1.00]
+		},
+		"fixed": {
+			"rotation": [0, 0, 0],
+			"translation": [0.00, 0.00, 0.00],
+			"scale": [1.00, 1.00, 1.00]
+		},
+		"ground": {
+			"rotation": [0, 0, 0],
+			"translation": [0.00, 2.50, 0.00],
+			"scale": [0.40, 0.40, 0.40]
+		}
+	},
 	"elements": [
 		{
 			"__comment": "BottomPanel",

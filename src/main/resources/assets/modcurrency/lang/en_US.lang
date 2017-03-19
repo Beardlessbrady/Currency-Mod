@@ -10,6 +10,7 @@ item.modcurrency:wallet.name=Wallet
 //Block names
 tile.modcurrency:blockvendor.name=Vending Machine
 tile.modcurrency:blockseller.name=Exchange Machine
+tile.modcurrency:blockatm.name=Automated Teller Machine
 
 //Shared Gui Stuff
 tile.modcurrency:gui.playerinventory=Inventory
@@ -24,5 +25,4 @@ tile.modcurrency:guisell.tabs.infinity.infinitestock=Infinite Stock
 tile.modcurrency:guisell.tabs.lock.name=Lock Tab
 
 //ATM Gui Stuff
-tile.modcurrency:guiatm.name=Automatic Teller Machine
 
