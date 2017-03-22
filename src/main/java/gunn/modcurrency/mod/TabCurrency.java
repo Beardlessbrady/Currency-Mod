@@ -1,6 +1,6 @@
 package gunn.modcurrency.mod;
 
-import gunn.modcurrency.mod.items.ModItems;
+import gunn.modcurrency.mod.item.ModItems;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;

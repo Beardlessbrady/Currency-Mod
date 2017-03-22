@@ -1,6 +1,6 @@
 package gunn.modcurrency.mod;
 
-import gunn.modcurrency.mod.proxy.CommonProxy;
+import gunn.modcurrency.mod.core.proxy.CommonProxy;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.logging.log4j.Level;
 
@@ -54,7 +54,7 @@ public class ModConfig {
     }
 
     private static void initRecipesConfig(Configuration cfg){
-        cfg.addCustomCategoryComment(CATEGORY_RECIPES, "These configs enable/disable recipes of blocks and items in the mod.");
+        cfg.addCustomCategoryComment(CATEGORY_RECIPES, "These configs enable/disable recipes of block and item in the mod.");
         recipeVendor = cfg.getBoolean("Vending Machine", CATEGORY_RECIPES, recipeVendor, "Block");
         recipeSeller = cfg.getBoolean("Exchange Machine", CATEGORY_RECIPES, recipeSeller, "Block");
         recipeWallet = cfg.getBoolean("Wallet", CATEGORY_RECIPES, recipeWallet, "Item");
