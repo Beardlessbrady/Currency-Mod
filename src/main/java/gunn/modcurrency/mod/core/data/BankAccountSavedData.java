@@ -17,12 +17,14 @@ public class BankAccountSavedData extends WorldSavedData{
     ArrayList<BankAccount> bankArray = new ArrayList<>();
     public static String IDENTIFIER = "currencyBankData";
 
-    public BankAccountSavedData() {
-        super(IDENTIFIER);
+    public BankAccountSavedData(String name) {
+        super(name);
     }
 
     public BankAccount getBankAccount(String name){
+        System.out.println(bankArray.size());
         for(int i = 0; i < bankArray.size(); i++){
+            System.out.println(bankArray.get(i));
             if(name.toLowerCase().equals(bankArray.get(i).name.toLowerCase())) return bankArray.get(i);
         }
         return null;
@@ -79,7 +81,7 @@ public class BankAccountSavedData extends WorldSavedData{
     public static BankAccountSavedData getData(World world) {
         BankAccountSavedData data = (BankAccountSavedData) world.getMapStorage().getOrLoadData(BankAccountSavedData.class, IDENTIFIER);
         if (data == null) {
-            data = new BankAccountSavedData();
+            data = new BankAccountSavedData(IDENTIFIER);
             world.setData(IDENTIFIER, data);
         }
         return data;

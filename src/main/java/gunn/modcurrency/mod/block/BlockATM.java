@@ -67,9 +67,8 @@ public class BlockATM extends Block implements ITileEntityProvider {
             player.openGui(ModCurrency.instance, 33, world, pos.getX(), pos.getY(), pos.getZ());
 
             BankAccountSavedData bankData = BankAccountSavedData.getData(world);
-            BankAccount bankPlayer = bankData.getBankAccount(player.getGameProfile().getId().toString());
-
-           System.out.println(bankPlayer);
+            //bankData.setBankAccount(new BankAccount("test", 100));
+            bankData.getBankAccount("test");
 
 
             return true;
