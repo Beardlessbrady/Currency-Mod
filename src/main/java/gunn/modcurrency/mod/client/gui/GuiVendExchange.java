@@ -1,7 +1,7 @@
 package gunn.modcurrency.mod.client.gui;
 
+import gunn.modcurrency.mod.client.container.ContainerVendExchange;
 import gunn.modcurrency.mod.tile.TileVendExchange;
-import gunn.modcurrency.mod.client.container.ContainerBuySell;
 import gunn.modcurrency.mod.core.network.*;
 import gunn.modcurrency.mod.client.util.TabButtonList;
 import gunn.modcurrency.mod.tile.TileSeller;
@@ -30,7 +30,7 @@ import java.util.List;
  *
  * File Created on 2016-11-02.
  */
-public class GuiBuySell extends GuiContainer {
+public class GuiVendExchange extends GuiContainer {
     private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/guivendortexture.png");
     private static final ResourceLocation TAB_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/guivendortabtexture.png");
     private TileVendExchange tile;
@@ -41,8 +41,8 @@ public class GuiBuySell extends GuiContainer {
 
     private String header;
 
-    public GuiBuySell(InventoryPlayer invPlayer, TileVendExchange te) {
-        super(new ContainerBuySell(invPlayer, te));
+    public GuiVendExchange(InventoryPlayer invPlayer, TileVendExchange te) {
+        super(new ContainerVendExchange(invPlayer, te));
         tile = te;
         xSize = 176;
         ySize = 235;

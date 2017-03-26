@@ -15,25 +15,26 @@ import java.util.ArrayList;
  */
 public class BankAccountSavedData extends WorldSavedData{
     ArrayList<BankAccount> bankArray = new ArrayList<>();
-    public static String IDENTIFIER = "currencyBankData";
+    public static String IDENTIFIER = "currency_bankdata";
 
     public BankAccountSavedData(String name) {
         super(name);
     }
 
     public BankAccount getBankAccount(String name){
-        System.out.println(bankArray.size());
         for(int i = 0; i < bankArray.size(); i++){
-            System.out.println(bankArray.get(i));
-            if(name.toLowerCase().equals(bankArray.get(i).name.toLowerCase())) return bankArray.get(i);
+            if(name.toLowerCase().equals(bankArray.get(i).getName().toLowerCase())) return bankArray.get(i);
         }
-        return null;
+
+        //If no account found, make one and run method again
+        setBankAccount(new BankAccount(name, 0));
+        return getBankAccount(name);
     }
 
     public void setBankAccount(BankAccount account){
         boolean hasAcc = false;
         for(int i = 0; i < bankArray.size(); i++){
-            if(account.name.toLowerCase().equals(bankArray.get(i).name.toLowerCase())){
+            if(account.getName().toLowerCase().equals(bankArray.get(i).getName().toLowerCase())){
                 bankArray.set(i, account);
                 hasAcc = true;
             }
@@ -55,8 +56,8 @@ public class BankAccountSavedData extends WorldSavedData{
 
         for(int i = 0; i < bankArray.size(); i++){
             NBTTagCompound bankTag = new NBTTagCompound();
-            bankTag.setString("name", bankArray.get(i).name);
-            bankTag.setInteger("balance", bankArray.get(i).balance);
+            bankTag.setString("name", bankArray.get(i).getName());
+            bankTag.setInteger("balance", bankArray.get(i).getBalance());
 
             bankList.appendTag(bankTag);
         }
@@ -70,10 +71,9 @@ public class BankAccountSavedData extends WorldSavedData{
         NBTTagList bankList = nbt.getTagList("bankData", 10);
 
         for (int i = 0; i < bankList.tagCount(); i++) {
-            NBTTagCompound bankTag = new NBTTagCompound();
+            NBTTagCompound bankTag = bankList.getCompoundTagAt(i);
             String name = bankTag.getString("name");
             int bal = bankTag.getInteger("balance");
-
             bankArray.add(new BankAccount(name, bal));
         }
     }

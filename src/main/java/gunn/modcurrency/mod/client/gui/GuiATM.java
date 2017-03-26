@@ -1,12 +1,19 @@
 package gunn.modcurrency.mod.client.gui;
 
 import gunn.modcurrency.mod.client.container.ContainerATM;
+import gunn.modcurrency.mod.core.data.BankAccount;
+import gunn.modcurrency.mod.core.data.BankAccountSavedData;
+import gunn.modcurrency.mod.core.network.PacketDepositToServer;
+import gunn.modcurrency.mod.core.network.PacketHandler;
+import gunn.modcurrency.mod.core.network.PacketItemSpawnToServer;
 import gunn.modcurrency.mod.tile.TileATM;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 
@@ -22,9 +29,13 @@ import java.io.IOException;
 public class GuiATM extends GuiContainer{
     private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/guiatmtexture.png");
     private GuiTextField withdrawField;
+    private TileATM te;
+    private EntityPlayer player;
 
-    public GuiATM(InventoryPlayer invPlayer, TileATM te) {
-        super(new ContainerATM(invPlayer, te));
+    public GuiATM(EntityPlayer player, TileATM te) {
+        super(new ContainerATM(player, te));
+        this.te = te;
+        this.player = player;
     }
 
     @Override
@@ -58,9 +69,11 @@ public class GuiATM extends GuiContainer{
         fontRendererObj.drawString(I18n.format("tile.modcurrency:blockatm.name"), 5, 6, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("tile.modcurrency:gui.playerinventory"), 7, 100, Color.darkGray.getRGB());
 
-        fontRendererObj.drawString(I18n.format("Balance: $0"), 5,15, Color.darkGray.getRGB());
-        fontRendererObj.drawString(I18n.format("Fee: $23"), 68, 40, Integer.parseInt("8c0000", 16));
-        fontRendererObj.drawString(I18n.format("Fee: $23"), 67, 40, Integer.parseInt("a71717", 16));
+
+        fontRendererObj.drawString(I18n.format("Balance: $null"), 5,15, Color.darkGray.getRGB());
+
+       //TODO fontRendererObj.drawString(I18n.format("Fee: $23"), 68, 40, Integer.parseInt("8c0000", 16));
+       // fontRendererObj.drawString(I18n.format("Fee: $23"), 67, 40, Integer.parseInt("a71717", 16));
     }
 
     @Override
@@ -85,6 +98,29 @@ public class GuiATM extends GuiContainer{
             }
         } else {
             super.keyTyped(typedChar, keyCode);
+        }
+    }
+
+    @Override
+    protected void actionPerformed(GuiButton button) throws IOException {
+        BankAccount currAcc = BankAccountSavedData.getData(te.getWorld()).getBankAccount(player.getGameProfile().getId().toString());
+        switch (button.id) {
+            case 0:         //Deposit Button
+                PacketDepositToServer pack0 = new PacketDepositToServer();
+                pack0.setData(te.getPos());
+                PacketHandler.INSTANCE.sendToServer(pack0);
+                System.out.println(BankAccountSavedData.getData(te.getWorld()).getBankAccount(player.getGameProfile().getId().toString()));
+                break;
+            case 1:         //Withdraw Button
+                PacketDepositToServer pack1 = new PacketDepositToServer();
+                pack1.setData(te.getPos());
+                PacketHandler.INSTANCE.sendToServer(pack1);
+
+                BankAccountSavedData bankSaved = BankAccountSavedData.getData(te.getWorld());
+                BankAccount bkk = bankSaved.getBankAccount(te.getPlayerUsing().getGameProfile().getId().toString());
+
+                System.out.println(bkk);
+                break;
         }
     }
 }

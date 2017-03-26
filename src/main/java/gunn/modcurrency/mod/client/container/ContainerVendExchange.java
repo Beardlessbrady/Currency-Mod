@@ -32,7 +32,7 @@ import javax.annotation.Nullable;
  *
  * File Created on 2016-11-02.
  */
-public class ContainerBuySell extends Container implements INBTInventory {
+public class ContainerVendExchange extends Container implements INBTInventory {
     //Slot Index's
     //0-35 = Player Inventory's
     //36 = Money Slot
@@ -59,7 +59,7 @@ public class ContainerBuySell extends Container implements INBTInventory {
     private TileVendExchange tile;
     private int[] cachedFields;
 
-    public ContainerBuySell(InventoryPlayer invPlayer, TileVendExchange te) {
+    public ContainerVendExchange(InventoryPlayer invPlayer, TileVendExchange te) {
         tile = te;
         if (tile instanceof TileVendor) specialSlotItems = ((TileVendor) tile).specialSlotItems;
         if (tile instanceof TileSeller) specialSlotItems = ((TileSeller) tile).specialSlotItems;

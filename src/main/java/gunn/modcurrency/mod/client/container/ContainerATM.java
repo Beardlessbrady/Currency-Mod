@@ -1,6 +1,8 @@
 package gunn.modcurrency.mod.client.container;
 
 import gunn.modcurrency.mod.client.container.slots.SlotCustomizable;
+import gunn.modcurrency.mod.core.data.BankAccount;
+import gunn.modcurrency.mod.core.data.BankAccountSavedData;
 import gunn.modcurrency.mod.item.ModItems;
 import gunn.modcurrency.mod.tile.TileATM;
 import gunn.modcurrency.mod.client.util.INBTInventory;
@@ -34,11 +36,17 @@ public class ContainerATM extends Container implements INBTInventory{
 
     private TileATM tile;
 
-    public ContainerATM(InventoryPlayer invPlayer, TileATM te){
+    public ContainerATM(EntityPlayer player, TileATM te){
         tile = te;
 
-        setupPlayerInv(invPlayer);
+        setupPlayerInv(player.inventory);
         setupTeInv();
+    }
+
+    @Override
+    public void onContainerClosed(EntityPlayer playerIn) {
+        tile.voidPlayerUsing();
+        super.onContainerClosed(playerIn);
     }
 
     private void setupPlayerInv(InventoryPlayer invPlayer){
@@ -104,4 +112,5 @@ public class ContainerATM extends Container implements INBTInventory{
     public boolean canInteractWith(EntityPlayer playerIn) {
         return true;
     }
+
 }

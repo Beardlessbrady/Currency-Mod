@@ -5,6 +5,7 @@ import gunn.modcurrency.mod.core.data.BankAccount;
 import gunn.modcurrency.mod.core.data.BankAccountSavedData;
 import gunn.modcurrency.mod.core.handler.StateHandler;
 import gunn.modcurrency.mod.tile.TileATM;
+import gunn.modcurrency.mod.tile.TileVendor;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
@@ -61,17 +62,18 @@ public class BlockATM extends Block implements ITileEntityProvider {
         return new TileATM();
     }
 
+    public TileATM getTile(World world, BlockPos pos) {
+        return (TileATM) world.getTileEntity(pos);
+    }
+
+
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if (!world.isRemote) {    //Just Server
-            player.openGui(ModCurrency.instance, 33, world, pos.getX(), pos.getY(), pos.getZ());
-
-            BankAccountSavedData bankData = BankAccountSavedData.getData(world);
-            //bankData.setBankAccount(new BankAccount("test", 100));
-            bankData.getBankAccount("test");
-
-
-            return true;
+            if (getTile(world, pos).getPlayerUsing() == null) {     //Only one player can use GUI at time
+                getTile(world, pos).openGui(player, world, pos);
+                return true;
+            }
         }
         return false;
     }

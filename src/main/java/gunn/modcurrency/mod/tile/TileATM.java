@@ -1,10 +1,18 @@
 package gunn.modcurrency.mod.tile;
 
+import gunn.modcurrency.mod.ModCurrency;
+import gunn.modcurrency.mod.core.data.BankAccount;
+import gunn.modcurrency.mod.core.data.BankAccountSavedData;
+import gunn.modcurrency.mod.core.network.PacketHandler;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -18,9 +26,39 @@ import javax.annotation.Nullable;
  */
 public class TileATM extends TileEntity implements ICapabilityProvider{
     private ItemStackHandler moneySlot;
+    private EntityPlayer playerUsing = null;
 
     public TileATM() {
         moneySlot = new ItemStackHandler(1);
+    }
+
+    public void openGui(EntityPlayer player, World world, BlockPos pos) {
+        player.openGui(ModCurrency.instance, 33, world, pos.getX(), pos.getY(), pos.getZ());
+        playerUsing = player;
+    }
+
+    public void withdraw(){
+
+    }
+
+    public void deposit(){
+        if(!world.isRemote){
+            BankAccountSavedData bankSaved = BankAccountSavedData.getData(world);
+            BankAccount bkk = bankSaved.getBankAccount(playerUsing.getGameProfile().getId().toString());
+            bkk.setBalance(bkk.getBalance() + 5);
+            bankSaved.setBankAccount(bkk);
+
+            PacketUpdateBankAccToClient pack = new PacketUpdateBankAccToClient();
+            pack.setData(getPos(), bkk.getBalance());
+            PacketHandler.INSTANCE.sendToAllAround(pack, new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 16));
+        }
+    }
+
+    public void updateAcc(int balance){
+        if(world.isRemote){
+            BankAccountSavedData bankSaved = BankAccountSavedData.getData(world);
+            bankSaved.setBankAccount(new BankAccount(playerUsing.getGameProfile().getId().toString(), balance));
+        }
     }
 
     //<editor-fold desc="NBT & Packet Stoof--------------------------------------------------------------------------------------------------">
@@ -59,4 +97,12 @@ public class TileATM extends TileEntity implements ICapabilityProvider{
         return super.getCapability(capability, facing);
     }
     //</editor-fold>
+
+    public EntityPlayer getPlayerUsing(){
+        return playerUsing;
+    }
+
+    public void voidPlayerUsing(){
+        playerUsing = null;
+    }
 }

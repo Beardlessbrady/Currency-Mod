@@ -7,8 +7,8 @@ package gunn.modcurrency.mod.core.data;
  * File Created on 2017-03-18
  */
 public class BankAccount {
-    String name;
-    int balance;
+    private String name;
+    private int balance;
 
     public BankAccount(String name){
         this.name = name;
@@ -24,17 +24,16 @@ public class BankAccount {
         this.balance = num;
     }
 
-    public void shrinkBalance(int num){
-        if(balance - num <= 0) balance = 0;
-        balance = balance - num;
-    }
-
-    public void growBalance(int num){
-        balance = balance + num;
-    }
-
     @Override
     public String toString() {
         return name + ":" + balance;
+    }
+
+    public String getName(){
+        return name;
+    }
+
+    public int getBalance(){
+        return balance;
     }
 }
