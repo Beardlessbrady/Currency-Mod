@@ -47,10 +47,6 @@ public class TileATM extends TileEntity implements ICapabilityProvider{
             BankAccount bkk = bankSaved.getBankAccount(playerUsing.getGameProfile().getId().toString());
             bkk.setBalance(bkk.getBalance() + 5);
             bankSaved.setBankAccount(bkk);
-
-            PacketUpdateBankAccToClient pack = new PacketUpdateBankAccToClient();
-            pack.setData(getPos(), bkk.getBalance());
-            PacketHandler.INSTANCE.sendToAllAround(pack, new NetworkRegistry.TargetPoint(world.provider.getDimension(), pos.getX(), pos.getY(), pos.getZ(), 16));
         }
     }
 

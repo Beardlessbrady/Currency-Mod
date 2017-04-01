@@ -168,11 +168,13 @@ public class ContainerVendExchange extends Container implements INBTInventory {
                     return ItemStack.EMPTY;
                 } else if (slotId >= 37 && slotId < 67 && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 1) {
                     return super.slotClick(slotId, 0, clickTypeIn, player);
-                } else {
+                } else if (slotId >= 37 && slotId < 67 && tile.getField(8) == 0){
                     if(((TileVendor) tile).isGhostSlot(slotId - PLAYER_TOTAL_COUNT - 1)){
                         this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).getStackInSlot(slotId - PLAYER_TOTAL_COUNT).shrink(1);
                         ((TileVendor) tile).setGhostSlot( slotId - PLAYER_TOTAL_COUNT -1, false);
                     }
+                    return super.slotClick(slotId, dragType, clickTypeIn, player);
+                }else{
                     return super.slotClick(slotId, dragType, clickTypeIn, player);
                 }
             } else {  //Sell Mode

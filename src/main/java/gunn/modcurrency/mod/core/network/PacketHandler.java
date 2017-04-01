@@ -29,6 +29,5 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketSetInfiniteToServer.Handler.class, PacketSetInfiniteToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketWithdrawToServer.Handler.class, PacketWithdrawToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketDepositToServer.Handler.class, PacketDepositToServer.class, index++, Side.SERVER);
-        INSTANCE.registerMessage(PacketUpdateBankAccToClient.Handler.class, PacketUpdateBankAccToClient.class, index++, Side.CLIENT);
     }
 }
