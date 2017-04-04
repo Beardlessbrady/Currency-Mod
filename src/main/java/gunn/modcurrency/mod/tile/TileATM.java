@@ -2,8 +2,6 @@ package gunn.modcurrency.mod.tile;
 
 import gunn.modcurrency.mod.ModCurrency;
 import gunn.modcurrency.mod.core.data.BankAccount;
-import gunn.modcurrency.mod.core.data.BankAccountSavedData;
-import gunn.modcurrency.mod.core.network.PacketHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -12,7 +10,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -35,26 +32,6 @@ public class TileATM extends TileEntity implements ICapabilityProvider{
     public void openGui(EntityPlayer player, World world, BlockPos pos) {
         player.openGui(ModCurrency.instance, 33, world, pos.getX(), pos.getY(), pos.getZ());
         playerUsing = player;
-    }
-
-    public void withdraw(){
-
-    }
-
-    public void deposit(){
-        if(!world.isRemote){
-            BankAccountSavedData bankSaved = BankAccountSavedData.getData(world);
-            BankAccount bkk = bankSaved.getBankAccount(playerUsing.getGameProfile().getId().toString());
-            bkk.setBalance(bkk.getBalance() + 5);
-            bankSaved.setBankAccount(bkk);
-        }
-    }
-
-    public void updateAcc(int balance){
-        if(world.isRemote){
-            BankAccountSavedData bankSaved = BankAccountSavedData.getData(world);
-            bankSaved.setBankAccount(new BankAccount(playerUsing.getGameProfile().getId().toString(), balance));
-        }
     }
 
     //<editor-fold desc="NBT & Packet Stoof--------------------------------------------------------------------------------------------------">

@@ -2,19 +2,14 @@ package gunn.modcurrency.mod.client.gui;
 
 import gunn.modcurrency.mod.client.container.ContainerATM;
 import gunn.modcurrency.mod.core.data.BankAccount;
-import gunn.modcurrency.mod.core.data.BankAccountSavedData;
-import gunn.modcurrency.mod.core.network.PacketDepositToServer;
 import gunn.modcurrency.mod.core.network.PacketHandler;
-import gunn.modcurrency.mod.core.network.PacketItemSpawnToServer;
 import gunn.modcurrency.mod.tile.TileATM;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
@@ -103,23 +98,12 @@ public class GuiATM extends GuiContainer{
 
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
-        BankAccount currAcc = BankAccountSavedData.getData(te.getWorld()).getBankAccount(player.getGameProfile().getId().toString());
         switch (button.id) {
             case 0:         //Deposit Button
-                PacketDepositToServer pack0 = new PacketDepositToServer();
-                pack0.setData(te.getPos());
-                PacketHandler.INSTANCE.sendToServer(pack0);
-                System.out.println(BankAccountSavedData.getData(te.getWorld()).getBankAccount(player.getGameProfile().getId().toString()));
+
                 break;
             case 1:         //Withdraw Button
-                PacketDepositToServer pack1 = new PacketDepositToServer();
-                pack1.setData(te.getPos());
-                PacketHandler.INSTANCE.sendToServer(pack1);
 
-                BankAccountSavedData bankSaved = BankAccountSavedData.getData(te.getWorld());
-                BankAccount bkk = bankSaved.getBankAccount(te.getPlayerUsing().getGameProfile().getId().toString());
-
-                System.out.println(bkk);
                 break;
         }
     }

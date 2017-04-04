@@ -1,8 +1,6 @@
 package gunn.modcurrency.mod.client.container;
 
 import gunn.modcurrency.mod.client.container.slots.SlotCustomizable;
-import gunn.modcurrency.mod.core.data.BankAccount;
-import gunn.modcurrency.mod.core.data.BankAccountSavedData;
 import gunn.modcurrency.mod.item.ModItems;
 import gunn.modcurrency.mod.tile.TileATM;
 import gunn.modcurrency.mod.client.util.INBTInventory;
