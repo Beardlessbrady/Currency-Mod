@@ -2,7 +2,12 @@ package gunn.modcurrency.mod.tile;
 
 import gunn.modcurrency.mod.ModCurrency;
 import gunn.modcurrency.mod.core.data.BankAccount;
+import gunn.modcurrency.mod.core.data.BankAccountSavedData;
+import gunn.modcurrency.mod.core.network.PacketHandler;
+import gunn.modcurrency.mod.core.network.PacketSetItemCostToServer;
+import gunn.modcurrency.mod.core.network.PacketSyncBankDataToClient;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -32,6 +37,31 @@ public class TileATM extends TileEntity implements ICapabilityProvider{
     public void openGui(EntityPlayer player, World world, BlockPos pos) {
         player.openGui(ModCurrency.instance, 33, world, pos.getX(), pos.getY(), pos.getZ());
         playerUsing = player;
+
+        BankAccountSavedData bankData = BankAccountSavedData.getData(world);
+        BankAccount account = bankData.getBankAccount(playerUsing.getUniqueID().toString());
+
+        PacketSyncBankDataToClient pack = new PacketSyncBankDataToClient();
+        pack.setData(account);
+        PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP)playerUsing);
+    }
+
+    public void withdraw(){
+
+    }
+
+    public void deposit(){
+        if(!world.isRemote) {
+            BankAccountSavedData bankData = BankAccountSavedData.getData(world);
+            BankAccount account = bankData.getBankAccount(playerUsing.getUniqueID().toString());
+
+            account.setBalance(account.getBalance() + 5);
+            bankData.setBankAccount(account);
+
+            PacketSyncBankDataToClient pack = new PacketSyncBankDataToClient();
+            pack.setData(account);
+            PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP)playerUsing);
+        }
     }
 
     //<editor-fold desc="NBT & Packet Stoof--------------------------------------------------------------------------------------------------">
@@ -49,7 +79,6 @@ public class TileATM extends TileEntity implements ICapabilityProvider{
         if (compound.hasKey("moneySlot")) moneySlot.deserializeNBT((NBTTagCompound) compound.getTag("moneySlot"));
     }
     //</editor-fold>
-
 
     //<editor-fold desc="ItemStackHandler Methods--------------------------------------------------------------------------------------------">
     @Override

@@ -1,6 +1,6 @@
 package gunn.modcurrency.mod.core.network;
 
-import gunn.modcurrency.mod.tile.TileVendExchange;
+import gunn.modcurrency.mod.tile.TileATM;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
@@ -16,41 +16,40 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  *
  * File Created on 2017-03-12
  */
-public class PacketItemSpawnToServer implements IMessage {
-    //Sends Amount of money to spawn to the server
-    private BlockPos blockPos;
+public class PacketBankDepositToServer implements IMessage {
+    //Player changes gear tab state by clicking it, sends this to the server
+    private BlockPos pos;
 
-    public PacketItemSpawnToServer(){}
+    public PacketBankDepositToServer(){}
 
-    public void setBlockPos(BlockPos blockpos) {
-        this.blockPos = blockpos;
+    public void setData(BlockPos pos) {
+        this.pos = pos;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
-        blockPos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
+        this.pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
     }
 
     @Override
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(blockPos.getX());
-        buf.writeInt(blockPos.getY());
-        buf.writeInt(blockPos.getZ());
+        buf.writeInt(pos.getX());
+        buf.writeInt(pos.getY());
+        buf.writeInt(pos.getZ());
     }
 
-    public static class Handler implements IMessageHandler<PacketItemSpawnToServer, IMessage> {
+    public static class Handler implements IMessageHandler<PacketBankDepositToServer, IMessage> {
 
         @Override
-        public IMessage onMessage(final PacketItemSpawnToServer message, MessageContext ctx) {
+        public IMessage onMessage(final PacketBankDepositToServer message, MessageContext ctx) {
             FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message,ctx));
             return null;
         }
 
-        private void handle(PacketItemSpawnToServer message, MessageContext ctx){
+        private void handle(PacketBankDepositToServer message, MessageContext ctx){
             EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
             World world = playerEntity.world;
-            TileVendExchange tile = (TileVendExchange) world.getTileEntity(message.blockPos);
-            tile.outChange();
+            ((TileATM) world.getTileEntity(message.pos)).deposit();
         }
     }
 }

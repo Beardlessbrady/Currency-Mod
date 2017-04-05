@@ -2,7 +2,10 @@ package gunn.modcurrency.mod.client.gui;
 
 import gunn.modcurrency.mod.client.container.ContainerATM;
 import gunn.modcurrency.mod.core.data.BankAccount;
+import gunn.modcurrency.mod.core.data.BankAccountSavedData;
+import gunn.modcurrency.mod.core.network.PacketBankDepositToServer;
 import gunn.modcurrency.mod.core.network.PacketHandler;
+import gunn.modcurrency.mod.core.network.PacketSyncBankDataToClient;
 import gunn.modcurrency.mod.tile.TileATM;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -10,6 +13,7 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
@@ -100,10 +104,14 @@ public class GuiATM extends GuiContainer{
     protected void actionPerformed(GuiButton button) throws IOException {
         switch (button.id) {
             case 0:         //Deposit Button
-
+                PacketBankDepositToServer pack = new PacketBankDepositToServer();
+                pack.setData(te.getPos());
+                PacketHandler.INSTANCE.sendToServer(pack);
                 break;
             case 1:         //Withdraw Button
-
+                BankAccountSavedData bankData = BankAccountSavedData.getData(te.getWorld());
+                BankAccount account = bankData.getBankAccount(player.getUniqueID().toString());
+                System.out.println(account.getBalance());
                 break;
         }
     }

@@ -27,5 +27,7 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketSetGearTabStateToServer.Handler.class, PacketSetGearTabStateToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketSetLockTabToServer.Handler.class, PacketSetLockTabToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketSetInfiniteToServer.Handler.class, PacketSetInfiniteToServer.class, index++, Side.SERVER);
+        INSTANCE.registerMessage(PacketSyncBankDataToClient.Handler.class, PacketSyncBankDataToClient.class, index++, Side.CLIENT);
+        INSTANCE.registerMessage(PacketBankDepositToServer.Handler.class, PacketBankDepositToServer.class, index++, Side.SERVER);
     }
 }
