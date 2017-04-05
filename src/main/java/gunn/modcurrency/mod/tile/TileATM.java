@@ -4,10 +4,11 @@ import gunn.modcurrency.mod.ModCurrency;
 import gunn.modcurrency.mod.core.data.BankAccount;
 import gunn.modcurrency.mod.core.data.BankAccountSavedData;
 import gunn.modcurrency.mod.core.network.PacketHandler;
-import gunn.modcurrency.mod.core.network.PacketSetItemCostToServer;
 import gunn.modcurrency.mod.core.network.PacketSyncBankDataToClient;
+import gunn.modcurrency.mod.item.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -50,17 +51,51 @@ public class TileATM extends TileEntity implements ICapabilityProvider{
 
     }
 
-    public void deposit(){
-        if(!world.isRemote) {
-            BankAccountSavedData bankData = BankAccountSavedData.getData(world);
-            BankAccount account = bankData.getBankAccount(playerUsing.getUniqueID().toString());
+    public void deposit() {
+        if (!world.isRemote) {
+            if (moneySlot.getStackInSlot(0) != ItemStack.EMPTY) {
+                if (moneySlot.getStackInSlot(0).getItem() == ModItems.itemBanknote) {
+                    int amount;
+                    switch (moneySlot.getStackInSlot(0).getItemDamage()) {
+                        case 0:
+                            amount = 1;
+                            break;
+                        case 1:
+                            amount = 5;
+                            break;
+                        case 2:
+                            amount = 10;
+                            break;
+                        case 3:
+                            amount = 20;
+                            break;
+                        case 4:
+                            amount = 50;
+                            break;
+                        case 5:
+                            amount = 100;
+                            break;
+                        default:
+                            amount = -1;
+                            break;
+                    }
+                    amount = amount * moneySlot.getStackInSlot(0).getCount();
+                    System.out.println(amount);
+                    moneySlot.setStackInSlot(0, ItemStack.EMPTY);
 
-            account.setBalance(account.getBalance() + 5);
-            bankData.setBankAccount(account);
+                    BankAccountSavedData bankData = BankAccountSavedData.getData(world);
+                    BankAccount account = bankData.getBankAccount(playerUsing.getUniqueID().toString());
 
-            PacketSyncBankDataToClient pack = new PacketSyncBankDataToClient();
-            pack.setData(account);
-            PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP)playerUsing);
+                    account.setBalance(account.getBalance() + amount);
+                    bankData.setBankAccount(account);
+
+                    PacketSyncBankDataToClient pack = new PacketSyncBankDataToClient();
+                    pack.setData(account);
+                    PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) playerUsing);
+
+
+                }
+            }
         }
     }
 

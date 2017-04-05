@@ -68,8 +68,9 @@ public class GuiATM extends GuiContainer{
         fontRendererObj.drawString(I18n.format("tile.modcurrency:blockatm.name"), 5, 6, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("tile.modcurrency:gui.playerinventory"), 7, 100, Color.darkGray.getRGB());
 
-
-        fontRendererObj.drawString(I18n.format("Balance: $null"), 5,15, Color.darkGray.getRGB());
+        BankAccountSavedData bankData = BankAccountSavedData.getData(te.getWorld());
+        BankAccount account = bankData.getBankAccount(player.getUniqueID().toString());
+        fontRendererObj.drawString(I18n.format("Balance: $" + account.getBalance()), 5,15, Color.darkGray.getRGB());
 
        //TODO fontRendererObj.drawString(I18n.format("Fee: $23"), 68, 40, Integer.parseInt("8c0000", 16));
        // fontRendererObj.drawString(I18n.format("Fee: $23"), 67, 40, Integer.parseInt("a71717", 16));
