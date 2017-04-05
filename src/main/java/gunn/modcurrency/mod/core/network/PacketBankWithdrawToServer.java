@@ -16,18 +16,21 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  *
  * File Created on 2017-03-12
  */
-public class PacketBankDepositToServer implements IMessage {
+public class PacketBankWithdrawToServer implements IMessage {
     private BlockPos pos;
+    private int amount;
 
-    public PacketBankDepositToServer(){}
+    public PacketBankWithdrawToServer(){}
 
-    public void setData(BlockPos pos) {
+    public void setData(BlockPos pos, int amnt) {
         this.pos = pos;
+        this.amount = amnt;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         this.pos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
+        this.amount = buf.readInt();
     }
 
     @Override
@@ -35,20 +38,21 @@ public class PacketBankDepositToServer implements IMessage {
         buf.writeInt(pos.getX());
         buf.writeInt(pos.getY());
         buf.writeInt(pos.getZ());
+        buf.writeInt(amount);
     }
 
-    public static class Handler implements IMessageHandler<PacketBankDepositToServer, IMessage> {
+    public static class Handler implements IMessageHandler<PacketBankWithdrawToServer, IMessage> {
 
         @Override
-        public IMessage onMessage(final PacketBankDepositToServer message, MessageContext ctx) {
+        public IMessage onMessage(final PacketBankWithdrawToServer message, MessageContext ctx) {
             FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message,ctx));
             return null;
         }
 
-        private void handle(PacketBankDepositToServer message, MessageContext ctx){
+        private void handle(PacketBankWithdrawToServer message, MessageContext ctx){
             EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
             World world = playerEntity.world;
-            ((TileATM) world.getTileEntity(message.pos)).deposit();
+            ((TileATM) world.getTileEntity(message.pos)).withdraw(message.amount);
         }
     }
 }

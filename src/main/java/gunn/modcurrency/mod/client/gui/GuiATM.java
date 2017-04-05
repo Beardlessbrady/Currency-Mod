@@ -4,8 +4,8 @@ import gunn.modcurrency.mod.client.container.ContainerATM;
 import gunn.modcurrency.mod.core.data.BankAccount;
 import gunn.modcurrency.mod.core.data.BankAccountSavedData;
 import gunn.modcurrency.mod.core.network.PacketBankDepositToServer;
+import gunn.modcurrency.mod.core.network.PacketBankWithdrawToServer;
 import gunn.modcurrency.mod.core.network.PacketHandler;
-import gunn.modcurrency.mod.core.network.PacketSyncBankDataToClient;
 import gunn.modcurrency.mod.tile.TileATM;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -13,8 +13,8 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 
 import java.awt.*;
 import java.io.IOException;
@@ -48,6 +48,7 @@ public class GuiATM extends GuiContainer{
 
         this.withdrawField = new GuiTextField(0, fontRendererObj, i + 65, j + 75, 46, 10);
         this.withdrawField.setMaxStringLength(6);
+
         this.withdrawField.setText("$");
     }
 
@@ -71,6 +72,17 @@ public class GuiATM extends GuiContainer{
         BankAccountSavedData bankData = BankAccountSavedData.getData(te.getWorld());
         BankAccount account = bankData.getBankAccount(player.getUniqueID().toString());
         fontRendererObj.drawString(I18n.format("Balance: $" + account.getBalance()), 5,15, Color.darkGray.getRGB());
+
+        String text = withdrawField.getText().substring(1);
+        if (withdrawField.getText().substring(1).length() != 0) {
+            int amount = Integer.parseInt(text);
+
+            if (amount > account.getBalance() && amount <= 6400) {
+                this.withdrawField.setTextColor(14826556);
+            }else{
+                this.withdrawField.setTextColor(15066597);
+            }
+        }
 
        //TODO fontRendererObj.drawString(I18n.format("Fee: $23"), 68, 40, Integer.parseInt("8c0000", 16));
        // fontRendererObj.drawString(I18n.format("Fee: $23"), 67, 40, Integer.parseInt("a71717", 16));
@@ -110,9 +122,14 @@ public class GuiATM extends GuiContainer{
                 PacketHandler.INSTANCE.sendToServer(pack);
                 break;
             case 1:         //Withdraw Button
-                BankAccountSavedData bankData = BankAccountSavedData.getData(te.getWorld());
-                BankAccount account = bankData.getBankAccount(player.getUniqueID().toString());
-                System.out.println(account.getBalance());
+                String text = withdrawField.getText().substring(1);
+                if (text.length() != 0) {
+                    int amount = Integer.parseInt(text);
+
+                    PacketBankWithdrawToServer pack1 = new PacketBankWithdrawToServer();
+                    pack1.setData(te.getPos(), amount);
+                    PacketHandler.INSTANCE.sendToServer(pack1);
+                }
                 break;
         }
     }

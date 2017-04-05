@@ -42,13 +42,50 @@ public class TileATM extends TileEntity implements ICapabilityProvider{
         BankAccountSavedData bankData = BankAccountSavedData.getData(world);
         BankAccount account = bankData.getBankAccount(playerUsing.getUniqueID().toString());
 
-        PacketSyncBankDataToClient pack = new PacketSyncBankDataToClient();
-        pack.setData(account);
-        PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP)playerUsing);
+        syncBankAccountData(account);
     }
 
-    public void withdraw(){
+    public void withdraw(int amount) {
+        if (moneySlot.getStackInSlot(0) == ItemStack.EMPTY) {
+            BankAccountSavedData bankData = BankAccountSavedData.getData(getWorld());
+            BankAccount account = bankData.getBankAccount(playerUsing.getUniqueID().toString());
+            if (amount <= account.getBalance() && amount <= 6400) {
+                ItemStack cash = new ItemStack(ModItems.itemBanknote);
 
+                if (amount % 100 == 0) {
+                    cash.setCount(amount / 100);
+                    cash.setItemDamage(5);
+                    moneySlot.setStackInSlot(0, cash);
+                    account.setBalance(account.getBalance() - amount);
+                }else if (amount % 50 == 0) {
+                    cash.setCount(amount / 50);
+                    cash.setItemDamage(4);
+                    moneySlot.setStackInSlot(0, cash);
+                    account.setBalance(account.getBalance() - amount);
+                }else if (amount % 20 == 0) {
+                    cash.setCount(amount / 20);
+                    cash.setItemDamage(3);
+                    moneySlot.setStackInSlot(0, cash);
+                    account.setBalance(account.getBalance() - amount);
+                }else if (amount % 10 == 0) {
+                    cash.setCount(amount / 10);
+                    cash.setItemDamage(2);
+                    moneySlot.setStackInSlot(0, cash);
+                    account.setBalance(account.getBalance() - amount);
+                }else if (amount % 5 == 0) {
+                    cash.setCount(amount / 5);
+                    cash.setItemDamage(1);
+                    moneySlot.setStackInSlot(0, cash);
+                    account.setBalance(account.getBalance() - amount);
+                }else{
+                    cash.setCount(amount);
+                    cash.setItemDamage(0);
+                    moneySlot.setStackInSlot(0, cash);
+                    account.setBalance(account.getBalance() - amount);
+                }
+            }
+            syncBankAccountData(account);
+        }
     }
 
     public void deposit() {
@@ -80,22 +117,25 @@ public class TileATM extends TileEntity implements ICapabilityProvider{
                             break;
                     }
                     amount = amount * moneySlot.getStackInSlot(0).getCount();
-                    System.out.println(amount);
                     moneySlot.setStackInSlot(0, ItemStack.EMPTY);
 
                     BankAccountSavedData bankData = BankAccountSavedData.getData(world);
                     BankAccount account = bankData.getBankAccount(playerUsing.getUniqueID().toString());
 
                     account.setBalance(account.getBalance() + amount);
-                    bankData.setBankAccount(account);
-
-                    PacketSyncBankDataToClient pack = new PacketSyncBankDataToClient();
-                    pack.setData(account);
-                    PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) playerUsing);
-
-
+                    syncBankAccountData(account);
                 }
             }
+        }
+    }
+
+    public void syncBankAccountData(BankAccount account){
+        if(!world.isRemote){
+            BankAccountSavedData bankData = BankAccountSavedData.getData(world);
+            bankData.setBankAccount(account);
+            PacketSyncBankDataToClient pack = new PacketSyncBankDataToClient();
+            pack.setData(account);
+            PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) playerUsing);
         }
     }
 
