@@ -1,6 +1,7 @@
 package gunn.modcurrency.mod.client.gui;
 
 import gunn.modcurrency.mod.client.container.ContainerATM;
+import gunn.modcurrency.mod.client.util.TabButtonList;
 import gunn.modcurrency.mod.core.data.BankAccount;
 import gunn.modcurrency.mod.core.data.BankAccountSavedData;
 import gunn.modcurrency.mod.core.network.PacketBankDepositToServer;
@@ -27,14 +28,16 @@ import java.io.IOException;
  */
 public class GuiATM extends GuiContainer{
     private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/guiatmtexture.png");
+    private static final ResourceLocation TAB_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/guivendortabtexture.png");
     private GuiTextField withdrawField;
     private TileATM te;
     private EntityPlayer player;
+    private TabButtonList tabList;
 
-    public GuiATM(EntityPlayer player, TileATM te) {
-        super(new ContainerATM(player, te));
-        this.te = te;
-        this.player = player;
+    public GuiATM(EntityPlayer entityPlayer, TileATM tile) {
+        super(new ContainerATM(entityPlayer, tile));
+        te = tile;
+        player = entityPlayer;
     }
 
     @Override
@@ -43,13 +46,17 @@ public class GuiATM extends GuiContainer{
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
 
+        this.withdrawField = new GuiTextField(0, fontRendererObj, i + 65, j + 75, 46, 10);
+        this.withdrawField.setMaxStringLength(6);
+        this.withdrawField.setText("$");
+
+        tabList = new TabButtonList(this.buttonList, i - 21, j + 20);
         this.buttonList.add(new GuiButton(0, i + 107, j + 51, 45, 20, "Deposit"));
         this.buttonList.add(new GuiButton(1, i + 21, j + 51, 48, 20, "Withdraw"));
 
-        this.withdrawField = new GuiTextField(0, fontRendererObj, i + 65, j + 75, 46, 10);
-        this.withdrawField.setMaxStringLength(6);
-
-        this.withdrawField.setText("$");
+        if(te.getField(0) == 1) {
+            tabList.addTab("Gear", TAB_TEXTURE, 0, 0, 2);
+        }
     }
 
     @Override

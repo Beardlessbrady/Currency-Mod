@@ -1,6 +1,7 @@
 package gunn.modcurrency.mod.tile;
 
 import gunn.modcurrency.mod.ModCurrency;
+import gunn.modcurrency.mod.client.util.INBTInventory;
 import gunn.modcurrency.mod.core.data.BankAccount;
 import gunn.modcurrency.mod.core.data.BankAccountSavedData;
 import gunn.modcurrency.mod.core.network.PacketHandler;
@@ -10,8 +11,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -27,17 +31,21 @@ import javax.annotation.Nullable;
  *
  * File Created on 2017-03-15
  */
-public class TileATM extends TileEntity implements ICapabilityProvider{
+public class TileATM extends TileEntity implements ICapabilityProvider, INBTInventory{
     private ItemStackHandler moneySlot;
     private EntityPlayer playerUsing = null;
+    private String owner;
+    boolean isOwner;
 
     public TileATM() {
         moneySlot = new ItemStackHandler(1);
+        owner = "";
     }
 
     public void openGui(EntityPlayer player, World world, BlockPos pos) {
         player.openGui(ModCurrency.instance, 33, world, pos.getX(), pos.getY(), pos.getZ());
         playerUsing = player;
+        isOwner = (player.getUniqueID().toString().equals(owner));
 
         BankAccountSavedData bankData = BankAccountSavedData.getData(world);
         BankAccount account = bankData.getBankAccount(playerUsing.getUniqueID().toString());
@@ -144,6 +152,7 @@ public class TileATM extends TileEntity implements ICapabilityProvider{
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
         compound.setTag("moneySlot", moneySlot.serializeNBT());
+        compound.setString("owner", owner);
 
         return compound;
     }
@@ -152,7 +161,29 @@ public class TileATM extends TileEntity implements ICapabilityProvider{
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         if (compound.hasKey("moneySlot")) moneySlot.deserializeNBT((NBTTagCompound) compound.getTag("moneySlot"));
+        if (compound.hasKey("owner")) owner = compound.getString("owner");
     }
+
+    @Override
+    public NBTTagCompound getUpdateTag() {
+        return writeToNBT(new NBTTagCompound());
+    }
+
+    @Nullable
+    @Override
+    public SPacketUpdateTileEntity getUpdatePacket() {
+        NBTTagCompound tag = new NBTTagCompound();
+        tag.setString("owner", owner);
+
+        return new SPacketUpdateTileEntity(pos, 1, tag);
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+        super.onDataPacket(net, pkt);
+        owner = pkt.getNbtCompound().getString("owner");
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="ItemStackHandler Methods--------------------------------------------------------------------------------------------">
@@ -175,6 +206,27 @@ public class TileATM extends TileEntity implements ICapabilityProvider{
     }
     //</editor-fold>
 
+    //<editor-fold desc="Getter & Setter Methods---------------------------------------------------------------------------------------------">
+    public int getFieldCount(){
+        return 1;
+    }
+
+    public void setField(int id, int value){
+        switch(id){
+            case 0:
+                isOwner = value == 1;
+                break;
+        }
+    }
+
+    public int getField(int id){
+        switch(id){
+            case 0:
+                return (isOwner) ? 1 : 0;
+        }
+        return -1;
+    }
+
     public EntityPlayer getPlayerUsing(){
         return playerUsing;
     }
@@ -182,4 +234,15 @@ public class TileATM extends TileEntity implements ICapabilityProvider{
     public void voidPlayerUsing(){
         playerUsing = null;
     }
+
+    public void setOwner(String player){
+        owner = player;
+    }
+
+    public String getOwner(){
+        return owner;
+    }
+    //</editor-fold>
+
+
 }

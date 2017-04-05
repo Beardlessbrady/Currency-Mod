@@ -243,7 +243,6 @@ public class ContainerVendExchange extends Container implements INBTInventory {
         return ItemStack.EMPTY;
     }
 
-
     public ItemStack checkAfford(int slotId, int amnt, EntityPlayer player) {
         if (tile instanceof TileVendor) {
             IItemHandler itemHandler = this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);

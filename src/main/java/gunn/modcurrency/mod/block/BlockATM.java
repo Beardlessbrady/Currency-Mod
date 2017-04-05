@@ -87,6 +87,9 @@ public class BlockATM extends Block implements ITileEntityProvider {
                 break;
         }
         worldIn.setBlockState(pos, state.withProperty(StateHandler.FACING, face));
+
+        if(placer instanceof EntityPlayer) getTile(worldIn, pos).setOwner((placer).getUniqueID().toString());
+
     }
 
 

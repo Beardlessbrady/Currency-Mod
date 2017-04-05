@@ -7,6 +7,7 @@ import gunn.modcurrency.mod.client.util.INBTInventory;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -31,6 +32,8 @@ public class ContainerATM extends Container implements INBTInventory{
     private final int TE_SLOT = PLAYER_TOTAL_COUNT;
 
     private final int PLAYER_FIRST_SLOT_INDEX = 0;
+
+    private int[] cachedFields;
 
     private TileATM tile;
 
@@ -104,6 +107,32 @@ public class ContainerATM extends Container implements INBTInventory{
             }
         }
         return sourceStack;
+    }
+
+    @Override
+    public void detectAndSendChanges() {
+        super.detectAndSendChanges();
+        boolean fieldChanged[] = new boolean[tile.getFieldCount()];
+
+        if (cachedFields == null) cachedFields = new int[tile.getFieldCount()];
+
+        for (int i = 0; i < cachedFields.length; i++) {
+            if (cachedFields[i] != tile.getField(i)) {
+                cachedFields[i] = tile.getField(i);
+                fieldChanged[i] = true;
+            }
+        }
+
+        for (IContainerListener listener : this.listeners) {
+            for (int field = 0; field < tile.getFieldCount(); ++field) {
+                if (fieldChanged[field]) listener.sendProgressBarUpdate(this, field, cachedFields[field]);
+            }
+        }
+    }
+
+    @Override
+    public void updateProgressBar(int id, int data) {
+        tile.setField(id, data);
     }
 
     @Override
