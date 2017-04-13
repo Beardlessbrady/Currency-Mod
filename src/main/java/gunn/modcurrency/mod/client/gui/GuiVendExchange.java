@@ -265,10 +265,6 @@ public class GuiVendExchange extends GuiContainer {
             }
 
             switch (k) {
-               // case 0://Todo: Hiding Name Tab as its not implemented yet
-                    //if(nameExtended) drawTexturedModalRect(-91, tabLoc - 2, 27, 96, 91, 21);
-                    //drawTexturedModalRect(-19, tabLoc, 236, 73, 19, 16);
-                    //break;
                 case 0:
                     if (tile.getField(1) == 0) {
                         drawTexturedModalRect(-19, tabLoc, 236, 1, 19, 16);
@@ -280,11 +276,6 @@ public class GuiVendExchange extends GuiContainer {
                     }
                     drawTexturedModalRect(-19, tabLoc, 236, 19, 19, 16); //Icon
                     break;
-              //  case 3: //Todo: Hiding Fuzzy Tab as its not implemented yet
-                   // if (tile.getField(11) == 1) {
-                   //     drawTexturedModalRect(-19, tabLoc + offSet2, 236, 55, 19, 16);
-                  //  } else drawTexturedModalRect(-19, tabLoc + offSet2, 216, 55, 19, 16);
-                    //break;
                 case 2:
                     if (tile.getField(5) == 1) {
                         if(tile.getField(8) == 1){

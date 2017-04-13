@@ -35,11 +35,13 @@ public class TileATM extends TileEntity implements ICapabilityProvider, INBTInve
     private ItemStackHandler moneySlot;
     private EntityPlayer playerUsing = null;
     private String owner;
-    boolean isOwner;
+    boolean isOwner, gearExtended;
 
     public TileATM() {
         moneySlot = new ItemStackHandler(1);
         owner = "";
+        isOwner = true;
+        gearExtended = false;
     }
 
     public void openGui(EntityPlayer player, World world, BlockPos pos) {
@@ -153,6 +155,7 @@ public class TileATM extends TileEntity implements ICapabilityProvider, INBTInve
         super.writeToNBT(compound);
         compound.setTag("moneySlot", moneySlot.serializeNBT());
         compound.setString("owner", owner);
+        compound.setBoolean("gearExtended", gearExtended);
 
         return compound;
     }
@@ -162,6 +165,7 @@ public class TileATM extends TileEntity implements ICapabilityProvider, INBTInve
         super.readFromNBT(compound);
         if (compound.hasKey("moneySlot")) moneySlot.deserializeNBT((NBTTagCompound) compound.getTag("moneySlot"));
         if (compound.hasKey("owner")) owner = compound.getString("owner");
+        if (compound.hasKey("gearExtended")) gearExtended = compound.getBoolean("gearExtended");
     }
 
     @Override
@@ -174,6 +178,7 @@ public class TileATM extends TileEntity implements ICapabilityProvider, INBTInve
     public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setString("owner", owner);
+        tag.setBoolean("gearExtended", gearExtended);
 
         return new SPacketUpdateTileEntity(pos, 1, tag);
     }
@@ -182,6 +187,7 @@ public class TileATM extends TileEntity implements ICapabilityProvider, INBTInve
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         super.onDataPacket(net, pkt);
         owner = pkt.getNbtCompound().getString("owner");
+        gearExtended = pkt.getNbtCompound().getBoolean("gearExtended");
     }
 
     //</editor-fold>
@@ -208,7 +214,7 @@ public class TileATM extends TileEntity implements ICapabilityProvider, INBTInve
 
     //<editor-fold desc="Getter & Setter Methods---------------------------------------------------------------------------------------------">
     public int getFieldCount(){
-        return 1;
+        return 2;
     }
 
     public void setField(int id, int value){
@@ -216,13 +222,23 @@ public class TileATM extends TileEntity implements ICapabilityProvider, INBTInve
             case 0:
                 isOwner = value == 1;
                 break;
+            case 1:
+                gearExtended = (value == 1);
+                break;
+
         }
     }
 
     public int getField(int id){
         switch(id){
             case 0:
+                world.markBlockRangeForRenderUpdate(pos, pos);
+                world.scheduleBlockUpdate(pos,this.getBlockType(),0,0);
+                world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
+                markDirty();
                 return (isOwner) ? 1 : 0;
+            case 1:
+                return (gearExtended) ? 1 : 0;
         }
         return -1;
     }

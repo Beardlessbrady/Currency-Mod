@@ -7,15 +7,18 @@ import gunn.modcurrency.mod.core.data.BankAccountSavedData;
 import gunn.modcurrency.mod.core.network.PacketBankDepositToServer;
 import gunn.modcurrency.mod.core.network.PacketBankWithdrawToServer;
 import gunn.modcurrency.mod.core.network.PacketHandler;
+import gunn.modcurrency.mod.core.network.PacketSetGearTabStateToServer;
 import gunn.modcurrency.mod.tile.TileATM;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.IOException;
@@ -54,8 +57,9 @@ public class GuiATM extends GuiContainer{
         this.buttonList.add(new GuiButton(0, i + 107, j + 51, 45, 20, "Deposit"));
         this.buttonList.add(new GuiButton(1, i + 21, j + 51, 48, 20, "Withdraw"));
 
-        if(te.getField(0) == 1) {
+       if(te.getField(0) == 1) {
             tabList.addTab("Gear", TAB_TEXTURE, 0, 0, 2);
+            tabList.setOpenState("Gear", 26);
         }
     }
 
@@ -91,8 +95,48 @@ public class GuiATM extends GuiContainer{
             }
         }
 
-       //TODO fontRendererObj.drawString(I18n.format("Fee: $23"), 68, 40, Integer.parseInt("8c0000", 16));
-       // fontRendererObj.drawString(I18n.format("Fee: $23"), 67, 40, Integer.parseInt("a71717", 16));
+       fontRendererObj.drawString(I18n.format("Fee: $23"), 68, 40, Integer.parseInt("8c0000", 16));
+       fontRendererObj.drawString(I18n.format("Fee: $23"), 67, 40, Integer.parseInt("a71717", 16));
+
+        if (te.getField(0) == 1) {
+            drawIcons();
+
+            if(te.getField(1) == 1) {
+
+                fontRendererObj.drawString(I18n.format("tile.modcurrency:guiatm.feesettings"), -81, 27 , Integer.parseInt("42401c", 16));
+                fontRendererObj.drawString(I18n.format("tile.modcurrency:guiatm.feesettings"), -80, 26, Integer.parseInt("fff200", 16));
+                fontRendererObj.drawString(I18n.format("tile.modcurrency:guiatm.fee"), -84, 48, Integer.parseInt("211d1b", 16));
+                fontRendererObj.drawString(I18n.format("tile.modcurrency:guiatm.fee"), -83, 47, Color.lightGray.getRGB());
+                fontRendererObj.drawString(I18n.format("$"), -62, 48, Integer.parseInt("0099ff", 16));
+
+
+            }
+
+        }
+    }
+
+    private void drawIcons(){
+        int i = (this.width - this.xSize) / 2;
+        int j = (this.height - this.ySize) / 2;
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
+
+        for (int k = 0; k < tabList.getSize(); k++) {
+            int tabLoc = 22 * (k + 1);
+            int offSet2 = 0;
+            if (te.getField(1) == 1){
+                offSet2 = 26;
+            }
+
+            switch (k) {
+                case 0:
+                    if (te.getField(1) == 1) {
+                        drawTexturedModalRect(-91, tabLoc - 2, 27, 0, 91, 47);
+                    }
+                    drawTexturedModalRect(-19, tabLoc, 236, 19, 19, 16); //Icon
+                    break;
+            }
+        }
     }
 
     @Override
@@ -137,6 +181,14 @@ public class GuiATM extends GuiContainer{
                     pack1.setData(te.getPos(), amount);
                     PacketHandler.INSTANCE.sendToServer(pack1);
                 }
+                break;
+            case 2:
+                System.out.println(te.getField(1));
+                tabList.checkOpenState("Gear", te.getField(1) == 0);
+                int newGear = te.getField(1) == 1 ? 0 : 1;
+                PacketSetGearTabStateToServer pack2 = new PacketSetGearTabStateToServer();
+                pack2.setData(newGear, te.getPos());
+                PacketHandler.INSTANCE.sendToServer(pack2);
                 break;
         }
     }

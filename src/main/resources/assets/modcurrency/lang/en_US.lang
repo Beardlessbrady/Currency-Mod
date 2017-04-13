@@ -25,4 +25,6 @@ tile.modcurrency:guisell.tabs.infinity.infinitestock=Infinite Stock
 tile.modcurrency:guisell.tabs.lock.name=Lock Tab
 
 //ATM Gui Stuff
+tile.modcurrency:guiatm.feesettings=ATM Settings
+tile.modcurrency:guiatm.fee=Fee:
 
