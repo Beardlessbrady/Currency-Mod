@@ -17,8 +17,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.IOException;
@@ -32,7 +30,7 @@ import java.io.IOException;
 public class GuiATM extends GuiContainer{
     private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/guiatmtexture.png");
     private static final ResourceLocation TAB_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/guivendortabtexture.png");
-    private GuiTextField withdrawField;
+    private GuiTextField withdrawField, feeField;
     private TileATM te;
     private EntityPlayer player;
     private TabButtonList tabList;
@@ -48,16 +46,19 @@ public class GuiATM extends GuiContainer{
         super.initGui();
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
-
         this.withdrawField = new GuiTextField(0, fontRendererObj, i + 65, j + 75, 46, 10);
         this.withdrawField.setMaxStringLength(6);
         this.withdrawField.setText("$");
+
+        this.feeField = new GuiTextField(0, fontRendererObj, i-55, j + 48, 46, 10);
+        this.feeField.setEnableBackgroundDrawing(false);
+        this.feeField.setTextColor((Integer.parseInt("0099ff", 16)));
 
         tabList = new TabButtonList(this.buttonList, i - 21, j + 20);
         this.buttonList.add(new GuiButton(0, i + 107, j + 51, 45, 20, "Deposit"));
         this.buttonList.add(new GuiButton(1, i + 21, j + 51, 48, 20, "Withdraw"));
 
-       if(te.getField(0) == 1) {
+        if (te.getField(0) == 1) {
             tabList.addTab("Gear", TAB_TEXTURE, 0, 0, 2);
             tabList.setOpenState("Gear", 26);
         }
@@ -74,9 +75,6 @@ public class GuiATM extends GuiContainer{
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        int i = (mouseX - (this.width - this.xSize) / 2);
-        int j = (mouseY - (this.height - this.ySize) / 2);
-
         fontRendererObj.drawString(I18n.format("tile.modcurrency:blockatm.name"), 5, 6, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("tile.modcurrency:gui.playerinventory"), 7, 100, Color.darkGray.getRGB());
 
@@ -90,9 +88,7 @@ public class GuiATM extends GuiContainer{
 
             if (amount > account.getBalance() && amount <= 6400) {
                 this.withdrawField.setTextColor(14826556);
-            }else{
-                this.withdrawField.setTextColor(15066597);
-            }
+            }else this.withdrawField.setTextColor(15066597);
         }
 
        fontRendererObj.drawString(I18n.format("Fee: $23"), 68, 40, Integer.parseInt("8c0000", 16));
@@ -100,22 +96,19 @@ public class GuiATM extends GuiContainer{
 
         if (te.getField(0) == 1) {
             drawIcons();
-
-            if(te.getField(1) == 1) {
-
-                fontRendererObj.drawString(I18n.format("tile.modcurrency:guiatm.feesettings"), -81, 27 , Integer.parseInt("42401c", 16));
+            if (te.getField(1) == 1) {
+                fontRendererObj.drawString(I18n.format("tile.modcurrency:guiatm.feesettings"), -81, 27, Integer.parseInt("42401c", 16));
                 fontRendererObj.drawString(I18n.format("tile.modcurrency:guiatm.feesettings"), -80, 26, Integer.parseInt("fff200", 16));
                 fontRendererObj.drawString(I18n.format("tile.modcurrency:guiatm.fee"), -84, 48, Integer.parseInt("211d1b", 16));
                 fontRendererObj.drawString(I18n.format("tile.modcurrency:guiatm.fee"), -83, 47, Color.lightGray.getRGB());
                 fontRendererObj.drawString(I18n.format("$"), -62, 48, Integer.parseInt("0099ff", 16));
 
-
+                this.feeField.setMaxStringLength(6);
             }
-
         }
     }
 
-    private void drawIcons(){
+    private void drawIcons() {
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
@@ -124,7 +117,7 @@ public class GuiATM extends GuiContainer{
         for (int k = 0; k < tabList.getSize(); k++) {
             int tabLoc = 22 * (k + 1);
             int offSet2 = 0;
-            if (te.getField(1) == 1){
+            if (te.getField(1) == 1) {
                 offSet2 = 26;
             }
 
@@ -143,29 +136,36 @@ public class GuiATM extends GuiContainer{
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
         withdrawField.drawTextBox();
+        if(te.getField(0) == 1 && te.getField(1) == 1) feeField.drawTextBox();
     }
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         withdrawField.mouseClicked(mouseX, mouseY, mouseButton);
+        feeField.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         int numChar = Character.getNumericValue(typedChar);
-        if (((numChar >= 0 && numChar <= 9) || (keyCode == 203) || (keyCode == 205) ||
-                (keyCode == 14 && withdrawField.getText().length() > 1) || (keyCode == 211 && withdrawField.getText().length() > 1))) { //Ensures keys input are only numbers or backspace type keys
-            if (this.withdrawField.textboxKeyTyped(typedChar, keyCode)){
+        if (withdrawField.isFocused()) {
+            if ((numChar >= 0 && numChar <= 9) || (keyCode == 203) || (keyCode == 205) || (keyCode == 14 && withdrawField.getText().length() > 1) || (keyCode == 211 && withdrawField.getText().length() > 1)) { //Ensures keys input are only numbers or backspace type keys
+                if (this.withdrawField.textboxKeyTyped(typedChar, keyCode)) {
+                }
+            } else super.keyTyped(typedChar, keyCode);
+        }
 
-            }
-        } else {
-            super.keyTyped(typedChar, keyCode);
+        if (feeField.isFocused()) {
+            if (((numChar >= 0 && numChar <= 9) || (keyCode == 203) || (keyCode == 205) || (keyCode == 14) || (keyCode == 211))) { //Ensures keys input are only numbers or backspace type keys
+                if (this.feeField.textboxKeyTyped(typedChar, keyCode)) {
+                }
+            } else super.keyTyped(typedChar, keyCode);
         }
     }
 
-    @Override
-    protected void actionPerformed(GuiButton button) throws IOException {
+        @Override
+        protected void actionPerformed(GuiButton button) throws IOException {
         switch (button.id) {
             case 0:         //Deposit Button
                 PacketBankDepositToServer pack = new PacketBankDepositToServer();
