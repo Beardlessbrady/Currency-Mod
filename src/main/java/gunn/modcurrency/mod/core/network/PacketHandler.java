@@ -30,5 +30,6 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketSyncBankDataToClient.Handler.class, PacketSyncBankDataToClient.class, index++, Side.CLIENT);
         INSTANCE.registerMessage(PacketBankDepositToServer.Handler.class, PacketBankDepositToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketBankWithdrawToServer.Handler.class, PacketBankWithdrawToServer.class, index++, Side.SERVER);
+        INSTANCE.registerMessage(PacketSetATMFeeToServer.Handler.class, PacketSetATMFeeToServer.class, index++, Side.SERVER);
     }
 }

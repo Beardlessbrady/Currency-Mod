@@ -36,10 +36,12 @@ public class TileATM extends TileEntity implements ICapabilityProvider, INBTInve
     private EntityPlayer playerUsing = null;
     private String owner;
     boolean isOwner, gearExtended;
+    private int fee;
 
     public TileATM() {
         moneySlot = new ItemStackHandler(1);
         owner = "";
+        fee = 0;
         isOwner = true;
         gearExtended = false;
     }
@@ -47,7 +49,6 @@ public class TileATM extends TileEntity implements ICapabilityProvider, INBTInve
     public void openGui(EntityPlayer player, World world, BlockPos pos) {
         player.openGui(ModCurrency.instance, 33, world, pos.getX(), pos.getY(), pos.getZ());
         playerUsing = player;
-        isOwner = (player.getUniqueID().toString().equals(owner));
 
         BankAccountSavedData bankData = BankAccountSavedData.getData(world);
         BankAccount account = bankData.getBankAccount(playerUsing.getUniqueID().toString());
@@ -59,42 +60,38 @@ public class TileATM extends TileEntity implements ICapabilityProvider, INBTInve
         if (moneySlot.getStackInSlot(0) == ItemStack.EMPTY) {
             BankAccountSavedData bankData = BankAccountSavedData.getData(getWorld());
             BankAccount account = bankData.getBankAccount(playerUsing.getUniqueID().toString());
-            if (amount <= account.getBalance() && amount <= 6400) {
+            if (amount <= account.getBalance() - this.fee && amount <= 6400) {
                 ItemStack cash = new ItemStack(ModItems.itemBanknote);
 
                 if (amount % 100 == 0) {
                     cash.setCount(amount / 100);
                     cash.setItemDamage(5);
                     moneySlot.setStackInSlot(0, cash);
-                    account.setBalance(account.getBalance() - amount);
                 }else if (amount % 50 == 0) {
                     cash.setCount(amount / 50);
                     cash.setItemDamage(4);
                     moneySlot.setStackInSlot(0, cash);
-                    account.setBalance(account.getBalance() - amount);
                 }else if (amount % 20 == 0) {
                     cash.setCount(amount / 20);
                     cash.setItemDamage(3);
                     moneySlot.setStackInSlot(0, cash);
-                    account.setBalance(account.getBalance() - amount);
                 }else if (amount % 10 == 0) {
                     cash.setCount(amount / 10);
                     cash.setItemDamage(2);
                     moneySlot.setStackInSlot(0, cash);
-                    account.setBalance(account.getBalance() - amount);
                 }else if (amount % 5 == 0) {
                     cash.setCount(amount / 5);
                     cash.setItemDamage(1);
                     moneySlot.setStackInSlot(0, cash);
-                    account.setBalance(account.getBalance() - amount);
                 }else{
                     cash.setCount(amount);
                     cash.setItemDamage(0);
                     moneySlot.setStackInSlot(0, cash);
-                    account.setBalance(account.getBalance() - amount);
                 }
+                account.setBalance(account.getBalance() - amount - this.fee);
+                payOwner(this.fee);
+                syncBankAccountData(account);
             }
-            syncBankAccountData(account);
         }
     }
 
@@ -127,16 +124,27 @@ public class TileATM extends TileEntity implements ICapabilityProvider, INBTInve
                             break;
                     }
                     amount = amount * moneySlot.getStackInSlot(0).getCount();
-                    moneySlot.setStackInSlot(0, ItemStack.EMPTY);
+                    if(amount - this.fee >= 1 || isOwner) {
+                        moneySlot.setStackInSlot(0, ItemStack.EMPTY);
 
-                    BankAccountSavedData bankData = BankAccountSavedData.getData(world);
-                    BankAccount account = bankData.getBankAccount(playerUsing.getUniqueID().toString());
+                        BankAccountSavedData bankData = BankAccountSavedData.getData(world);
+                        BankAccount account = bankData.getBankAccount(playerUsing.getUniqueID().toString());
 
-                    account.setBalance(account.getBalance() + amount);
-                    syncBankAccountData(account);
+                        account.setBalance(account.getBalance() + amount - this.fee);
+                        payOwner(this.fee);
+
+                        syncBankAccountData(account);
+                    }
                 }
             }
         }
+    }
+
+    public void payOwner(int amount){
+        BankAccountSavedData bankData = BankAccountSavedData.getData(getWorld());
+        BankAccount account = bankData.getBankAccount(owner);
+        account.setBalance(account.getBalance() + amount);
+        syncBankAccountData(account);
     }
 
     public void syncBankAccountData(BankAccount account){
@@ -154,6 +162,7 @@ public class TileATM extends TileEntity implements ICapabilityProvider, INBTInve
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
         compound.setTag("moneySlot", moneySlot.serializeNBT());
+        compound.setInteger("fee", fee);
         compound.setString("owner", owner);
         compound.setBoolean("gearExtended", gearExtended);
 
@@ -164,6 +173,7 @@ public class TileATM extends TileEntity implements ICapabilityProvider, INBTInve
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         if (compound.hasKey("moneySlot")) moneySlot.deserializeNBT((NBTTagCompound) compound.getTag("moneySlot"));
+        if (compound.hasKey("fee")) fee = compound.getInteger("fee");
         if (compound.hasKey("owner")) owner = compound.getString("owner");
         if (compound.hasKey("gearExtended")) gearExtended = compound.getBoolean("gearExtended");
     }
@@ -178,6 +188,7 @@ public class TileATM extends TileEntity implements ICapabilityProvider, INBTInve
     public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setString("owner", owner);
+        tag.setInteger("fee", fee);
         tag.setBoolean("gearExtended", gearExtended);
 
         return new SPacketUpdateTileEntity(pos, 1, tag);
@@ -187,6 +198,7 @@ public class TileATM extends TileEntity implements ICapabilityProvider, INBTInve
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         super.onDataPacket(net, pkt);
         owner = pkt.getNbtCompound().getString("owner");
+        fee = pkt.getNbtCompound().getInteger("fee");
         gearExtended = pkt.getNbtCompound().getBoolean("gearExtended");
     }
 
@@ -214,7 +226,7 @@ public class TileATM extends TileEntity implements ICapabilityProvider, INBTInve
 
     //<editor-fold desc="Getter & Setter Methods---------------------------------------------------------------------------------------------">
     public int getFieldCount(){
-        return 2;
+        return 3;
     }
 
     public void setField(int id, int value){
@@ -225,7 +237,9 @@ public class TileATM extends TileEntity implements ICapabilityProvider, INBTInve
             case 1:
                 gearExtended = (value == 1);
                 break;
-
+            case 2:
+                fee = value;
+                break;
         }
     }
 
@@ -239,6 +253,8 @@ public class TileATM extends TileEntity implements ICapabilityProvider, INBTInve
                 return (isOwner) ? 1 : 0;
             case 1:
                 return (gearExtended) ? 1 : 0;
+            case 2:
+                return fee;
         }
         return -1;
     }

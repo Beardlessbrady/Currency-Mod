@@ -4,11 +4,9 @@ import gunn.modcurrency.mod.client.container.ContainerATM;
 import gunn.modcurrency.mod.client.util.TabButtonList;
 import gunn.modcurrency.mod.core.data.BankAccount;
 import gunn.modcurrency.mod.core.data.BankAccountSavedData;
-import gunn.modcurrency.mod.core.network.PacketBankDepositToServer;
-import gunn.modcurrency.mod.core.network.PacketBankWithdrawToServer;
-import gunn.modcurrency.mod.core.network.PacketHandler;
-import gunn.modcurrency.mod.core.network.PacketSetGearTabStateToServer;
+import gunn.modcurrency.mod.core.network.*;
 import gunn.modcurrency.mod.tile.TileATM;
+import gunn.modcurrency.mod.tile.TileSeller;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
@@ -17,6 +15,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 
 import java.awt.*;
 import java.io.IOException;
@@ -41,6 +40,20 @@ public class GuiATM extends GuiContainer{
         player = entityPlayer;
     }
 
+    private void setFee() {
+        if (te.getField(0)== 1) {
+            if (this.feeField.getText().length() > 0) {
+                int newFee = Integer.valueOf(this.feeField.getText());
+
+                PacketSetATMFeeToServer pack = new PacketSetATMFeeToServer();
+                pack.setData(newFee, te.getPos());
+
+                PacketHandler.INSTANCE.sendToServer(pack);
+                te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
+            }
+        }
+    }
+
     @Override
     public void initGui() {
         super.initGui();
@@ -53,6 +66,7 @@ public class GuiATM extends GuiContainer{
         this.feeField = new GuiTextField(0, fontRendererObj, i-55, j + 48, 46, 10);
         this.feeField.setEnableBackgroundDrawing(false);
         this.feeField.setTextColor((Integer.parseInt("0099ff", 16)));
+        this.feeField.setText(Integer.toString(te.getField(2)));
 
         tabList = new TabButtonList(this.buttonList, i - 21, j + 20);
         this.buttonList.add(new GuiButton(0, i + 107, j + 51, 45, 20, "Deposit"));
@@ -91,8 +105,10 @@ public class GuiATM extends GuiContainer{
             }else this.withdrawField.setTextColor(15066597);
         }
 
-       fontRendererObj.drawString(I18n.format("Fee: $23"), 68, 40, Integer.parseInt("8c0000", 16));
-       fontRendererObj.drawString(I18n.format("Fee: $23"), 67, 40, Integer.parseInt("a71717", 16));
+        if(te.getField(2) != 0) {
+            fontRendererObj.drawString(I18n.format("Fee: $" + te.getField(2)), 68, 40, Integer.parseInt("540909", 16));
+            fontRendererObj.drawString(I18n.format("Fee: $" + te.getField(2)), 67, 40, Integer.parseInt("9B1A1A", 16));
+        }
 
         if (te.getField(0) == 1) {
             drawIcons();
@@ -158,10 +174,11 @@ public class GuiATM extends GuiContainer{
 
         if (feeField.isFocused()) {
             if (((numChar >= 0 && numChar <= 9) || (keyCode == 203) || (keyCode == 205) || (keyCode == 14) || (keyCode == 211))) { //Ensures keys input are only numbers or backspace type keys
-                if (this.feeField.textboxKeyTyped(typedChar, keyCode)) {
-                }
+                if (this.feeField.textboxKeyTyped(typedChar, keyCode)) setFee();
             } else super.keyTyped(typedChar, keyCode);
         }
+
+        if(!feeField.isFocused() && !withdrawField.isFocused()) super.keyTyped(typedChar, keyCode);
     }
 
         @Override
@@ -183,7 +200,6 @@ public class GuiATM extends GuiContainer{
                 }
                 break;
             case 2:
-                System.out.println(te.getField(1));
                 tabList.checkOpenState("Gear", te.getField(1) == 0);
                 int newGear = te.getField(1) == 1 ? 0 : 1;
                 PacketSetGearTabStateToServer pack2 = new PacketSetGearTabStateToServer();

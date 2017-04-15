@@ -4,6 +4,7 @@ import gunn.modcurrency.mod.client.container.slots.SlotCustomizable;
 import gunn.modcurrency.mod.item.ModItems;
 import gunn.modcurrency.mod.tile.TileATM;
 import gunn.modcurrency.mod.client.util.INBTInventory;
+import gunn.modcurrency.mod.tile.TileVendor;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -39,6 +40,7 @@ public class ContainerATM extends Container implements INBTInventory{
 
     public ContainerATM(EntityPlayer player, TileATM te){
         tile = te;
+        te.setField(0, (player.getUniqueID().toString()).equals(te.getOwner().toString()) ? 1 : 0);
 
         setupPlayerInv(player.inventory);
         setupTeInv();
@@ -47,6 +49,7 @@ public class ContainerATM extends Container implements INBTInventory{
     @Override
     public void onContainerClosed(EntityPlayer playerIn) {
         tile.voidPlayerUsing();
+        tile.setField(1, 0);
         super.onContainerClosed(playerIn);
     }
 
