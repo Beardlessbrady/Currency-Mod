@@ -34,6 +34,7 @@ public class ItemWallet extends Item{
         setUnlocalizedName(getRegistryName().toString());
         GameRegistry.register(this);
         setHasSubtypes(true);
+        setMaxStackSize(1);
     }
 
     public void recipe(){
