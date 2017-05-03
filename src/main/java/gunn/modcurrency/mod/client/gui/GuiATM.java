@@ -60,8 +60,7 @@ public class GuiATM extends GuiContainer{
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
         this.withdrawField = new GuiTextField(0, fontRendererObj, i + 65, j + 75, 46, 10);
-        this.withdrawField.setMaxStringLength(6);
-        this.withdrawField.setText("$");
+        this.withdrawField.setMaxStringLength(7);
 
         this.feeField = new GuiTextField(0, fontRendererObj, i-55, j + 48, 46, 10);
         this.feeField.setEnableBackgroundDrawing(false);
@@ -95,9 +94,10 @@ public class GuiATM extends GuiContainer{
         BankAccountSavedData bankData = BankAccountSavedData.getData(te.getWorld());
         BankAccount account = bankData.getBankAccount(player.getUniqueID().toString());
         fontRendererObj.drawString(I18n.format("Balance: $" + account.getBalance()), 5,15, Color.darkGray.getRGB());
+        fontRendererObj.drawString(I18n.format("$"), 57,76, Color.darkGray.getRGB());
 
-        String text = withdrawField.getText().substring(1);
-        if (withdrawField.getText().substring(1).length() != 0) {
+        String text = withdrawField.getText();
+        if (withdrawField.getText().length() > 0) {
             int amount = Integer.parseInt(text);
 
             if (amount > account.getBalance() && amount <= 6400) {
@@ -166,7 +166,7 @@ public class GuiATM extends GuiContainer{
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         int numChar = Character.getNumericValue(typedChar);
         if (withdrawField.isFocused()) {
-            if ((numChar >= 0 && numChar <= 9) || (keyCode == 203) || (keyCode == 205) || (keyCode == 14 && withdrawField.getText().length() > 1) || (keyCode == 211 && withdrawField.getText().length() > 1)) { //Ensures keys input are only numbers or backspace type keys
+            if ((numChar >= 0 && numChar <= 9) || (keyCode == 203) || (keyCode == 205) || (keyCode == 14 && withdrawField.getText().length() > 0) || (keyCode == 211 && withdrawField.getText().length() > 0)) { //Ensures keys input are only numbers or backspace type keys
                 if (this.withdrawField.textboxKeyTyped(typedChar, keyCode)) {
                 }
             } else super.keyTyped(typedChar, keyCode);
@@ -190,7 +190,7 @@ public class GuiATM extends GuiContainer{
                 PacketHandler.INSTANCE.sendToServer(pack);
                 break;
             case 1:         //Withdraw Button
-                String text = withdrawField.getText().substring(1);
+                String text = withdrawField.getText();
                 if (text.length() != 0) {
                     int amount = Integer.parseInt(text);
 
