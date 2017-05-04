@@ -54,7 +54,7 @@ public class BlockATM extends Block implements ITileEntityProvider {
     }
 
     public void recipe(){
-        GameRegistry.addRecipe(new ItemStack(ModItems.itemWallet, 1, 0),
+        GameRegistry.addRecipe(new ItemStack(ModBlocks.blockATM, 1, 0),
                 "ABA",
                 "ACA",
                 "ADA",

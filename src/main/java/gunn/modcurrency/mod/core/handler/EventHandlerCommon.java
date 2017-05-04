@@ -23,7 +23,7 @@ public class EventHandlerCommon {
         //Invincible Machines
         if (ModConfig.invincibleVendSell) {
             cancelEventChange:
-            if (brokeBlock == ModBlocks.blockSeller || brokeBlock == ModBlocks.blockVendor || brokeBlock == ModBlocks.blockTop) {
+            if (brokeBlock == ModBlocks.blockSeller || brokeBlock == ModBlocks.blockVendor || brokeBlock == ModBlocks.blockTop || brokeBlock == ModBlocks.blockATM) {
                 TileVendExchange tile = (TileVendExchange) e.getWorld().getTileEntity(e.getPos());
                 if ((brokeBlock == ModBlocks.blockTop && (e.getWorld().getBlockState(e.getPos()).getBlock() != ModBlocks.blockVendor ||
                         e.getWorld().getBlockState(e.getPos()).getBlock() != ModBlocks.blockSeller)))
