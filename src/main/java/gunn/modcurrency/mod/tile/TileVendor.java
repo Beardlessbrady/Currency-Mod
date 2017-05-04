@@ -35,7 +35,7 @@ import javax.annotation.Nullable;
  *
  * File Created on 2016-10-30.
  */
-public class TileVendor extends TileVendExchange implements ICapabilityProvider, ITickable, INBTInventory{
+public class TileVendor extends abAdvSell implements ICapabilityProvider, ITickable, INBTInventory{
     private static final int INPUT_SLOT_COUNT = 1;
     private static final int VEND_SLOT_COUNT = 30;
     private static final int BUFFER_SLOT_COUNT = 6;

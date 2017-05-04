@@ -1,7 +1,7 @@
 package gunn.modcurrency.mod.block;
 
 import gunn.modcurrency.mod.ModCurrency;
-import gunn.modcurrency.mod.tile.TileVendExchange;
+import gunn.modcurrency.mod.tile.abAdvSell;
 import gunn.modcurrency.mod.block.items.IBColored;
 import gunn.modcurrency.mod.core.handler.StateHandler;
 import gunn.modcurrency.mod.tile.TileVendor;
@@ -35,7 +35,6 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Random;
 
 /**
  * Distributed with the Currency-Mod for Minecraft.
@@ -113,7 +112,7 @@ public class BlockVendor extends Block implements ITileEntityProvider{
             if (player.getHeldItemMainhand() != ItemStack.EMPTY && !world.isRemote) {      //Just Server
                 if (player.getHeldItemMainhand().getItem() == Items.DYE) {
                     //<editor-fold desc="Saving Tile Variables">
-                    TileVendExchange tile = getTile(world, pos);
+                    abAdvSell tile = getTile(world, pos);
 
                     ItemStackHandler inputStackHandler = tile.getInputHandler();
                     ItemStackHandler vendStackHandler = tile.getVendHandler();
@@ -268,7 +267,7 @@ public class BlockVendor extends Block implements ITileEntityProvider{
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         if(source.getTileEntity(pos) != null){
-            Integer face = ((TileVendExchange) source.getTileEntity(pos)).getField(7);
+            Integer face = ((abAdvSell) source.getTileEntity(pos)).getField(7);
             switch (face) {
                 default:
                 case 0: return BOUND_BOX_N;
@@ -284,7 +283,7 @@ public class BlockVendor extends Block implements ITileEntityProvider{
     @Override
     public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
         if(worldIn.getTileEntity(pos) != null){
-            Integer face = ((TileVendExchange) worldIn.getTileEntity(pos)).getField(7);
+            Integer face = ((abAdvSell) worldIn.getTileEntity(pos)).getField(7);
             switch (face) {
                 default:
                 case 0: return BOUND_BOX_N;

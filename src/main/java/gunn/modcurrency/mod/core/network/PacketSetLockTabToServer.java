@@ -1,6 +1,6 @@
 package gunn.modcurrency.mod.core.network;
 
-import gunn.modcurrency.mod.tile.TileVendExchange;
+import gunn.modcurrency.mod.tile.abAdvSell;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
@@ -53,7 +53,7 @@ public class PacketSetLockTabToServer implements IMessage {
         private void handle(PacketSetLockTabToServer message, MessageContext ctx){
             EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
             World world = playerEntity.world;
-            ((TileVendExchange) world.getTileEntity(message.blockPos)).setField(1, message.data);
+            ((abAdvSell) world.getTileEntity(message.blockPos)).setField(1, message.data);
         }
     }
 }

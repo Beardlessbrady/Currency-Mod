@@ -1,7 +1,6 @@
 package gunn.modcurrency.mod.core.network;
 
 import gunn.modcurrency.mod.tile.TileATM;
-import gunn.modcurrency.mod.tile.TileVendExchange;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;

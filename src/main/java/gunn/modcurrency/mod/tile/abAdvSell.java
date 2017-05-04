@@ -12,7 +12,7 @@ import net.minecraftforge.items.ItemStackHandler;
  *
  * File Created on 2016-12-17
  */
-public abstract class TileVendExchange extends TileEntity implements ICapabilityProvider {
+public abstract class abAdvSell extends TileEntity implements ICapabilityProvider, IOwnable {
 
     public void outChange(){}
 
@@ -45,12 +45,6 @@ public abstract class TileVendExchange extends TileEntity implements ICapability
     public void setItemCost(int amount) {}
 
     public ItemStack getStack(int index){
-        return null;
-    }
-
-    public void setOwner(String owner) {}
-
-    public String getOwner() {
         return null;
     }
 

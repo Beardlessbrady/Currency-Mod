@@ -31,7 +31,7 @@ import javax.annotation.Nullable;
  *
  * File Created on 2017-03-15
  */
-public class TileATM extends TileEntity implements ICapabilityProvider, INBTInventory{
+public class TileATM extends TileEntity implements ICapabilityProvider, INBTInventory, IOwnable{
     private ItemStackHandler moneySlot;
     private EntityPlayer playerUsing = null;
     private String owner;

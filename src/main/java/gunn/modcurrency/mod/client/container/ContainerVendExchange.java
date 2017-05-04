@@ -1,6 +1,6 @@
 package gunn.modcurrency.mod.client.container;
 
-import gunn.modcurrency.mod.tile.TileVendExchange;
+import gunn.modcurrency.mod.tile.abAdvSell;
 import gunn.modcurrency.mod.client.container.slots.SlotCustomizable;
 import gunn.modcurrency.mod.client.container.slots.SlotVendor;
 import gunn.modcurrency.mod.core.network.PacketHandler;
@@ -56,10 +56,10 @@ public class ContainerVendExchange extends Container implements INBTInventory {
 
     private Item[] specialSlotItems;
 
-    private TileVendExchange tile;
+    private abAdvSell tile;
     private int[] cachedFields;
 
-    public ContainerVendExchange(InventoryPlayer invPlayer, TileVendExchange te) {
+    public ContainerVendExchange(InventoryPlayer invPlayer, abAdvSell te) {
         tile = te;
         if (tile instanceof TileVendor) specialSlotItems = ((TileVendor) tile).specialSlotItems;
         if (tile instanceof TileSeller) specialSlotItems = ((TileSeller) tile).specialSlotItems;

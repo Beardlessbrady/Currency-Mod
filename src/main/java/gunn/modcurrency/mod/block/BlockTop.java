@@ -1,6 +1,6 @@
 package gunn.modcurrency.mod.block;
 
-import gunn.modcurrency.mod.tile.TileVendExchange;
+import gunn.modcurrency.mod.tile.abAdvSell;
 import gunn.modcurrency.mod.core.handler.StateHandler;
 import gunn.modcurrency.mod.tile.TileSeller;
 import gunn.modcurrency.mod.tile.TileVendor;
@@ -63,12 +63,12 @@ public class BlockTop extends Block{
         return -1;
     }
 
-    public TileVendExchange getTile(World world, BlockPos pos) {
-        return (TileVendExchange) world.getTileEntity(pos.down());
+    public abAdvSell getTile(World world, BlockPos pos) {
+        return (abAdvSell) world.getTileEntity(pos.down());
     }
 
-    public TileVendExchange getTile(IBlockAccess world, BlockPos pos) {
-        return (TileVendExchange) world.getTileEntity(pos.down());
+    public abAdvSell getTile(IBlockAccess world, BlockPos pos) {
+        return (abAdvSell) world.getTileEntity(pos.down());
     }
 
     @Override
@@ -80,7 +80,7 @@ public class BlockTop extends Block{
                 if (player.getHeldItemMainhand() != ItemStack.EMPTY && !world.isRemote) {      //Just Server
                     if (player.getHeldItemMainhand().getItem() == Items.DYE) {
                         //<editor-fold desc="Saving Tile Variables">
-                        TileVendExchange tile = getTile(world, pos);
+                        abAdvSell tile = getTile(world, pos);
 
                         ItemStackHandler inputStackHandler = tile.getInputHandler();
                         ItemStackHandler vendStackHandler = tile.getVendHandler();
@@ -179,7 +179,7 @@ public class BlockTop extends Block{
         if (worldIn.getBlockState(pos.down()).getBlock() == ModBlocks.blockVendor || worldIn.getBlockState(pos.down()).getBlock() == ModBlocks.blockSeller) {
             int faceData = 0;
 
-            TileVendExchange tile = (TileVendExchange) worldIn.getTileEntity(pos.down());
+            abAdvSell tile = (abAdvSell) worldIn.getTileEntity(pos.down());
             faceData = tile.getField(7);
 
             EnumFacing face = EnumFacing.NORTH;
@@ -227,7 +227,7 @@ public class BlockTop extends Block{
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         if(source.getTileEntity(pos.down()) != null){
-            Integer face = ((TileVendExchange) source.getTileEntity(pos.down())).getField(7);
+            Integer face = ((abAdvSell) source.getTileEntity(pos.down())).getField(7);
             AxisAlignedBB box;
             AxisAlignedBB newBox;
 
@@ -252,7 +252,7 @@ public class BlockTop extends Block{
     @Override
     public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
         if(worldIn.getTileEntity(pos.down()) != null){
-            Integer face = ((TileVendExchange) worldIn.getTileEntity(pos.down())).getField(7);
+            Integer face = ((abAdvSell) worldIn.getTileEntity(pos.down())).getField(7);
             AxisAlignedBB box;
             AxisAlignedBB newBox;
 

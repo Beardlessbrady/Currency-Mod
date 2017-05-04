@@ -29,7 +29,7 @@ import javax.annotation.Nullable;
  *
  * File Created on 2016-12-19
  */
-public class TileSeller extends TileVendExchange implements ICapabilityProvider, ITickable{
+public class TileSeller extends abAdvSell implements ICapabilityProvider, ITickable{
     private static final int INPUT_SLOT_COUNT = 1;
     private static final int VEND_SLOT_COUNT = 30;
     private static final int BUFFER_SLOT_COUNT = 6;
