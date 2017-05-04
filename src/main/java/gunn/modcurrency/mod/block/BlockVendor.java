@@ -35,6 +35,7 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Distributed with the Currency-Mod for Minecraft.

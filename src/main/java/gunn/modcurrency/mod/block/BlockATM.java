@@ -1,7 +1,9 @@
 package gunn.modcurrency.mod.block;
 
+import gunn.modcurrency.mod.ModConfig;
 import gunn.modcurrency.mod.ModCurrency;
 import gunn.modcurrency.mod.core.handler.StateHandler;
+import gunn.modcurrency.mod.item.ModItems;
 import gunn.modcurrency.mod.tile.TileATM;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -13,6 +15,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -25,6 +29,7 @@ import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 
 import javax.annotation.Nullable;
+import java.util.Random;
 
 /**
  * Distributed with the Currency-Mod for Minecraft
@@ -46,6 +51,17 @@ public class BlockATM extends Block implements ITileEntityProvider {
         GameRegistry.register(this);
         GameRegistry.register(new ItemBlock(this), getRegistryName());
         GameRegistry.registerTileEntity(TileATM.class, ModCurrency.MODID + "_teatm");
+    }
+
+    public void recipe(){
+        GameRegistry.addRecipe(new ItemStack(ModItems.itemWallet, 1, 0),
+                "ABA",
+                "ACA",
+                "ADA",
+                'A', Blocks.IRON_BLOCK,
+                'B', Blocks.REDSTONE_LAMP,
+                'C', Blocks.ENDER_CHEST,
+                'D', new ItemStack (ModItems.itemBanknote, 1, 0));
     }
 
     public void initModel() {
@@ -92,6 +108,11 @@ public class BlockATM extends Block implements ITileEntityProvider {
 
     }
 
+    @Override
+    public Item getItemDropped(IBlockState state, Random rand, int fortune) {
+        if(ModConfig.dropATM) return super.getItemDropped(state, rand, fortune);
+        return null;
+    }
 
     //<editor-fold desc="Block States">
     @Override

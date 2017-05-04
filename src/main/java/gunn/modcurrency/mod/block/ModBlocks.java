@@ -23,7 +23,7 @@ public class ModBlocks {
         if(ModConfig.enableVendor) blockVendor = new BlockVendor();
         if(ModConfig.enableSeller) blockSeller = new BlockSeller();
         if(ModConfig.enableVendor || ModConfig.enableSeller) blockTop = new BlockTop();
-        blockATM = new BlockATM();
+        if(ModConfig.enableATM) blockATM = new BlockATM();
 
         //blockShopMob = new BlockShopMob();
     }
@@ -31,11 +31,12 @@ public class ModBlocks {
     public static void ItemModels(){
         if(ModConfig.enableVendor) blockVendor.initModel();
         if(ModConfig.enableSeller) blockSeller.initModel();
-        blockATM.initModel();
+        if(ModConfig.enableATM) blockATM.initModel();
     }
     
     public static void addRecipes(){
-        if(ModConfig.enableVendor) if(ModConfig.recipeVendor) blockVendor.recipe();
-        if(ModConfig.enableSeller) if(ModConfig.recipeSeller) blockSeller.recipe();
+        if(ModConfig.enableVendor && ModConfig.recipeVendor) blockVendor.recipe();
+        if(ModConfig.enableSeller && ModConfig.recipeSeller) blockSeller.recipe();
+        if(ModConfig.enableATM && ModConfig.recipeATM) blockATM.recipe();
     }
 }
