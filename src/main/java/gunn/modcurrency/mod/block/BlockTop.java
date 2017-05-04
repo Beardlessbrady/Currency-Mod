@@ -87,7 +87,6 @@ public class BlockTop extends Block{
                         ItemStackHandler buffStackHandler = tile.getBufferHandler();
 
                         int bank = tile.getField(0);
-                        int face = tile.getField(7);
                         int four = tile.getField(4);
                         int locked = tile.getField(1);
                         int mode = tile.getField(2);
@@ -100,7 +99,6 @@ public class BlockTop extends Block{
 
                         tile.setStackHandlers(inputStackHandler, buffStackHandler, vendStackHandler);
                         tile.setField(0, bank);
-                        tile.setField(7, face);
                         tile.setField(4, four);
                         tile.setField(1, locked);
                         tile.setField(2, mode);
@@ -172,29 +170,23 @@ public class BlockTop extends Block{
     @Override
     public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
         if (worldIn.getBlockState(pos.down()).getBlock() == ModBlocks.blockVendor || worldIn.getBlockState(pos.down()).getBlock() == ModBlocks.blockSeller) {
-            int faceData = 0;
-
-            abAdvSell tile = (abAdvSell) worldIn.getTileEntity(pos.down());
-            faceData = tile.getField(7);
+            Integer faceData = (worldIn.getBlockState(pos.down()).getBlock().getMetaFromState(worldIn.getBlockState(pos.down())));
 
             EnumFacing face = EnumFacing.NORTH;
             switch (faceData) {
-                case 1:
+                case 3:
                     face = EnumFacing.EAST;
                     break;
-                case 2:
+                case 0:
                     face = EnumFacing.SOUTH;
                     break;
-                case 3:
+                case 1:
                     face = EnumFacing.WEST;
                     break;
             }
 
             StateHandler.EnumTopTypes type = StateHandler.EnumTopTypes.VENDOR;
             switch (whatBlock(worldIn, pos)) {
-                case 0:
-                    if (getTile(worldIn, pos).getField(2) == 1) type = StateHandler.EnumTopTypes.VENDOROPEN;
-                    break;
                 case 1:
                     if (getTile(worldIn, pos).getField(2) == 1) {
                         type = StateHandler.EnumTopTypes.SELLEROPEN;
@@ -221,19 +213,19 @@ public class BlockTop extends Block{
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         if(source.getTileEntity(pos.down()) != null){
-            Integer face = ((abAdvSell) source.getTileEntity(pos.down())).getField(7);
+            Integer face = (source.getBlockState(pos.down()).getBlock().getMetaFromState(source.getBlockState(pos.down())));
             AxisAlignedBB box;
             AxisAlignedBB newBox;
 
             switch (face) {
                 default:
-                case 0: box = BOUND_BOX_N;
+                case 2: box = BOUND_BOX_N;
                     break;
-                case 1: box = BOUND_BOX_E;
+                case 3: box = BOUND_BOX_E;
                     break;
-                case 2: box = BOUND_BOX_S;
+                case 0: box = BOUND_BOX_S;
                     break;
-                case 3: box = BOUND_BOX_W;
+                case 1: box = BOUND_BOX_W;
             }
 
             newBox = new AxisAlignedBB(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ);
@@ -246,19 +238,19 @@ public class BlockTop extends Block{
     @Override
     public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
         if(worldIn.getTileEntity(pos.down()) != null){
-            Integer face = ((abAdvSell) worldIn.getTileEntity(pos.down())).getField(7);
+            Integer face = (worldIn.getBlockState(pos.down()).getBlock().getMetaFromState(worldIn.getBlockState(pos.down())));
             AxisAlignedBB box;
             AxisAlignedBB newBox;
 
             switch (face) {
                 default:
-                case 0: box = BOUND_BOX_N;
+                case 2: box = BOUND_BOX_N;
                     break;
-                case 1: box = BOUND_BOX_E;
+                case 3: box = BOUND_BOX_E;
                     break;
-                case 2: box = BOUND_BOX_S;
+                case 0: box = BOUND_BOX_S;
                     break;
-                case 3: box = BOUND_BOX_W;
+                case 1: box = BOUND_BOX_W;
             }
 
             newBox = new AxisAlignedBB(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ);

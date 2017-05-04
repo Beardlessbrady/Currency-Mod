@@ -93,41 +93,7 @@ public class BlockVendor extends Block implements ITileEntityProvider{
         if(getTile(world, pos).getPlayerUsing() == null) {      //Client and Server
             getTile(world, pos).setField(5, player.isCreative() ? 1 : 0);
             if (player.getHeldItemMainhand() != ItemStack.EMPTY && !world.isRemote) {      //Just Server
-                if (player.getHeldItemMainhand().getItem() == Items.DYE) {
-                    //<editor-fold desc="Saving Tile Variables">
-                    abAdvSell tile = getTile(world, pos);
-
-                    ItemStackHandler inputStackHandler = tile.getInputHandler();
-                    ItemStackHandler vendStackHandler = tile.getVendHandler();
-                    ItemStackHandler buffStackHandler = tile.getBufferHandler();
-
-                    int bank = tile.getField(0);
-                    int face = tile.getField(7);
-                    int profit = tile.getField(4);
-                    int locked = tile.getField(1);
-                    int mode = tile.getField(2);
-                    int infinite = tile.getField(6);
-                    String owner = tile.getOwner();
-                    int[] itemCosts = tile.getAllItemCosts();
-                    //</editor-fold>
-
-                    //<editor-fold desc="Setting Tile Variables">
-                    tile = getTile(world, pos);
-
-                    tile.setStackHandlers(inputStackHandler, buffStackHandler, vendStackHandler);
-                    tile.setField(0, bank);
-                    tile.setField(7, face);
-                    tile.setField(4, profit);
-                    tile.setField(1, locked);
-                    tile.setField(2, mode);
-                    tile.setField(6, infinite);
-                    tile.setOwner(owner);
-                    tile.setAllItemCosts(itemCosts);
-                    //</editor-fold>
-
-                    if (!player.isCreative()) player.getHeldItemMainhand().shrink(1);
-                    return true;
-                } else if (player.getHeldItemMainhand() != ItemStack.EMPTY && world.isRemote) return true;
+                if (player.getHeldItemMainhand() != ItemStack.EMPTY && world.isRemote) return true;
             }
 
             if ((player.isSneaking() && player.getUniqueID().toString().equals(getTile(world, pos).getOwner())) || (player.isSneaking() && player.isCreative())) {      //Client and Server
@@ -163,6 +129,7 @@ public class BlockVendor extends Block implements ITileEntityProvider{
                 break;
         }
         worldIn.setBlockState(pos, state.withProperty(StateHandler.FACING, face));
+        worldIn.setBlockState(pos.up(),ModBlocks.blockTop.getDefaultState());
 
         if(placer instanceof EntityPlayer) getTile(worldIn, pos).setOwner((placer).getUniqueID().toString());
 
@@ -204,7 +171,8 @@ public class BlockVendor extends Block implements ITileEntityProvider{
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return this.getDefaultState().withProperty(StateHandler.FACING, EnumFacing.getHorizontal(meta));
+        return this.getDefaultState().withProperty(StateHandler.FACING, EnumFacing.getHorizontal(meta))
+                .withProperty(StateHandler.ITEM, false);
     }
 
     @Override
@@ -217,29 +185,28 @@ public class BlockVendor extends Block implements ITileEntityProvider{
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
         if(source.getTileEntity(pos) != null){
-            Integer face = ((abAdvSell) source.getTileEntity(pos)).getField(7);
-            switch (face) {
+            switch (getMetaFromState(state)) {
                 default:
-                case 0: return BOUND_BOX_N;
-                case 1: return BOUND_BOX_E;
-                case 2: return BOUND_BOX_S;
-                case 3: return BOUND_BOX_W;
+                case 2: return BOUND_BOX_N;
+                case 3: return BOUND_BOX_E;
+                case 0: return BOUND_BOX_S;
+                case 1: return BOUND_BOX_W;
             }
         }
         return super.getBoundingBox(state, source, pos);
     }
 
+
     @Nullable
     @Override
     public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
         if(worldIn.getTileEntity(pos) != null){
-            Integer face = ((abAdvSell) worldIn.getTileEntity(pos)).getField(7);
-            switch (face) {
+            switch (getMetaFromState(blockState)) {
                 default:
-                case 0: return BOUND_BOX_N;
-                case 1: return BOUND_BOX_E;
-                case 2: return BOUND_BOX_S;
-                case 3: return BOUND_BOX_W;
+                case 2: return BOUND_BOX_N;
+                case 3: return BOUND_BOX_E;
+                case 0: return BOUND_BOX_S;
+                case 1: return BOUND_BOX_W;
             }
         }
         return super.getCollisionBoundingBox(blockState, worldIn, pos);
