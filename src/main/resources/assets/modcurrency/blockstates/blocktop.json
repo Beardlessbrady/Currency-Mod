@@ -13,9 +13,6 @@
     "inventory": [{}],
     "top":{
       "vendor":{},
-      "vendoropen":{
-        "model": "modcurrency:vend_top2"
-      },
       "seller":{
         "model": "modcurrency:sell_top"
       },
