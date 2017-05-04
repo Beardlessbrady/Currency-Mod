@@ -26,9 +26,6 @@ public class EventHandlerCommon {
             cancelEventChange:
             if (brokeBlock == ModBlocks.blockSeller || brokeBlock == ModBlocks.blockVendor || brokeBlock == ModBlocks.blockTop || brokeBlock == ModBlocks.blockATM) {
                 IOwnable tile = (IOwnable) e.getWorld().getTileEntity(e.getPos());
-                if ((brokeBlock == ModBlocks.blockTop && (e.getWorld().getBlockState(e.getPos()).getBlock() != ModBlocks.blockVendor ||
-                        e.getWorld().getBlockState(e.getPos()).getBlock() != ModBlocks.blockSeller)))
-                    break cancelEventChange;
                 if (brokeBlock == ModBlocks.blockTop) tile = (abAdvSell) e.getWorld().getTileEntity(e.getPos().down());
                 if ((!e.getEntityPlayer().getUniqueID().toString().equals(tile.getOwner())) && !e.getEntityPlayer().isCreative()) {     //If not Owner (and not in creative) Can't Break
                     e.setCanceled(true);
