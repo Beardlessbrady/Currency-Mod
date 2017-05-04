@@ -1,10 +1,9 @@
 package gunn.modcurrency.mod.block;
 
 import gunn.modcurrency.mod.ModCurrency;
-import gunn.modcurrency.mod.tile.abAdvSell;
-import gunn.modcurrency.mod.block.items.IBColored;
 import gunn.modcurrency.mod.core.handler.StateHandler;
 import gunn.modcurrency.mod.tile.TileVendor;
+import gunn.modcurrency.mod.tile.abAdvSell;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
@@ -18,8 +17,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
@@ -58,13 +57,12 @@ public class BlockVendor extends Block implements ITileEntityProvider{
         setSoundType(SoundType.METAL);
 
         GameRegistry.register(this);
-        GameRegistry.register(new IBColored(this), getRegistryName());
+        GameRegistry.register(new ItemBlock(this), getRegistryName());
         GameRegistry.registerTileEntity(TileVendor.class, ModCurrency.MODID + "_tevendor");
     }
 
     public void recipe(){
         ItemStack basic = new ItemStack(Item.getItemFromBlock(this));
-        ItemStack color = new ItemStack(Items.DYE);
         basic.setItemDamage(0);
 
         GameRegistry.addRecipe(basic,
@@ -75,25 +73,10 @@ public class BlockVendor extends Block implements ITileEntityProvider{
                 'B', Items.COMPARATOR,
                 'C', Item.getItemFromBlock(Blocks.CHEST),
                 'D', Items.IRON_DOOR);
-
-        for(int i = 1; i < 16; i++) {
-            ItemStack stack = new ItemStack(Item.getItemFromBlock(this));
-            stack.setItemDamage(i);
-            color.setItemDamage(i);
-            GameRegistry.addShapelessRecipe(stack, color, basic);
-            GameRegistry.addShapelessRecipe(basic, stack);
-        }
     }
 
     public void initModel() {
-        for (int i = 0; i < 16; i++) {
-            //Im Lazy and I hate Mojangs EnumDyeColor, BE CONSISTENT (lightBlue, light_blue....)
-            if (i == 12) {
-                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 12, new ModelResourceLocation(getRegistryName(), "color=light_blue" + ",facing=north,item=true,open=false"));
-            } else {
-                ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), i, new ModelResourceLocation(getRegistryName(), "color=" + EnumDyeColor.byDyeDamage(i) + ",facing=north,item=true,open=false"));
-            }
-        }
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "facing=north,item=true"));
     }
 
     @Override
@@ -127,9 +110,6 @@ public class BlockVendor extends Block implements ITileEntityProvider{
                     String owner = tile.getOwner();
                     int[] itemCosts = tile.getAllItemCosts();
                     //</editor-fold>
-
-                    world.setBlockState(pos, state.withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(player.getHeldItemMainhand().getItemDamage())), 3);
-                    world.setBlockState(pos.up(), world.getBlockState(pos.up()).withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(player.getHeldItemMainhand().getItemDamage())), 3);
 
                     //<editor-fold desc="Setting Tile Variables">
                     tile = getTile(world, pos);
@@ -172,28 +152,25 @@ public class BlockVendor extends Block implements ITileEntityProvider{
 
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        int face = 0;
+        EnumFacing face = EnumFacing.NORTH;
         switch(placer.getHorizontalFacing().getOpposite()){
-            case NORTH: face = 0;
+            case NORTH: break;
+            case EAST: face = EnumFacing.EAST;
                 break;
-            case EAST: face = 1;
+            case SOUTH: face = EnumFacing.SOUTH;
                 break;
-            case SOUTH: face = 2;
-                break;
-            case WEST: face = 3;
+            case WEST: face = EnumFacing.WEST;
                 break;
         }
+        worldIn.setBlockState(pos, state.withProperty(StateHandler.FACING, face));
 
-        getTile(worldIn, pos).setField(7,face);
-        EnumDyeColor color = state.getValue(StateHandler.COLOR);
-        worldIn.setBlockState(pos.up(),ModBlocks.blockTop.getDefaultState().withProperty(StateHandler.COLOR, color));
+        if(placer instanceof EntityPlayer) getTile(worldIn, pos).setOwner((placer).getUniqueID().toString());
 
         if(placer instanceof EntityPlayer) {
             EntityPlayer player = (EntityPlayer) placer;
             String playerName = player.getUniqueID().toString();
             getTile(worldIn, pos).setOwner(playerName);
         }
-        worldIn.scheduleBlockUpdate(pos, worldIn.getBlockState(pos).getBlock(), 0, 0);
     }
 
     @Override
@@ -222,44 +199,17 @@ public class BlockVendor extends Block implements ITileEntityProvider{
     //<editor-fold desc="Block States--------------------------------------------------------------------------------------------------------">
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, new IProperty[] {StateHandler.COLOR, StateHandler.FACING, StateHandler.ITEM, StateHandler.OPEN});
+        return new BlockStateContainer(this, new IProperty[] {StateHandler.FACING, StateHandler.ITEM});
     }
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return this.getDefaultState().withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(meta));
+        return this.getDefaultState().withProperty(StateHandler.FACING, EnumFacing.getHorizontal(meta));
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return (state.getValue(StateHandler.COLOR)).getDyeDamage();
-    }
-
-    @Override
-    public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
-        EnumFacing face = EnumFacing.NORTH;
-        TileVendor tile = (TileVendor) worldIn.getTileEntity(pos);
-        int i = tile.getField(7);
-
-        switch (i) {
-            case 0:
-                face = EnumFacing.NORTH;
-                break;
-            case 1:
-                face = EnumFacing.EAST;
-                break;
-            case 2:
-                face = EnumFacing.SOUTH;
-                break;
-            case 3:
-                face = EnumFacing.WEST;
-                break;
-        }
-
-        ArrayList<Integer> pio = new ArrayList<Integer>(4);
-
-        return state.withProperty(StateHandler.FACING, face).withProperty(StateHandler.ITEM, false)
-                .withProperty(StateHandler.OPEN, tile.getField(2) == 1);
+        return (state.getValue(StateHandler.FACING).getHorizontalIndex());
     }
     //</editor-fold>
 

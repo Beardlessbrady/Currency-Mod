@@ -34,7 +34,7 @@ public class TileSeller extends abAdvSell implements ICapabilityProvider, ITicka
     private static final int VEND_SLOT_COUNT = 30;
     private static final int BUFFER_SLOT_COUNT = 6;
 
-    private int bank, selectedSlot, face, cashRegister;
+    private int bank, selectedSlot, cashRegister;
     private String owner, selectedName;
     private boolean locked, mode, creative, infinite, gearExtended, fuzzy;
     private int[] itemCosts = new int[VEND_SLOT_COUNT];
@@ -50,7 +50,6 @@ public class TileSeller extends abAdvSell implements ICapabilityProvider, ITicka
     public TileSeller() {
         bank = 0;
         selectedSlot = 37;
-        face = 0;
         owner = "";
         selectedName = "No Item";
         locked = false;
@@ -255,7 +254,7 @@ public class TileSeller extends abAdvSell implements ICapabilityProvider, ITicka
                         int x = getPos().getX();
                         int z = getPos().getZ();
 
-                        switch (face) {
+                        switch (this.getBlockMetadata()) {
                             case 0:
                                 z = z - 2; //North
                                 break;
@@ -284,7 +283,7 @@ public class TileSeller extends abAdvSell implements ICapabilityProvider, ITicka
 
                 int x = getPos().getX();
                 int z = getPos().getZ();
-                switch (face) {
+                switch (this.getBlockMetadata()) {
                     case 0:
                         z = z - 2; //North
                         break;
@@ -330,7 +329,6 @@ public class TileSeller extends abAdvSell implements ICapabilityProvider, ITicka
         compound.setTag("input", inputStackHandler.serializeNBT());
         compound.setTag("autoInput", automationInputStackHandler.serializeNBT());
         compound.setInteger("bank", bank);
-        compound.setInteger("face", face);
         compound.setInteger("cashRegister", cashRegister);
         compound.setBoolean("locked", locked);
         compound.setBoolean("mode", mode);
@@ -362,7 +360,6 @@ public class TileSeller extends abAdvSell implements ICapabilityProvider, ITicka
         if (compound.hasKey("input")) inputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("input"));
         if (compound.hasKey("autoInput")) automationInputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("autoInput"));
         if (compound.hasKey("bank")) bank = compound.getInteger("bank");
-        if (compound.hasKey("face")) face = compound.getInteger("face");
         if (compound.hasKey("cashRegister")) cashRegister = compound.getInteger("cashRegister");
         if (compound.hasKey("locked")) locked = compound.getBoolean("locked");
         if (compound.hasKey("mode")) mode = compound.getBoolean("mode");
@@ -395,7 +392,6 @@ public class TileSeller extends abAdvSell implements ICapabilityProvider, ITicka
     public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setInteger("bank", bank);
-        tag.setInteger("face", face);
         tag.setInteger("cashRegister", cashRegister);
         tag.setBoolean("locked", locked);
         tag.setBoolean("mode", mode);
@@ -422,7 +418,6 @@ public class TileSeller extends abAdvSell implements ICapabilityProvider, ITicka
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         super.onDataPacket(net, pkt);
         bank = pkt.getNbtCompound().getInteger("bank");
-        face = pkt.getNbtCompound().getInteger("face");
         cashRegister = pkt.getNbtCompound().getInteger("cashRegister");
         locked = pkt.getNbtCompound().getBoolean("locked");
         mode = pkt.getNbtCompound().getBoolean("mode");
@@ -493,7 +488,7 @@ public class TileSeller extends abAdvSell implements ICapabilityProvider, ITicka
                 infinite = (value == 1);
                 break;
             case 7:
-                face = value;
+
                 break;
             case 8:
                 gearExtended = (value == 1);
@@ -526,7 +521,7 @@ public class TileSeller extends abAdvSell implements ICapabilityProvider, ITicka
             case 6:
                 return (infinite) ? 1 : 0;
             case 7:
-                return face;
+
             case 8:
                 return (gearExtended) ? 1 : 0;
             case 11:

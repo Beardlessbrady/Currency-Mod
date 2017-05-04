@@ -95,10 +95,6 @@ public class BlockTop extends Block{
                         String owner = tile.getOwner();
                         int[] itemCosts = tile.getAllItemCosts();
                         //</editor-fold>
-
-                        world.setBlockState(pos, state.withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(player.getHeldItemMainhand().getItemDamage())), 3);
-                        world.setBlockState(pos.down(), world.getBlockState(pos.down()).withProperty(StateHandler.COLOR, EnumDyeColor.byDyeDamage(player.getHeldItemMainhand().getItemDamage())), 3);
-
                         //<editor-fold desc="Setting Tile Variables">
                         tile = getTile(world, pos);
 
@@ -150,7 +146,6 @@ public class BlockTop extends Block{
         if(!worldIn.isAirBlock(pos.down())) {
             ItemStack drop = new ItemStack(Item.getItemFromBlock(ModBlocks.blockVendor));
             if (worldIn.getBlockState(pos.down()).getBlock().equals(ModBlocks.blockSeller)) drop = new ItemStack(Item.getItemFromBlock(ModBlocks.blockSeller));
-            drop.setItemDamage(worldIn.getBlockState(pos.down()).getValue(StateHandler.COLOR).getDyeDamage());
             spawnAsEntity(worldIn,pos,drop);
         }
 
@@ -161,7 +156,7 @@ public class BlockTop extends Block{
     //<editor-fold desc="Block States--------------------------------------------------------------------------------------------------------">
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, new IProperty[] {StateHandler.TOP,StateHandler.COLOR,StateHandler.FACING});
+        return new BlockStateContainer(this, new IProperty[] {StateHandler.TOP,StateHandler.FACING});
     }
 
     @Override
@@ -211,7 +206,6 @@ public class BlockTop extends Block{
 
 
             return getDefaultState().withProperty(StateHandler.FACING, face)
-                    .withProperty(StateHandler.COLOR, worldIn.getBlockState(pos.down()).getValue(StateHandler.COLOR))
                     .withProperty(StateHandler.TOP, type);
         }
         return getDefaultState();

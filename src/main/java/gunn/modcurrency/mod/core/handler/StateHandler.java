@@ -17,10 +17,8 @@ import net.minecraftforge.common.property.IUnlistedProperty;
  */
 public class StateHandler {
     public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
-    public static final PropertyEnum<EnumDyeColor> COLOR = PropertyEnum.create("color", EnumDyeColor.class);
     public static final PropertyBool ITEM = PropertyBool.create("item");
     public static final PropertyEnum<EnumTopTypes> TOP = PropertyEnum.create("top", EnumTopTypes.class);
-    public static final PropertyBool OPEN = PropertyBool.create("open");
     public static final IUnlistedProperty<ItemStack>[] UNLISTED_CONTAIN = new UnlistedPropertyContain[30];
 
     public enum EnumTopTypes implements IStringSerializable {

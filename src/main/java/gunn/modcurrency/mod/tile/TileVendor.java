@@ -40,7 +40,7 @@ public class TileVendor extends abAdvSell implements ICapabilityProvider, ITicka
     private static final int VEND_SLOT_COUNT = 30;
     private static final int BUFFER_SLOT_COUNT = 6;
 
-    private int bank, profit, selectedSlot, face, walletTotal;
+    private int bank, profit, selectedSlot, walletTotal;
     private String owner, selectedName;
     private boolean locked, mode, creative, infinite, gearExtended, walletIn, fuzzy;
     private int[] itemCosts = new int[VEND_SLOT_COUNT];
@@ -56,7 +56,6 @@ public class TileVendor extends abAdvSell implements ICapabilityProvider, ITicka
         bank = 0;
         profit = 0;
         selectedSlot = 37;
-        face = 0;
         walletTotal = 0;
         owner = "";
         selectedName = "No Item";
@@ -278,7 +277,7 @@ public class TileVendor extends abAdvSell implements ICapabilityProvider, ITicka
                         int x = getPos().getX();
                         int z = getPos().getZ();
 
-                        switch (face) {
+                        switch (this.getBlockMetadata()) {
                             case 0:
                                 z = z - 2; //North
                                 break;
@@ -307,7 +306,7 @@ public class TileVendor extends abAdvSell implements ICapabilityProvider, ITicka
 
                 int x = getPos().getX();
                 int z = getPos().getZ();
-                switch (face) {
+                switch (this.getBlockMetadata()) {
                     case 0:
                         z = z - 2; //North
                         break;
@@ -337,7 +336,6 @@ public class TileVendor extends abAdvSell implements ICapabilityProvider, ITicka
         compound.setTag("input", inputStackHandler.serializeNBT());
         compound.setInteger("bank", bank);
         compound.setInteger("profit", profit);
-        compound.setInteger("face", face);
         compound.setInteger("walletTotal", walletTotal);
         compound.setBoolean("locked", locked);
         compound.setBoolean("mode", mode);
@@ -365,7 +363,6 @@ public class TileVendor extends abAdvSell implements ICapabilityProvider, ITicka
         if (compound.hasKey("input")) inputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("input"));
         if (compound.hasKey("bank")) bank = compound.getInteger("bank");
         if (compound.hasKey("profit")) profit = compound.getInteger("profit");
-        if (compound.hasKey("face")) face = compound.getInteger("face");
         if (compound.hasKey("walletTotal")) walletTotal = compound.getInteger("walletTotal");
         if (compound.hasKey("locked")) locked = compound.getBoolean("locked");
         if (compound.hasKey("mode")) mode = compound.getBoolean("mode");
@@ -395,7 +392,6 @@ public class TileVendor extends abAdvSell implements ICapabilityProvider, ITicka
         NBTTagCompound tag = new NBTTagCompound();
         tag.setInteger("bank", bank);
         tag.setInteger("profit", profit);
-        tag.setInteger("face", face);
         tag.setInteger("walletTotal", walletTotal);
         tag.setBoolean("locked", locked);
         tag.setBoolean("mode", mode);
@@ -420,7 +416,6 @@ public class TileVendor extends abAdvSell implements ICapabilityProvider, ITicka
         super.onDataPacket(net, pkt);
         bank = pkt.getNbtCompound().getInteger("bank");
         profit = pkt.getNbtCompound().getInteger("profit");
-        face = pkt.getNbtCompound().getInteger("face");
         walletTotal = pkt.getNbtCompound().getInteger("walletTotal");
         locked = pkt.getNbtCompound().getBoolean("locked");
         mode = pkt.getNbtCompound().getBoolean("mode");
@@ -491,7 +486,6 @@ public class TileVendor extends abAdvSell implements ICapabilityProvider, ITicka
                 infinite = (value == 1);
                 break;
             case 7:
-                face = value;
                 break;
             case 8:
                 gearExtended = (value == 1);
@@ -529,7 +523,6 @@ public class TileVendor extends abAdvSell implements ICapabilityProvider, ITicka
             case 6:
                 return (infinite) ? 1 : 0;
             case 7:
-                return face;
             case 8:
                 return (gearExtended) ? 1 : 0;
             case 9:
