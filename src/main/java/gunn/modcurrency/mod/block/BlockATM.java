@@ -1,10 +1,10 @@
 package gunn.modcurrency.mod.block;
 
+import gunn.modcurrency.mod.tileEntity.TileATM;
 import gunn.modcurrency.mod.ModConfig;
 import gunn.modcurrency.mod.ModCurrency;
-import gunn.modcurrency.mod.core.handler.StateHandler;
+import gunn.modcurrency.mod.handler.StateHandler;
 import gunn.modcurrency.mod.item.ModItems;
-import gunn.modcurrency.mod.tile.TileATM;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
@@ -16,7 +16,6 @@ import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;

@@ -1,9 +1,8 @@
 package gunn.modcurrency.mod;
 
-import gunn.modcurrency.mod.core.proxy.CommonProxy;
+import gunn.modcurrency.mod.proxy.CommonProxy;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Optional;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -24,7 +23,7 @@ public class ModCurrency {
     public static final String MODNAME = "Currency Mod";
     public static final String VERSION = "1.11.2-1.0.2";
 
-    @SidedProxy(clientSide = "gunn.modcurrency.mod.core.proxy.ClientProxy", serverSide = "gunn.modcurrency.mod.core.proxy.CommonProxy")
+    @SidedProxy(clientSide = "gunn.modcurrency.mod.proxy.ClientProxy", serverSide = "gunn.modcurrency.mod.proxy.CommonProxy")
     public static CommonProxy proxy;
 
     @Mod.Instance
@@ -48,3 +47,5 @@ public class ModCurrency {
         proxy.postInit(event);
     }
 }
+
+

@@ -1,6 +1,6 @@
 package gunn.modcurrency.mod;
 
-import gunn.modcurrency.mod.core.proxy.CommonProxy;
+import gunn.modcurrency.mod.proxy.CommonProxy;
 import net.minecraftforge.common.config.Configuration;
 import org.apache.logging.log4j.Level;
 
@@ -52,7 +52,7 @@ public class ModConfig {
     }
 
     private static void initItemsConfig(Configuration cfg){
-        cfg.addCustomCategoryComment(CATEGORY_ITEMS, "These configs enable/disable a lot of main features of the mod.");
+        cfg.addCustomCategoryComment(CATEGORY_ITEMS, "These configs enable/disable a lot of main features of the old.");
         enableVendor = cfg.getBoolean("Vending Machine", CATEGORY_ITEMS, enableVendor, "Block");
         enableSeller = cfg.getBoolean("Exchange Machine", CATEGORY_ITEMS, enableSeller, "Block");
         enableWallet = cfg.getBoolean("Wallet", CATEGORY_ITEMS, enableWallet, "Item");
@@ -60,7 +60,7 @@ public class ModConfig {
     }
 
     private static void initRecipesConfig(Configuration cfg){
-        cfg.addCustomCategoryComment(CATEGORY_RECIPES, "These configs enable/disable recipes of block and item in the mod.");
+        cfg.addCustomCategoryComment(CATEGORY_RECIPES, "These configs enable/disable recipes of block and item in the old.");
         recipeVendor = cfg.getBoolean("Vending Machine", CATEGORY_RECIPES, recipeVendor, "Block");
         recipeSeller = cfg.getBoolean("Exchange Machine", CATEGORY_RECIPES, recipeSeller, "Block");
         recipeWallet = cfg.getBoolean("Wallet", CATEGORY_RECIPES, recipeWallet, "Item");
@@ -68,10 +68,10 @@ public class ModConfig {
     }
 
     private static void initgeneralConfig(Configuration cfg){
-        cfg.addCustomCategoryComment(CATEGORY_GENERAL, "These configs modify the balance/experience of the mod");
+        cfg.addCustomCategoryComment(CATEGORY_GENERAL, "These configs modify the balance/experience of the old");
         dropATM = cfg.getBoolean("Drop ATM when broken", CATEGORY_GENERAL, dropATM, "This changes if the ATM will drop itself when broken or not");
         invincibleVendSell = cfg.getBoolean("Invincible Machine", CATEGORY_GENERAL, invincibleVendSell, "Enabling this makes it so only the player who placed the machine can break it");
-        walletSize = cfg.getInt("Wallet Size", CATEGORY_GENERAL, walletSize, 0, 4, "This changes how many rows of inventory slots there are in the wallet");
+        walletSize = cfg.getInt("Wallet Size", CATEGORY_GENERAL, walletSize, 0, 4, "This changes how many rows of inventory slot there are in the wallet");
         shitTextures = cfg.getBoolean("16x16 Textures", Configuration.CATEGORY_GENERAL, shitTextures, "Some textures are 32x32 (like the money). If you are stingy and want 16x16 enable this");
 
     }

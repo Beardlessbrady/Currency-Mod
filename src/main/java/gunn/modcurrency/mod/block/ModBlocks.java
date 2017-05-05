@@ -1,6 +1,9 @@
 package gunn.modcurrency.mod.block;
 
 import gunn.modcurrency.mod.ModConfig;
+import gunn.modcurrency.old.OLDvendexchanger.BlockSeller;
+import gunn.modcurrency.old.OLDvendexchanger.BlockTop;
+import gunn.modcurrency.old.OLDvendexchanger.BlockVendor;
 
 /**
  * Distributed with the Currency-Mod for Minecraft.
@@ -13,7 +16,7 @@ public class ModBlocks {
     public static BlockVendor blockVendor;
     public static BlockSeller blockSeller;
     public static BlockATM blockATM;
-    public static BlockShopMob blockShopMob;
+    public static BlockEntityMarket blockEntityMarket;
 
     public static void preInit(){
         setupBlocks();
@@ -25,7 +28,7 @@ public class ModBlocks {
         if(ModConfig.enableVendor || ModConfig.enableSeller) blockTop = new BlockTop();
         if(ModConfig.enableATM) blockATM = new BlockATM();
 
-        //blockShopMob = new BlockShopMob();
+        //blockEntityMarket = new BlockEntityMarket();
     }
 
     public static void ItemModels(){

@@ -1,6 +1,6 @@
 package gunn.modcurrency.mod.client.gui;
 
-import gunn.modcurrency.mod.client.container.ContainerWallet;
+import gunn.modcurrency.mod.container.ContainerWallet;
 import gunn.modcurrency.mod.item.ItemWallet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;

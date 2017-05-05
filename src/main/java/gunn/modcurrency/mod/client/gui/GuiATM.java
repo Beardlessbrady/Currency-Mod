@@ -1,11 +1,11 @@
 package gunn.modcurrency.mod.client.gui;
 
-import gunn.modcurrency.mod.client.container.ContainerATM;
-import gunn.modcurrency.mod.client.util.TabButtonList;
-import gunn.modcurrency.mod.core.data.BankAccount;
-import gunn.modcurrency.mod.core.data.BankAccountSavedData;
-import gunn.modcurrency.mod.core.network.*;
-import gunn.modcurrency.mod.tile.TileATM;
+import gunn.modcurrency.mod.tileEntity.TileATM;
+import gunn.modcurrency.mod.container.ContainerATM;
+import gunn.modcurrency.mod.client.gui.util.TabButtonList;
+import gunn.modcurrency.mod.worldsaveddata.bank.BankAccount;
+import gunn.modcurrency.mod.worldsaveddata.bank.BankAccountSavedData;
+import gunn.modcurrency.mod.network.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
