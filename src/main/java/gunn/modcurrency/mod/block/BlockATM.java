@@ -38,7 +38,7 @@ import java.util.Random;
  */
 public class BlockATM extends Block implements ITileEntityProvider {
 
-    public BlockATM() {
+    BlockATM() {
         super(Material.ROCK);
         setRegistryName("blockatm");
         setUnlocalizedName(this.getRegistryName().toString());
@@ -52,7 +52,7 @@ public class BlockATM extends Block implements ITileEntityProvider {
         GameRegistry.registerTileEntity(TileATM.class, ModCurrency.MODID + "_teatm");
     }
 
-    public void recipe(){
+    void recipe(){
         GameRegistry.addRecipe(new ItemStack(ModBlocks.blockATM, 1, 0),
                 "ABA",
                 "ACA",
@@ -63,7 +63,7 @@ public class BlockATM extends Block implements ITileEntityProvider {
                 'D', new ItemStack (ModItems.itemBanknote, 1, 0));
     }
 
-    public void initModel() {
+    void initModel() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
     }
 
@@ -73,7 +73,7 @@ public class BlockATM extends Block implements ITileEntityProvider {
         return new TileATM();
     }
 
-    public TileATM getTile(World world, BlockPos pos) {
+    private TileATM getTile(World world, BlockPos pos) {
         return (TileATM) world.getTileEntity(pos);
     }
 
@@ -116,7 +116,7 @@ public class BlockATM extends Block implements ITileEntityProvider {
     //<editor-fold desc="Block States">
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, new IProperty[] {StateHandler.FACING});
+        return new BlockStateContainer(this, StateHandler.FACING);
     }
 
     @Override

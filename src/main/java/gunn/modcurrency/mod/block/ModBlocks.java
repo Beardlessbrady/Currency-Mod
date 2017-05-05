@@ -16,7 +16,7 @@ public class ModBlocks {
     public static BlockVendor blockVendor;
     public static BlockSeller blockSeller;
     public static BlockATM blockATM;
-    public static BlockEntityMarket blockEntityMarket;
+    //public static BlockEntityMarket blockEntityMarket;
 
     public static void preInit(){
         setupBlocks();

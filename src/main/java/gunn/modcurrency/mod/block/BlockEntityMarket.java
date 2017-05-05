@@ -51,7 +51,7 @@ public class BlockEntityMarket extends Block implements ITileEntityProvider{
         return new TileBlockEntityMarket();
     }
 
-    public TileBlockEntityMarket getTile(World world, BlockPos pos){
+    private TileBlockEntityMarket getTile(World world, BlockPos pos){
         return (TileBlockEntityMarket) world.getTileEntity(pos);
     }
 
@@ -83,7 +83,7 @@ public class BlockEntityMarket extends Block implements ITileEntityProvider{
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         if(placer instanceof EntityPlayer) {
-           getTile(worldIn, pos).setOwner(((EntityPlayer) placer).getUniqueID().toString());
+           getTile(worldIn, pos).setOwner((placer).getUniqueID().toString());
         }
         worldIn.scheduleBlockUpdate(pos, worldIn.getBlockState(pos).getBlock(), 0, 0);
     }
