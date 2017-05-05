@@ -12,12 +12,10 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
  *
  * File Created on 2016-10-28.
  */
-public class ClientProxy extends CommonProxy {
+public class ServerProxy extends CommonProxy {
     @Override
     public void preInit(FMLPreInitializationEvent e) {
         super.preInit(e);
-        ModItems.ItemModels();
-        ModBlocks.ItemModels();
         PacketHandler.registerCommonMessages("modcurrency");
     }
 

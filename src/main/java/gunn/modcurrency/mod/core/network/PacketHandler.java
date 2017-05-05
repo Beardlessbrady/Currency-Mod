@@ -10,17 +10,23 @@ import net.minecraftforge.fml.relauncher.Side;
  *
  * File Created on 2016-11-06.
  */
-public class PacketHandlerCommon {
+public class PacketHandler {
     public static SimpleNetworkWrapper INSTANCE = null;
     
-    public PacketHandlerCommon(){}
+    public PacketHandler(){}
     
-    public static void registerMessages(String channelName){
+    public static void registerCommonMessages(String channelName){
         INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(channelName);
-        registerMessages(0);
+        registerCommonMessages(0);
+    }
+
+    public static void registerClientMessages(String channelName){
+        INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(channelName);
+        int index = registerCommonMessages(0);
+        registerClientMessages(index);
     }
     
-    public static void registerMessages(int index){
+    public static int registerCommonMessages(int index){
         INSTANCE.registerMessage(PacketItemSpawnToServer.Handler.class, PacketItemSpawnToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketSetItemCostToServer.Handler.class, PacketSetItemCostToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketSetItemAmountToServer.Handler.class, PacketSetItemAmountToServer.class, index++, Side.SERVER);
@@ -30,5 +36,10 @@ public class PacketHandlerCommon {
         INSTANCE.registerMessage(PacketBankDepositToServer.Handler.class, PacketBankDepositToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketBankWithdrawToServer.Handler.class, PacketBankWithdrawToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketSetATMFeeToServer.Handler.class, PacketSetATMFeeToServer.class, index++, Side.SERVER);
+        return index;
+    }
+
+    public static void registerClientMessages(int index){
+        INSTANCE.registerMessage(PacketSyncBankDataToClient.Handler.class, PacketSyncBankDataToClient.class, index++, Side.CLIENT);
     }
 }

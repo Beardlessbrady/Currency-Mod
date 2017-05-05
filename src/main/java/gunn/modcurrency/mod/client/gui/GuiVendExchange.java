@@ -63,7 +63,7 @@ public class GuiVendExchange extends GuiContainer {
 
             PacketSetItemCostToServer pack = new PacketSetItemCostToServer();
             pack.setData(newCost, tile.getPos());
-            PacketHandlerCommon.INSTANCE.sendToServer(pack);
+            PacketHandler.INSTANCE.sendToServer(pack);
 
             tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
         }
@@ -78,7 +78,7 @@ public class GuiVendExchange extends GuiContainer {
                 PacketSetItemAmountToServer pack = new PacketSetItemAmountToServer();
                 pack.setData(newAmount, tile.getPos(), tile.getField(3) - 37);
 
-                PacketHandlerCommon.INSTANCE.sendToServer(pack);
+                PacketHandler.INSTANCE.sendToServer(pack);
                 tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
             }
         }
@@ -101,7 +101,7 @@ public class GuiVendExchange extends GuiContainer {
         super.onResize(mcIn, w, h);
         PacketSetGearTabStateToServer pack = new PacketSetGearTabStateToServer();
         pack.setData(0, tile.getPos());
-        PacketHandlerCommon.INSTANCE.sendToServer(pack);
+        PacketHandler.INSTANCE.sendToServer(pack);
 
         creativeExtended = false;
         nameExtended = false;
@@ -465,12 +465,12 @@ public class GuiVendExchange extends GuiContainer {
             case 0:         //Change Button
                 PacketItemSpawnToServer pack0 = new PacketItemSpawnToServer();
                 pack0.setBlockPos(tile.getPos());
-                PacketHandlerCommon.INSTANCE.sendToServer(pack0);
+                PacketHandler.INSTANCE.sendToServer(pack0);
                 break;
             case 1: //Lock Button
                 PacketSetLockTabToServer pack1 = new PacketSetLockTabToServer();
                 pack1.setData((tile.getField(1) == 1) ? 0 : 1, tile.getPos());
-                PacketHandlerCommon.INSTANCE.sendToServer(pack1);
+                PacketHandler.INSTANCE.sendToServer(pack1);
                 tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
                 break;
             case 2: //Gear Button
@@ -478,7 +478,7 @@ public class GuiVendExchange extends GuiContainer {
                 int newGear = tile.getField(8) == 1 ? 0 : 1;
                 PacketSetGearTabStateToServer pack2 = new PacketSetGearTabStateToServer();
                 pack2.setData(newGear, tile.getPos());
-                PacketHandlerCommon.INSTANCE.sendToServer(pack2);
+                PacketHandler.INSTANCE.sendToServer(pack2);
                 break;
             case 3:
                 creativeExtended = !creativeExtended;
@@ -486,12 +486,12 @@ public class GuiVendExchange extends GuiContainer {
             case 4:
                 PacketSetInfiniteToServer pack4 = new PacketSetInfiniteToServer();
                 pack4.setData((tile.getField(6) == 1) ? 0 : 1, tile.getPos());
-                PacketHandlerCommon.INSTANCE.sendToServer(pack4);
+                PacketHandler.INSTANCE.sendToServer(pack4);
                 break;
          //   case 5:
         //        PacketSetFuzzyToServer pack5 = new PacketSetFuzzyToServer();
          //       pack5.setData((tile.getField(11) == 1) ? 0 : 1, tile.getPos());
-         //       PacketHandlerCommon.INSTANCE.sendToServer(pack5);
+         //       PacketHandler.INSTANCE.sendToServer(pack5);
            //     break;
             case 6:
                 nameExtended = !nameExtended;
