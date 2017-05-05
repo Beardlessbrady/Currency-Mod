@@ -4,7 +4,9 @@ import gunn.modcurrency.mod.core.data.BankAccount;
 import gunn.modcurrency.mod.core.data.BankAccountSavedData;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.WorldCapabilityData;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
@@ -51,7 +53,7 @@ public class PacketSyncBankDataToClient implements IMessage {
         }
 
         private void handle(PacketSyncBankDataToClient message, MessageContext ctx){
-            World world = Minecraft.getMinecraft().world;
+            WorldClient world = Minecraft.getMinecraft().world;
             BankAccountSavedData data = BankAccountSavedData.getData(world);
             data.setBankAccount(new BankAccount(message.name, message.balance));
         }

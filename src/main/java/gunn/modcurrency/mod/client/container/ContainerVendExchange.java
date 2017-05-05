@@ -1,9 +1,9 @@
 package gunn.modcurrency.mod.client.container;
 
+import gunn.modcurrency.mod.core.network.PacketHandlerCommon;
 import gunn.modcurrency.mod.tile.abAdvSell;
 import gunn.modcurrency.mod.client.container.slots.SlotCustomizable;
 import gunn.modcurrency.mod.client.container.slots.SlotVendor;
-import gunn.modcurrency.mod.core.network.PacketHandler;
 import gunn.modcurrency.mod.core.network.PacketItemSpawnToServer;
 import gunn.modcurrency.mod.client.util.INBTInventory;
 import gunn.modcurrency.mod.item.ItemWallet;
@@ -553,7 +553,7 @@ public class ContainerVendExchange extends Container implements INBTInventory {
             //Forces the vendor to output the change
             PacketItemSpawnToServer pack = new PacketItemSpawnToServer();
             pack.setBlockPos(tile.getPos());
-            PacketHandler.INSTANCE.sendToServer(pack);
+            PacketHandlerCommon.INSTANCE.sendToServer(pack);
         }
 
         writeInventoryTag(wallet, itemHandler);

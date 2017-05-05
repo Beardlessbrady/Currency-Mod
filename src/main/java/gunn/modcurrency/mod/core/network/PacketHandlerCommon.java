@@ -10,10 +10,10 @@ import net.minecraftforge.fml.relauncher.Side;
  *
  * File Created on 2016-11-06.
  */
-public class PacketHandler {
+public class PacketHandlerCommon {
     public static SimpleNetworkWrapper INSTANCE = null;
     
-    public PacketHandler(){}
+    public PacketHandlerCommon(){}
     
     public static void registerMessages(String channelName){
         INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(channelName);
@@ -27,7 +27,6 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketSetGearTabStateToServer.Handler.class, PacketSetGearTabStateToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketSetLockTabToServer.Handler.class, PacketSetLockTabToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketSetInfiniteToServer.Handler.class, PacketSetInfiniteToServer.class, index++, Side.SERVER);
-        INSTANCE.registerMessage(PacketSyncBankDataToClient.Handler.class, PacketSyncBankDataToClient.class, index++, Side.CLIENT);
         INSTANCE.registerMessage(PacketBankDepositToServer.Handler.class, PacketBankDepositToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketBankWithdrawToServer.Handler.class, PacketBankWithdrawToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketSetATMFeeToServer.Handler.class, PacketSetATMFeeToServer.class, index++, Side.SERVER);

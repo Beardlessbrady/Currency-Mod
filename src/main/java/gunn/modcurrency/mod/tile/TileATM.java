@@ -4,7 +4,7 @@ import gunn.modcurrency.mod.ModCurrency;
 import gunn.modcurrency.mod.client.util.INBTInventory;
 import gunn.modcurrency.mod.core.data.BankAccount;
 import gunn.modcurrency.mod.core.data.BankAccountSavedData;
-import gunn.modcurrency.mod.core.network.PacketHandler;
+import gunn.modcurrency.mod.core.network.PacketHandlerCommon;
 import gunn.modcurrency.mod.core.network.PacketSyncBankDataToClient;
 import gunn.modcurrency.mod.item.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
@@ -15,7 +15,6 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -153,7 +152,7 @@ public class TileATM extends TileEntity implements ICapabilityProvider, INBTInve
             bankData.setBankAccount(account);
             PacketSyncBankDataToClient pack = new PacketSyncBankDataToClient();
             pack.setData(account);
-            PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) playerUsing);
+            PacketHandlerCommon.INSTANCE.sendTo(pack, (EntityPlayerMP) playerUsing);
         }
     }
 

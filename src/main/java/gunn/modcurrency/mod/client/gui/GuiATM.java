@@ -6,7 +6,6 @@ import gunn.modcurrency.mod.core.data.BankAccount;
 import gunn.modcurrency.mod.core.data.BankAccountSavedData;
 import gunn.modcurrency.mod.core.network.*;
 import gunn.modcurrency.mod.tile.TileATM;
-import gunn.modcurrency.mod.tile.TileSeller;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
@@ -15,7 +14,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
 
 import java.awt.*;
 import java.io.IOException;
@@ -48,7 +46,7 @@ public class GuiATM extends GuiContainer{
                 PacketSetATMFeeToServer pack = new PacketSetATMFeeToServer();
                 pack.setData(newFee, te.getPos());
 
-                PacketHandler.INSTANCE.sendToServer(pack);
+                PacketHandlerCommon.INSTANCE.sendToServer(pack);
                 te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
             }
         }
@@ -187,7 +185,7 @@ public class GuiATM extends GuiContainer{
             case 0:         //Deposit Button
                 PacketBankDepositToServer pack = new PacketBankDepositToServer();
                 pack.setData(te.getPos());
-                PacketHandler.INSTANCE.sendToServer(pack);
+                PacketHandlerCommon.INSTANCE.sendToServer(pack);
                 break;
             case 1:         //Withdraw Button
                 String text = withdrawField.getText();
@@ -196,7 +194,7 @@ public class GuiATM extends GuiContainer{
 
                     PacketBankWithdrawToServer pack1 = new PacketBankWithdrawToServer();
                     pack1.setData(te.getPos(), amount);
-                    PacketHandler.INSTANCE.sendToServer(pack1);
+                    PacketHandlerCommon.INSTANCE.sendToServer(pack1);
                 }
                 break;
             case 2:
@@ -204,7 +202,7 @@ public class GuiATM extends GuiContainer{
                 int newGear = te.getField(1) == 1 ? 0 : 1;
                 PacketSetGearTabStateToServer pack2 = new PacketSetGearTabStateToServer();
                 pack2.setData(newGear, te.getPos());
-                PacketHandler.INSTANCE.sendToServer(pack2);
+                PacketHandlerCommon.INSTANCE.sendToServer(pack2);
                 break;
         }
     }

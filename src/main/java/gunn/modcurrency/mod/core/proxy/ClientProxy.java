@@ -1,6 +1,7 @@
 package gunn.modcurrency.mod.core.proxy;
 
 import gunn.modcurrency.mod.block.ModBlocks;
+import gunn.modcurrency.mod.core.network.PacketHandlerClient;
 import gunn.modcurrency.mod.item.ModItems;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
@@ -17,6 +18,7 @@ public class ClientProxy extends CommonProxy {
         super.preInit(e);
         ModItems.ItemModels();
         ModBlocks.ItemModels();
+        PacketHandlerClient.registerMessages("modcurrency");
     }
 
     @Override
