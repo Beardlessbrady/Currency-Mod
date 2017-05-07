@@ -39,43 +39,6 @@ import javax.annotation.Nullable;
  * File Created on 2016-10-30.
  */
 public class BlockVendor extends Block implements ITileEntityProvider{
-    private static final AxisAlignedBB BOUND_BOX_N = new AxisAlignedBB(0.03125, 0, 0.28125, 0.96875, 1, 1);
-    private static final AxisAlignedBB BOUND_BOX_E = new AxisAlignedBB(0.71875, 0, 0.03125, 0, 1, 0.96875);
-    private static final AxisAlignedBB BOUND_BOX_S = new AxisAlignedBB(0.03125, 0, 0.71875, 0.96875, 1, 0);
-    private static final AxisAlignedBB BOUND_BOX_W = new AxisAlignedBB(0.28125, 0, 0.03125, 1, 1, 0.96875);
-    
-    public BlockVendor() {
-        super(Material.ROCK);
-        setRegistryName("blockvendor");
-        setUnlocalizedName(this.getRegistryName().toString());
-
-        setHardness(3.0F);
-        setCreativeTab(ModCurrency.tabCurrency);
-        setSoundType(SoundType.METAL);
-
-        GameRegistry.register(this);
-        GameRegistry.register(new ItemBlock(this), getRegistryName());
-        GameRegistry.registerTileEntity(TileVendor.class, ModCurrency.MODID + "_tevendor");
-    }
-
-    public void recipe(){
-        ItemStack basic = new ItemStack(Item.getItemFromBlock(this));
-        basic.setItemDamage(0);
-
-        GameRegistry.addRecipe(basic,
-                "ABA",
-                "ACA",
-                "ADA",
-                'A', Items.IRON_INGOT,
-                'B', Items.COMPARATOR,
-                'C', Item.getItemFromBlock(Blocks.CHEST),
-                'D', Items.IRON_DOOR);
-    }
-
-    public void initModel() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "facing=north,item=true"));
-    }
-
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
         return new TileVendor();
@@ -113,29 +76,7 @@ public class BlockVendor extends Block implements ITileEntityProvider{
         return false;
     }
 
-    @Override
-    public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        EnumFacing face = EnumFacing.NORTH;
-        switch(placer.getHorizontalFacing().getOpposite()){
-            case NORTH: break;
-            case EAST: face = EnumFacing.EAST;
-                break;
-            case SOUTH: face = EnumFacing.SOUTH;
-                break;
-            case WEST: face = EnumFacing.WEST;
-                break;
-        }
-        worldIn.setBlockState(pos, state.withProperty(StateHandler.FACING, face));
-        worldIn.setBlockState(pos.up(), ModBlocks.blockTop.getDefaultState());
 
-        if(placer instanceof EntityPlayer) getTile(worldIn, pos).setOwner((placer).getUniqueID().toString());
-
-        if(placer instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer) placer;
-            String playerName = player.getUniqueID().toString();
-            getTile(worldIn, pos).setOwner(playerName);
-        }
-    }
 
     @Override
     public boolean canPlaceBlockAt(World worldIn, BlockPos pos) {
@@ -159,64 +100,4 @@ public class BlockVendor extends Block implements ITileEntityProvider{
     public int damageDropped(IBlockState state) {
         return getMetaFromState(state);
     }
-
-    //<editor-fold desc="Block States--------------------------------------------------------------------------------------------------------">
-    @Override
-    protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, new IProperty[] {StateHandler.FACING, StateHandler.ITEM});
-    }
-
-    @Override
-    public IBlockState getStateFromMeta(int meta) {
-        return this.getDefaultState().withProperty(StateHandler.FACING, EnumFacing.getHorizontal(meta))
-                .withProperty(StateHandler.ITEM, false);
-    }
-
-    @Override
-    public int getMetaFromState(IBlockState state) {
-        return (state.getValue(StateHandler.FACING).getHorizontalIndex());
-    }
-    //</editor-fold>
-
-    //<editor-fold desc="Rendering-----------------------------------------------------------------------------------------------------------">
-    @Override
-    public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        if(source.getTileEntity(pos) != null){
-            switch (getMetaFromState(state)) {
-                default:
-                case 2: return BOUND_BOX_N;
-                case 3: return BOUND_BOX_E;
-                case 0: return BOUND_BOX_S;
-                case 1: return BOUND_BOX_W;
-            }
-        }
-        return super.getBoundingBox(state, source, pos);
-    }
-
-
-    @Nullable
-    @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
-        if(worldIn.getTileEntity(pos) != null){
-            switch (getMetaFromState(blockState)) {
-                default:
-                case 2: return BOUND_BOX_N;
-                case 3: return BOUND_BOX_E;
-                case 0: return BOUND_BOX_S;
-                case 1: return BOUND_BOX_W;
-            }
-        }
-        return super.getCollisionBoundingBox(blockState, worldIn, pos);
-    }
-
-    @Override
-    public boolean isFullCube(IBlockState state) {
-        return false;
-    }
-
-    @Override
-    public boolean isOpaqueCube(IBlockState state) {
-        return false;
-    }
-    //</editor-fold>
 }

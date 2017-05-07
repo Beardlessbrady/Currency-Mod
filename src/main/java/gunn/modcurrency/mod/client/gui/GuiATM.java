@@ -1,6 +1,6 @@
 package gunn.modcurrency.mod.client.gui;
 
-import gunn.modcurrency.mod.tileEntity.TileATM;
+import gunn.modcurrency.mod.tileentity.TileATM;
 import gunn.modcurrency.mod.container.ContainerATM;
 import gunn.modcurrency.mod.client.gui.util.TabButtonList;
 import gunn.modcurrency.mod.worldsaveddata.bank.BankAccount;

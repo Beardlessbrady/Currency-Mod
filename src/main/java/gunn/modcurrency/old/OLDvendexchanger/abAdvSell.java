@@ -1,6 +1,6 @@
 package gunn.modcurrency.old.OLDvendexchanger;
 
-import gunn.modcurrency.mod.tileEntity.IOwnable;
+import gunn.modcurrency.mod.tileentity.IOwnable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;

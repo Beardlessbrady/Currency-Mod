@@ -2,21 +2,15 @@
   "forge_marker": 1,
   "defaults": {
     "custom": { "flip-v": true },
-    "model": "modcurrency:sell_bottom",
+    "model": "modcurrency:vend_1b",
     "textures": {
       "particle": "blocks/coal_block",
-      "texture": "modcurrency:blocks/buysell/buysell_black"
+      "texture": "modcurrency:blocks/vending/vending_black"
     }
   },
   "variants": {
     "normal": [{}],
     "inventory": [{}],
-    "item": {
-      "true": {
-        "model": "modcurrency:sell_item"
-      },
-      "false": {}
-    },
     "facing": {
       "north": {},
       "south": {"y": 180},

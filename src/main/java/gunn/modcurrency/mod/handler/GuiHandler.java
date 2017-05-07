@@ -1,15 +1,11 @@
 package gunn.modcurrency.mod.handler;
 
-import gunn.modcurrency.mod.container.ContainerATM;
 import gunn.modcurrency.mod.client.gui.GuiATM;
-import gunn.modcurrency.old.OLDvendexchanger.GuiVendExchange;
 import gunn.modcurrency.mod.client.gui.GuiWallet;
-import gunn.modcurrency.old.OLDvendexchanger.ContainerVendExchange;
+import gunn.modcurrency.mod.container.ContainerATM;
 import gunn.modcurrency.mod.container.ContainerWallet;
 import gunn.modcurrency.mod.item.ModItems;
-import gunn.modcurrency.mod.tileEntity.TileATM;
-import gunn.modcurrency.old.OLDvendexchanger.TileSeller;
-import gunn.modcurrency.old.OLDvendexchanger.TileVendor;
+import gunn.modcurrency.mod.tileentity.TileATM;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
@@ -34,7 +30,7 @@ public class GuiHandler implements IGuiHandler{
         BlockPos xyz = new BlockPos(x,y,z);
         TileEntity tileEntity = world.getTileEntity(xyz);
 
-        if(tileEntity instanceof TileVendor && ID == 30){
+      /*  if(tileEntity instanceof TileVendor && ID == 30){
             TileVendor tilevendor = (TileVendor) tileEntity;
             return new ContainerVendExchange(player.inventory, tilevendor);
         }
@@ -42,7 +38,7 @@ public class GuiHandler implements IGuiHandler{
         if(tileEntity instanceof TileSeller && ID == 31){
             TileSeller tileSeller = (TileSeller) tileEntity;
             return new ContainerVendExchange(player.inventory, tileSeller);
-        }
+        }*/
 
         if(ID == 32 && player.getHeldItemMainhand().getItem().equals(ModItems.itemWallet)){
             return new ContainerWallet(player, player.getHeldItemMainhand());
@@ -60,7 +56,7 @@ public class GuiHandler implements IGuiHandler{
         BlockPos xyz = new BlockPos(x,y,z);
         TileEntity tileEntity = world.getTileEntity(xyz);
 
-        if(tileEntity instanceof TileVendor && ID == 30){
+      /*  if(tileEntity instanceof TileVendor && ID == 30){
             TileVendor tilevendor = (TileVendor) tileEntity;
             return new GuiVendExchange(player.inventory, tilevendor);
         }
@@ -68,7 +64,7 @@ public class GuiHandler implements IGuiHandler{
         if(tileEntity instanceof TileSeller && ID == 31){
             TileSeller tileSeller = (TileSeller) tileEntity;
             return new GuiVendExchange(player.inventory, tileSeller);
-        }
+        }*/
 
         if(ID == 32 && player.getHeldItemMainhand().getItem().equals(ModItems.itemWallet)){
             return new GuiWallet(player, player.getHeldItemMainhand());

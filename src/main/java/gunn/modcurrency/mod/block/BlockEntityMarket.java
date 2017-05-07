@@ -1,6 +1,6 @@
 package gunn.modcurrency.mod.block;
 
-import gunn.modcurrency.mod.tileEntity.TileBlockEntityMarket;
+import gunn.modcurrency.mod.tileentity.TileBlockEntityMarket;
 import gunn.modcurrency.mod.ModCurrency;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;

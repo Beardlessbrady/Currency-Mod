@@ -16,45 +16,4 @@ import net.minecraftforge.common.property.IUnlistedProperty;
  */
 public class StateHandler {
     public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
-    public static final PropertyBool ITEM = PropertyBool.create("item");
-    public static final PropertyEnum<EnumTopTypes> TOP = PropertyEnum.create("top", EnumTopTypes.class);
-    public static final IUnlistedProperty<ItemStack>[] UNLISTED_CONTAIN = new UnlistedPropertyContain[30];
-
-    public enum EnumTopTypes implements IStringSerializable {
-        VENDOR,
-        SELLER,
-        SELLEROPEN;
-
-        @Override
-        public String getName() {
-            return name().toLowerCase();
-        }
-    }
-
-    public static class UnlistedPropertyContain implements IUnlistedProperty<ItemStack>{
-
-        public UnlistedPropertyContain(){
-
-        }
-
-        @Override
-        public String getName() {
-            return "unlistedContain";
-        }
-
-        @Override
-        public boolean isValid(ItemStack value) {
-            return true;
-        }
-
-        @Override
-        public Class<ItemStack> getType() {
-            return ItemStack.class;
-        }
-
-        @Override
-        public String valueToString(ItemStack value) {
-            return value.toString();
-        }
-    }
 }

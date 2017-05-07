@@ -1,4 +1,4 @@
-package gunn.modcurrency.mod.tileEntity;
+package gunn.modcurrency.mod.tileentity;
 
 /**
  * Distributed with the <INSERT> for Minecraft

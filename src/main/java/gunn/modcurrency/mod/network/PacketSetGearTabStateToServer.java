@@ -1,7 +1,6 @@
 package gunn.modcurrency.mod.network;
 
-import gunn.modcurrency.mod.tileEntity.TileATM;
-import gunn.modcurrency.old.OLDvendexchanger.abAdvSell;
+import gunn.modcurrency.mod.tileentity.TileATM;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
@@ -54,7 +53,7 @@ public class PacketSetGearTabStateToServer implements IMessage {
         private void handle(PacketSetGearTabStateToServer message, MessageContext ctx){
             EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
             World world = playerEntity.world;
-            if(world.getTileEntity(message.blockPos) instanceof abAdvSell) ((abAdvSell) world.getTileEntity(message.blockPos)).setField(8, message.data);
+          //  if(world.getTileEntity(message.blockPos) instanceof abAdvSell) ((abAdvSell) world.getTileEntity(message.blockPos)).setField(8, message.data);
             if(world.getTileEntity(message.blockPos) instanceof TileATM) ((TileATM) world.getTileEntity(message.blockPos)).setField(1, message.data);
         }
     }

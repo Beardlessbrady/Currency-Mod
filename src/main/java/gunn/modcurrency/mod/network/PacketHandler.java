@@ -27,12 +27,12 @@ public class PacketHandler {
     }
     
     public static int registerCommonMessages(int index){
-        INSTANCE.registerMessage(PacketItemSpawnToServer.Handler.class, PacketItemSpawnToServer.class, index++, Side.SERVER);
-        INSTANCE.registerMessage(PacketSetItemCostToServer.Handler.class, PacketSetItemCostToServer.class, index++, Side.SERVER);
-        INSTANCE.registerMessage(PacketSetItemAmountToServer.Handler.class, PacketSetItemAmountToServer.class, index++, Side.SERVER);
+       // INSTANCE.registerMessage(PacketItemSpawnToServer.Handler.class, PacketItemSpawnToServer.class, index++, Side.SERVER);
+       // INSTANCE.registerMessage(PacketSetItemCostToServer.Handler.class, PacketSetItemCostToServer.class, index++, Side.SERVER);
+       // INSTANCE.registerMessage(PacketSetItemAmountToServer.Handler.class, PacketSetItemAmountToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketSetGearTabStateToServer.Handler.class, PacketSetGearTabStateToServer.class, index++, Side.SERVER);
-        INSTANCE.registerMessage(PacketSetLockTabToServer.Handler.class, PacketSetLockTabToServer.class, index++, Side.SERVER);
-        INSTANCE.registerMessage(PacketSetInfiniteToServer.Handler.class, PacketSetInfiniteToServer.class, index++, Side.SERVER);
+       // INSTANCE.registerMessage(PacketSetLockTabToServer.Handler.class, PacketSetLockTabToServer.class, index++, Side.SERVER);
+       // INSTANCE.registerMessage(PacketSetInfiniteToServer.Handler.class, PacketSetInfiniteToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketBankDepositToServer.Handler.class, PacketBankDepositToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketBankWithdrawToServer.Handler.class, PacketBankWithdrawToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketSetATMFeeToServer.Handler.class, PacketSetATMFeeToServer.class, index++, Side.SERVER);

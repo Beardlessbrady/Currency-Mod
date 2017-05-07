@@ -1,4 +1,4 @@
-package gunn.modcurrency.mod.tileEntity;
+package gunn.modcurrency.mod.tileentity;
 
 import gunn.modcurrency.mod.client.gui.util.INBTInventory;
 import net.minecraft.nbt.NBTTagCompound;

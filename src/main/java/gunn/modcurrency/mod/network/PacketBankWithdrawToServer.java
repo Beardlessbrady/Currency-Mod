@@ -1,6 +1,6 @@
 package gunn.modcurrency.mod.network;
 
-import gunn.modcurrency.mod.tileEntity.TileATM;
+import gunn.modcurrency.mod.tileentity.TileATM;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;

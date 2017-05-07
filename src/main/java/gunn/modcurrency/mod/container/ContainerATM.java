@@ -1,6 +1,6 @@
 package gunn.modcurrency.mod.container;
 
-import gunn.modcurrency.mod.tileEntity.TileATM;
+import gunn.modcurrency.mod.tileentity.TileATM;
 import gunn.modcurrency.mod.container.slot.SlotCustomizable;
 import gunn.modcurrency.mod.item.ModItems;
 import gunn.modcurrency.mod.client.gui.util.INBTInventory;
