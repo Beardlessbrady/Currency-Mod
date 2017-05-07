@@ -1,8 +1,10 @@
 package gunn.modcurrency.mod.proxy;
 
 import gunn.modcurrency.mod.block.ModBlocks;
-import gunn.modcurrency.mod.network.PacketHandler;
+import gunn.modcurrency.mod.handler.EventHandlerClient;
 import gunn.modcurrency.mod.item.ModItems;
+import gunn.modcurrency.mod.network.PacketHandler;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
@@ -24,5 +26,6 @@ public class ClientProxy extends CommonProxy {
     @Override
     public void Init(FMLInitializationEvent e){
         super.Init(e);
+        MinecraftForge.EVENT_BUS.register(new EventHandlerClient());
     }
 }
