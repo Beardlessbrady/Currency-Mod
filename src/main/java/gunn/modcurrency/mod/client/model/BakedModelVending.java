@@ -50,20 +50,12 @@ public class BakedModelVending implements IBakedModel{
         List<BakedQuad> itemQuads = new ArrayList<>();
         itemQuads.addAll(model.getQuads(state,side,rand));
 
-
         TRSRTransformation test = new TRSRTransformation(new Vector3f(0,1,0),null, new Vector3f(0.4f,0.4f,0.4f), null);
-
-
-
         for(int i = 0; i < itemQuads.size(); i++){
             itemQuads.set(i, transform(itemQuads.get(i), test));
         }
 
-
-
-
         quads.addAll(itemQuads);
-
 
         return quads;
     }
