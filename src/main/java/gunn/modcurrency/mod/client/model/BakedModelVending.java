@@ -41,6 +41,9 @@ public class BakedModelVending implements IBakedModel{
 
     @Override
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
+
+      //  System.out.println(MinecraftForgeClient.getRenderLayer());
+
         //Initialize a list of quads and add the basic model to it
             List<BakedQuad> quads = new ArrayList<>();
         quads.addAll(basicModel.getQuads(state, side, rand));
@@ -50,7 +53,7 @@ public class BakedModelVending implements IBakedModel{
         List<BakedQuad> itemQuads = new ArrayList<>();
         itemQuads.addAll(model.getQuads(state,side,rand));
 
-        TRSRTransformation test = new TRSRTransformation(new Vector3f(0,1,0),null, new Vector3f(0.4f,0.4f,0.4f), null);
+        TRSRTransformation test = new TRSRTransformation(new Vector3f(0,1,0),null, new Vector3f(7,7,7), null);
         for(int i = 0; i < itemQuads.size(); i++){
             itemQuads.set(i, transform(itemQuads.get(i), test));
         }
@@ -100,7 +103,6 @@ public class BakedModelVending implements IBakedModel{
 
     @Override
     public boolean isBuiltInRenderer() {
-
         return basicModel.isBuiltInRenderer();
     }
 

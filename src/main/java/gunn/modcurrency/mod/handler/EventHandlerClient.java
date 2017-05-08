@@ -19,9 +19,11 @@ public class EventHandlerClient {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onModelBake(ModelBakeEvent e){
-       //  ModelResourceLocation base = new ModelResourceLocation(ModCurrency.MODID + ":blockvending", "facing=north");
-       //     IBakedModel basicVendor = e.getModelRegistry().getObject(base);
+        ModelResourceLocation base = new ModelResourceLocation(ModCurrency.MODID + "blockvending", "facing=north,twotall=one");
+        IBakedModel basicVendor = e.getModelRegistry().getObject(base);
 
-           // e.getModelRegistry().putObject(base, new BakedModelVending(basicVendor));
+        System.out.println("POOP" + e.getModelRegistry().getKeys());
+
+        e.getModelRegistry().putObject(base, new BakedModelVending(basicVendor));
     }
 }
