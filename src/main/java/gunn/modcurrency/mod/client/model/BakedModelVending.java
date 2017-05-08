@@ -12,7 +12,9 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexFormatElement;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.model.pipeline.IVertexConsumer;
 import net.minecraftforge.client.model.pipeline.UnpackedBakedQuad;
 import net.minecraftforge.client.model.pipeline.VertexTransformer;
@@ -40,10 +42,8 @@ public class BakedModelVending implements IBakedModel{
     @Override
     public List<BakedQuad> getQuads(@Nullable IBlockState state, @Nullable EnumFacing side, long rand) {
         //Initialize a list of quads and add the basic model to it
-        List<BakedQuad> quads = new ArrayList<>();
+            List<BakedQuad> quads = new ArrayList<>();
         quads.addAll(basicModel.getQuads(state, side, rand));
-
-
         ItemStack item = new ItemStack(Items.APPLE,1);
         ItemModelMesher modelMesher = Minecraft.getMinecraft().getRenderItem().getItemModelMesher();
         IBakedModel model = modelMesher.getItemModel(item);
@@ -100,6 +100,7 @@ public class BakedModelVending implements IBakedModel{
 
     @Override
     public boolean isBuiltInRenderer() {
+
         return basicModel.isBuiltInRenderer();
     }
 

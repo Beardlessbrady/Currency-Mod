@@ -16,6 +16,23 @@
   "variants": {
     "normal": [{}],
     "inventory": [{}],
+    "twotall": {
+      "one": {},
+      "twobottom": {
+        "custom": {
+          "base": "modcurrency:blockvending#basetwobottom",
+          "Solid": "modcurrency:blockvending#basetwobottom",
+          "Translucent": "modcurrency:blockvending#basetwobottomwindow"
+        }
+      },
+      "twotop": {
+        "custom": {
+          "base": "modcurrency:blockvending#basetwotop",
+          "Solid": "modcurrency:blockvending#basetwotop",
+          "Translucent": "modcurrency:blockvending#basetwotopwindow"
+        }
+      }
+    },
     "facing": {
       "north": {},
       "south": {"y": 180},
@@ -23,12 +40,22 @@
       "east": {"y": 90}
     },
     "base": [{
-      "custom": { "flip-v": true},
       "model": "modcurrency:vend_1b"
     }],
     "window": [{
-      "custom": { "flip-v": true},
       "model": "modcurrency:vend_1b_window"
+    }],
+    "basetwobottom": [{
+      "model": "modcurrency:vend_2bb"
+    }],
+    "basetwotop": [{
+      "model": "modcurrency:vend_2bt"
+    }],
+    "basetwobottomwindow": [{
+      "model": "modcurrency:vend_2bb_window"
+    }],
+    "basetwotopwindow": [{
+      "model": "modcurrency:vend_2bt_window"
     }]
   }
 }

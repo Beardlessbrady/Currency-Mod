@@ -64,7 +64,7 @@ public class BlockVending extends Block{
     }
 
     public void initModel() {
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "facing=north"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
     }
 
     @Override
@@ -75,12 +75,13 @@ public class BlockVending extends Block{
     //<editor-fold desc="Block States--------------------------------------------------------------------------------------------------------">
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, StateHandler.FACING);
+        return new BlockStateContainer(this, StateHandler.FACING, StateHandler.TWOTALL);
     }
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return this.getDefaultState().withProperty(StateHandler.FACING, EnumFacing.getHorizontal(meta));
+        return this.getDefaultState().withProperty(StateHandler.FACING, EnumFacing.getHorizontal(meta))
+                .withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.one);
     }
 
     @Override
@@ -101,7 +102,6 @@ public class BlockVending extends Block{
                 case 1: return BOUND_BOX_W;
         }
     }
-
 
     @Nullable
     @Override

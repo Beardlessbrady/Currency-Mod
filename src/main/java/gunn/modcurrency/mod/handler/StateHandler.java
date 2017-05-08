@@ -16,4 +16,16 @@ import net.minecraftforge.common.property.IUnlistedProperty;
  */
 public class StateHandler {
     public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
+    public static final PropertyEnum<EnumTwoBlock> TWOTALL = PropertyEnum.create("twotall", EnumTwoBlock.class);
+
+    public enum EnumTwoBlock implements IStringSerializable {
+        one,
+        TWOBOTTOM,
+        TWOTOP;
+
+        @Override
+        public String getName() {
+            return name().toLowerCase();
+        }
+    }
 }
