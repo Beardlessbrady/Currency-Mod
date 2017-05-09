@@ -1,8 +1,9 @@
 package gunn.modcurrency.mod.network;
 
-import gunn.modcurrency.old.OLDvendexchanger.abAdvSell;
+import gunn.modcurrency.mod.tileentity.TileVending;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -16,19 +17,22 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  *
  * File Created on 2017-03-12
  */
-public class PacketItemSpawnToServer implements IMessage {
-    //Sends Amount of money to spawn to the server
+public class PacketSetInfiniteToServer implements IMessage {
+    //Player changes infinity mode, sends to server
     private BlockPos blockPos;
+    private int data;
 
-    public PacketItemSpawnToServer(){}
+    public PacketSetInfiniteToServer(){}
 
-    public void setBlockPos(BlockPos blockpos) {
-        this.blockPos = blockpos;
+    public void setData(int data, BlockPos pos) {
+        this.blockPos = pos;
+        this.data = data;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         blockPos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
+        data = buf.readInt();
     }
 
     @Override
@@ -36,21 +40,23 @@ public class PacketItemSpawnToServer implements IMessage {
         buf.writeInt(blockPos.getX());
         buf.writeInt(blockPos.getY());
         buf.writeInt(blockPos.getZ());
+        buf.writeInt(data);
     }
 
-    public static class Handler implements IMessageHandler<PacketItemSpawnToServer, IMessage> {
+    public static class Handler implements IMessageHandler<PacketSetInfiniteToServer, IMessage> {
 
         @Override
-        public IMessage onMessage(final PacketItemSpawnToServer message, MessageContext ctx) {
+        public IMessage onMessage(final PacketSetInfiniteToServer message, MessageContext ctx) {
             FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message,ctx));
             return null;
         }
 
-        private void handle(PacketItemSpawnToServer message, MessageContext ctx){
+        private void handle(PacketSetInfiniteToServer message, MessageContext ctx){
             EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
             World world = playerEntity.world;
-            abAdvSell tile = (abAdvSell) world.getTileEntity(message.blockPos);
-            tile.outChange();
+            TileEntity tile = world.getTileEntity(message.blockPos);
+
+            if(tile instanceof TileVending) ((TileVending) tile).setField(6, message.data);
         }
     }
 }

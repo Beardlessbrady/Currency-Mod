@@ -2,20 +2,25 @@ package gunn.modcurrency.mod.block;
 
 import gunn.modcurrency.mod.ModCurrency;
 import gunn.modcurrency.mod.handler.StateHandler;
+import gunn.modcurrency.mod.tileentity.TileVending;
 import net.minecraft.block.Block;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -31,7 +36,7 @@ import javax.annotation.Nullable;
  *
  * File Created on 2017-05-05
  */
-public class BlockVending extends Block{
+public class BlockVending extends Block implements ITileEntityProvider{
     private static final AxisAlignedBB BOUND_BOX_N = new AxisAlignedBB(0.03125, 0, 0.28125, 0.96875, 1, 1);
     private static final AxisAlignedBB BOUND_BOX_E = new AxisAlignedBB(0.71875, 0, 0.03125, 0, 1, 0.96875);
     private static final AxisAlignedBB BOUND_BOX_S = new AxisAlignedBB(0.03125, 0, 0.71875, 0.96875, 1, 0);
@@ -48,7 +53,7 @@ public class BlockVending extends Block{
 
         GameRegistry.register(this);
         GameRegistry.register(new ItemBlock(this), getRegistryName());
-        // GameRegistry.registerTileEntity(TileVendor.class, ModCurrency.MODID + "_tevendor");
+        GameRegistry.registerTileEntity(TileVending.class, ModCurrency.MODID + "_tevending");
     }
 
     public void recipe(){
@@ -67,9 +72,46 @@ public class BlockVending extends Block{
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
     }
 
+    @Nullable
+    @Override
+    public TileEntity createNewTileEntity(World worldIn, int meta) {
+        return new TileVending();
+
+    }
+
+    public TileVending getTile(World world, BlockPos pos) {
+        return (TileVending) world.getTileEntity(pos);
+    }
+
+    @Override
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        if(getTile(worldIn, pos).getPlayerUsing() == null) {
+            getTile(worldIn, pos).setField(5, playerIn.isCreative() ? 1 : 0);
+
+            if(!worldIn.isRemote){
+                getTile(worldIn, pos).openGui(playerIn, worldIn, pos);
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         worldIn.setBlockState(pos, state.withProperty(StateHandler.FACING, placer.getHorizontalFacing().getOpposite()));
+    }
+
+    @Override
+    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+        TileVending te = getTile(worldIn, pos);
+        te.setField(2,1);
+        te.outChange();
+        te.setField(2,0);
+        te.outChange();
+        te.dropItems();
+
+        super.breakBlock(worldIn, pos, state);
+        worldIn.setBlockToAir(pos.up());
     }
 
     //<editor-fold desc="Block States--------------------------------------------------------------------------------------------------------">

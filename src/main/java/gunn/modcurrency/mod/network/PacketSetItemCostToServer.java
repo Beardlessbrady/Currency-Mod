@@ -1,8 +1,9 @@
 package gunn.modcurrency.mod.network;
 
-import gunn.modcurrency.old.OLDvendexchanger.abAdvSell;
+import gunn.modcurrency.mod.tileentity.TileVending;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -53,7 +54,9 @@ public class PacketSetItemCostToServer implements IMessage {
         private void handle(PacketSetItemCostToServer message, MessageContext ctx){
             EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
             World world = playerEntity.world;
-            ((abAdvSell) world.getTileEntity(message.blockPos)).setItemCost(message.data);
+            TileEntity tile = world.getTileEntity(message.blockPos);
+
+            if(tile instanceof TileVending) ((TileVending) tile).setItemCost(message.data);
         }
     }
 }

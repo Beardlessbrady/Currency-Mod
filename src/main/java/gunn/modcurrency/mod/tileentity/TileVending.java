@@ -1,8 +1,8 @@
-
-package gunn.modcurrency.old.OLDvendexchanger;
+package gunn.modcurrency.mod.tileentity;
 
 import gunn.modcurrency.mod.ModCurrency;
 import gunn.modcurrency.mod.client.gui.util.INBTInventory;
+import gunn.modcurrency.mod.handler.ItemHandlerVendor;
 import gunn.modcurrency.mod.item.ItemWallet;
 import gunn.modcurrency.mod.item.ModItems;
 import net.minecraft.entity.item.EntityItem;
@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
@@ -29,32 +30,29 @@ import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import javax.annotation.Nullable;
 
 /**
- * Distributed with the Currency-Mod for Minecraft.
- * Copyright (C) 2016  Brady Gunn
+ * Distributed with the Currency-Mod for Minecraft
+ * Copyright (C) 2017  Brady Gunn
  *
- * File Created on 2016-10-30.
+ * File Created on 2017-05-08
  */
-public class TileVendor extends abAdvSell implements ICapabilityProvider, ITickable, INBTInventory{
+public class TileVending extends TileEntity implements ICapabilityProvider, ITickable, INBTInventory, IOwnable{
     private static final int INPUT_SLOT_COUNT = 1;
-    private static final int VEND_SLOT_COUNT = 30;
-    private static final int BUFFER_SLOT_COUNT = 6;
+    private static final int VEND_SLOT_COUNT = 15;
+    private static final int BUFFER_SLOT_COUNT = 3;
 
     private int bank, profit, selectedSlot, walletTotal;
     private String owner, selectedName;
-    private boolean locked, mode, creative, infinite, gearExtended, walletIn, fuzzy;
+    private boolean locked, mode, creative, infinite, gearExtended, walletIn;
     private int[] itemCosts = new int[VEND_SLOT_COUNT];
     private ItemStackHandler inputStackHandler = new ItemStackHandler(INPUT_SLOT_COUNT);
     private ItemHandlerVendor vendStackHandler = new ItemHandlerVendor(VEND_SLOT_COUNT);
     private ItemStackHandler bufferStackHandler = new ItemHandlerVendor(BUFFER_SLOT_COUNT);
     private EntityPlayer playerUsing = null;
-    public static Item[] specialSlotItems = new Item[2];
 
-
-
-    public TileVendor() {
+    public TileVending() {
         bank = 0;
         profit = 0;
-        selectedSlot = 37;
+        selectedSlot = 0;
         walletTotal = 0;
         owner = "";
         selectedName = "No Item";
@@ -64,13 +62,6 @@ public class TileVendor extends abAdvSell implements ICapabilityProvider, ITicka
         infinite = false;
         gearExtended = false;
         walletIn = false;
-        fuzzy = true;
-
-        for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = 0;
-
-        //Setting item allowed in special slot
-        specialSlotItems[0] = ModItems.itemBanknote;
-        specialSlotItems[1] = ModItems.itemWallet;
     }
 
     public void openGui(EntityPlayer player, World world, BlockPos pos) {
@@ -80,7 +71,7 @@ public class TileVendor extends abAdvSell implements ICapabilityProvider, ITicka
 
     @Override
     public void update() {
-        if(playerUsing != null) {
+        if(playerUsing != null){
             if (!world.isRemote) {
                 if (inputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
                     if (inputStackHandler.getStackInSlot(0).getItem() == ModItems.itemBanknote) {
@@ -162,8 +153,6 @@ public class TileVendor extends abAdvSell implements ICapabilityProvider, ITicka
         }
     }
 
-    //Player must be in certain range to open GUI
-    @Override
     public boolean canInteractWith(EntityPlayer player) {
         return !isInvalid() && player.getDistanceSq(pos.add(0.5D, 0.5D, 0.5D)) <= 64D;
     }
@@ -173,10 +162,6 @@ public class TileVendor extends abAdvSell implements ICapabilityProvider, ITicka
     }
 
     //<editor-fold desc="Money Methods-------------------------------------------------------------------------------------------------------">
-    /**
-     * If the wallet is present returns the total amount of cash in it
-     * @return TotalCash
-     */
     public int getTotalCash(){
         ItemStack item = inputStackHandler.getStackInSlot(0);
         if(item.hasTagCompound()) {
@@ -217,12 +202,11 @@ public class TileVendor extends abAdvSell implements ICapabilityProvider, ITicka
 
     public boolean canAfford(int slot){
         if(walletIn){
-            return getItemCost(slot) >= getTotalCash();
+            return itemCosts[slot] >= getTotalCash();
         }
-        return bank >= getItemCost(slot);
+        return bank >= itemCosts[slot];
     }
 
-    //Outputs change in least amount of bills
     public void outChange() {
         int amount = bank;
         if (mode) amount = profit;
@@ -342,7 +326,6 @@ public class TileVendor extends abAdvSell implements ICapabilityProvider, ITicka
         compound.setBoolean("infinite", infinite);
         compound.setBoolean("gearExtended", gearExtended);
         compound.setBoolean("walletIn", walletIn);
-        compound.setBoolean("fuzzy", fuzzy);
         compound.setInteger("selectedSlot", selectedSlot);
         compound.setString("selectedName", selectedName);
         compound.setString("owner", owner);
@@ -369,7 +352,6 @@ public class TileVendor extends abAdvSell implements ICapabilityProvider, ITicka
         if (compound.hasKey("infinite")) infinite = compound.getBoolean("infinite");
         if (compound.hasKey("gearExtended")) gearExtended = compound.getBoolean("gearExtended");
         if (compound.hasKey("walletIn")) walletIn = compound.getBoolean("walletIn");
-        if (compound.hasKey("fuzzy")) fuzzy = compound.getBoolean("fuzzy");
         if (compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
         if (compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
         if (compound.hasKey("owner")) owner = compound.getString("owner");
@@ -398,7 +380,6 @@ public class TileVendor extends abAdvSell implements ICapabilityProvider, ITicka
         tag.setBoolean("infinite", infinite);
         tag.setBoolean("gearExtended", gearExtended);
         tag.setBoolean("walletIn", walletIn);
-        tag.setBoolean("fuzzy", fuzzy);
         tag.setInteger("selectedSlot", selectedSlot);
         tag.setString("selectedName", selectedName);
         tag.setString("owner", owner);
@@ -422,7 +403,6 @@ public class TileVendor extends abAdvSell implements ICapabilityProvider, ITicka
         infinite = pkt.getNbtCompound().getBoolean("infinite");
         gearExtended = pkt.getNbtCompound().getBoolean("gearExtended");
         walletIn = pkt.getNbtCompound().getBoolean("walletIn");
-        fuzzy = pkt.getNbtCompound().getBoolean("fuzzy");
         selectedSlot = pkt.getNbtCompound().getInteger("selectedSlot");
         selectedName = pkt.getNbtCompound().getString("selectedName");
         owner = pkt.getNbtCompound().getString("owner");
@@ -455,12 +435,10 @@ public class TileVendor extends abAdvSell implements ICapabilityProvider, ITicka
     //</editor-fold>
 
     //<editor-fold desc="Getter & Setter Methods---------------------------------------------------------------------------------------------">
-    @Override
     public int getFieldCount() {
-        return 12;
+        return 11;
     }
 
-    @Override
     public void setField(int id, int value) {
         switch (id) {
             case 0:
@@ -494,13 +472,9 @@ public class TileVendor extends abAdvSell implements ICapabilityProvider, ITicka
                 break;
             case 10:
                 break;
-            case 11:
-                fuzzy = (value == 1);
-                break;
         }
     }
 
-    @Override
     public int getField(int id) {
         switch (id) {
             case 0:
@@ -528,43 +502,26 @@ public class TileVendor extends abAdvSell implements ICapabilityProvider, ITicka
                 return (walletIn) ? 1 : 0;
             case 10:
                 return walletTotal;
-            case 11:
-                return (fuzzy) ? 1 : 0;
         }
         return -1;
     }
 
-    @Override
     public String getSelectedName() {
         return selectedName;
     }
 
-    @Override
     public void setSelectedName(String name) {
         selectedName = name;
     }
 
-    @Override
-    public int[] getAllItemCosts() {
-        return itemCosts.clone();
-    }
-
-    @Override
-    public void setAllItemCosts(int[] copy) {
-        itemCosts = copy.clone();
-    }
-
-    @Override
     public int getItemCost(int index) {
         return itemCosts[index];
     }
 
-    @Override
     public void setItemCost(int amount) {
         itemCosts[selectedSlot - 37] = amount;
     }
 
-    @Override
     public ItemStack getStack(int index) {
         return vendStackHandler.getStackInSlot(index);
     }
@@ -577,28 +534,6 @@ public class TileVendor extends abAdvSell implements ICapabilityProvider, ITicka
     @Override
     public String getOwner() {
         return owner;
-    }
-
-    @Override
-    public ItemStackHandler getInputHandler() {
-        return inputStackHandler;
-    }
-
-    @Override
-    public ItemStackHandler getBufferHandler() {
-        return bufferStackHandler;
-    }
-
-    @Override
-    public ItemStackHandler getVendHandler() {
-        return vendStackHandler;
-    }
-
-    @Override
-    public void setStackHandlers(ItemStackHandler inputCopy, ItemStackHandler buffCopy, ItemStackHandler vendCopy) {
-        inputStackHandler = inputCopy;
-        vendStackHandler = ((ItemHandlerVendor) vendCopy);
-        bufferStackHandler = buffCopy;
     }
 
     public EntityPlayer getPlayerUsing(){
@@ -617,6 +552,4 @@ public class TileVendor extends abAdvSell implements ICapabilityProvider, ITicka
         vendStackHandler.setGhost(slot, bool);
     }
     //</editor-fold>
-
-
 }

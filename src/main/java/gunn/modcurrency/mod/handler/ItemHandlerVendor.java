@@ -1,4 +1,4 @@
-package gunn.modcurrency.old.OLDvendexchanger;
+package gunn.modcurrency.mod.handler;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;

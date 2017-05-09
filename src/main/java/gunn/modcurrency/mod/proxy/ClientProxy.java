@@ -3,7 +3,6 @@ package gunn.modcurrency.mod.proxy;
 import gunn.modcurrency.mod.block.ModBlocks;
 import gunn.modcurrency.mod.item.ModItems;
 import gunn.modcurrency.mod.network.PacketHandler;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 

@@ -1,6 +1,5 @@
 package gunn.modcurrency.mod.network;
 
-import gunn.modcurrency.old.OLDvendexchanger.TileSeller;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
@@ -56,7 +55,7 @@ public class PacketSetItemAmountToServer implements IMessage {
         private void handle(PacketSetItemAmountToServer message, MessageContext ctx){
             EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
             World world = playerEntity.world;
-            ((TileSeller) world.getTileEntity(message.blockPos)).setItemAmount(message.data, message.slot);
+           // ((TileSeller) world.getTileEntity(message.blockPos)).setItemAmount(message.data, message.slot);
         }
     }
 }
