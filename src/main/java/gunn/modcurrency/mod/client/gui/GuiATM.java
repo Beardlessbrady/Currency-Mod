@@ -43,8 +43,8 @@ public class GuiATM extends GuiContainer{
             if (this.feeField.getText().length() > 0) {
                 int newFee = Integer.valueOf(this.feeField.getText());
 
-                PacketSetATMFeeToServer pack = new PacketSetATMFeeToServer();
-                pack.setData(newFee, te.getPos());
+                PacketSetFieldToServer pack = new PacketSetFieldToServer();
+                pack.setData(newFee, 2, te.getPos());
 
                 PacketHandler.INSTANCE.sendToServer(pack);
                 te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
@@ -200,8 +200,8 @@ public class GuiATM extends GuiContainer{
             case 2:
                 tabList.checkOpenState("Gear", te.getField(1) == 0);
                 int newGear = te.getField(1) == 1 ? 0 : 1;
-                PacketSetGearTabStateToServer pack2 = new PacketSetGearTabStateToServer();
-                pack2.setData(newGear, te.getPos());
+                PacketSetFieldToServer pack2 = new PacketSetFieldToServer();
+                pack2.setData(newGear, 1, te.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack2);
                 break;
         }

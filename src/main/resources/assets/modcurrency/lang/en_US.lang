@@ -8,21 +8,21 @@ item.modcurrency:banknote_5.name=One Hundred-Dollar Bill
 item.modcurrency:wallet.name=Wallet
 
 //Block names
-tile.modcurrency:blockvendor.name=Vending Machine
-tile.modcurrency:blockseller.name=Exchange Machine
+tile.modcurrency:blockvending.name=Vending Machine
+tile.modcurrency:blockexchanger.name=Exchange Machine
 tile.modcurrency:blockatm.name=Automated Teller Machine
 
 //Shared Gui Stuff
 tile.modcurrency:gui.playerinventory=Inventory
 
 //Buy Sell Gui Stuff
-tile.modcurrency:guisell.profit=Profit
-tile.modcurrency:guisell.funds=Funds
-tile.modcurrency:guisell.slotsettings=Slot Settings
-tile.modcurrency:guisell.cost=Cost:
-tile.modcurrency:guisell.cash=Cash
-tile.modcurrency:guisell.tabs.infinity.infinitestock=Infinite Stock
-tile.modcurrency:guisell.tabs.lock.name=Lock Tab
+tile.modcurrency:guivending.profit=Profit
+tile.modcurrency:guivending.funds=Funds
+tile.modcurrency:guivending.slotsettings=Slot Settings
+tile.modcurrency:guivending.cost=Cost:
+tile.modcurrency:guivending.cash=Cash
+tile.modcurrency:guivending.infinitestock=Infinite Stock
+tile.modcurrency:guivending.locktab=Lock Tab
 
 //ATM Gui Stuff
 tile.modcurrency:guiatm.feesettings=ATM Settings

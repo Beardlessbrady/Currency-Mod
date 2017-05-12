@@ -97,7 +97,9 @@ public class ContainerVending extends Container implements INBTInventory{
         final int SLOT_X_SPACING = 18;
         final int SLOT_Y_SPACING = 18;
         final int TE_INV_XPOS = 44;
-        final int TE_INV_YPOS = 32;
+        int TE_INV_YPOS = 50;
+
+        if(TE_VEND_COLUMN_COUNT == 6) TE_INV_YPOS = 32;
 
         //Main Slots
         for (int y = 0; y < TE_VEND_COLUMN_COUNT; y++) {

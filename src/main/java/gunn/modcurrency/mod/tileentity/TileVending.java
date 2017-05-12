@@ -449,6 +449,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                 break;
             case 2:
                 mode = (value == 1);
+                System.out.println(mode);
                 break;
             case 3:
                 selectedSlot = value;
@@ -550,6 +551,11 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
 
     public void setGhostSlot(int slot, boolean bool){
         vendStackHandler.setGhost(slot, bool);
+    }
+
+    public boolean isTwoBlock(){
+        return false;
+        //TODO
     }
     //</editor-fold>
 }

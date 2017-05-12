@@ -2,7 +2,10 @@ package gunn.modcurrency.mod.client.gui;
 
 import gunn.modcurrency.mod.client.gui.util.TabButtonList;
 import gunn.modcurrency.mod.container.ContainerVending;
-import gunn.modcurrency.mod.network.*;
+import gunn.modcurrency.mod.network.PacketHandler;
+import gunn.modcurrency.mod.network.PacketItemSpawnToServer;
+import gunn.modcurrency.mod.network.PacketSetFieldToServer;
+import gunn.modcurrency.mod.network.PacketSetItemCostToServer;
 import gunn.modcurrency.mod.tileentity.TileVending;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -19,7 +22,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -50,32 +53,28 @@ public class GuiVending extends GuiContainer {
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
         String ChangeButton = "Change";
-
         if (tile.getField(2) == 1) ChangeButton = "Profit";
 
-        tabList = new TabButtonList(this.buttonList, i - 21, j + 20);
         this.buttonList.add(new GuiButton(0, i + 103, j + 7, 45, 20, ChangeButton));
+        this.buttonList.add(new GuiButton(1, i + 198, j + 85, 45, 20, "BORKED"));
+        this.buttonList.get(1).visible = false;
 
-        if (tile.getField(2) == 1) {
-            //tabList.addTab("Name", TAB_TEXTURE, 0, 88, 6);
-            tabList.addTab("Lock", TAB_TEXTURE, 0, 22, 1);
-            tabList.addTab("Gear", TAB_TEXTURE, 0, 0, 2);
-            //tabList.addTab("Fuzzy", TAB_TEXTURE, 0, 66, 5);
-            tabList.setOpenState("Gear", 26);
-            if (tile.getField(5) == 1) {
-                tabList.addTab("Creative", TAB_TEXTURE, 0, 44, 3);
-                tabList.setOpenState("Creative", 26);
-                this.buttonList.add(new GuiButton(4, i + 198, j + 85, 45, 20, "BORKED"));
-                this.buttonList.get(4).visible = false;
-            }
-            this.nameField = new GuiTextField(0, fontRendererObj, i - 50, j + 88 - 28, 45, 10);        //Setting Costs
-            this.nameField.setTextColor(Integer.parseInt("0099ff", 16));
-            this.nameField.setEnableBackgroundDrawing(false);
-            this.nameField.setMaxStringLength(7);
-            this.nameField.setEnabled(true);
+        tabList = new TabButtonList(this.buttonList, i - 21, j + 20);
+        tabList.addTab("Mode", TAB_TEXTURE, 0, 88, 2);
+        tabList.addTab("Lock", TAB_TEXTURE, 0, 22, 3);
+        tabList.addTab("Gear", TAB_TEXTURE, 0, 0, 4);
+        tabList.addTab("Creative", TAB_TEXTURE, 0, 44, 5);
+        this.buttonList.get(3).visible = false;
+        this.buttonList.get(4).visible = false;
+        this.buttonList.get(5).visible = false;
 
-            updateTextField();
-        }
+        this.nameField = new GuiTextField(0, fontRendererObj, i - 50, j + 88 - 28, 45, 10);        //Setting Costs
+        this.nameField.setTextColor(Integer.parseInt("0099ff", 16));
+        this.nameField.setEnableBackgroundDrawing(false);
+        this.nameField.setMaxStringLength(7);
+        this.nameField.setEnabled(false);
+
+        //updateTextField();
     }
 
     private void setCost() {
@@ -97,13 +96,12 @@ public class GuiVending extends GuiContainer {
     @Override
     public void onResize(Minecraft mcIn, int w, int h) {
         super.onResize(mcIn, w, h);
-        PacketSetGearTabStateToServer pack = new PacketSetGearTabStateToServer();
-        pack.setData(0, tile.getPos());
+        PacketSetFieldToServer pack = new PacketSetFieldToServer();
+        pack.setData(0, 8, tile.getPos());
         PacketHandler.INSTANCE.sendToServer(pack);
 
         creativeExtended = false;
     }
-
 
     //<editor-fold desc="Draw and Renders">
     @Override
@@ -119,6 +117,15 @@ public class GuiVending extends GuiContainer {
         Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
+        if(tile.isTwoBlock()){
+            drawTexturedModalRect(guiLeft + 43, guiTop + 31, 7, 210, 90, 18);
+            drawTexturedModalRect(guiLeft + 43, guiTop + 103, 7, 210, 90, 18);
+            drawTexturedModalRect(guiLeft + 43, guiTop + 121, 7, 210, 90, 18);
+        }
+        drawTexturedModalRect(guiLeft + 43, guiTop + 49, 7, 210, 90, 18);
+        drawTexturedModalRect(guiLeft + 43, guiTop + 67, 7, 210, 90, 18);
+        drawTexturedModalRect(guiLeft + 43, guiTop + 85, 7, 210, 90, 18);
+
         //Draw Input Icons
         if (tile.getField(2) == 0) {
             drawTexturedModalRect(guiLeft + 152, guiTop + 9, 198, 0, 15, 15);
@@ -133,21 +140,35 @@ public class GuiVending extends GuiContainer {
         int i = (mouseX - (this.width - this.xSize) / 2);
         int j = (mouseY - (this.height - this.ySize) / 2);
 
-        fontRendererObj.drawString(I18n.format("WIP"), 5, 6, Color.darkGray.getRGB());
-        fontRendererObj.drawString(I18n.format("WIP"), 4, 142, Color.darkGray.getRGB());
+        if(tile.getField(2) == 1){
+            this.buttonList.get(3).visible = true;
+            this.buttonList.get(4).visible = true;
+            this.buttonList.get(5).visible = true;
+        }else{
+            this.buttonList.get(3).visible = false;
+            this.buttonList.get(4).visible = false;
+            this.buttonList.get(5).visible = false;
 
+        }
+
+
+
+        fontRendererObj.drawString(I18n.format("tile.modcurrency:blockvending.name"), 5, 6, Color.darkGray.getRGB());
+        fontRendererObj.drawString(I18n.format("tile.modcurrency:gui.playerinventory"), 4, 142, Color.darkGray.getRGB());
+
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
+
+        drawIcons();
         if (tile.getField(2) == 0) {    //SELL MODE
             fontRendererObj.drawString(I18n.format("Cash") + ": $" + tile.getField(0), 5, 15, Color.darkGray.getRGB());
 
             if (tile.getField(9) == 1)
                 fontRendererObj.drawString(I18n.format("Wallet") + ": $" + tile.getField(10), 5, 23, Integer.parseInt("3abd0c", 16));
 
-            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
-            drawTexturedModalRect(14, 31, 177, 21, 18, 108);
         } else {    //EDIT MODE
-            drawIcons();
             drawSelectionOverlay();
+            drawTexturedModalRect(14, 31, 177, 21, 18, 108);
 
             String profitName = "WEEORK";
             String profitAmnt = Integer.toString(tile.getField(4));
@@ -182,13 +203,18 @@ public class GuiVending extends GuiContainer {
         }
 
     }
+
     private void drawIcons() {
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
 
-        for (int k = 0; k < tabList.getSize(); k++) {
+        int size = 1;
+        if(tile.getField(2) == 1) size = tabList.getSize();
+
+
+        for (int k = 0; k < size; k++) {
             int tabLoc = 22 * (k + 1);
 
             int offSet2 = 0;
@@ -198,26 +224,30 @@ public class GuiVending extends GuiContainer {
 
             switch (k) {
                 case 0:
+                    drawTexturedModalRect(-19, tabLoc, 236, 73, 19, 16);
+                    break;
+                case 1:
                     if (tile.getField(1) == 0) {
                         drawTexturedModalRect(-19, tabLoc, 236, 1, 19, 16);
                     } else drawTexturedModalRect(-19, tabLoc, 216, 1, 19, 16);
+
                     break;
-                case 1:
+                case 2:
                     if (tile.getField(8) == 1) {
                         drawTexturedModalRect(-91, tabLoc - 2, 27, 0, 91, 47);
                     }
                     drawTexturedModalRect(-19, tabLoc, 236, 19, 19, 16); //Icon
                     break;
-                case 2:
+                case 3:
                     if (tile.getField(5) == 1) {
                         int yOffset = 0;
                         if (tile.getField(8) == 1) yOffset = 26;
 
                         if (creativeExtended) {
                             drawTexturedModalRect(-91, tabLoc + yOffset - 2, 27, 48, 91, 47);
-                            this.buttonList.set(4, (new GuiButton(4, i - 69, j + tabLoc + 18 + yOffset, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
+                            this.buttonList.set(1, (new GuiButton(1, i - 69, j + tabLoc + 18 + yOffset, 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
                         } else {
-                            this.buttonList.get(4).visible = false;
+                            this.buttonList.get(1).visible = false;
                         }
                         drawTexturedModalRect(-19, tabLoc + offSet2, 236, 37, 19, 16);
                     }
@@ -347,7 +377,7 @@ public class GuiVending extends GuiContainer {
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         if(tile.getField(2) == 1) {
             super.mouseClicked(mouseX, mouseY, mouseButton);
-            nameField.mouseClicked(mouseX, mouseY, mouseButton);
+//            nameField.mouseClicked(mouseX, mouseY, mouseButton);
             if (tile.getField(8) == 1 && mouseButton == 0) updateTextField();
         }else {
             super.mouseClicked(mouseX, mouseY, mouseButton);
@@ -373,26 +403,32 @@ public class GuiVending extends GuiContainer {
                 pack0.setBlockPos(tile.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack0);
                 break;
-            case 1: //Lock Button
-                PacketSetLockTabToServer pack1 = new PacketSetLockTabToServer();
-                pack1.setData((tile.getField(1) == 1) ? 0 : 1, tile.getPos());
+            case 1: //Infinite? Button
+                PacketSetFieldToServer pack4 = new PacketSetFieldToServer();
+                pack4.setData((tile.getField(6) == 1) ? 0 : 1, 6, tile.getPos());
+                PacketHandler.INSTANCE.sendToServer(pack4);
+                break;
+            case 2: //Mode Button
+                PacketSetFieldToServer pack5 = new PacketSetFieldToServer();
+                pack5.setData((tile.getField(2) == 1) ? 0 : 1, 2, tile.getPos());
+                PacketHandler.INSTANCE.sendToServer(pack5);
+                tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
+                break;
+            case 3: //Lock Button
+                PacketSetFieldToServer pack1 = new PacketSetFieldToServer();
+                pack1.setData((tile.getField(1) == 1) ? 0 : 1, 1, tile.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack1);
                 tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
                 break;
-            case 2: //Gear Button
+            case 4: //Gear Button
                 tabList.checkOpenState("Gear", tile.getField(8) == 0);
                 int newGear = tile.getField(8) == 1 ? 0 : 1;
-                PacketSetGearTabStateToServer pack2 = new PacketSetGearTabStateToServer();
-                pack2.setData(newGear, tile.getPos());
+                PacketSetFieldToServer pack2 = new PacketSetFieldToServer();
+                pack2.setData(newGear, 8, tile.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack2);
                 break;
-            case 3: //Creative Button
+            case 5: //Creative Button
                 creativeExtended = !creativeExtended;
-                break;
-            case 4: //Infinite Button
-                PacketSetInfiniteToServer pack4 = new PacketSetInfiniteToServer();
-                pack4.setData((tile.getField(6) == 1) ? 0 : 1, tile.getPos());
-                PacketHandler.INSTANCE.sendToServer(pack4);
                 break;
         }
     }
