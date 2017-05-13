@@ -209,14 +209,11 @@ public class GuiVending extends GuiContainer {
         int j = (this.height - this.ySize) / 2;
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
-
         int size = 1;
         if(tile.getField(2) == 1) size = tabList.getSize();
 
-
         for (int k = 0; k < size; k++) {
             int tabLoc = 22 * (k + 1);
-
             int offSet2 = 0;
             if (tile.getField(8) == 1) {
                 offSet2 = 26;
@@ -230,7 +227,6 @@ public class GuiVending extends GuiContainer {
                     if (tile.getField(1) == 0) {
                         drawTexturedModalRect(-19, tabLoc, 236, 1, 19, 16);
                     } else drawTexturedModalRect(-19, tabLoc, 216, 1, 19, 16);
-
                     break;
                 case 2:
                     if (tile.getField(8) == 1) {
@@ -342,6 +338,8 @@ public class GuiVending extends GuiContainer {
             int row = ((i - startX) / 18);
             int column = ((j - startY) / 18);
             int slot = row + (column * 5);
+            if(!tile.isTwoBlock())slot = slot -5;
+
             ItemStack currStack = tile.getStack(slot);
 
             List<String> list = new ArrayList<>();
@@ -404,28 +402,28 @@ public class GuiVending extends GuiContainer {
                 PacketHandler.INSTANCE.sendToServer(pack0);
                 break;
             case 1: //Infinite? Button
-                PacketSetFieldToServer pack4 = new PacketSetFieldToServer();
-                pack4.setData((tile.getField(6) == 1) ? 0 : 1, 6, tile.getPos());
-                PacketHandler.INSTANCE.sendToServer(pack4);
+                PacketSetFieldToServer pack1 = new PacketSetFieldToServer();
+                pack1.setData((tile.getField(6) == 1) ? 0 : 1, 6, tile.getPos());
+                PacketHandler.INSTANCE.sendToServer(pack1);
                 break;
             case 2: //Mode Button
-                PacketSetFieldToServer pack5 = new PacketSetFieldToServer();
-                pack5.setData((tile.getField(2) == 1) ? 0 : 1, 2, tile.getPos());
-                PacketHandler.INSTANCE.sendToServer(pack5);
+                PacketSetFieldToServer pack2 = new PacketSetFieldToServer();
+                pack2.setData((tile.getField(2) == 1) ? 0 : 1, 2, tile.getPos());
+                PacketHandler.INSTANCE.sendToServer(pack2);
                 tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
                 break;
             case 3: //Lock Button
-                PacketSetFieldToServer pack1 = new PacketSetFieldToServer();
-                pack1.setData((tile.getField(1) == 1) ? 0 : 1, 1, tile.getPos());
-                PacketHandler.INSTANCE.sendToServer(pack1);
+                PacketSetFieldToServer pack3 = new PacketSetFieldToServer();
+                pack3.setData((tile.getField(1) == 1) ? 0 : 1, 1, tile.getPos());
+                PacketHandler.INSTANCE.sendToServer(pack3);
                 tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
                 break;
             case 4: //Gear Button
                 tabList.checkOpenState("Gear", tile.getField(8) == 0);
                 int newGear = tile.getField(8) == 1 ? 0 : 1;
-                PacketSetFieldToServer pack2 = new PacketSetFieldToServer();
-                pack2.setData(newGear, 8, tile.getPos());
-                PacketHandler.INSTANCE.sendToServer(pack2);
+                PacketSetFieldToServer pack4 = new PacketSetFieldToServer();
+                pack4.setData(newGear, 8, tile.getPos());
+                PacketHandler.INSTANCE.sendToServer(pack4);
                 break;
             case 5: //Creative Button
                 creativeExtended = !creativeExtended;

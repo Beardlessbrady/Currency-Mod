@@ -99,7 +99,7 @@ public class ContainerVending extends Container implements INBTInventory{
         final int TE_INV_XPOS = 44;
         int TE_INV_YPOS = 50;
 
-        if(TE_VEND_COLUMN_COUNT == 6) TE_INV_YPOS = 32;
+        if(tile.isTwoBlock()) TE_INV_YPOS = 32;
 
         //Main Slots
         for (int y = 0; y < TE_VEND_COLUMN_COUNT; y++) {

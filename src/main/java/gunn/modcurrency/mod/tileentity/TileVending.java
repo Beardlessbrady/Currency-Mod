@@ -449,7 +449,6 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                 break;
             case 2:
                 mode = (value == 1);
-                System.out.println(mode);
                 break;
             case 3:
                 selectedSlot = value;
@@ -483,10 +482,6 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
             case 1:
                 return (locked) ? 1 : 0;
             case 2:
-                world.markBlockRangeForRenderUpdate(pos, pos);
-                world.scheduleBlockUpdate(pos,this.getBlockType(),0,0);
-                world.notifyBlockUpdate(pos, world.getBlockState(pos), world.getBlockState(pos), 3);
-                markDirty();
                 return (mode) ? 1 : 0;
             case 3:
                 return selectedSlot;
