@@ -115,17 +115,22 @@ public class GuiVending extends GuiContainer {
         int j = (this.height - this.ySize) / 2;
 
         Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
-        ((TabButton)buttonList.get(GEAR_ID)).setOpenState(tile.getField(8) == 1, 26);
+        drawIcons();
 
+        ((TabButton)buttonList.get(GEAR_ID)).setOpenState(tile.getField(8) == 1, 26);
         if(((TabButton)buttonList.get(GEAR_ID)).openState()){
             drawTexturedModalRect(-91, 64, 27, 0, 91, 47);
-            this.buttonList.set(CREATIVE_ID, new TabButton("Creative", CREATIVE_ID, i - 20, j + 20 + ((TabButton)this.buttonList.get(GEAR_ID)).getButtonY(),0, 44, 20, 21, "", TAB_TEXTURE));
+            this.buttonList.set(CREATIVE_ID, new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton)this.buttonList.get(GEAR_ID)).getButtonY(),0, 44, 20, 21, "", TAB_TEXTURE));
         }else{
-            this.buttonList.set(CREATIVE_ID, new TabButton("Creative", CREATIVE_ID, i - 20, j + 20 + ((TabButton)this.buttonList.get(GEAR_ID)).getButtonY(),0, 44, 20, 21, "", TAB_TEXTURE));
+            this.buttonList.set(CREATIVE_ID, new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton)this.buttonList.get(GEAR_ID)).getButtonY(),0, 44, 20, 21, "", TAB_TEXTURE));
         }
 
-        ((TabButton)buttonList.get(CREATIVE_ID)).setOpenState(creativeExtended, 26);
-        if(((TabButton)buttonList.get(CREATIVE_ID)).openState()) drawTexturedModalRect(-91, 20 + ((TabButton)this.buttonList.get(GEAR_ID)).getButtonY(), 27, 48, 91, 47);
+        ((TabButton)buttonList.get(CREATIVE_ID)).setOpenState(creativeExtended, 26 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY());
+        if(((TabButton)buttonList.get(CREATIVE_ID)).openState()) drawTexturedModalRect(-91, 86 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY(), 27, 48, 91, 47);
+
+    }
+
+    private void drawIcons(){
 
     }
 

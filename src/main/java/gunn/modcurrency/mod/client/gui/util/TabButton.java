@@ -14,12 +14,10 @@ import net.minecraft.util.ResourceLocation;
  */
 public class TabButton extends GuiButton{
     protected ResourceLocation CUSTOM_TEXTURES;
-    int minU, minV, maxU, maxV, openY;
+    int minU, minV, maxU, maxV, openY, buttonid;
     String name;
-    int buttonid;
     ResourceLocation textureLoc;
     boolean openState;
-
 
     //Allows a button with a custom texture, yes it is very butchered together
     public TabButton(String name, int buttonId, int x, int y, int minU, int minV, int maxU, int maxV, String buttonText, ResourceLocation texture) {
@@ -36,6 +34,8 @@ public class TabButton extends GuiButton{
         this.buttonid = buttonId;
         this.textureLoc = texture;
         this.openState = false;
+
+
     }
 
     /**
@@ -69,6 +69,11 @@ public class TabButton extends GuiButton{
     public void setOpenState(boolean op, int opY){
         this.openState = op;
         this.openY = opY;
+    }
+
+    public int openExtY(){
+        if(openState) return openY;
+        return 0;
     }
 
 
