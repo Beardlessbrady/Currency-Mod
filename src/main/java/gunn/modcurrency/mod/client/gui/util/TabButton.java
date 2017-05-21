@@ -10,14 +10,15 @@ import net.minecraft.util.ResourceLocation;
  * Distributed with the Currency-Mod for Minecraft
  * Copyright (C) 2017  Brady Gunn
  *
- * File Created on 2017-02-12
+ * File Created on 2017-05-21
  */
 public class TabButton extends GuiButton{
     protected ResourceLocation CUSTOM_TEXTURES;
-    int minU, minV, maxU, maxV;
+    int minU, minV, maxU, maxV, openY;
     String name;
     int buttonid;
     ResourceLocation textureLoc;
+    boolean openState;
 
 
     //Allows a button with a custom texture, yes it is very butchered together
@@ -34,8 +35,12 @@ public class TabButton extends GuiButton{
         this.name = name;
         this.buttonid = buttonId;
         this.textureLoc = texture;
+        this.openState = false;
     }
 
+    /**
+     * Draws this button to the screen.
+     */
     @Override
     public void drawButton(Minecraft mc, int mouseX, int mouseY) {
         if (this.visible) {
@@ -51,4 +56,20 @@ public class TabButton extends GuiButton{
             this.mouseDragged(mc, mouseX, mouseY);
         }
     }
+
+    public int getButtonY(){
+        if(openState) return yPosition + openY;
+        return yPosition;
+    }
+
+    public boolean openState(){
+        return this.openState;
+    }
+
+    public void setOpenState(boolean op, int opY){
+        this.openState = op;
+        this.openY = opY;
+    }
+
+
 }

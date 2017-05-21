@@ -2,7 +2,6 @@ package gunn.modcurrency.mod.client.gui;
 
 import gunn.modcurrency.mod.tileentity.TileATM;
 import gunn.modcurrency.mod.container.ContainerATM;
-import gunn.modcurrency.mod.client.gui.util.TabButtonList;
 import gunn.modcurrency.mod.worldsaveddata.bank.BankAccount;
 import gunn.modcurrency.mod.worldsaveddata.bank.BankAccountSavedData;
 import gunn.modcurrency.mod.network.*;
@@ -30,7 +29,6 @@ public class GuiATM extends GuiContainer{
     private GuiTextField withdrawField, feeField;
     private TileATM te;
     private EntityPlayer player;
-    private TabButtonList tabList;
 
     public GuiATM(EntityPlayer entityPlayer, TileATM tile) {
         super(new ContainerATM(entityPlayer, tile));
@@ -65,14 +63,14 @@ public class GuiATM extends GuiContainer{
         this.feeField.setTextColor((Integer.parseInt("0099ff", 16)));
         this.feeField.setText(Integer.toString(te.getField(2)));
 
-        tabList = new TabButtonList(this.buttonList, i - 21, j + 20);
+      //  tabList = new TabButtonList(this.buttonList, i - 21, j + 20);
         this.buttonList.add(new GuiButton(0, i + 107, j + 51, 45, 20, "Deposit"));
         this.buttonList.add(new GuiButton(1, i + 21, j + 51, 48, 20, "Withdraw"));
 
-        if (te.getField(0) == 1) {
-            tabList.addTab("Gear", TAB_TEXTURE, 0, 0, 2);
-            tabList.setOpenState("Gear", 26);
-        }
+     //   if (te.getField(0) == 1) {
+     //       tabList.addTab("Gear", TAB_TEXTURE, 0, 0, 2);
+      //      tabList.setOpenState("Gear", 26);
+     //   }
     }
 
     @Override
@@ -128,22 +126,22 @@ public class GuiATM extends GuiContainer{
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
 
-        for (int k = 0; k < tabList.getSize(); k++) {
-            int tabLoc = 22 * (k + 1);
-            int offSet2 = 0;
-            if (te.getField(1) == 1) {
-                offSet2 = 26;
-            }
+      //  for (int k = 0; k < tabList.getSize(); k++) {
+      //      int tabLoc = 22 * (k + 1);
+      //      int offSet2 = 0;
+    //        if (te.getField(1) == 1) {
+       //         offSet2 = 26;
+     //       }
 
-            switch (k) {
-                case 0:
-                    if (te.getField(1) == 1) {
-                        drawTexturedModalRect(-91, tabLoc - 2, 27, 0, 91, 47);
-                    }
-                    drawTexturedModalRect(-19, tabLoc, 236, 19, 19, 16); //Icon
-                    break;
-            }
-        }
+      //      switch (k) {
+      //          case 0:
+     //               if (te.getField(1) == 1) {
+      //                  drawTexturedModalRect(-91, tabLoc - 2, 27, 0, 91, 47);
+      //              }
+      //              drawTexturedModalRect(-19, tabLoc, 236, 19, 19, 16); //Icon
+      //              break;
+      //      }
+      //  }
     }
 
     @Override
@@ -198,7 +196,7 @@ public class GuiATM extends GuiContainer{
                 }
                 break;
             case 2:
-                tabList.checkOpenState("Gear", te.getField(1) == 0);
+              //  tabList.checkOpenState("Gear", te.getField(1) == 0);
                 int newGear = te.getField(1) == 1 ? 0 : 1;
                 PacketSetFieldToServer pack2 = new PacketSetFieldToServer();
                 pack2.setData(newGear, 1, te.getPos());
