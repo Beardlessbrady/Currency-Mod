@@ -111,7 +111,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                         walletIn = true;
                         walletTotal = getTotalCash();
                     }
-                } else if (walletIn == true) walletIn = false;
+                } else if (walletIn) walletIn = false;
 
                 if (profit >= 20) {
                     //<editor-fold desc="Dealing with Buffer Slots">
@@ -164,7 +164,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     }
 
     //<editor-fold desc="Money Methods-------------------------------------------------------------------------------------------------------">
-    public int getTotalCash(){
+    private int getTotalCash(){
         ItemStack item = inputStackHandler.getStackInSlot(0);
         if(item.hasTagCompound()) {
             ItemStackHandler itemStackHandler = readInventoryTag(inputStackHandler.getStackInSlot(0), ItemWallet.WALLET_TOTAL_COUNT);
@@ -174,7 +174,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                 if (itemStackHandler.getStackInSlot(i) != ItemStack.EMPTY) {
                     switch (itemStackHandler.getStackInSlot(i).getItemDamage()) {
                         case 0:
-                            totalCash = totalCash + 1 * itemStackHandler.getStackInSlot(i).getCount();
+                            totalCash = totalCash + itemStackHandler.getStackInSlot(i).getCount();
                             break;
                         case 1:
                             totalCash = totalCash + 5 * itemStackHandler.getStackInSlot(i).getCount();
@@ -418,9 +418,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            if(facing == null) return true;
-            if(!locked)  return false;
-            return true;
+            return facing == null || locked;
         }
         return super.hasCapability(capability, facing);
     }

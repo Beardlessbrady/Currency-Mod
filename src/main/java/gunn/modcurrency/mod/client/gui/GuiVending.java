@@ -156,7 +156,7 @@ public class GuiVending extends GuiContainer {
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
 
-        if (tile.getOwner() == player.getUniqueID().toString() || player.isCreative()) {  //If owner or creative
+        if (tile.getOwner().equals(player.getUniqueID().toString()) || player.isCreative()) {  //If owner or creative
             this.buttonList.get(MODE_ID).visible = true;
 
             if(tile.getField(2) == 1) { //If in EDIT mode

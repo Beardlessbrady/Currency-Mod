@@ -112,12 +112,12 @@ public class ContainerVending extends Container implements INBTInventory{
         }
 
         //Buffer Slots
-        int yStart = 1;
-        if(tile.isTwoBlock()) yStart = 0;
-        for (int x = yStart; x < TE_BUFFER_TOTAL_COUNT + yStart; x++) {
+        int buffStart = 1;
+        if(tile.isTwoBlock()) buffStart = 0;
+        for (int x = buffStart; x < TE_BUFFER_TOTAL_COUNT + buffStart; x++) {
             int slotNum = TE_VEND_MAIN_TOTAL_COUNT + 1 + x;
             int ypos = 32 + x * 18;
-            addSlotToContainer(new SlotCustomizable(itemHandler, slotNum, 15, ypos, specialSlotItems));
+            addSlotToContainer(new SlotCustomizable(itemHandler, slotNum - buffStart, 15, ypos, specialSlotItems));
         }
     }
 
@@ -182,7 +182,7 @@ public class ContainerVending extends Container implements INBTInventory{
         return ItemStack.EMPTY;
     }
 
-    public ItemStack checkAfford(int slotId, int amnt, EntityPlayer player) {
+    private ItemStack checkAfford(int slotId, int amnt, EntityPlayer player) {
         IItemHandler itemHandler = this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
         ItemStack playStack = player.inventory.getItemStack();
         ItemStack slotStack = itemHandler.getStackInSlot(slotId - PLAYER_TOTAL_COUNT);
@@ -321,7 +321,7 @@ public class ContainerVending extends Container implements INBTInventory{
         tile.setField(id, data);
     }
 
-    public void sellToWallet(ItemStack wallet, int amountRemovable) {
+    private void sellToWallet(ItemStack wallet, int amountRemovable) {
         int amount = amountRemovable;
 
         int one = getTotalOfBill(wallet, 0);
@@ -355,7 +355,7 @@ public class ContainerVending extends Container implements INBTInventory{
 
         out[0] = Math.round(amount);
         while (out[0] > one) out[0]--;
-        amount = amount - (out[0] * 1);
+        amount = amount - (out[0]);
 
 
         ItemStackHandler itemHandler = readInventoryTag(wallet, ItemWallet.WALLET_TOTAL_COUNT);
@@ -440,21 +440,21 @@ public class ContainerVending extends Container implements INBTInventory{
         writeInventoryTag(wallet, itemHandler);
     }
 
-    public int getTotalOfBill(ItemStack stack, int billDamage) {
+    private int getTotalOfBill(ItemStack stack, int billDamage) {
         ItemStackHandler itemStackHandler = readInventoryTag(stack, ItemWallet.WALLET_TOTAL_COUNT);
 
         int totalOfBill = 0;
         for (int i = 0; i < itemStackHandler.getSlots(); i++) {
             if (itemStackHandler.getStackInSlot(i) != ItemStack.EMPTY) {
                 if (itemStackHandler.getStackInSlot(i).getItemDamage() == billDamage) {
-                    totalOfBill = totalOfBill + 1 * itemStackHandler.getStackInSlot(i).getCount();
+                    totalOfBill = totalOfBill + itemStackHandler.getStackInSlot(i).getCount();
                 }
             }
         }
         return totalOfBill;
     }
 
-    public int getBillWorth(int itemDamage, int stackSize) {
+    private int getBillWorth(int itemDamage, int stackSize) {
         int cash = 0;
         switch (itemDamage) {
             case 0:
@@ -480,7 +480,7 @@ public class ContainerVending extends Container implements INBTInventory{
         return cash * stackSize;
     }
 
-    public void checkGhostStacks(){
+    private void checkGhostStacks(){
         IItemHandler itemHandler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
         for(int i=0; i < TE_VEND_MAIN_TOTAL_COUNT; i++){
             if(tile.isGhostSlot(i) && itemHandler.getStackInSlot(i+1).getCount() > 1){

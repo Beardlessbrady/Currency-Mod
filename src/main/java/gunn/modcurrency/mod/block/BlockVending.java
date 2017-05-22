@@ -42,7 +42,7 @@ public class BlockVending extends Block implements ITileEntityProvider{
     private static final AxisAlignedBB BOUND_BOX_S = new AxisAlignedBB(0.03125, 0, 0.71875, 0.96875, 1, 0);
     private static final AxisAlignedBB BOUND_BOX_W = new AxisAlignedBB(0.28125, 0, 0.03125, 1, 1, 0.96875);
 
-    public BlockVending() {
+    BlockVending() {
         super(Material.ROCK);
         setRegistryName("blockvending");
         setUnlocalizedName(this.getRegistryName().toString());
@@ -56,7 +56,7 @@ public class BlockVending extends Block implements ITileEntityProvider{
         GameRegistry.registerTileEntity(TileVending.class, ModCurrency.MODID + "_tevending");
     }
 
-    public void recipe(){
+    void recipe(){
         ItemStack basic = new ItemStack(Item.getItemFromBlock(this));
         basic.setItemDamage(0);
 
@@ -68,7 +68,7 @@ public class BlockVending extends Block implements ITileEntityProvider{
                 'D', Items.IRON_DOOR);
     }
 
-    public void initModel() {
+    void initModel() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
     }
 
@@ -79,7 +79,7 @@ public class BlockVending extends Block implements ITileEntityProvider{
 
     }
 
-    public TileVending getTile(World world, BlockPos pos) {
+    private TileVending getTile(World world, BlockPos pos) {
         return (TileVending) world.getTileEntity(pos);
     }
 
