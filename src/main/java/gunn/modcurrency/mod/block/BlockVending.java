@@ -87,7 +87,6 @@ public class BlockVending extends Block implements ITileEntityProvider{
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if(getTile(worldIn, pos).getPlayerUsing() == null) {
             getTile(worldIn, pos).setField(5, playerIn.isCreative() ? 1 : 0);
-
             if(!worldIn.isRemote){
                 getTile(worldIn, pos).openGui(playerIn, worldIn, pos);
                 return true;

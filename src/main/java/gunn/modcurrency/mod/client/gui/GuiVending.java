@@ -3,6 +3,7 @@ package gunn.modcurrency.mod.client.gui;
 import gunn.modcurrency.mod.client.gui.util.TabButton;
 import gunn.modcurrency.mod.container.ContainerVending;
 import gunn.modcurrency.mod.network.PacketHandler;
+import gunn.modcurrency.mod.network.PacketItemSpawnToServer;
 import gunn.modcurrency.mod.network.PacketSetFieldToServer;
 import gunn.modcurrency.mod.network.PacketSetItemCostToServer;
 import gunn.modcurrency.mod.tileentity.TileVending;
@@ -34,14 +35,16 @@ public class GuiVending extends GuiContainer {
     private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/guivendortexture.png");
     private static final ResourceLocation TAB_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/guivendortabtexture.png");
     private TileVending tile;
-    private GuiTextField nameField;
     private boolean creativeExtended;
     private EntityPlayer player;
+    private GuiTextField priceField;
 
-    private static final int MODE_ID = 0;
-    private static final int LOCK_ID = 1;
-    private static final int GEAR_ID = 2;
-    private static final int CREATIVE_ID = 3;
+    private static final int CHANGEBUTTON_ID = 0;
+    private static final int INFINITEBUTTON_ID = 1;
+    private static final int MODE_ID = 2;
+    private static final int LOCK_ID = 3;
+    private static final int GEAR_ID = 4;
+    private static final int CREATIVE_ID = 5;
 
     public GuiVending(EntityPlayer entityPlayer, TileVending te) {
         super(new ContainerVending(entityPlayer.inventory, te));
@@ -58,27 +61,51 @@ public class GuiVending extends GuiContainer {
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
 
-       this.buttonList.add(new TabButton("Mode", MODE_ID, i - 20, j + 20,0, 88, 20, 21, "", TAB_TEXTURE));
-       this.buttonList.add(new TabButton("Lock", LOCK_ID, i - 20, 22 + ((TabButton)this.buttonList.get(MODE_ID)).getButtonY(),0, 22, 20, 21, "", TAB_TEXTURE));
-       this.buttonList.add(new TabButton("Gear", GEAR_ID, i - 20, 22 + ((TabButton)this.buttonList.get(LOCK_ID)).getButtonY(),0, 0, 20, 21, "", TAB_TEXTURE));
-       this.buttonList.add(new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton)this.buttonList.get(GEAR_ID)).getButtonY(),0, 44, 20, 21, "", TAB_TEXTURE));
+        String ChangeButton = "Change";
+        if(tile.getField(2) == 1) ChangeButton = "Profit";
 
-       this.buttonList.get(MODE_ID).visible = false;
-       this.buttonList.get(LOCK_ID).visible = false;
-       this.buttonList.get(GEAR_ID).visible = false;
-       this.buttonList.get(CREATIVE_ID).visible = false;
+        this.buttonList.add(new GuiButton(CHANGEBUTTON_ID, i + 103, j + 7, 45, 20, ChangeButton));
+        this.buttonList.add(new GuiButton(INFINITEBUTTON_ID, i + 198, j + 85, 45, 20, "BORKED"));
+        this.buttonList.add(new TabButton("Mode", MODE_ID, i - 20, j + 20, 0, 88, 20, 21, "", TAB_TEXTURE));
+        this.buttonList.add(new TabButton("Lock", LOCK_ID, i - 20, 22 + ((TabButton) this.buttonList.get(MODE_ID)).getButtonY(), 0, 22, 20, 21, "", TAB_TEXTURE));
+        this.buttonList.add(new TabButton("Gear", GEAR_ID, i - 20, 22 + ((TabButton) this.buttonList.get(LOCK_ID)).getButtonY(), 0, 0, 20, 21, "", TAB_TEXTURE));
+        this.buttonList.add(new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton) this.buttonList.get(GEAR_ID)).getButtonY(), 0, 44, 20, 21, "", TAB_TEXTURE));
+
+        this.priceField = new GuiTextField(0, fontRendererObj, i - 50, j + 90, 45, 10);        //Setting Costs
+        this.priceField.setTextColor(Integer.parseInt("0099ff", 16));
+        this.priceField.setEnableBackgroundDrawing(false);
+        this.priceField.setMaxStringLength(7);
+
+        this.buttonList.get(MODE_ID).visible = false;
+        this.buttonList.get(LOCK_ID).visible = false;
+        this.buttonList.get(GEAR_ID).visible = false;
+        this.buttonList.get(CREATIVE_ID).visible = false;
+        this.buttonList.get(INFINITEBUTTON_ID).visible = false;
+
+        this.priceField.setEnabled(false);
     }
 
     private void setCost() {
-        if (this.nameField.getText().length() > 0) {
-            int newCost = Integer.valueOf(this.nameField.getText());
+        if (this.priceField.getText().length() > 0) {
+            int newCost = Integer.valueOf(this.priceField.getText());
 
+            tile.setItemCost(newCost);
             PacketSetItemCostToServer pack = new PacketSetItemCostToServer();
             pack.setData(newCost, tile.getPos());
             PacketHandler.INSTANCE.sendToServer(pack);
 
             tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
+            updateTextField();
         }
+    }
+
+    @Override
+    public void onGuiClosed() {
+        super.onGuiClosed();
+    }
+
+    private void updateTextField() {
+        this.priceField.setText(String.valueOf(tile.getItemCost(tile.getField(3) - 37)));
     }
 
     @Override
@@ -95,12 +122,15 @@ public class GuiVending extends GuiContainer {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
+        if (tile.getField(8) == 1 && tile.getField(2) == 1) priceField.drawTextBox();
     }
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
+        drawTexturedModalRect(guiLeft + 14, guiTop + 49, 177, 21, 18, 54);
+
 
         if(tile.isTwoBlock()){
             drawTexturedModalRect(guiLeft + 43, guiTop + 31, 7, 210, 90, 18);
@@ -137,45 +167,47 @@ public class GuiVending extends GuiContainer {
                 if(((TabButton)buttonList.get(GEAR_ID)).openState()){
                     drawTexturedModalRect(-91, 64, 27, 0, 91, 47);
                     drawSelectionOverlay();
+                    this.priceField.setEnabled(true);
                     Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
                     this.buttonList.set(CREATIVE_ID, new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton)this.buttonList.get(GEAR_ID)).getButtonY(),0, 44, 20, 21, "", TAB_TEXTURE));
                 }else{
+                    this.priceField.setEnabled(false);
                     this.buttonList.set(CREATIVE_ID, new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton)this.buttonList.get(GEAR_ID)).getButtonY(),0, 44, 20, 21, "", TAB_TEXTURE));
                 }
                 if(player.isCreative()){    //If in Creative
                     this.buttonList.get(CREATIVE_ID).visible = true;
 
                     ((TabButton)buttonList.get(CREATIVE_ID)).setOpenState(creativeExtended, 26 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY());
-                    if(((TabButton)buttonList.get(CREATIVE_ID)).openState()) drawTexturedModalRect(-91, 86 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY(), 27, 48, 91, 47);
+                    if(((TabButton)buttonList.get(CREATIVE_ID)).openState()){
+                        this.buttonList.set(INFINITEBUTTON_ID, (new GuiButton(INFINITEBUTTON_ID, i - 69, j + 106 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY(), 45, 20, ((tile.getField(6) == 1) ? "Enabled" : "Disabled"))));
+                        drawTexturedModalRect(-91, 86 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY(), 27, 48, 91, 47);
+                    }else  this.buttonList.get(INFINITEBUTTON_ID).visible = false;
                 }else{  //If in Survival
                     this.buttonList.get(CREATIVE_ID).visible = false;
+                    this.buttonList.get(INFINITEBUTTON_ID).visible = false;
+
                 }
 
             }else{  //In SELL mode
                 this.buttonList.get(LOCK_ID).visible = false;
                 this.buttonList.get(GEAR_ID).visible = false;
                 this.buttonList.get(CREATIVE_ID).visible = false;
+                this.buttonList.get(INFINITEBUTTON_ID).visible = false;
             }
             drawIcons();
         }
         drawText();
-
-
-
-
-
-
-
-
-
-
-
     }
 
     private void drawText(){
         fontRendererObj.drawString(I18n.format("tile.modcurrency:blockvending.name"), 5, 6, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("tile.modcurrency:gui.playerinventory"), 4, 142, Color.darkGray.getRGB());
-        fontRendererObj.drawString(I18n.format("Cash") + ": $" + tile.getField(0), 5, 15, Color.darkGray.getRGB());
+
+        if (tile.getField(2) == 1){
+            fontRendererObj.drawString(I18n.format("tile.modcurrency:guivending.profit") + ": $" + Integer.toString(tile.getField(4)), 5, 16, Color.darkGray.getRGB());
+        }else{
+            fontRendererObj.drawString(I18n.format("tile.modcurrency:guivending.cash") + ": $" + tile.getField(0), 5, 15, Color.darkGray.getRGB());
+        }
 
         if (tile.getField(8) == 1) {
             fontRendererObj.drawString(I18n.format("tile.modcurrency:guivending.slotsettings"), -81, 71, Integer.parseInt("42401c", 16));
@@ -194,6 +226,9 @@ public class GuiVending extends GuiContainer {
             fontRendererObj.drawString(I18n.format("tile.modcurrency:guivending.infinitestock"), -86, 93 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY(), Integer.parseInt("42401c", 16));
             fontRendererObj.drawString(I18n.format("tile.modcurrency:guivending.infinitestock"), -85, 92 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY(), Integer.parseInt("fff200", 16));
         }
+
+        if (tile.getField(9) == 1) fontRendererObj.drawString(I18n.format("Wallet") + ": $" + tile.getField(10), 5, 23, Integer.parseInt("3abd0c", 16));
+
     }
 
     private void drawIcons() {
@@ -228,8 +263,6 @@ public class GuiVending extends GuiContainer {
             }
         }
     }
-
-
 
     private void drawSelectionOverlay() {
         if (tile.getField(8) == 1) {
@@ -311,8 +344,8 @@ public class GuiVending extends GuiContainer {
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         if(tile.getField(2) == 1) {
             super.mouseClicked(mouseX, mouseY, mouseButton);
-//            nameField.mouseClicked(mouseX, mouseY, mouseButton);
-           // if (tile.getField(8) == 1 && mouseButton == 0) updateTextField();
+            priceField.mouseClicked(mouseX, mouseY, mouseButton);
+            if (tile.getField(8) == 1 && mouseButton == 0) updateTextField();
         }else {
             super.mouseClicked(mouseX, mouseY, mouseButton);
         }
@@ -322,7 +355,7 @@ public class GuiVending extends GuiContainer {
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         int numChar = Character.getNumericValue(typedChar);
         if ((tile.getField(2) == 1) && ((numChar >= 0 && numChar <= 9) || (keyCode == 14) || keyCode == 211 || (keyCode == 203) || (keyCode == 205))) { //Ensures keys input are only numbers or backspace type keys
-            if (this.nameField.textboxKeyTyped(typedChar, keyCode)) setCost();
+            if (this.priceField.textboxKeyTyped(typedChar, keyCode)) setCost();
         } else {
             super.keyTyped(typedChar, keyCode);
         }
@@ -332,20 +365,28 @@ public class GuiVending extends GuiContainer {
     //Button Actions
     protected void actionPerformed(GuiButton button) throws IOException {
         switch (button.id) {
-            /*case 0:  //Change Button
+            case CHANGEBUTTON_ID:  //Change Button
                 PacketItemSpawnToServer pack0 = new PacketItemSpawnToServer();
                 pack0.setBlockPos(tile.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack0);
                 break;
-            case 1: //Infinite? Button
+            case INFINITEBUTTON_ID: //Infinite? Button
+                System.out.println("DD");
                 PacketSetFieldToServer pack1 = new PacketSetFieldToServer();
                 pack1.setData((tile.getField(6) == 1) ? 0 : 1, 6, tile.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack1);
-                break;*/
+                break;
             case MODE_ID: //Mode Button
                 PacketSetFieldToServer pack2 = new PacketSetFieldToServer();
                 pack2.setData((tile.getField(2) == 1) ? 0 : 1, 2, tile.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack2);
+
+                creativeExtended = false;
+
+                tile.setField(8, 0);
+                PacketSetFieldToServer pack2b = new PacketSetFieldToServer();
+                pack2b.setData(0, 8, tile.getPos());
+                PacketHandler.INSTANCE.sendToServer(pack2b);
                 tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
                 break;
             case LOCK_ID: //Lock Button

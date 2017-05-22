@@ -48,7 +48,7 @@ public class ContainerVending extends Container implements INBTInventory{
     private final int TE_MONEY_FIRST_SLOT_INDEX = PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT;
     private final int TE_VEND_FIRST_SLOT_INDEX = TE_MONEY_FIRST_SLOT_INDEX + 1;
 
-    private final int TE_BUFFER_TOTAL_COUNT = 6;
+    private final int TE_BUFFER_TOTAL_COUNT = 3;
 
     private Item[] specialSlotItems = new Item[2];
     private TileVending tile;
@@ -112,13 +112,12 @@ public class ContainerVending extends Container implements INBTInventory{
         }
 
         //Buffer Slots
-        for (int x = 0; x < TE_BUFFER_TOTAL_COUNT; x++) {
+        int yStart = 1;
+        if(tile.isTwoBlock()) yStart = 0;
+        for (int x = yStart; x < TE_BUFFER_TOTAL_COUNT + yStart; x++) {
             int slotNum = TE_VEND_MAIN_TOTAL_COUNT + 1 + x;
-            int xpos = 0;
-            if (tile.getField(2) == 1) xpos = 15;
-            if (tile.getField(2) == 0) xpos = -1000;
             int ypos = 32 + x * 18;
-            addSlotToContainer(new SlotCustomizable(itemHandler, slotNum, xpos, ypos, specialSlotItems));
+            addSlotToContainer(new SlotCustomizable(itemHandler, slotNum, 15, ypos, specialSlotItems));
         }
     }
 
@@ -202,7 +201,7 @@ public class ContainerVending extends Container implements INBTInventory{
 
         if (slotStack != ItemStack.EMPTY) {
             if (playStack.getItem() != Item.getItemFromBlock(Blocks.AIR)) {
-                if (!(playStack.equals(slotStack))) {
+                if (!(playStack.getItem().equals(slotStack.getItem()) && (playStack.getItemDamage() == slotStack.getItemDamage()))) {
                     return ItemStack.EMPTY; //Checks if player is holding stack, if its different then one being clicked do nothing
                 }
             }
@@ -231,7 +230,6 @@ public class ContainerVending extends Container implements INBTInventory{
                     } else {
                         tile.setField(0, bank - (cost * amnt));
                     }
-
                     tile.setField(4, tile.getField(4) + cost * amnt);
                 }
             } else {
@@ -311,7 +309,9 @@ public class ContainerVending extends Container implements INBTInventory{
 
         for (IContainerListener listener : this.listeners) {
             for (int field = 0; field < tile.getFieldCount(); ++field) {
-                if (fieldChanged[field]) listener.sendProgressBarUpdate(this, field, cachedFields[field]);
+                if (fieldChanged[field]){
+                    listener.sendProgressBarUpdate(this, field, cachedFields[field]);
+                }
             }
         }
     }

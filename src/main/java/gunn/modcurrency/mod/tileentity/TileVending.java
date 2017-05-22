@@ -52,7 +52,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     public TileVending() {
         bank = 0;
         profit = 0;
-        selectedSlot = 0;
+        selectedSlot = 37;
         walletTotal = 0;
         owner = "";
         selectedName = "No Item";
@@ -62,6 +62,8 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         infinite = false;
         gearExtended = false;
         walletIn = false;
+
+        for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = 0;
     }
 
     public void openGui(EntityPlayer player, World world, BlockPos pos) {
