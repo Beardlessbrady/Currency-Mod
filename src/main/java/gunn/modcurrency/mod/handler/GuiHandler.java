@@ -61,7 +61,7 @@ public class GuiHandler implements IGuiHandler{
 
         if(tileEntity instanceof TileVending && ID == 30){
             TileVending tilevendor = (TileVending) tileEntity;
-            return new GuiVending(player.inventory, tilevendor);
+            return new GuiVending(player, tilevendor);
         }
 
         /*if(tileEntity instanceof TileSeller && ID == 31){

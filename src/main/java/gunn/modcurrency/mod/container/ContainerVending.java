@@ -127,6 +127,8 @@ public class ContainerVending extends Container implements INBTInventory{
         if(tile.getField(2) == 1) checkGhostStacks();
         tile.voidPlayerUsing();
         tile.setField(8, 0);
+        tile.setField(5, 0);
+        tile.setField(2, 0);
         tile.outInputSlot();
         super.onContainerClosed(playerIn);
     }
