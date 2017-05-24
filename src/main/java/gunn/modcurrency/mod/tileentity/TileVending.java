@@ -37,8 +37,8 @@ import javax.annotation.Nullable;
  */
 public class TileVending extends TileEntity implements ICapabilityProvider, ITickable, INBTInventory, IOwnable{
     private static final int INPUT_SLOT_COUNT = 1;
-    private static final int VEND_SLOT_COUNT = 15;
-    private static final int BUFFER_SLOT_COUNT = 3;
+    private static final int VEND_SLOT_COUNT = 30;
+    private static final int BUFFER_SLOT_COUNT = 6;
 
     private int bank, profit, selectedSlot, walletTotal;
     private String owner, selectedName;
@@ -550,7 +550,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     }
 
     public boolean isTwoBlock(){
-        return false;
+        return true;
         //TODO
     }
     //</editor-fold>

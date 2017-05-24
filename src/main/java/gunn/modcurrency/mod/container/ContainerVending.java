@@ -118,9 +118,13 @@ public class ContainerVending extends Container implements INBTInventory{
 
         //Buffer Slots
         int buffStart = 1;
-        if(tile.isTwoBlock()) buffStart = 0;
+        int skip = 15;
+        if(tile.isTwoBlock()){
+            buffStart = 0;
+            skip =  0;
+        }
         for (int x = buffStart; x < TE_BUFFER_TOTAL_COUNT + buffStart; x++) {
-            int slotNum = TE_VEND_MAIN_TOTAL_COUNT + 1 + x;
+            int slotNum = 30 + 1 + x;
             int ypos = 32 + x * 18;
             addSlotToContainer(new SlotCustomizable(itemHandler, slotNum - buffStart, 15, ypos, specialSlotItems));
         }
