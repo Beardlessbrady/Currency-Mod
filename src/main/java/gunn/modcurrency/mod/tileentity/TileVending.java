@@ -550,7 +550,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     }
 
     public boolean isTwoBlock(){
-        return true;
+        return false;
         //TODO
     }
     //</editor-fold>

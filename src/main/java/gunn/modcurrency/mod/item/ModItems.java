@@ -32,5 +32,6 @@ public class ModItems {
 
     public static void addRecipes(){
         if(ModConfig.enableWallet) if(ModConfig.recipeWallet) itemWallet.recipe();
+        itemBanknote.recipe();
     }
 }
