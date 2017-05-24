@@ -129,7 +129,10 @@ public class GuiVending extends GuiContainer {
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
-        drawTexturedModalRect(guiLeft + 14, guiTop + 49, 177, 21, 18, 54);
+
+        if(tile.isTwoBlock()){
+            drawTexturedModalRect(guiLeft + 14, guiTop + 31, 177, 21, 18, 108);
+        }else drawTexturedModalRect(guiLeft + 14, guiTop + 49, 177, 21, 18, 54);
 
 
         if(tile.isTwoBlock()){

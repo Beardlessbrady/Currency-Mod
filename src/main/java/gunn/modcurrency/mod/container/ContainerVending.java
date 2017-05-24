@@ -40,7 +40,7 @@ public class ContainerVending extends Container implements INBTInventory{
     private final int PLAYER_INV_TOTAL_COUNT = PLAYER_INV_COLUMN_COUNT * PLAYER_INV_ROW_COUNT;
     private final int PLAYER_TOTAL_COUNT = HOTBAR_SLOT_COUNT + PLAYER_INV_TOTAL_COUNT;
 
-    private final int TE_VEND_COLUMN_COUNT = 3;
+    private int TE_VEND_COLUMN_COUNT = 3;
     private final int TE_VEND_ROW_COUNT = 5;
     private final int TE_VEND_MAIN_TOTAL_COUNT = TE_VEND_COLUMN_COUNT * TE_VEND_ROW_COUNT;
 
@@ -48,7 +48,7 @@ public class ContainerVending extends Container implements INBTInventory{
     private final int TE_MONEY_FIRST_SLOT_INDEX = PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT;
     private final int TE_VEND_FIRST_SLOT_INDEX = TE_MONEY_FIRST_SLOT_INDEX + 1;
 
-    private final int TE_BUFFER_TOTAL_COUNT = 3;
+    private int TE_BUFFER_TOTAL_COUNT = 3;
 
     private Item[] specialSlotItems = new Item[2];
     private TileVending tile;
@@ -99,7 +99,12 @@ public class ContainerVending extends Container implements INBTInventory{
         final int TE_INV_XPOS = 44;
         int TE_INV_YPOS = 50;
 
-        if(tile.isTwoBlock()) TE_INV_YPOS = 32;
+        if(tile.isTwoBlock()) {
+            TE_INV_YPOS = 32;
+            TE_VEND_COLUMN_COUNT = 6;
+            TE_BUFFER_TOTAL_COUNT = 6;
+        }
+
 
         //Main Slots
         for (int y = 0; y < TE_VEND_COLUMN_COUNT; y++) {

@@ -99,7 +99,13 @@ public class BlockVending extends Block implements ITileEntityProvider{
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         worldIn.setBlockState(pos, state.withProperty(StateHandler.FACING, placer.getHorizontalFacing().getOpposite()));
 
-        if(placer instanceof EntityPlayer) getTile(worldIn, pos).setOwner((placer).getUniqueID().toString());
+        if(placer instanceof EntityPlayer){
+            getTile(worldIn, pos).setOwner((placer).getUniqueID().toString());
+
+            if(worldIn.getBlockState(pos.down()).getBlock() == ModBlocks.blockVending && (getTile(worldIn,pos.down()).getOwner().equals(placer.getUniqueID().toString()))){ //If Owner and a vending is below
+
+            }
+        }
     }
 
     @Override
