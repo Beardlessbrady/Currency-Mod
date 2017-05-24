@@ -231,7 +231,6 @@ public class GuiVending extends GuiContainer {
         }
 
         if (tile.getField(9) == 1) fontRendererObj.drawString(I18n.format("Wallet") + ": $" + tile.getField(10), 5, 23, Integer.parseInt("3abd0c", 16));
-
     }
 
     private void drawIcons() {

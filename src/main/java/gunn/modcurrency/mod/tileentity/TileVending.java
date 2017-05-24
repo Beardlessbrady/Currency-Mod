@@ -471,6 +471,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                 walletIn = (value == 1);
                 break;
             case 10:
+                walletTotal = value;
                 break;
         }
     }
