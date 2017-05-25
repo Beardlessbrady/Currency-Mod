@@ -19,7 +19,7 @@ public class StateHandler {
     public static final PropertyEnum<EnumTwoBlock> TWOTALL = PropertyEnum.create("twotall", EnumTwoBlock.class);
 
     public enum EnumTwoBlock implements IStringSerializable {
-        one,
+        ONE,
         TWOBOTTOM,
         TWOTOP;
 

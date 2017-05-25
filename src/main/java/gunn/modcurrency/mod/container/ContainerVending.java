@@ -99,7 +99,7 @@ public class ContainerVending extends Container implements INBTInventory{
         final int TE_INV_XPOS = 44;
         int TE_INV_YPOS = 50;
 
-        if(tile.isTwoBlock()) {
+        if(tile.getField(7) == 1) {
             TE_INV_YPOS = 32;
             TE_VEND_COLUMN_COUNT = 6;
             TE_BUFFER_TOTAL_COUNT = 6;
@@ -119,7 +119,7 @@ public class ContainerVending extends Container implements INBTInventory{
         //Buffer Slots
         int buffStart = 1;
         int skip = 15;
-        if(tile.isTwoBlock()){
+        if(tile.getField(7) == 1){
             buffStart = 0;
             skip =  0;
         }

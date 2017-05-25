@@ -130,12 +130,12 @@ public class GuiVending extends GuiContainer {
         Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
-        if(tile.isTwoBlock()){
+        if(tile.getField(7) == 1){
             drawTexturedModalRect(guiLeft + 14, guiTop + 31, 177, 21, 18, 108);
         }else drawTexturedModalRect(guiLeft + 14, guiTop + 49, 177, 21, 18, 54);
 
 
-        if(tile.isTwoBlock()){
+        if(tile.getField(7) == 1){
             drawTexturedModalRect(guiLeft + 43, guiTop + 31, 7, 210, 90, 18);
             drawTexturedModalRect(guiLeft + 43, guiTop + 103, 7, 210, 90, 18);
             drawTexturedModalRect(guiLeft + 43, guiTop + 121, 7, 210, 90, 18);
@@ -291,7 +291,7 @@ public class GuiVending extends GuiContainer {
                 slotRow = (slotId + 1) - 25;
             }
 
-            if(!tile.isTwoBlock()) slotColumn++;
+            if(tile.getField(7) != 1) slotColumn++;
 
             Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
             drawTexturedModalRect(24 + (18 * slotRow), 30 + (18 * slotColumn), 177, 0, 20, 20); //Selection Box
@@ -309,7 +309,7 @@ public class GuiVending extends GuiContainer {
             int row = ((i - startX) / 18);
             int column = ((j - startY) / 18);
             int slot = row + (column * 5);
-            if(!tile.isTwoBlock())slot = slot -5;
+            if(tile.getField(7) != 1)slot = slot -5;
 
             ItemStack currStack = tile.getStack(slot);
 

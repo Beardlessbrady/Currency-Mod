@@ -3,6 +3,7 @@ package gunn.modcurrency.mod.tileentity;
 import gunn.modcurrency.mod.ModCurrency;
 import gunn.modcurrency.mod.client.gui.util.INBTInventory;
 import gunn.modcurrency.mod.handler.ItemHandlerVendor;
+import gunn.modcurrency.mod.handler.StateHandler;
 import gunn.modcurrency.mod.item.ItemWallet;
 import gunn.modcurrency.mod.item.ModItems;
 import net.minecraft.entity.item.EntityItem;
@@ -37,12 +38,12 @@ import javax.annotation.Nullable;
  */
 public class TileVending extends TileEntity implements ICapabilityProvider, ITickable, INBTInventory, IOwnable{
     private static final int INPUT_SLOT_COUNT = 1;
-    private static final int VEND_SLOT_COUNT = 30;
+    public static final int VEND_SLOT_COUNT = 30;
     private static final int BUFFER_SLOT_COUNT = 6;
 
     private int bank, profit, selectedSlot, walletTotal;
     private String owner, selectedName;
-    private boolean locked, mode, creative, infinite, gearExtended, walletIn;
+    private boolean locked, mode, creative, infinite, gearExtended, walletIn, twoBlock;
     private int[] itemCosts = new int[VEND_SLOT_COUNT];
     private ItemStackHandler inputStackHandler = new ItemStackHandler(INPUT_SLOT_COUNT);
     private ItemHandlerVendor vendStackHandler = new ItemHandlerVendor(VEND_SLOT_COUNT);
@@ -62,12 +63,15 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         infinite = false;
         gearExtended = false;
         walletIn = false;
+        twoBlock = false;
 
         for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = 0;
     }
 
     public void openGui(EntityPlayer player, World world, BlockPos pos) {
-        player.openGui(ModCurrency.instance, 30, world, pos.getX(), pos.getY(), pos.getZ());
+        if(world.getBlockState(pos).getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP){
+            player.openGui(ModCurrency.instance, 30, world, pos.getX(), pos.down().getY(), pos.getZ());
+        }else player.openGui(ModCurrency.instance, 30, world, pos.getX(), pos.getY(), pos.getZ());
         playerUsing = player;
     }
 
@@ -328,6 +332,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         compound.setBoolean("infinite", infinite);
         compound.setBoolean("gearExtended", gearExtended);
         compound.setBoolean("walletIn", walletIn);
+        compound.setBoolean("twoBlock", twoBlock);
         compound.setInteger("selectedSlot", selectedSlot);
         compound.setString("selectedName", selectedName);
         compound.setString("owner", owner);
@@ -354,6 +359,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         if (compound.hasKey("infinite")) infinite = compound.getBoolean("infinite");
         if (compound.hasKey("gearExtended")) gearExtended = compound.getBoolean("gearExtended");
         if (compound.hasKey("walletIn")) walletIn = compound.getBoolean("walletIn");
+        if (compound.hasKey("twoBlock")) twoBlock = compound.getBoolean("twoBlock");
         if (compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
         if (compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
         if (compound.hasKey("owner")) owner = compound.getString("owner");
@@ -382,6 +388,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         tag.setBoolean("infinite", infinite);
         tag.setBoolean("gearExtended", gearExtended);
         tag.setBoolean("walletIn", walletIn);
+        tag.setBoolean("twoBlock", twoBlock);
         tag.setInteger("selectedSlot", selectedSlot);
         tag.setString("selectedName", selectedName);
         tag.setString("owner", owner);
@@ -405,6 +412,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         infinite = pkt.getNbtCompound().getBoolean("infinite");
         gearExtended = pkt.getNbtCompound().getBoolean("gearExtended");
         walletIn = pkt.getNbtCompound().getBoolean("walletIn");
+        twoBlock = pkt.getNbtCompound().getBoolean("twoBlock");
         selectedSlot = pkt.getNbtCompound().getInteger("selectedSlot");
         selectedName = pkt.getNbtCompound().getString("selectedName");
         owner = pkt.getNbtCompound().getString("owner");
@@ -463,6 +471,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                 infinite = (value == 1);
                 break;
             case 7:
+                twoBlock = (value == 1);
                 break;
             case 8:
                 gearExtended = (value == 1);
@@ -493,6 +502,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
             case 6:
                 return (infinite) ? 1 : 0;
             case 7:
+                return (twoBlock) ? 1 : 0;
             case 8:
                 return (gearExtended) ? 1 : 0;
             case 9:
@@ -517,6 +527,34 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
 
     public void setItemCost(int amount) {
         itemCosts[selectedSlot - 37] = amount;
+    }
+
+    public void setItemCost(int amount, int index) {
+        itemCosts[index] = amount;
+    }
+
+    public ItemStackHandler getBufferStackHandler(){
+        return bufferStackHandler;
+    }
+
+    public ItemStackHandler getInputStackHandler(){
+        return inputStackHandler;
+    }
+
+    public ItemHandlerVendor getVendStackHandler(){
+        return vendStackHandler;
+    }
+
+    public void setBufferStackHandler(ItemStackHandler buf){
+        bufferStackHandler = buf;
+    }
+
+    public void setInputStackHandler(ItemStackHandler input){
+        inputStackHandler = input;
+    }
+
+    public void setVendStackHandler(ItemHandlerVendor vend){
+        vendStackHandler = vend;
     }
 
     public ItemStack getStack(int index) {
@@ -547,11 +585,6 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
 
     public void setGhostSlot(int slot, boolean bool){
         vendStackHandler.setGhost(slot, bool);
-    }
-
-    public boolean isTwoBlock(){
-        return false;
-        //TODO
     }
     //</editor-fold>
 }
