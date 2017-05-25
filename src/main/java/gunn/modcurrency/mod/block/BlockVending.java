@@ -107,38 +107,39 @@ public class BlockVending extends Block implements ITileEntityProvider {
             getTile(worldIn, pos).setOwner((placer).getUniqueID().toString());
 
             if (worldIn.getBlockState(pos.down()).getBlock() == ModBlocks.blockVending && (getTile(worldIn, pos.down()).getOwner().equals(placer.getUniqueID().toString()))) { //If Owner and a vending is below
+                if(worldIn.getBlockState(pos.down()).getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.ONE) {
+                    //Backing up important tile variables from below tile
+                    TileVending tile = (TileVending) worldIn.getTileEntity(pos.down());
+                    ItemStackHandler inputStack = tile.getInputStackHandler();
+                    ItemHandlerVendor vendStack = tile.getVendStackHandler();
+                    ItemStackHandler buffStack = tile.getBufferStackHandler();
+                    int bank = tile.getField(0);
+                    int profit = tile.getField(4);
+                    String owner = tile.getOwner();
+                    boolean locked = tile.getField(1) == 1;
+                    boolean infinite = tile.getField(6) == 1;
+                    int[] itemCosts = new int[tile.VEND_SLOT_COUNT];
+                    for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = tile.getItemCost(i);
 
-                //Backing up important tile variables from below tile
-                TileVending tile = (TileVending) worldIn.getTileEntity(pos.down());
-                ItemStackHandler inputStack = tile.getInputStackHandler();
-                ItemHandlerVendor vendStack = tile.getVendStackHandler();
-                ItemStackHandler buffStack = tile.getBufferStackHandler();
-                int bank = tile.getField(0);
-                int profit = tile.getField(4);
-                String owner = tile.getOwner();
-                boolean locked = tile.getField(1) == 1;
-                boolean infinite = tile.getField(6) == 1;
-                int[] itemCosts = new int[tile.VEND_SLOT_COUNT];
-                for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = tile.getItemCost(i);
+                    worldIn.setBlockState(pos, state.withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.TWOTOP)
+                            .withProperty(StateHandler.FACING, placer.getHorizontalFacing().getOpposite()));
 
-                worldIn.setBlockState(pos, state.withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.TWOTOP)
-                        .withProperty(StateHandler.FACING, placer.getHorizontalFacing().getOpposite()));
+                    worldIn.setBlockState(pos.down(), state.withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.TWOBOTTOM)
+                            .withProperty(StateHandler.FACING, placer.getHorizontalFacing().getOpposite()));
 
-                worldIn.setBlockState(pos.down(), state.withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.TWOBOTTOM)
-                        .withProperty(StateHandler.FACING, placer.getHorizontalFacing().getOpposite()));
-
-                //Re adding important variables to below tile
-                tile = (TileVending) worldIn.getTileEntity(pos.down());
-                tile.setField(7, 1);
-                tile.setInputStackHandler(inputStack);
-                tile.setVendStackHandler(vendStack);
-                tile.setBufferStackHandler(buffStack);
-                tile.setField(0, bank);
-                tile.setField(4, profit);
-                tile.setOwner(owner);
-                tile.setField(1, locked ? 1 : 0);
-                tile.setField(6, infinite ? 1 : 0);
-                for (int i = 0; i < itemCosts.length; i++) tile.setItemCost(itemCosts[i], i);
+                    //Re adding important variables to below tile
+                    tile = (TileVending) worldIn.getTileEntity(pos.down());
+                    tile.setField(7, 1);
+                    tile.setInputStackHandler(inputStack);
+                    tile.setVendStackHandler(vendStack);
+                    tile.setBufferStackHandler(buffStack);
+                    tile.setField(0, bank);
+                    tile.setField(4, profit);
+                    tile.setOwner(owner);
+                    tile.setField(1, locked ? 1 : 0);
+                    tile.setField(6, infinite ? 1 : 0);
+                    for (int i = 0; i < itemCosts.length; i++) tile.setItemCost(itemCosts[i], i);
+                }
             }
         }
     }
