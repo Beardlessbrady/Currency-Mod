@@ -26,7 +26,7 @@ public class ModConfig {
     public static boolean recipeATM = true;
 
 
-    public static boolean shitTextures = false;
+    public static int textureType = 0;
 
     public static boolean invincibleVendSell = true;
     public static int walletSize = 4;
@@ -72,7 +72,7 @@ public class ModConfig {
         dropATM = cfg.getBoolean("Drop ATM when broken", CATEGORY_GENERAL, dropATM, "This changes if the ATM will drop itself when broken or not");
         invincibleVendSell = cfg.getBoolean("Invincible Machine", CATEGORY_GENERAL, invincibleVendSell, "Enabling this makes it so only the player who placed the machine can break it");
         walletSize = cfg.getInt("Wallet Size", CATEGORY_GENERAL, walletSize, 0, 4, "This changes how many rows of inventory slot there are in the wallet");
-        shitTextures = cfg.getBoolean("16x16 Textures", Configuration.CATEGORY_GENERAL, shitTextures, "Some textures are 32x32 (like the money). If you are stingy and want 16x16 enable this");
+        textureType = cfg.getInt("Item Textures", CATEGORY_GENERAL, textureType, 0, 2,"Default=0, 16x16=1, Foolcraft=2");
 
     }
 }

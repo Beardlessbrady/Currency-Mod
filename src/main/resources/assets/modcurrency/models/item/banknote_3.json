@@ -1,7 +1,7 @@
 {
   "parent": "builtin/generated",
   "textures": {
-    "layer0": "modcurrency:items/dollartwenty"
+    "layer0": "modcurrency:items/dollarbill/dollartwenty"
   },
   "display": {
     "thirdperson_righthand": {

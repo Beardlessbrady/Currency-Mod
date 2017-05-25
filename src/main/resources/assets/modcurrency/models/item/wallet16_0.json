@@ -1,7 +1,7 @@
 {
   "parent": "builtin/generated",
   "textures": {
-    "layer0": "modcurrency:items/16_wallet0"
+    "layer0": "modcurrency:items/wallet/16_wallet0"
   },
   "display": {
     "gui": {

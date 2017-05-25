@@ -31,14 +31,23 @@ public class ItemBanknote extends Item {
 
     @SideOnly(Side.CLIENT)
     public void initModel(){
-        if(ModConfig.shitTextures){
-            for (int i = 0; i < noteLength; i++) {
-                ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName()+ "16" + "_" + i, "inventory"));
-            }
-        }else {
-            for (int i = 0; i < noteLength; i++) {
-                ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName() + "_" + i, "inventory"));
-            }
+        switch (ModConfig.textureType) {
+            default:
+            case 0:
+                for (int i = 0; i < noteLength; i++) {
+                    ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName() + "_" + i, "inventory"));
+                }
+                break;
+            case 1:
+                for (int i = 0; i < noteLength; i++) {
+                    ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName() + "16" + "_" + i, "inventory"));
+                }
+                break;
+            case 2:
+                for (int i = 0; i < noteLength; i++) {
+                    ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName() + "fool" + "_" + i, "inventory"));
+                }
+                break;
         }
     }
 

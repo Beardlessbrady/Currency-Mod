@@ -2,7 +2,7 @@
 {
   "parent": "builtin/generated",
   "textures": {
-    "layer0": "modcurrency:items/16_wallet5"
+    "layer0": "modcurrency:items/wallet/16_wallet5"
   },
   "display": {
     "gui": {

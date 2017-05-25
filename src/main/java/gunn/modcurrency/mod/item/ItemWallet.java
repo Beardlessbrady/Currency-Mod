@@ -48,20 +48,24 @@ public class ItemWallet extends Item{
 
     @SideOnly(Side.CLIENT)
     public void initModel(){
-        if(ModConfig.shitTextures){
-            for (int i = 0; i < walletLength; i++) {
-                if(i == 2) {
-                    ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName() + "16" + "_" + 2, "inventory"));
-                }else if(i == 3) {
-                    ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName() + "16" + "_" + 3, "inventory"));
-                }else {
-                    ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName() + "16" + "_" + i, "inventory"));
+        switch (ModConfig.textureType){
+            default:
+            case 0:
+                for (int i = 0; i < walletLength; i++) {
+                    ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName() + "_" + i, "inventory"));
                 }
-            }
-        }else {
-            for (int i = 0; i < walletLength; i++) {
-                ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName() + "_" + i, "inventory"));
-            }
+                break;
+            case 1:
+                for (int i = 0; i < walletLength; i++) {
+                    if(i == 2) {
+                        ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName() + "16" + "_" + 2, "inventory"));
+                    }else if(i == 3) {
+                        ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName() + "16" + "_" + 3, "inventory"));
+                    }else {
+                        ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName() + "16" + "_" + i, "inventory"));
+                    }
+                }
+                break;
         }
     }
 
