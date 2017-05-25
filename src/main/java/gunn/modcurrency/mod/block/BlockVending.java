@@ -103,6 +103,7 @@ public class BlockVending extends Block implements ITileEntityProvider {
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         worldIn.setBlockState(pos, state.withProperty(StateHandler.FACING, placer.getHorizontalFacing().getOpposite()));
 
+
         if (placer instanceof EntityPlayer) {
             getTile(worldIn, pos).setOwner((placer).getUniqueID().toString());
 
@@ -199,13 +200,13 @@ public class BlockVending extends Block implements ITileEntityProvider {
 
     @Override
     public IBlockState getStateFromMeta(int meta) {
-        return this.getDefaultState().withProperty(StateHandler.FACING, EnumFacing.getHorizontal(meta))
-                .withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.ONE);
+        return this.getDefaultState().withProperty(StateHandler.FACING, EnumFacing.getHorizontal(meta % 4))
+                .withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.class.getEnumConstants()[meta / 4]);
     }
 
     @Override
     public int getMetaFromState(IBlockState state) {
-        return (state.getValue(StateHandler.FACING).getHorizontalIndex());
+        return (state.getValue(StateHandler.FACING).getHorizontalIndex() + (state.getValue(StateHandler.TWOTALL).ordinal() * 4));
     }
 
     //</editor-fold>
