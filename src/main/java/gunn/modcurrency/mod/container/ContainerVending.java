@@ -42,7 +42,7 @@ public class ContainerVending extends Container implements INBTInventory{
 
     private int TE_VEND_COLUMN_COUNT = 3;
     private final int TE_VEND_ROW_COUNT = 5;
-    private final int TE_VEND_MAIN_TOTAL_COUNT = TE_VEND_COLUMN_COUNT * TE_VEND_ROW_COUNT;
+    private int TE_VEND_MAIN_TOTAL_COUNT = TE_VEND_COLUMN_COUNT * TE_VEND_ROW_COUNT;
 
     private final int PLAYER_FIRST_SLOT_INDEX = 0;
     private final int TE_MONEY_FIRST_SLOT_INDEX = PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT;
@@ -103,6 +103,7 @@ public class ContainerVending extends Container implements INBTInventory{
             TE_INV_YPOS = 32;
             TE_VEND_COLUMN_COUNT = 6;
             TE_BUFFER_TOTAL_COUNT = 6;
+            TE_VEND_MAIN_TOTAL_COUNT = TE_VEND_COLUMN_COUNT * TE_VEND_ROW_COUNT;
         }
 
 
