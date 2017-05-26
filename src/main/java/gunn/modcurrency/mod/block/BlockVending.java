@@ -148,7 +148,7 @@ public class BlockVending extends Block implements ITileEntityProvider {
 
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-        if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP) {
+        if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP) {     //TOP BLOCK
             if(worldIn.getBlockState(pos.down()).getBlock() == ModBlocks.blockVending){
                 if(getTile(worldIn, pos.down()).getPlayerUsing() != null) getTile(worldIn, pos.down()).getPlayerUsing().closeScreen();
                 //Backing up important tile variables from below tile
@@ -179,8 +179,10 @@ public class BlockVending extends Block implements ITileEntityProvider {
                 tile.setField(1, locked ? 1 : 0);
                 tile.setField(6, infinite ? 1 : 0);
                 for (int i = 0; i < itemCosts.length; i++) tile.setItemCost(itemCosts[i], i);
+
+                tile.dropTopItems();
             }
-        } else if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOBOTTOM) {
+        } else if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOBOTTOM) {   //BOTTOM BLOCK
             if(getTile(worldIn, pos).getPlayerUsing() != null) getTile(worldIn, pos).getPlayerUsing().closeScreen();
             worldIn.setBlockState(pos.up(), worldIn.getBlockState(pos.up()).withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.ONE));
         }

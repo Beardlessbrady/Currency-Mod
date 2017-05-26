@@ -159,6 +159,24 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         }
     }
 
+    //Drop Items
+    public void dropTopItems() {
+        for (int i = 15; i < vendStackHandler.getSlots(); i++) {
+            ItemStack item = vendStackHandler.getStackInSlot(i);
+            if (item != ItemStack.EMPTY) {
+                world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), item));
+                vendStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
+            }
+        }
+        for (int i = 3; i < bufferStackHandler.getSlots(); i++){
+            ItemStack item = bufferStackHandler.getStackInSlot(i);
+            if (item != ItemStack.EMPTY) {
+                world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), item));
+                bufferStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
+            }
+        }
+    }
+
     public boolean canInteractWith(EntityPlayer player) {
         return !isInvalid() && player.getDistanceSq(pos.add(0.5D, 0.5D, 0.5D)) <= 64D;
     }
