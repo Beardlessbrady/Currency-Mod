@@ -109,6 +109,7 @@ public class BlockVending extends Block implements ITileEntityProvider {
 
             if (worldIn.getBlockState(pos.down()).getBlock() == ModBlocks.blockVending && (getTile(worldIn, pos.down()).getOwner().equals(placer.getUniqueID().toString()))) { //If Owner and a vending is below
                 if(worldIn.getBlockState(pos.down()).getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.ONE) {
+                    if(getTile(worldIn, pos.down()).getPlayerUsing() != null) getTile(worldIn, pos.down()).getPlayerUsing().closeScreen();
                     //Backing up important tile variables from below tile
                     TileVending tile = (TileVending) worldIn.getTileEntity(pos.down());
                     ItemStackHandler inputStack = tile.getInputStackHandler();
@@ -149,6 +150,7 @@ public class BlockVending extends Block implements ITileEntityProvider {
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
         if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP) {
             if(worldIn.getBlockState(pos.down()).getBlock() == ModBlocks.blockVending){
+                if(getTile(worldIn, pos.down()).getPlayerUsing() != null) getTile(worldIn, pos.down()).getPlayerUsing().closeScreen();
                 //Backing up important tile variables from below tile
                 TileVending tile = (TileVending) worldIn.getTileEntity(pos.down());
                 ItemStackHandler inputStack = tile.getInputStackHandler();
@@ -178,10 +180,12 @@ public class BlockVending extends Block implements ITileEntityProvider {
                 tile.setField(6, infinite ? 1 : 0);
                 for (int i = 0; i < itemCosts.length; i++) tile.setItemCost(itemCosts[i], i);
             }
-
         } else if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOBOTTOM) {
+            if(getTile(worldIn, pos).getPlayerUsing() != null) getTile(worldIn, pos).getPlayerUsing().closeScreen();
+            worldIn.setBlockState(pos.up(), worldIn.getBlockState(pos.up()).withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.ONE));
+        }
 
-        } else if (state.getValue(StateHandler.TWOTALL) != StateHandler.EnumTwoBlock.ONE) {
+        if (state.getValue(StateHandler.TWOTALL) != StateHandler.EnumTwoBlock.TWOTOP) {
             TileVending te = getTile(worldIn, pos);
             te.setField(2, 1);
             te.outChange();
