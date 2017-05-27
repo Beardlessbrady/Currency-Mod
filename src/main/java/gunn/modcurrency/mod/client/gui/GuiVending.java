@@ -193,12 +193,12 @@ public class GuiVending extends GuiContainer {
             drawIcons();
         }
         drawText();
+        drawToolTips(mouseX - (this.width - this.xSize) / 2, mouseY - (this.height - this.ySize) / 2);
     }
 
     private void drawText(){
         fontRendererObj.drawString(I18n.format("tile.modcurrency:blockvending.name"), 5, 6, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("tile.modcurrency:gui.playerinventory"), 4, 142, Color.darkGray.getRGB());
-
         if (tile.getField(2) == 1){
             fontRendererObj.drawString(I18n.format("tile.modcurrency:guivending.profit") + ": $" + Integer.toString(tile.getField(4)), 5, 16, Color.darkGray.getRGB());
         }else{
@@ -288,6 +288,67 @@ public class GuiVending extends GuiContainer {
 
             Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
             drawTexturedModalRect(24 + (18 * slotRow), 30 + (18 * slotColumn), 177, 0, 20, 20); //Selection Box
+        }
+    }
+
+    private void drawToolTips(int i, int j) {
+        int xMin = -21;
+        int xMax = 0;
+        int yMin, yMax;
+
+        for (int k = 0; k < 5; k++) {
+            yMin = (22 * (k)) + 20;
+            yMax = yMin + 21;
+
+            if ((i >= xMin && i <= xMax) && (j >= yMin && j <= yMax)) {
+                List<String> list = new ArrayList<>();
+                switch (k) {
+                    case 0:
+                        list.add("Mode Tab");
+                        list.add("Change to 'Stock'");
+                        list.add("or 'Sell' mode");
+                        this.drawHoveringText(list, -125, 29, fontRendererObj);
+                        break;
+                    case 1:
+                        list.add("Lock Tab");
+                        list.add("Enable/Disable");
+                        list.add("pipe interaction");
+                        if(tile.getField(8) == 0) {
+                            this.drawHoveringText(list, -116, 48, fontRendererObj);
+                        }else this.drawHoveringText(list, -116, 39, fontRendererObj);
+                        break;
+                    case 2:
+                        list.add("Settings Tab");
+                        list.add("Set item costs");
+                        list.add("and prices");
+                        if(tile.getField(8) == 0 && !creativeExtended) {
+                            this.drawHoveringText(list, -108, 72, fontRendererObj);
+                        }else if(creativeExtended && tile.getField(8) == 0){
+                            this.drawHoveringText(list, -108, 61, fontRendererObj);
+                        }else this.drawHoveringText(list, -108, 39, fontRendererObj);
+                        break;
+                    case 3:
+                        list.add("Creative Tab");
+                        list.add("Infinite Stock");
+
+                        if(tile.getField(8) == 0 && !creativeExtended) {
+                            this.drawHoveringText(list, -104, 98, fontRendererObj);
+                        }else if(tile.getField(8) == 0 && creativeExtended) {
+                            this.drawHoveringText(list, -104, 72, fontRendererObj);
+                        }
+                        break;
+                    case 4:
+                        list.add("Creative Tab");
+                        list.add("Infinite Stock");
+
+                        if(tile.getField(8) == 1 && !creativeExtended) {
+                            this.drawHoveringText(list, -104, 130, fontRendererObj);
+                        }else if (tile.getField(8) == 1 && creativeExtended){
+                            this.drawHoveringText(list, -104, 178, fontRendererObj);
+                        }
+                        break;
+                }
+            }
         }
     }
 
