@@ -2,10 +2,7 @@ package gunn.modcurrency.mod.client.gui;
 
 import gunn.modcurrency.mod.client.gui.util.TabButton;
 import gunn.modcurrency.mod.container.ContainerVending;
-import gunn.modcurrency.mod.network.PacketHandler;
-import gunn.modcurrency.mod.network.PacketItemSpawnToServer;
-import gunn.modcurrency.mod.network.PacketSetFieldToServer;
-import gunn.modcurrency.mod.network.PacketSetItemCostToServer;
+import gunn.modcurrency.mod.network.*;
 import gunn.modcurrency.mod.tileentity.TileVending;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -131,11 +128,6 @@ public class GuiVending extends GuiContainer {
         drawTexturedModalRect(guiLeft, guiTop, 0, 0, xSize, ySize);
 
         if(tile.getField(7) == 1){
-            drawTexturedModalRect(guiLeft + 14, guiTop + 31, 177, 21, 18, 108);
-        }else drawTexturedModalRect(guiLeft + 14, guiTop + 49, 177, 21, 18, 54);
-
-
-        if(tile.getField(7) == 1){
             drawTexturedModalRect(guiLeft + 43, guiTop + 31, 7, 210, 90, 18);
             drawTexturedModalRect(guiLeft + 43, guiTop + 103, 7, 210, 90, 18);
             drawTexturedModalRect(guiLeft + 43, guiTop + 121, 7, 210, 90, 18);
@@ -155,6 +147,7 @@ public class GuiVending extends GuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+
         Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
@@ -373,7 +366,6 @@ public class GuiVending extends GuiContainer {
                 PacketHandler.INSTANCE.sendToServer(pack0);
                 break;
             case INFINITEBUTTON_ID: //Infinite? Button
-                System.out.println("DD");
                 PacketSetFieldToServer pack1 = new PacketSetFieldToServer();
                 pack1.setData((tile.getField(6) == 1) ? 0 : 1, 6, tile.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack1);

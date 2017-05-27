@@ -39,7 +39,6 @@ import javax.annotation.Nullable;
 public class TileVending extends TileEntity implements ICapabilityProvider, ITickable, INBTInventory, IOwnable{
     private static final int INPUT_SLOT_COUNT = 1;
     public static final int VEND_SLOT_COUNT = 30;
-    private static final int BUFFER_SLOT_COUNT = 6;
 
     private int bank, profit, selectedSlot, walletTotal;
     private String owner, selectedName;
@@ -47,7 +46,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     private int[] itemCosts = new int[VEND_SLOT_COUNT];
     private ItemStackHandler inputStackHandler = new ItemStackHandler(INPUT_SLOT_COUNT);
     private ItemHandlerVendor vendStackHandler = new ItemHandlerVendor(VEND_SLOT_COUNT);
-    private ItemStackHandler bufferStackHandler = new ItemHandlerVendor(BUFFER_SLOT_COUNT);
+    private ItemStackHandler bufferStackHandler = new ItemHandlerVendor(1);
     private EntityPlayer playerUsing = null;
 
     public TileVending() {
@@ -119,20 +118,17 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
 
                 if (profit >= 20) {
                     //<editor-fold desc="Dealing with Buffer Slots">
-                    Loop:
-                    for (int i = 0; i < BUFFER_SLOT_COUNT; i++) {
-                        if (bufferStackHandler.getStackInSlot(i) != ItemStack.EMPTY) {
-                            if (bufferStackHandler.getStackInSlot(i).getItemDamage() == 3 && bufferStackHandler.getStackInSlot(i).getCount() < bufferStackHandler.getStackInSlot(i).getMaxStackSize()) {
+                    if(locked) {
+                        if (bufferStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
+                            if (bufferStackHandler.getStackInSlot(0).getItemDamage() == 3 && bufferStackHandler.getStackInSlot(0).getCount() < bufferStackHandler.getStackInSlot(0).getMaxStackSize()) {
                                 profit = profit - 20;
-                                bufferStackHandler.getStackInSlot(i).grow(1);
-                                break Loop;
+                                bufferStackHandler.getStackInSlot(0).grow(1);
                             }
-                        } else if (bufferStackHandler.getStackInSlot(i) == ItemStack.EMPTY) {
+                        } else if (bufferStackHandler.getStackInSlot(0) == ItemStack.EMPTY) {
                             ItemStack newStack = new ItemStack(ModItems.itemBanknote);
                             newStack.setItemDamage(3);
-                            bufferStackHandler.setStackInSlot(i, newStack);
+                            bufferStackHandler.setStackInSlot(0, newStack);
                             profit = profit - 20;
-                            break Loop;
                         }
                     }
                     //</editor-fold>

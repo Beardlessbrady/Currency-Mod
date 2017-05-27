@@ -47,8 +47,7 @@ public class ContainerVending extends Container implements INBTInventory{
     private final int PLAYER_FIRST_SLOT_INDEX = 0;
     private final int TE_MONEY_FIRST_SLOT_INDEX = PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT;
     private final int TE_VEND_FIRST_SLOT_INDEX = TE_MONEY_FIRST_SLOT_INDEX + 1;
-
-    private int TE_BUFFER_TOTAL_COUNT = 3;
+    private final int TE_VEND_BUFFER_SLOT = TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT + 1;
 
     private Item[] specialSlotItems = new Item[2];
     private TileVending tile;
@@ -102,7 +101,6 @@ public class ContainerVending extends Container implements INBTInventory{
         if(tile.getField(7) == 1) {
             TE_INV_YPOS = 32;
             TE_VEND_COLUMN_COUNT = 6;
-            TE_BUFFER_TOTAL_COUNT = 6;
             TE_VEND_MAIN_TOTAL_COUNT = TE_VEND_COLUMN_COUNT * TE_VEND_ROW_COUNT;
         }
 
@@ -117,23 +115,13 @@ public class ContainerVending extends Container implements INBTInventory{
             }
         }
 
-        //Buffer Slots
-        int buffStart = 1;
-        int skip = 15;
-        if(tile.getField(7) == 1){
-            buffStart = 0;
-            skip =  0;
-        }
-        for (int x = buffStart; x < TE_BUFFER_TOTAL_COUNT + buffStart; x++) {
-            int slotNum = 30 + 1 + x;
-            int ypos = 32 + x * 18;
-            addSlotToContainer(new SlotCustomizable(itemHandler, slotNum - buffStart, 15, ypos, specialSlotItems));
-        }
+        //Buffer Slot
+        addSlotToContainer(new SlotCustomizable(itemHandler, TE_VEND_BUFFER_SLOT, 20, 20, specialSlotItems));
     }
 
     @Override
     public void onContainerClosed(EntityPlayer playerIn) {
-        if(tile.getField(2) == 1) checkGhostStacks();
+        checkGhostStacks();
         tile.voidPlayerUsing();
         tile.setField(8, 0);
         tile.setField(5, 0);
@@ -286,7 +274,7 @@ public class ContainerVending extends Container implements INBTInventory{
                         }
                     }
                 }
-            } else if (index >= TE_VEND_FIRST_SLOT_INDEX && index < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT + TE_BUFFER_TOTAL_COUNT) {  //TE Inventory
+            } else if (index >= TE_VEND_FIRST_SLOT_INDEX && index < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT + 1) {  //TE Inventory
                 if (!this.mergeItemStack(copyStack, 0, PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT, false)) {
                     return ItemStack.EMPTY;
                 }

@@ -220,7 +220,7 @@ public class BlockVending extends Block implements ITileEntityProvider {
     //<editor-fold desc="Rendering-----------------------------------------------------------------------------------------------------------">
     @Override
     public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
-        switch (getMetaFromState(state)) {
+        switch (getMetaFromState(state)% 4) {
                 default:
                 case 2: return BOUND_BOX_N;
                 case 3: return BOUND_BOX_E;
@@ -232,7 +232,7 @@ public class BlockVending extends Block implements ITileEntityProvider {
     @Nullable
     @Override
     public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
-        switch (getMetaFromState(blockState)) {
+        switch (getMetaFromState(blockState)% 4) {
                 default:
                 case 2: return BOUND_BOX_N;
                 case 3: return BOUND_BOX_E;
