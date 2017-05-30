@@ -1,5 +1,6 @@
 package gunn.modcurrency.mod.network;
 
+import gunn.modcurrency.mod.tileentity.TileExchanger;
 import gunn.modcurrency.mod.tileentity.TileVending;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -52,6 +53,7 @@ public class PacketItemSpawnToServer implements IMessage {
             World world = playerEntity.world;
             TileEntity te = world.getTileEntity(message.blockPos);
             if(te instanceof TileVending) ((TileVending) te).outChange();
+            if(te instanceof TileExchanger) ((TileExchanger) te).outChange();
         }
     }
 }

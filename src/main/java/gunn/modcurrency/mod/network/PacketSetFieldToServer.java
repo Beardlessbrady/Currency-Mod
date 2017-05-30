@@ -1,6 +1,7 @@
 package gunn.modcurrency.mod.network;
 
 import gunn.modcurrency.mod.tileentity.TileATM;
+import gunn.modcurrency.mod.tileentity.TileExchanger;
 import gunn.modcurrency.mod.tileentity.TileVending;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -57,6 +58,7 @@ public class PacketSetFieldToServer implements IMessage {
             EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
             World world = playerEntity.world;
             if(world.getTileEntity(message.blockPos) instanceof TileVending)((TileVending) world.getTileEntity(message.blockPos)).setField(message.field, message.data);
+            if(world.getTileEntity(message.blockPos) instanceof TileExchanger) ((TileExchanger) world.getTileEntity(message.blockPos)).setField(message.field, message.data);
             if(world.getTileEntity(message.blockPos) instanceof TileATM) ((TileATM) world.getTileEntity(message.blockPos)).setField(message.field, message.data);
         }
     }
