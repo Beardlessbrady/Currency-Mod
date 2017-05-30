@@ -1,13 +1,16 @@
 package gunn.modcurrency.mod.handler;
 
 import gunn.modcurrency.mod.client.gui.GuiATM;
+import gunn.modcurrency.mod.client.gui.GuiExchanger;
 import gunn.modcurrency.mod.client.gui.GuiVending;
 import gunn.modcurrency.mod.client.gui.GuiWallet;
 import gunn.modcurrency.mod.container.ContainerATM;
+import gunn.modcurrency.mod.container.ContainerExchanger;
 import gunn.modcurrency.mod.container.ContainerVending;
 import gunn.modcurrency.mod.container.ContainerWallet;
 import gunn.modcurrency.mod.item.ModItems;
 import gunn.modcurrency.mod.tileentity.TileATM;
+import gunn.modcurrency.mod.tileentity.TileExchanger;
 import gunn.modcurrency.mod.tileentity.TileVending;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -38,10 +41,10 @@ public class GuiHandler implements IGuiHandler{
             return new ContainerVending(player.inventory, tilevendor);
         }
 
-       /* if(tileEntity instanceof TileSeller && ID == 31){
-            TileSeller tileSeller = (TileSeller) tileEntity;
-            return new ContainerVendExchange(player.inventory, tileSeller);
-        }*/
+        if(tileEntity instanceof TileExchanger && ID == 31){
+            TileExchanger tileExchanger = (TileExchanger) tileEntity;
+            return new ContainerExchanger(player.inventory, tileExchanger);
+        }
 
         if(ID == 32 && player.getHeldItemMainhand().getItem().equals(ModItems.itemWallet)){
             return new ContainerWallet(player, player.getHeldItemMainhand());
@@ -64,10 +67,10 @@ public class GuiHandler implements IGuiHandler{
             return new GuiVending(player, tilevendor);
         }
 
-        /*if(tileEntity instanceof TileSeller && ID == 31){
-            TileSeller tileSeller = (TileSeller) tileEntity;
-            return new GuiVendExchange(player.inventory, tileSeller);
-        }*/
+        if(tileEntity instanceof TileExchanger && ID == 31){
+            TileExchanger tileSeller = (TileExchanger) tileEntity;
+            return new GuiExchanger(player, tileSeller);
+        }
 
         if(ID == 32 && player.getHeldItemMainhand().getItem().equals(ModItems.itemWallet)){
             return new GuiWallet(player, player.getHeldItemMainhand());

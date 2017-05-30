@@ -10,6 +10,7 @@ import gunn.modcurrency.mod.ModConfig;
  */
 public class ModBlocks {
     public static BlockVending blockVending;
+    public static BlockExchanger blockExchanger;
     public static BlockATM blockATM;
     //public static BlockEntityMarket blockEntityMarket;
 
@@ -19,17 +20,20 @@ public class ModBlocks {
 
     private static void setupBlocks(){
         if(ModConfig.enableVendor) blockVending = new BlockVending();
+        if(ModConfig.enableSeller) blockExchanger = new BlockExchanger();
         if(ModConfig.enableATM) blockATM = new BlockATM();
         //blockEntityMarket = new BlockEntityMarket();
     }
 
     public static void ItemModels(){
         if(ModConfig.enableVendor)  blockVending.initModel();
+        if(ModConfig.enableSeller) blockExchanger.initModel();
         if(ModConfig.enableATM) blockATM.initModel();
     }
     
     public static void addRecipes(){
         if(ModConfig.enableVendor && ModConfig.recipeVendor) blockVending.recipe();
+        if(ModConfig.enableSeller && ModConfig.recipeSeller) blockExchanger.recipe();
         if(ModConfig.enableATM && ModConfig.recipeATM) blockATM.recipe();
     }
 }
