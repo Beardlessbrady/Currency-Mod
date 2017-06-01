@@ -40,20 +40,21 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     private static final int INPUT_SLOT_COUNT = 1;
     public static final int VEND_SLOT_COUNT = 30;
 
-    private int bank, profit, selectedSlot, walletTotal;
+    private int bank, selectedSlot, cashRegister;
     private String owner, selectedName;
-    private boolean locked, mode, creative, infinite, gearExtended, walletIn, twoBlock;
+    private boolean locked, mode, creative, infinite, gearExtended, twoBlock;
     private int[] itemCosts = new int[VEND_SLOT_COUNT];
+    private int[] itemAmounts = new int[VEND_SLOT_COUNT];
     private ItemStackHandler inputStackHandler = new ItemStackHandler(INPUT_SLOT_COUNT);
-    private ItemHandlerVendor vendStackHandler = new ItemHandlerVendor(VEND_SLOT_COUNT);
+    private ItemStackHandler vendStackHandler = new ItemStackHandler(VEND_SLOT_COUNT);
     private ItemStackHandler bufferStackHandler = new ItemHandlerVendor(1);
+    private ItemStackHandler automationInputStackHandler = new ItemStackHandler(1);;
     private EntityPlayer playerUsing = null;
 
     public TileExchanger() {
         bank = 0;
-        profit = 0;
+        cashRegister = 0;
         selectedSlot = 37;
-        walletTotal = 0;
         owner = "";
         selectedName = "No Item";
         locked = false;
@@ -61,10 +62,12 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         creative = false;
         infinite = false;
         gearExtended = false;
-        walletIn = false;
         twoBlock = false;
 
-        for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = 0;
+        for (int i = 0; i < itemCosts.length; i++){
+            itemCosts[i] = 0;
+            itemAmounts[i] = 0;
+        }
     }
 
     public void openGui(EntityPlayer player, World world, BlockPos pos) {
@@ -110,42 +113,94 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                         bank = bank + amount;
                         markDirty();
                         //</editor-fold>
-                    } else if (inputStackHandler.getStackInSlot(0).getItem() == ModItems.itemWallet) {      //Wallet
-                        walletIn = true;
-                        walletTotal = getTotalCash();
                     }
-                } else if (walletIn) walletIn = false;
+                }
 
-                if (profit >= 20) {
-                    //<editor-fold desc="Dealing with Buffer Slots">
-                    if(locked) {
-                        if (bufferStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
-                            if (bufferStackHandler.getStackInSlot(0).getItemDamage() == 3 && bufferStackHandler.getStackInSlot(0).getCount() < bufferStackHandler.getStackInSlot(0).getMaxStackSize()) {
-                                profit = profit - 20;
-                                bufferStackHandler.getStackInSlot(0).grow(1);
+                if (!mode) {        //SELL MODE
+                    if (inputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
+                        searchLoop:
+                        for (int i = 0; i < vendStackHandler.getSlots(); i++) {
+                            if (vendStackHandler.getStackInSlot(i) != ItemStack.EMPTY) {
+                                if (inputStackHandler.getStackInSlot(0).getUnlocalizedName().equals(vendStackHandler.getStackInSlot(i).getUnlocalizedName())) {
+                                    int cost = getItemCost(i);
+                                    boolean isThereRoom = false;
+
+                                    if (bufferStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
+                                            if ((bufferStackHandler.getStackInSlot(0).getUnlocalizedName().equals(inputStackHandler.getStackInSlot(0).getUnlocalizedName())
+                                                    && (bufferStackHandler.getStackInSlot(0).getCount() < bufferStackHandler.getStackInSlot(0).getMaxStackSize())))
+                                                isThereRoom = true;
+                                        } else isThereRoom = true;
+
+                                    if ((cashRegister >= cost || infinite) && isThereRoom) {
+                                        ItemStack inputItem = inputStackHandler.getStackInSlot(0);
+                                        bank = bank + cost;
+                                        if (!infinite) {
+                                            cashRegister = cashRegister - cost;
+                                            if (bufferStackHandler.getStackInSlot(0) != ItemStack.EMPTY)
+                                                bufferStackHandler.getStackInSlot(0).grow(1);
+                                            if (bufferStackHandler.getStackInSlot(0) == ItemStack.EMPTY) {
+                                                ItemStack newStack = inputItem.copy();
+                                                newStack.setCount(1);
+                                                bufferStackHandler.setStackInSlot(0, newStack);
+                                            }
+                                        }
+                                        inputItem.shrink(1);
+                                        if (itemAmounts[i] > 1) {
+                                            vendStackHandler.getStackInSlot(i).shrink(1);
+                                            itemAmounts[i]--;
+                                        }else if (itemAmounts[i] == 1){
+                                            vendStackHandler.setStackInSlot(i, ItemStack.EMPTY);
+                                            itemAmounts[i] = -1;
+                                        }
+                                    }
+                                }
                             }
-                        } else if (bufferStackHandler.getStackInSlot(0) == ItemStack.EMPTY) {
-                            ItemStack newStack = new ItemStack(ModItems.itemBanknote);
-                            newStack.setItemDamage(3);
-                            bufferStackHandler.setStackInSlot(0, newStack);
-                            profit = profit - 20;
+                            if (inputStackHandler.getStackInSlot(0).getCount() == 0) {
+                                inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
+                                break searchLoop;
+                            }
                         }
                     }
-                    //</editor-fold>
+                } else {        //EDIT MODE
+                    if (inputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
+                        if (inputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemBanknote)) {
+                            int amount;
+                            switch (inputStackHandler.getStackInSlot(0).getItemDamage()) {
+                                case 0:
+                                    amount = 1;
+                                    break;
+                                case 1:
+                                    amount = 5;
+                                    break;
+                                case 2:
+                                    amount = 10;
+                                    break;
+                                case 3:
+                                    amount = 20;
+                                    break;
+                                case 4:
+                                    amount = 50;
+                                    break;
+                                case 5:
+                                    amount = 100;
+                                    break;
+                                default:
+                                    amount = -1;
+                                    break;
+                            }
+                            amount = amount * inputStackHandler.getStackInSlot(0).getCount();
+                            inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
+                            cashRegister = cashRegister + amount;
+                        }
+                    }
                 }
             }
+            markDirty();
         }
     }
 
     //Drop Items
     public void dropItems() {
-        for (int i = 0; i < vendStackHandler.getSlots(); i++) {
-            ItemStack item = vendStackHandler.getStackInSlot(i);
-            if (item != ItemStack.EMPTY) {
-                world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), item));
-                vendStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
-            }
-        }
         for (int i = 0; i < bufferStackHandler.getSlots(); i++){
             ItemStack item = bufferStackHandler.getStackInSlot(i);
             if (item != ItemStack.EMPTY) {
@@ -175,10 +230,6 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
 
     public boolean canInteractWith(EntityPlayer player) {
         return !isInvalid() && player.getDistanceSq(pos.add(0.5D, 0.5D, 0.5D)) <= 64D;
-    }
-
-    public void unsucessfulNoise(){
-        world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 1.0F, 10.0F, false);
     }
 
     //<editor-fold desc="Money Methods-------------------------------------------------------------------------------------------------------">
@@ -220,16 +271,9 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         return 0;
     }
 
-    public boolean canAfford(int slot){
-        if(walletIn){
-            return itemCosts[slot] >= getTotalCash();
-        }
-        return bank >= itemCosts[slot];
-    }
-
     public void outChange() {
         int amount = bank;
-        if (mode) amount = profit;
+        if(mode) amount = cashRegister;
 
         int[] out = new int[6];
 
@@ -257,9 +301,9 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                     item.setItemDamage(i);
                     item.setCount(out[i]);
 
-                    if (mode) {
-                        profit = 0;
-                    } else {
+                    if(mode){
+                        cashRegister = 0;
+                    }else {
                         bank = 0;
                     }
 
@@ -337,15 +381,14 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         compound.setTag("item", vendStackHandler.serializeNBT());
         compound.setTag("buffer", bufferStackHandler.serializeNBT());
         compound.setTag("input", inputStackHandler.serializeNBT());
+        compound.setTag("autoInput", automationInputStackHandler.serializeNBT());
         compound.setInteger("bank", bank);
-        compound.setInteger("profit", profit);
-        compound.setInteger("walletTotal", walletTotal);
+        compound.setInteger("cashRegister", cashRegister);
         compound.setBoolean("locked", locked);
         compound.setBoolean("mode", mode);
         compound.setBoolean("creative", creative);
         compound.setBoolean("infinite", infinite);
         compound.setBoolean("gearExtended", gearExtended);
-        compound.setBoolean("walletIn", walletIn);
         compound.setBoolean("twoBlock", twoBlock);
         compound.setInteger("selectedSlot", selectedSlot);
         compound.setString("selectedName", selectedName);
@@ -364,15 +407,14 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         if (compound.hasKey("item")) vendStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("item"));
         if (compound.hasKey("buffer")) bufferStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("buffer"));
         if (compound.hasKey("input")) inputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("input"));
+        if (compound.hasKey("autoInput")) automationInputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("autoInput"));
         if (compound.hasKey("bank")) bank = compound.getInteger("bank");
-        if (compound.hasKey("profit")) profit = compound.getInteger("profit");
-        if (compound.hasKey("walletTotal")) walletTotal = compound.getInteger("walletTotal");
+        if (compound.hasKey("cashRegister")) cashRegister = compound.getInteger("cashRegister");
         if (compound.hasKey("locked")) locked = compound.getBoolean("locked");
         if (compound.hasKey("mode")) mode = compound.getBoolean("mode");
         if (compound.hasKey("creative")) creative = compound.getBoolean("creative");
         if (compound.hasKey("infinite")) infinite = compound.getBoolean("infinite");
         if (compound.hasKey("gearExtended")) gearExtended = compound.getBoolean("gearExtended");
-        if (compound.hasKey("walletIn")) walletIn = compound.getBoolean("walletIn");
         if (compound.hasKey("twoBlock")) twoBlock = compound.getBoolean("twoBlock");
         if (compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
         if (compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
@@ -394,14 +436,12 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setInteger("bank", bank);
-        tag.setInteger("profit", profit);
-        tag.setInteger("walletTotal", walletTotal);
+        tag.setInteger("cashRegister", cashRegister);
         tag.setBoolean("locked", locked);
         tag.setBoolean("mode", mode);
         tag.setBoolean("creative", creative);
         tag.setBoolean("infinite", infinite);
         tag.setBoolean("gearExtended", gearExtended);
-        tag.setBoolean("walletIn", walletIn);
         tag.setBoolean("twoBlock", twoBlock);
         tag.setInteger("selectedSlot", selectedSlot);
         tag.setString("selectedName", selectedName);
@@ -418,14 +458,12 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         super.onDataPacket(net, pkt);
         bank = pkt.getNbtCompound().getInteger("bank");
-        profit = pkt.getNbtCompound().getInteger("profit");
-        walletTotal = pkt.getNbtCompound().getInteger("walletTotal");
+        cashRegister = pkt.getNbtCompound().getInteger("cashRegister");
         locked = pkt.getNbtCompound().getBoolean("locked");
         mode = pkt.getNbtCompound().getBoolean("mode");
         creative = pkt.getNbtCompound().getBoolean("creative");
         infinite = pkt.getNbtCompound().getBoolean("infinite");
         gearExtended = pkt.getNbtCompound().getBoolean("gearExtended");
-        walletIn = pkt.getNbtCompound().getBoolean("walletIn");
         twoBlock = pkt.getNbtCompound().getBoolean("twoBlock");
         selectedSlot = pkt.getNbtCompound().getInteger("selectedSlot");
         selectedName = pkt.getNbtCompound().getString("selectedName");
@@ -440,7 +478,9 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return facing == null || locked;
+            if(facing == null) return true;
+            if(!locked) return false;
+            return true;
         }
         return super.hasCapability(capability, facing);
     }
@@ -450,7 +490,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
             if (facing == null) return (T) new CombinedInvWrapper(inputStackHandler, vendStackHandler, bufferStackHandler); //Inside Itself
             if (facing == EnumFacing.DOWN) return (T) bufferStackHandler;
-            if (facing != EnumFacing.DOWN) return (T) vendStackHandler;
+            if (facing != EnumFacing.DOWN) return (T) automationInputStackHandler;
         }
         return super.getCapability(capability, facing);
     }
@@ -458,7 +498,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
 
     //<editor-fold desc="Getter & Setter Methods---------------------------------------------------------------------------------------------">
     public int getFieldCount() {
-        return 11;
+        return 8;
     }
 
     public void setField(int id, int value) {
@@ -476,7 +516,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                 selectedSlot = value;
                 break;
             case 4:
-                profit = value;
+                cashRegister = value;
                 break;
             case 5:
                 creative = (value == 1);
@@ -489,12 +529,6 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                 break;
             case 8:
                 gearExtended = (value == 1);
-                break;
-            case 9:
-                walletIn = (value == 1);
-                break;
-            case 10:
-                walletTotal = value;
                 break;
         }
     }
@@ -510,7 +544,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
             case 3:
                 return selectedSlot;
             case 4:
-                return profit;
+                return cashRegister;
             case 5:
                 return (creative) ? 1 : 0;
             case 6:
@@ -519,10 +553,6 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                 return (twoBlock) ? 1 : 0;
             case 8:
                 return (gearExtended) ? 1 : 0;
-            case 9:
-                return (walletIn) ? 1 : 0;
-            case 10:
-                return walletTotal;
         }
         return -1;
     }
@@ -547,6 +577,17 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         itemCosts[index] = amount;
     }
 
+    public int getItemAmount(int index) {return itemAmounts[index];}
+
+    public void setItemAmount(int amount, int index){
+        itemAmounts[index] = amount;
+        if(amount == -1){
+            vendStackHandler.getStackInSlot(index).setCount(1);
+        }else {
+            vendStackHandler.getStackInSlot(index).setCount(itemAmounts[index]);
+        }
+    }
+
     public ItemStackHandler getBufferStackHandler(){
         return bufferStackHandler;
     }
@@ -555,7 +596,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         return inputStackHandler;
     }
 
-    public ItemHandlerVendor getVendStackHandler(){
+    public ItemStackHandler getVendStackHandler(){
         return vendStackHandler;
     }
 
@@ -567,7 +608,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         inputStackHandler = input;
     }
 
-    public void setVendStackHandler(ItemHandlerVendor vend){
+    public void setVendStackHandler(ItemStackHandler vend){
         vendStackHandler = vend;
     }
 
@@ -591,14 +632,6 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
 
     public void voidPlayerUsing(){
         playerUsing = null;
-    }
-
-    public boolean isGhostSlot(int slot){
-        return vendStackHandler.isGhost(slot);
-    }
-
-    public void setGhostSlot(int slot, boolean bool){
-        vendStackHandler.setGhost(slot, bool);
     }
     //</editor-fold>
 }

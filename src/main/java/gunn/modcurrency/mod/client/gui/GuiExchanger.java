@@ -37,7 +37,7 @@ public class GuiExchanger extends GuiContainer {
     private TileExchanger tile;
     private boolean creativeExtended;
     private EntityPlayer player;
-    private GuiTextField priceField;
+    private GuiTextField priceField, amountField;
 
     private static final int CHANGEBUTTON_ID = 0;
     private static final int INFINITEBUTTON_ID = 1;
@@ -61,8 +61,7 @@ public class GuiExchanger extends GuiContainer {
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
 
-        String ChangeButton = "Change";
-        if(tile.getField(2) == 1) ChangeButton = "Profit";
+        String ChangeButton = "Cash";
 
         this.buttonList.add(new GuiButton(CHANGEBUTTON_ID, i + 103, j + 7, 45, 20, ChangeButton));
         this.buttonList.add(new GuiButton(INFINITEBUTTON_ID, i + 198, j + 85, 45, 20, "BORKED"));
@@ -141,9 +140,9 @@ public class GuiExchanger extends GuiContainer {
 
         //Draw Input Icons
         if (tile.getField(2) == 0) {
-            drawTexturedModalRect(guiLeft + 152, guiTop + 9, 198, 0, 15, 15);
+            drawTexturedModalRect(guiLeft + 152, guiTop + 9, 198, 17, 15, 15);
         } else {
-            drawTexturedModalRect(guiLeft + 152, guiTop + 9, 215, 0, 15, 15);
+            drawTexturedModalRect(guiLeft + 152, guiTop + 9, 198, 0, 15, 15);
         }
     }
 
@@ -373,18 +372,7 @@ public class GuiExchanger extends GuiContainer {
             List<String> list = new ArrayList<>();
             list.add(String.valueOf(currStack.getDisplayName()));
 
-            if(tile.getField(2) == 0){
-                if(!tile.canAfford(slot)){
-                    list.add(TextFormatting.RED + "$" + (String.valueOf(tile.getItemCost(slot))));
-                }else{
-                    list.add("$" + (String.valueOf(tile.getItemCost(slot))));
-                }
-                if(tile.isGhostSlot(slot)) {
-                    list.add(TextFormatting.RED + "OUT OF STOCK");
-                }
-            }else{
-                list.add("$" + (String.valueOf(tile.getItemCost(slot))));
-            }
+            list.add("$" + (String.valueOf(tile.getItemCost(slot))));
 
             FontRenderer font = stack.getItem().getFontRenderer(stack);
             net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(stack);

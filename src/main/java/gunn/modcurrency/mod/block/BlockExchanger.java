@@ -111,7 +111,7 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
                     //Backing up important tile variables from below tile
                     TileExchanger tile = (TileExchanger) worldIn.getTileEntity(pos.down());
                     ItemStackHandler inputStack = tile.getInputStackHandler();
-                    ItemHandlerVendor vendStack = tile.getVendStackHandler();
+                    ItemStackHandler vendStack = tile.getVendStackHandler();
                     ItemStackHandler buffStack = tile.getBufferStackHandler();
                     int bank = tile.getField(0);
                     int profit = tile.getField(4);
@@ -152,7 +152,7 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
                 //Backing up important tile variables from below tile
                 TileExchanger tile = (TileExchanger) worldIn.getTileEntity(pos.down());
                 ItemStackHandler inputStack = tile.getInputStackHandler();
-                ItemHandlerVendor vendStack = tile.getVendStackHandler();
+                ItemStackHandler vendStack = tile.getVendStackHandler();
                 ItemStackHandler buffStack = tile.getBufferStackHandler();
                 int bank = tile.getField(0);
                 int profit = tile.getField(4);
