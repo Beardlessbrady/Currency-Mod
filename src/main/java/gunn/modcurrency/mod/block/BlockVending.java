@@ -1,7 +1,7 @@
 package gunn.modcurrency.mod.block;
 
 import gunn.modcurrency.mod.ModCurrency;
-import gunn.modcurrency.mod.handler.ItemHandlerVendor;
+import gunn.modcurrency.mod.container.itemhandler.ItemHandlerVendor;
 import gunn.modcurrency.mod.handler.StateHandler;
 import gunn.modcurrency.mod.tileentity.TileVending;
 import net.minecraft.block.Block;

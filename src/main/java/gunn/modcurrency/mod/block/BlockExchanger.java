@@ -2,7 +2,6 @@ package gunn.modcurrency.mod.block;
 
 
 import gunn.modcurrency.mod.ModCurrency;
-import gunn.modcurrency.mod.handler.ItemHandlerVendor;
 import gunn.modcurrency.mod.handler.StateHandler;
 import gunn.modcurrency.mod.tileentity.TileExchanger;
 import net.minecraft.block.Block;
@@ -14,6 +13,8 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -58,15 +59,17 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
     }
 
     void recipe() {
-     /*   ItemStack basic = new ItemStack(Item.getItemFromBlock(this));
+        ItemStack basic = new ItemStack(Item.getItemFromBlock(this));
         basic.setItemDamage(0);
 
         GameRegistry.addRecipe(basic,
-                "ABA", "ACA", "ADA",
+                "ABA",
+                "ACA",
+                "ADA",
                 'A', Items.IRON_INGOT,
-                'B', Items.COMPARATOR,
+                'B', Items.REPEATER,
                 'C', Item.getItemFromBlock(Blocks.CHEST),
-                'D', Items.IRON_DOOR);*/
+                'D', Items.IRON_DOOR);
     }
 
     void initModel() {

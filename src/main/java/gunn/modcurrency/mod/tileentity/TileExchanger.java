@@ -2,7 +2,8 @@ package gunn.modcurrency.mod.tileentity;
 
 import gunn.modcurrency.mod.ModCurrency;
 import gunn.modcurrency.mod.client.gui.util.INBTInventory;
-import gunn.modcurrency.mod.handler.ItemHandlerVendor;
+import gunn.modcurrency.mod.container.itemhandler.ItemHandlerCustom;
+import gunn.modcurrency.mod.container.itemhandler.ItemHandlerVendor;
 import gunn.modcurrency.mod.handler.StateHandler;
 import gunn.modcurrency.mod.item.ItemWallet;
 import gunn.modcurrency.mod.item.ModItems;
@@ -46,7 +47,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     private ItemStackHandler inputStackHandler = new ItemStackHandler(INPUT_SLOT_COUNT);
     private ItemStackHandler vendStackHandler = new ItemStackHandler(VEND_SLOT_COUNT);
     private ItemStackHandler bufferStackHandler = new ItemHandlerVendor(1);
-    private ItemStackHandler automationInputStackHandler = new ItemStackHandler(1);
+    private ItemHandlerCustom automationInputStackHandler = new ItemHandlerCustom(1);
     private EntityPlayer playerUsing = null;
 
     public TileExchanger() {
@@ -61,6 +62,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         infinite = false;
         gearExtended = false;
         twoBlock = false;
+        automationInputStackHandler.setAllowedItem(ModItems.itemBanknote);
 
         for (int i = 0; i < itemCosts.length; i++){
             itemCosts[i] = 0;

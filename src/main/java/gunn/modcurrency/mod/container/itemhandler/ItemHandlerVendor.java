@@ -1,4 +1,4 @@
-package gunn.modcurrency.mod.handler;
+package gunn.modcurrency.mod.container.itemhandler;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;

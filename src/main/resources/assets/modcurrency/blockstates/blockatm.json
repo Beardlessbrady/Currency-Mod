@@ -4,7 +4,8 @@
     "model": "modcurrency:atm",
     "textures": {
       "particle": "blocks/iron_block"
-    }
+    },
+    "transform": "forge:default-block"
   },
   "variants": {
     "normal": [{}],

@@ -5,7 +5,8 @@
     "textures": {
       "texture": "modcurrency:blocks/vending/vending_black",
       "particle": "blocks/coal_block"
-    }
+    },
+    "transform": "forge:default-block"
   },
   "variants": {
     "normal": [{}],
