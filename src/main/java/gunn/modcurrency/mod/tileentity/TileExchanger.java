@@ -118,13 +118,15 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                         searchLoop:
                         for (int i = 0; i < vendStackHandler.getSlots(); i++) {
                             if (vendStackHandler.getStackInSlot(i) != ItemStack.EMPTY) {
-                                if (inputStackHandler.getStackInSlot(0).getUnlocalizedName().equals(vendStackHandler.getStackInSlot(i).getUnlocalizedName())) {
+                                if (inputStackHandler.getStackInSlot(0).getItem().equals(vendStackHandler.getStackInSlot(i).getItem()) &&
+                                        inputStackHandler.getStackInSlot(0).getItemDamage() == vendStackHandler.getStackInSlot(i).getItemDamage()) {
                                     int cost = getItemCost(i);
                                     boolean isThereRoom = false;
                                     int buffSlot = 0;
 
                                     if (bufferStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
-                                        if ((bufferStackHandler.getStackInSlot(0).getUnlocalizedName().equals(inputStackHandler.getStackInSlot(0).getUnlocalizedName())
+                                        if ((bufferStackHandler.getStackInSlot(0).getItem().equals(inputStackHandler.getStackInSlot(0).getItem()) &&
+                                                bufferStackHandler.getStackInSlot(0).getItemDamage() == inputStackHandler.getStackInSlot(0).getItemDamage()
                                                 && (bufferStackHandler.getStackInSlot(0).getCount() < bufferStackHandler.getStackInSlot(0).getMaxStackSize())))
                                             isThereRoom = true;
                                     } else isThereRoom = true;
@@ -198,7 +200,6 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         }
     }
 
-
     //Drop Items
     public void dropItems() {
         for (int i = 0; i < bufferStackHandler.getSlots(); i++){
@@ -233,44 +234,6 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     }
 
     //<editor-fold desc="Money Methods-------------------------------------------------------------------------------------------------------">
-    private int getTotalCash(){
-        ItemStack item = inputStackHandler.getStackInSlot(0);
-        if(item.hasTagCompound()) {
-            ItemStackHandler itemStackHandler = readInventoryTag(inputStackHandler.getStackInSlot(0), ItemWallet.WALLET_TOTAL_COUNT);
-
-            int totalCash = 0;
-            for (int i = 0; i < itemStackHandler.getSlots(); i++) {
-                if (itemStackHandler.getStackInSlot(i) != ItemStack.EMPTY) {
-                    switch (itemStackHandler.getStackInSlot(i).getItemDamage()) {
-                        case 0:
-                            totalCash = totalCash + itemStackHandler.getStackInSlot(i).getCount();
-                            break;
-                        case 1:
-                            totalCash = totalCash + 5 * itemStackHandler.getStackInSlot(i).getCount();
-                            break;
-                        case 2:
-                            totalCash = totalCash + 10 * itemStackHandler.getStackInSlot(i).getCount();
-                            break;
-                        case 3:
-                            totalCash = totalCash + 20 * itemStackHandler.getStackInSlot(i).getCount();
-                            break;
-                        case 4:
-                            totalCash = totalCash + 50 * itemStackHandler.getStackInSlot(i).getCount();
-                            break;
-                        case 5:
-                            totalCash = totalCash + 100 * itemStackHandler.getStackInSlot(i).getCount();
-                            break;
-                        default:
-                            totalCash = -1;
-                            break;
-                    }
-                }
-            }
-            return totalCash;
-        }
-        return 0;
-    }
-
     public void outChange() {
         int amount = bank;
         if(mode) amount = cashRegister;
@@ -398,6 +361,10 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         for (int i = 0; i < itemCosts.length; i++) itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
         compound.setTag("itemCosts", itemCostsNBT);
 
+        NBTTagCompound itemAmountNBT = new NBTTagCompound();
+        for (int i = 0; i < itemAmounts.length; i++) itemAmountNBT.setInteger("amount" + i, itemAmounts[i]);
+        compound.setTag("itemAmounts", itemAmountNBT);
+
         return compound;
     }
 
@@ -423,6 +390,11 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         if (compound.hasKey("itemCosts")) {
             NBTTagCompound itemCostsNBT = compound.getCompoundTag("itemCosts");
             for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = itemCostsNBT.getInteger("cost" + i);
+        }
+
+        if (compound.hasKey("itemAmounts")) {
+            NBTTagCompound itemAmountsNBT = compound.getCompoundTag("itemAmounts");
+            for (int i = 0; i < itemAmounts.length; i++) itemAmounts[i] = itemAmountsNBT.getInteger("amount" + i);
         }
     }
 
@@ -451,6 +423,10 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         for (int i = 0; i < itemCosts.length; i++) itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
         tag.setTag("itemCosts", itemCostsNBT);
 
+        NBTTagCompound itemAmountsNBT = new NBTTagCompound();
+        for (int i = 0; i < itemAmounts.length; i++) itemAmountsNBT.setInteger("amount" + i, itemAmounts[i]);
+        tag.setTag("itemAmounts", itemAmountsNBT);
+
         return new SPacketUpdateTileEntity(pos, 1, tag);
     }
 
@@ -471,6 +447,9 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
 
         NBTTagCompound itemCostsNBT = pkt.getNbtCompound().getCompoundTag("itemCosts");
         for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = itemCostsNBT.getInteger("cost" + i);
+
+        NBTTagCompound itemAmountsNBT = pkt.getNbtCompound().getCompoundTag("itemAmounts");
+        for (int i = 0; i < itemAmounts.length; i++) itemAmounts[i] = itemAmountsNBT.getInteger("amounts" + i);
     }
     //</editor-fold>--------------------------------
 
@@ -577,7 +556,18 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         itemCosts[index] = amount;
     }
 
-    public int getItemAmount(int index) {return itemAmounts[index];}
+    public int getItemAmount(int index) {
+        return itemAmounts[index];
+    }
+
+    public void setItemAmount(int amount){
+        itemAmounts[selectedSlot - 37] = amount;
+        if(amount == -1){
+            vendStackHandler.getStackInSlot(selectedSlot - 37).setCount(1);
+        }else {
+            vendStackHandler.getStackInSlot(selectedSlot - 37).setCount(itemAmounts[selectedSlot - 37]);
+        }
+    }
 
     public void setItemAmount(int amount, int index){
         itemAmounts[index] = amount;

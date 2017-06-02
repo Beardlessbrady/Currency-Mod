@@ -20,6 +20,7 @@ tile.modcurrency:guivending.profit=Profit
 tile.modcurrency:guivending.funds=Funds
 tile.modcurrency:guivending.slotsettings=Slot Settings
 tile.modcurrency:guivending.cost=Cost:
+tile.modcurrency:guivending.amount=Amount:
 tile.modcurrency:guivending.cash=Cash
 tile.modcurrency:guivending.infinitestock=Infinite Stock
 tile.modcurrency:guivending.locktab=Lock Tab

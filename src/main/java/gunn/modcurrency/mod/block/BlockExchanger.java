@@ -123,6 +123,8 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
                     boolean infinite = tile.getField(6) == 1;
                     int[] itemCosts = new int[tile.VEND_SLOT_COUNT];
                     for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = tile.getItemCost(i);
+                    int[] itemAmounts = new int[tile.VEND_SLOT_COUNT];
+                    for (int i = 0; i < itemAmounts.length; i++) itemAmounts[i] = tile.getItemAmount(i);
 
                     worldIn.setBlockState(pos, state.withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.TWOTOP)
                             .withProperty(StateHandler.FACING, placer.getHorizontalFacing().getOpposite()));
@@ -142,6 +144,7 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
                     tile.setField(1, locked ? 1 : 0);
                     tile.setField(6, infinite ? 1 : 0);
                     for (int i = 0; i < itemCosts.length; i++) tile.setItemCost(itemCosts[i], i);
+                    for (int i = 0; i < itemAmounts.length; i++) tile.setItemAmount(itemAmounts[i], i);
                 }
             }
         }
@@ -164,6 +167,8 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
                 boolean infinite = tile.getField(6) == 1;
                 int[] itemCosts = new int[tile.VEND_SLOT_COUNT];
                 for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = tile.getItemCost(i);
+                int[] itemAmounts = new int[tile.VEND_SLOT_COUNT];
+                for (int i = 0; i < itemAmounts.length; i++) itemAmounts[i] = tile.getItemAmount(i);
 
                 worldIn.setBlockState(pos.down(), worldIn.getBlockState(pos.down()).withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.ONE));
                 ((TileExchanger) worldIn.getTileEntity(pos.down())).setField(7, 0);
@@ -180,6 +185,7 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
                 tile.setField(1, locked ? 1 : 0);
                 tile.setField(6, infinite ? 1 : 0);
                 for (int i = 0; i < itemCosts.length; i++) tile.setItemCost(itemCosts[i], i);
+                for (int i = 0; i < itemAmounts.length; i++) tile.setItemAmount(itemAmounts[i], i);
 
                 tile.dropTopItems();
             }

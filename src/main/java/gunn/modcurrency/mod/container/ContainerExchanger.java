@@ -127,16 +127,21 @@ public class ContainerExchanger extends Container implements INBTInventory{
     @Nullable
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-        if (tile.getField(2) == 1) {  //EDIT
+        if (tile.getField(2) == 1) {      //EDIT MODE
             if (slotId >= 0 && slotId <= 36) {
                 return super.slotClick(slotId, dragType, clickTypeIn, player);
             } else if ((slotId >= 37 && slotId < 67 && tile.getField(8) == 0)) {    //Vend Slots, not in Selection mode
                 InventoryPlayer inventoryPlayer = player.inventory;
                 Slot ghostSlot = this.inventorySlots.get(slotId);
                 if (clickTypeIn == ClickType.PICKUP) {      //LEFT
-                    if (inventoryPlayer.getItemStack().getItem() != Items.AIR && inventorySlots.get(slotId).getStack() == ItemStack.EMPTY) {
+                    if (inventoryPlayer.getItemStack() != ItemStack.EMPTY && inventorySlots.get(slotId).getStack() == ItemStack.EMPTY) {
                         ItemStack ghostStack = inventoryPlayer.getItemStack().copy();
-                        ghostStack.setCount(1);
+                        int gCount = 1;
+                        if (tile.getItemAmount(slotId - 37) > 1) {
+                            gCount = tile.getItemAmount(slotId - 37);
+                        }
+
+                        ghostStack.setCount(gCount);
                         ghostSlot.putStack(ghostStack);
                     } else {
                         tile.setItemAmount(-1, slotId - 37);
@@ -163,7 +168,7 @@ public class ContainerExchanger extends Container implements INBTInventory{
                 return ItemStack.EMPTY;
             }
         }
-        return ItemStack.EMPTY;
+       return ItemStack.EMPTY;
     }
 
     @Nullable

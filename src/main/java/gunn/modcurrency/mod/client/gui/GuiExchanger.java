@@ -2,10 +2,7 @@ package gunn.modcurrency.mod.client.gui;
 
 import gunn.modcurrency.mod.client.gui.util.TabButton;
 import gunn.modcurrency.mod.container.ContainerExchanger;
-import gunn.modcurrency.mod.network.PacketHandler;
-import gunn.modcurrency.mod.network.PacketItemSpawnToServer;
-import gunn.modcurrency.mod.network.PacketSetFieldToServer;
-import gunn.modcurrency.mod.network.PacketSetItemCostToServer;
+import gunn.modcurrency.mod.network.*;
 import gunn.modcurrency.mod.tileentity.TileExchanger;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -17,7 +14,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -70,10 +66,15 @@ public class GuiExchanger extends GuiContainer {
         this.buttonList.add(new TabButton("Gear", GEAR_ID, i - 20, 22 + ((TabButton) this.buttonList.get(LOCK_ID)).getButtonY(), 0, 0, 20, 21, "", TAB_TEXTURE));
         this.buttonList.add(new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton) this.buttonList.get(GEAR_ID)).getButtonY(), 0, 44, 20, 21, "", TAB_TEXTURE));
 
-        this.priceField = new GuiTextField(0, fontRendererObj, i - 50, j + 90, 45, 10);        //Setting Costs
+        this.priceField = new GuiTextField(0, fontRendererObj, i - 50, j + 91, 45, 10);        //Setting Costs
         this.priceField.setTextColor(Integer.parseInt("0099ff", 16));
         this.priceField.setEnableBackgroundDrawing(false);
         this.priceField.setMaxStringLength(7);
+
+        this.amountField = new GuiTextField(0, fontRendererObj, i - 38, j + 101, 45, 10);        //Setting Amounts
+        this.amountField.setTextColor(Integer.parseInt("0099ff", 16));
+        this.amountField.setEnableBackgroundDrawing(false);
+        this.amountField.setMaxStringLength(7);
 
         this.buttonList.get(MODE_ID).visible = false;
         this.buttonList.get(LOCK_ID).visible = false;
@@ -82,6 +83,7 @@ public class GuiExchanger extends GuiContainer {
         this.buttonList.get(INFINITEBUTTON_ID).visible = false;
 
         this.priceField.setEnabled(false);
+        this.amountField.setEnabled(false);
     }
 
     private void setCost() {
@@ -98,6 +100,21 @@ public class GuiExchanger extends GuiContainer {
         }
     }
 
+    private void setAmount() {
+        if (this.amountField.getText().length() > 0) {
+            int newAmount = Integer.valueOf(this.amountField.getText());
+            if (Integer.valueOf(this.amountField.getText()) == 0) newAmount = -1;
+
+            tile.setItemAmount(newAmount);
+            PacketSetItemAmountToServer pack = new PacketSetItemAmountToServer();
+            pack.setData(newAmount, tile.getPos());
+            PacketHandler.INSTANCE.sendToServer(pack);
+
+            tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
+            updateTextField();
+        }
+    }
+
     @Override
     public void onGuiClosed() {
         super.onGuiClosed();
@@ -105,6 +122,12 @@ public class GuiExchanger extends GuiContainer {
 
     private void updateTextField() {
         this.priceField.setText(String.valueOf(tile.getItemCost(tile.getField(3) - 37)));
+        if (tile.getItemAmount(tile.getField(3) - 37) == -1) {
+            this.amountField.setText("0");
+        } else {
+            //System.out.println(tile.getItemAmount(tile.getField(3) - 37));
+            this.amountField.setText(String.valueOf(tile.getItemAmount(tile.getField(3) - 37)));
+        }
     }
 
     @Override
@@ -121,7 +144,10 @@ public class GuiExchanger extends GuiContainer {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
-        if (tile.getField(8) == 1 && tile.getField(2) == 1) priceField.drawTextBox();
+        if (tile.getField(8) == 1 && tile.getField(2) == 1) {
+            priceField.drawTextBox();
+            amountField.drawTextBox();
+        }
     }
 
     @Override
@@ -164,12 +190,15 @@ public class GuiExchanger extends GuiContainer {
                 ((TabButton)buttonList.get(GEAR_ID)).setOpenState(tile.getField(8) == 1, 26);
                 if(((TabButton)buttonList.get(GEAR_ID)).openState()){
                     drawTexturedModalRect(-91, 64, 27, 0, 91, 47);
+                    drawTexturedModalRect(-91, 74, 27, 0, 91, 47);
                     drawSelectionOverlay();
                     this.priceField.setEnabled(true);
+                    this.amountField.setEnabled(true);
                     Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
                     this.buttonList.set(CREATIVE_ID, new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton)this.buttonList.get(GEAR_ID)).getButtonY(),0, 44, 20, 21, "", TAB_TEXTURE));
                 }else{
                     this.priceField.setEnabled(false);
+                    this.amountField.setEnabled(false);
                     this.buttonList.set(CREATIVE_ID, new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton)this.buttonList.get(GEAR_ID)).getButtonY(),0, 44, 20, 21, "", TAB_TEXTURE));
                 }
                 if(player.isCreative()){    //If in Creative
@@ -212,7 +241,10 @@ public class GuiExchanger extends GuiContainer {
             fontRendererObj.drawString(I18n.format("tile.modcurrency:guivending.slotsettings"), -80, 70, Integer.parseInt("fff200", 16));
             fontRendererObj.drawString(I18n.format("tile.modcurrency:guivending.cost"), -84, 92, Integer.parseInt("211d1b", 16));
             fontRendererObj.drawString(I18n.format("tile.modcurrency:guivending.cost"), -83, 91, Color.lightGray.getRGB());
+            fontRendererObj.drawString(I18n.format("tile.modcurrency:guivending.amount"), -84, 102, Integer.parseInt("211d1b", 16));
+            fontRendererObj.drawString(I18n.format("tile.modcurrency:guivending.amount"), -83, 101, Color.lightGray.getRGB());
             fontRendererObj.drawString(I18n.format("$"), -57, 91, Integer.parseInt("0099ff", 16));
+            fontRendererObj.drawString(I18n.format("$"), -45, 101, Integer.parseInt("0099ff", 16));
 
             GL11.glPushMatrix();
             GL11.glScaled(0.7, 0.7, 0.7);
@@ -392,6 +424,7 @@ public class GuiExchanger extends GuiContainer {
         if(tile.getField(2) == 1) {
             super.mouseClicked(mouseX, mouseY, mouseButton);
             priceField.mouseClicked(mouseX, mouseY, mouseButton);
+            amountField.mouseClicked(mouseX, mouseY, mouseButton);
             if (tile.getField(8) == 1 && mouseButton == 0) updateTextField();
         }else {
             super.mouseClicked(mouseX, mouseY, mouseButton);
@@ -403,6 +436,7 @@ public class GuiExchanger extends GuiContainer {
         int numChar = Character.getNumericValue(typedChar);
         if ((tile.getField(2) == 1) && ((numChar >= 0 && numChar <= 9) || (keyCode == 14) || keyCode == 211 || (keyCode == 203) || (keyCode == 205))) { //Ensures keys input are only numbers or backspace type keys
             if (this.priceField.textboxKeyTyped(typedChar, keyCode)) setCost();
+            if (this.amountField.textboxKeyTyped(typedChar, keyCode)) setAmount();
         } else {
             super.keyTyped(typedChar, keyCode);
         }
