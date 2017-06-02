@@ -202,7 +202,7 @@ public class GuiExchanger extends GuiContainer {
         fontRendererObj.drawString(I18n.format("tile.modcurrency:blockvending.name"), 5, 6, Color.darkGray.getRGB());
         fontRendererObj.drawString(I18n.format("tile.modcurrency:gui.playerinventory"), 4, 142, Color.darkGray.getRGB());
         if (tile.getField(2) == 1){
-            fontRendererObj.drawString(I18n.format("tile.modcurrency:guivending.profit") + ": $" + Integer.toString(tile.getField(4)), 5, 16, Color.darkGray.getRGB());
+            fontRendererObj.drawString(I18n.format("tile.modcurrency:guivending.funds") + ": $" + Integer.toString(tile.getField(4)), 5, 16, Color.darkGray.getRGB());
         }else{
             fontRendererObj.drawString(I18n.format("tile.modcurrency:guivending.cash") + ": $" + tile.getField(0), 5, 15, Color.darkGray.getRGB());
         }

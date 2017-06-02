@@ -10,7 +10,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -19,7 +18,6 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -48,7 +46,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     private ItemStackHandler inputStackHandler = new ItemStackHandler(INPUT_SLOT_COUNT);
     private ItemStackHandler vendStackHandler = new ItemStackHandler(VEND_SLOT_COUNT);
     private ItemStackHandler bufferStackHandler = new ItemHandlerVendor(1);
-    private ItemStackHandler automationInputStackHandler = new ItemStackHandler(1);;
+    private ItemStackHandler automationInputStackHandler = new ItemStackHandler(1);
     private EntityPlayer playerUsing = null;
 
     public TileExchanger() {
@@ -79,13 +77,12 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
 
     @Override
     public void update() {
-        if(playerUsing != null){
+        if(playerUsing != null) {
             if (!world.isRemote) {
-                if (inputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
-                    if (inputStackHandler.getStackInSlot(0).getItem() == ModItems.itemBanknote) {
-                        //<editor-fold desc="Dealing with a Banknote">
+                if (automationInputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
+                    if (automationInputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemBanknote)) {
                         int amount;
-                        switch (inputStackHandler.getStackInSlot(0).getItemDamage()) {
+                        switch (automationInputStackHandler.getStackInSlot(0).getItemDamage()) {
                             case 0:
                                 amount = 1;
                                 break;
@@ -108,11 +105,9 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                                 amount = -1;
                                 break;
                         }
-                        amount = amount * inputStackHandler.getStackInSlot(0).getCount();
-                        inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
-                        bank = bank + amount;
-                        markDirty();
-                        //</editor-fold>
+                        amount = amount * automationInputStackHandler.getStackInSlot(0).getCount();
+                        automationInputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
+                        cashRegister = cashRegister + amount;
                     }
                 }
 
@@ -124,24 +119,26 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                                 if (inputStackHandler.getStackInSlot(0).getUnlocalizedName().equals(vendStackHandler.getStackInSlot(i).getUnlocalizedName())) {
                                     int cost = getItemCost(i);
                                     boolean isThereRoom = false;
+                                    int buffSlot = 0;
 
                                     if (bufferStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
-                                            if ((bufferStackHandler.getStackInSlot(0).getUnlocalizedName().equals(inputStackHandler.getStackInSlot(0).getUnlocalizedName())
-                                                    && (bufferStackHandler.getStackInSlot(0).getCount() < bufferStackHandler.getStackInSlot(0).getMaxStackSize())))
-                                                isThereRoom = true;
-                                        } else isThereRoom = true;
+                                        if ((bufferStackHandler.getStackInSlot(0).getUnlocalizedName().equals(inputStackHandler.getStackInSlot(0).getUnlocalizedName())
+                                                && (bufferStackHandler.getStackInSlot(0).getCount() < bufferStackHandler.getStackInSlot(0).getMaxStackSize())))
+                                            isThereRoom = true;
+                                    } else isThereRoom = true;
+
 
                                     if ((cashRegister >= cost || infinite) && isThereRoom) {
                                         ItemStack inputItem = inputStackHandler.getStackInSlot(0);
                                         bank = bank + cost;
                                         if (!infinite) {
                                             cashRegister = cashRegister - cost;
-                                            if (bufferStackHandler.getStackInSlot(0) != ItemStack.EMPTY)
-                                                bufferStackHandler.getStackInSlot(0).grow(1);
-                                            if (bufferStackHandler.getStackInSlot(0) == ItemStack.EMPTY) {
+                                            if (bufferStackHandler.getStackInSlot(buffSlot) != ItemStack.EMPTY)
+                                                bufferStackHandler.getStackInSlot(buffSlot).grow(1);
+                                            if (bufferStackHandler.getStackInSlot(buffSlot) == ItemStack.EMPTY) {
                                                 ItemStack newStack = inputItem.copy();
                                                 newStack.setCount(1);
-                                                bufferStackHandler.setStackInSlot(0, newStack);
+                                                bufferStackHandler.setStackInSlot(buffSlot, newStack);
                                             }
                                         }
                                         inputItem.shrink(1);
@@ -198,6 +195,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
             markDirty();
         }
     }
+
 
     //Drop Items
     public void dropItems() {

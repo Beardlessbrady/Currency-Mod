@@ -47,7 +47,7 @@ public class ContainerVending extends Container implements INBTInventory{
     private final int PLAYER_FIRST_SLOT_INDEX = 0;
     private final int TE_MONEY_FIRST_SLOT_INDEX = PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT;
     private final int TE_VEND_FIRST_SLOT_INDEX = TE_MONEY_FIRST_SLOT_INDEX + 1;
-    private final int TE_VEND_BUFFER_SLOT = TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT + 1;
+    //private final int TE_VEND_BUFFER_SLOT = TE_VEND_MAIN_TOTAL_COUNT + 1;
 
     private Item[] specialSlotItems = new Item[2];
     private TileVending tile;
@@ -114,9 +114,6 @@ public class ContainerVending extends Container implements INBTInventory{
                 addSlotToContainer(new SlotVendor(itemHandler, slotNum, xpos, ypos));
             }
         }
-
-        //Buffer Slot
-        addSlotToContainer(new SlotCustomizable(itemHandler, TE_VEND_BUFFER_SLOT, 20, 20, specialSlotItems));
     }
 
     @Override
