@@ -20,6 +20,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Distributed with the Currency-Mod for Minecraft
@@ -330,7 +331,17 @@ public class GuiExchanger extends GuiContainer {
         int xMax = 0;
         int yMin, yMax;
 
-        for (int k = 0; k < 5; k++) {
+        int kMax = 0;
+
+        if(UUID.fromString(tile.getOwner()).equals(player.getUniqueID())) {
+            kMax++;
+            if (tile.getField(2) == 1) {
+                kMax = kMax + 2;
+                if (player.isCreative()) kMax++;
+            }
+        }
+
+        for (int k = 0; k < kMax; k++) {
             yMin = (22 * (k)) + 20;
             yMax = yMin + 21;
 
