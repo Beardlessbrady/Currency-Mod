@@ -160,17 +160,19 @@ public class GuiVending extends GuiContainer {
                 this.buttonList.get(LOCK_ID).visible = true;
                 this.buttonList.get(GEAR_ID).visible = true;
 
-                ((TabButton)buttonList.get(GEAR_ID)).setOpenState(tile.getField(8) == 1, 26);
-                if(((TabButton)buttonList.get(GEAR_ID)).openState()){
+                ((TabButton)buttonList.get(GEAR_ID)).setOpenState(tile.getField(8) == 1, 26);   //Set Gear Tab Open state
+
+                if(((TabButton)buttonList.get(GEAR_ID)).openState()){   //If Gear Tab Opened
                     drawTexturedModalRect(-91, 64, 27, 0, 91, 47);
                     drawSelectionOverlay();
                     this.priceField.setEnabled(true);
                     Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
                     this.buttonList.set(CREATIVE_ID, new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton)this.buttonList.get(GEAR_ID)).getButtonY(),0, 44, 20, 21, "", TAB_TEXTURE));
-                }else{
+                }else{  //If Gear Tab Closed
                     this.priceField.setEnabled(false);
                     this.buttonList.set(CREATIVE_ID, new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton)this.buttonList.get(GEAR_ID)).getButtonY(),0, 44, 20, 21, "", TAB_TEXTURE));
                 }
+
                 if(player.isCreative()){    //If in Creative
                     this.buttonList.get(CREATIVE_ID).visible = true;
 
