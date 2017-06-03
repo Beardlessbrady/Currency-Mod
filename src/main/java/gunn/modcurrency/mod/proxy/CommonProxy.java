@@ -6,6 +6,7 @@ import gunn.modcurrency.mod.block.ModBlocks;
 import gunn.modcurrency.mod.handler.EventHandlerCommon;
 import gunn.modcurrency.mod.handler.GuiHandler;
 import gunn.modcurrency.mod.item.ModItems;
+import gunn.modcurrency.mod.network.PacketHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -31,8 +32,8 @@ public class CommonProxy {
 
         ModItems.preInit();
         ModBlocks.preInit();
-
         NetworkRegistry.INSTANCE.registerGuiHandler(ModCurrency.instance, new GuiHandler());
+        PacketHandler.registerCommonMessages("modcurrency");
     }
 
     public void Init(FMLInitializationEvent e){

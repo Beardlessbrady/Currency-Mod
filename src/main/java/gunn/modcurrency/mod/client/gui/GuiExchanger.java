@@ -191,7 +191,7 @@ public class GuiExchanger extends GuiContainer {
                 ((TabButton)buttonList.get(GEAR_ID)).setOpenState(tile.getField(8) == 1, 26);
                 if(((TabButton)buttonList.get(GEAR_ID)).openState()){
                     drawTexturedModalRect(-91, 64, 27, 0, 91, 47);
-                    drawTexturedModalRect(-91, 74, 27, 0, 91, 47);
+                    drawTexturedModalRect(-91, 74, 27, 8, 91, 40);
                     drawSelectionOverlay();
                     this.priceField.setEnabled(true);
                     this.amountField.setEnabled(true);

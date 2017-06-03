@@ -20,23 +20,14 @@ public class PacketHandler {
         registerCommonMessages(0);
     }
 
-    public static void registerClientMessages(String channelName){
-        INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(channelName);
-        int index = registerCommonMessages(0);
-        registerClientMessages(index);
-    }
     
-    public static int registerCommonMessages(int index){
+    public static void registerCommonMessages(int index){
         INSTANCE.registerMessage(PacketItemSpawnToServer.Handler.class, PacketItemSpawnToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketSetItemCostToServer.Handler.class, PacketSetItemCostToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketSetItemAmountToServer.Handler.class, PacketSetItemAmountToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketBankDepositToServer.Handler.class, PacketBankDepositToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketBankWithdrawToServer.Handler.class, PacketBankWithdrawToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketSetFieldToServer.Handler.class, PacketSetFieldToServer.class, index++, Side.SERVER);
-        return index;
-    }
-
-    public static void registerClientMessages(int index){
         INSTANCE.registerMessage(PacketSyncBankDataToClient.Handler.class, PacketSyncBankDataToClient.class, index++, Side.CLIENT);
     }
 }
