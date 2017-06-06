@@ -15,18 +15,12 @@ public class PacketHandler {
     
     public PacketHandler(){}
     
-    public static void registerServerMessages(String channelName){
+    public static void registerCommonMessages(String channelName){
         INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(channelName);
-        registerServerMessages(0);
+        registerCommonMessages(0);
     }
 
-    public static void registerClientMessages(String channelName){
-        INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel(channelName);
-        registerClientMessages(0);
-    }
-
-    
-    public static void registerServerMessages(int index){
+    public static void registerCommonMessages(int index){
         INSTANCE.registerMessage(PacketItemSpawnToServer.Handler.class, PacketItemSpawnToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketSetItemCostToServer.Handler.class, PacketSetItemCostToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketSetItemAmountToServer.Handler.class, PacketSetItemAmountToServer.class, index++, Side.SERVER);
@@ -34,14 +28,5 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketBankWithdrawToServer.Handler.class, PacketBankWithdrawToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketSetFieldToServer.Handler.class, PacketSetFieldToServer.class, index++, Side.SERVER);
        // INSTANCE.registerMessage(PacketSyncBankDataToClient.Handler.class, PacketSyncBankDataToClient.class, index++, Side.CLIENT);
-    }
-
-    public static void registerClientMessages(int index){
-        INSTANCE.registerMessage(PacketItemSpawnToServer.Handler.class, PacketItemSpawnToServer.class, index++, Side.SERVER);
-        INSTANCE.registerMessage(PacketSetItemCostToServer.Handler.class, PacketSetItemCostToServer.class, index++, Side.SERVER);
-        INSTANCE.registerMessage(PacketSetItemAmountToServer.Handler.class, PacketSetItemAmountToServer.class, index++, Side.SERVER);
-        INSTANCE.registerMessage(PacketBankDepositToServer.Handler.class, PacketBankDepositToServer.class, index++, Side.SERVER);
-        INSTANCE.registerMessage(PacketBankWithdrawToServer.Handler.class, PacketBankWithdrawToServer.class, index++, Side.SERVER);
-        INSTANCE.registerMessage(PacketSetFieldToServer.Handler.class, PacketSetFieldToServer.class, index++, Side.SERVER);
     }
 }
