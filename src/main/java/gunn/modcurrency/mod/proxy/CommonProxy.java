@@ -33,7 +33,6 @@ public class CommonProxy {
         ModItems.preInit();
         ModBlocks.preInit();
         NetworkRegistry.INSTANCE.registerGuiHandler(ModCurrency.instance, new GuiHandler());
-        PacketHandler.registerCommonMessages("modcurrency");
     }
 
     public void Init(FMLInitializationEvent e){

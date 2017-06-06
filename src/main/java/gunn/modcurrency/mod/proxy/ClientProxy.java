@@ -18,6 +18,7 @@ public class ClientProxy extends CommonProxy {
         super.preInit(e);
         ModItems.ItemModels();
         ModBlocks.ItemModels();
+        PacketHandler.registerClientMessages("modcurrency");
     }
 
     @Override

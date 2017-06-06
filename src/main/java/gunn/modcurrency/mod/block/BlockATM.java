@@ -52,14 +52,14 @@ public class BlockATM extends Block implements ITileEntityProvider {
     }
 
     void recipe(){
-        GameRegistry.addRecipe(new ItemStack(ModBlocks.blockATM, 1, 0),
+      /*  GameRegistry.addRecipe(new ItemStack(ModBlocks.blockATM, 1, 0),
                 "ABA",
                 "ACA",
                 "ADA",
                 'A', Blocks.IRON_BLOCK,
                 'B', Blocks.REDSTONE_LAMP,
                 'C', Blocks.ENDER_CHEST,
-                'D', new ItemStack (ModItems.itemBanknote, 1, 0));
+                'D', new ItemStack (ModItems.itemBanknote, 1, 0));*/
     }
 
     void initModel() {

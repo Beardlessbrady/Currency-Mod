@@ -152,6 +152,7 @@ public class TileATM extends TileEntity implements ICapabilityProvider, INBTInve
             bankData.setBankAccount(account);
             PacketSyncBankDataToClient pack = new PacketSyncBankDataToClient();
             pack.setData(account);
+            //TODO FIX THIS
             PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) playerUsing);
         }
     }

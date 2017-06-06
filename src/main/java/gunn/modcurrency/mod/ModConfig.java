@@ -56,7 +56,7 @@ public class ModConfig {
         enableVendor = cfg.getBoolean("Vending Machine", CATEGORY_ITEMS, enableVendor, "Block");
         enableSeller = cfg.getBoolean("Exchange Machine", CATEGORY_ITEMS, enableSeller, "Block");
         enableWallet = cfg.getBoolean("Wallet", CATEGORY_ITEMS, enableWallet, "Item");
-        enableATM = cfg.getBoolean("ATM", CATEGORY_ITEMS, enableATM, "Block");
+      //  enableATM = cfg.getBoolean("ATM", CATEGORY_ITEMS, enableATM, "Block");
     }
 
     private static void initRecipesConfig(Configuration cfg){
@@ -64,7 +64,7 @@ public class ModConfig {
         recipeVendor = cfg.getBoolean("Vending Machine", CATEGORY_RECIPES, recipeVendor, "Block");
         recipeSeller = cfg.getBoolean("Exchange Machine", CATEGORY_RECIPES, recipeSeller, "Block");
         recipeWallet = cfg.getBoolean("Wallet", CATEGORY_RECIPES, recipeWallet, "Item");
-        recipeATM = cfg.getBoolean("ATM", CATEGORY_RECIPES, recipeATM, "Block");
+       // recipeATM = cfg.getBoolean("ATM", CATEGORY_RECIPES, recipeATM, "Block");
     }
 
     private static void initgeneralConfig(Configuration cfg){

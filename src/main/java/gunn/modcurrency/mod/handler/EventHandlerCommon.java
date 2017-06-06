@@ -23,7 +23,7 @@ public class EventHandlerCommon {
         //Invincible Machines
         if (ModConfig.invincibleVendSell) {
             cancelEventChange:
-            if (brokeBlock == ModBlocks.blockVending || brokeBlock == ModBlocks.blockATM || brokeBlock == ModBlocks.blockExchanger) {
+            if (brokeBlock == ModBlocks.blockVending || brokeBlock == ModBlocks.blockExchanger) {
                 IOwnable tile = (IOwnable) e.getWorld().getTileEntity(e.getPos());
                 if ((!e.getEntityPlayer().getUniqueID().toString().equals(tile.getOwner())) && !e.getEntityPlayer().isCreative()) {     //If not Owner (and not in creative) Can't Break
                     e.setCanceled(true);
