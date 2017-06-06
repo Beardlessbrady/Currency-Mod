@@ -391,11 +391,12 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         compound.setString("owner", owner);
 
         NBTTagCompound itemCostsNBT = new NBTTagCompound();
-        for (int i = 0; i < itemCosts.length; i++) itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
-        compound.setTag("itemCosts", itemCostsNBT);
-
         NBTTagCompound itemAmountNBT = new NBTTagCompound();
-        for (int i = 0; i < itemAmounts.length; i++) itemAmountNBT.setInteger("amount" + i, itemAmounts[i]);
+        for (int i = 0; i < itemCosts.length; i++){
+            itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
+            itemAmountNBT.setInteger("amount" + i, itemAmounts[i]);
+        }
+        compound.setTag("itemCosts", itemCostsNBT);
         compound.setTag("itemAmounts", itemAmountNBT);
 
         return compound;
@@ -485,7 +486,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = itemCostsNBT.getInteger("cost" + i);
 
         NBTTagCompound itemAmountsNBT = pkt.getNbtCompound().getCompoundTag("itemAmounts");
-        for (int i = 0; i < itemAmounts.length; i++) itemAmounts[i] = itemAmountsNBT.getInteger("amounts" + i);
+        for (int i = 0; i < itemAmounts.length; i++) itemAmounts[i] = itemAmountsNBT.getInteger("amount" + i);
     }
     //</editor-fold>--------------------------------
 
@@ -599,16 +600,8 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         return itemAmounts[index];
     }
 
-    public void setItemAmount(int amount){
-        itemAmounts[selectedSlot - 37] = amount;
-        if(amount == -1){
-            vendStackHandler.getStackInSlot(selectedSlot - 37).setCount(1);
-        }else {
-            vendStackHandler.getStackInSlot(selectedSlot - 37).setCount(itemAmounts[selectedSlot - 37]);
-        }
-    }
-
     public void setItemAmount(int amount, int index){
+        System.out.println(index + ":" + amount);
         itemAmounts[index] = amount;
         if(amount == -1){
             vendStackHandler.getStackInSlot(index).setCount(1);

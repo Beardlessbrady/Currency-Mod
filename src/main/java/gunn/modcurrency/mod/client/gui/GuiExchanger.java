@@ -106,9 +106,9 @@ public class GuiExchanger extends GuiContainer {
             int newAmount = Integer.valueOf(this.amountField.getText());
             if (Integer.valueOf(this.amountField.getText()) == 0) newAmount = -1;
 
-            tile.setItemAmount(newAmount);
+            tile.setItemAmount(newAmount, tile.getField(3) - 37);
             PacketSetItemAmountToServer pack = new PacketSetItemAmountToServer();
-            pack.setData(newAmount, tile.getPos());
+            pack.setData(newAmount, tile.getPos(), tile.getField(3) - 37);
             PacketHandler.INSTANCE.sendToServer(pack);
 
             tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
@@ -126,7 +126,6 @@ public class GuiExchanger extends GuiContainer {
         if (tile.getItemAmount(tile.getField(3) - 37) == -1) {
             this.amountField.setText("0");
         } else {
-            //System.out.println(tile.getItemAmount(tile.getField(3) - 37));
             this.amountField.setText(String.valueOf(tile.getItemAmount(tile.getField(3) - 37)));
         }
     }

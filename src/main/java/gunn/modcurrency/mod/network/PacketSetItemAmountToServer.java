@@ -20,19 +20,21 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class PacketSetItemAmountToServer implements IMessage {
     //Seller: Uses player input and sets amount of item, sends to server
     private BlockPos blockPos;
-    private int data;
+    private int data, index;
 
     public PacketSetItemAmountToServer(){}
 
-    public void setData(int data, BlockPos pos) {
+    public void setData(int data, BlockPos pos, int index) {
         this.blockPos = pos;
         this.data = data;
+        this.index = index;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         blockPos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
         data = buf.readInt();
+        index = buf.readInt();
     }
 
     @Override
@@ -41,6 +43,7 @@ public class PacketSetItemAmountToServer implements IMessage {
         buf.writeInt(blockPos.getY());
         buf.writeInt(blockPos.getZ());
         buf.writeInt(data);
+        buf.writeInt(index);
     }
 
     public static class Handler implements IMessageHandler<PacketSetItemAmountToServer, IMessage> {
@@ -55,7 +58,7 @@ public class PacketSetItemAmountToServer implements IMessage {
             EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
             World world = playerEntity.world;
             TileExchanger tile = ((TileExchanger) world.getTileEntity(message.blockPos));
-            tile.setItemAmount(message.data);
+            tile.setItemAmount(message.data, message.index);
         }
     }
 }
