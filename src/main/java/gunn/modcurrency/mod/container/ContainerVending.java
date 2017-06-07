@@ -11,6 +11,7 @@ import gunn.modcurrency.mod.tileentity.TileVending;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
@@ -20,6 +21,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import org.lwjgl.Sys;
 
 import javax.annotation.Nullable;
 
@@ -48,6 +50,8 @@ public class ContainerVending extends Container implements INBTInventory{
     private final int TE_MONEY_FIRST_SLOT_INDEX = PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT;
     private final int TE_VEND_FIRST_SLOT_INDEX = TE_MONEY_FIRST_SLOT_INDEX + 1;
     //private final int TE_VEND_BUFFER_SLOT = TE_VEND_MAIN_TOTAL_COUNT + 1;
+
+    private int maxStack = 100;
 
     private Item[] specialSlotItems = new Item[2];
     private TileVending tile;
@@ -151,11 +155,31 @@ public class ContainerVending extends Container implements INBTInventory{
             } else if (slotId >= 37 && slotId < (37 + TE_VEND_MAIN_TOTAL_COUNT) && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 1) {
                 return super.slotClick(slotId, 0, clickTypeIn, player);
             } else if (slotId >= 37 && slotId < (37 + TE_VEND_MAIN_TOTAL_COUNT) && tile.getField(8) == 0) {
+
+                //If an item is a ghost and clicked on with an item
                 if (tile.isGhostSlot(slotId - PLAYER_TOTAL_COUNT - 1)) {
                     this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).getStackInSlot(slotId - PLAYER_TOTAL_COUNT).shrink(1);
                     tile.setGhostSlot(slotId - PLAYER_TOTAL_COUNT - 1, false);
                 }
-                return super.slotClick(slotId, dragType, clickTypeIn, player);
+
+                //If current stack or players hand isn't empty and items are the same, try to add to count OTHERWISE normal
+                if(player.inventory.getItemStack().getItem() == Items.AIR || getSlot(slotId).getStack().getItem() == Items.AIR || !equalStacks(player.inventory.getItemStack(), getSlot(slotId).getStack())){
+                    return super.slotClick(slotId, dragType, clickTypeIn, player);
+                }else if(getSlot(slotId).getStack().getCount() < maxStack){
+                    int add = player.inventory.getItemStack().getCount();
+                    int current = getSlot(slotId).getStack().getCount();
+                    int leftover = 0;
+                    if(add + current > maxStack){
+                        leftover = add + current - maxStack;
+                        add = maxStack - current;
+                    }
+                    getSlot(slotId).getStack().setCount(current + add);
+                    if(leftover == 0) {
+                        player.inventory.setItemStack(ItemStack.EMPTY);
+                    }else player.inventory.getItemStack().setCount(leftover);
+                }
+
+
             } else return super.slotClick(slotId, dragType, clickTypeIn, player);
         } else {  //Sell Mode
             if (slotId >= 0 && slotId <= 36) {           //Is Players Inv or Input Slot
@@ -196,7 +220,7 @@ public class ContainerVending extends Container implements INBTInventory{
 
         if (slotStack != ItemStack.EMPTY) {
             if (playStack.getItem() != Item.getItemFromBlock(Blocks.AIR)) {
-                if (!(playStack.getItem().equals(slotStack.getItem()) && (playStack.getItemDamage() == slotStack.getItemDamage()))) {
+                if (!equalStacks(playStack, slotStack)) {
                     return ItemStack.EMPTY; //Checks if player is holding stack, if its different then one being clicked do nothing
                 }
             }
@@ -233,6 +257,10 @@ public class ContainerVending extends Container implements INBTInventory{
             return slotStack;
         }
         return ItemStack.EMPTY;
+    }
+
+    private boolean equalStacks(ItemStack one, ItemStack two){
+        return one.getItem().equals(two.getItem()) && (one.getItemDamage() == two.getItemDamage());
     }
 
     @Nullable
