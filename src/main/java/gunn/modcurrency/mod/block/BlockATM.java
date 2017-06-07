@@ -76,12 +76,11 @@ public class BlockATM extends Block implements ITileEntityProvider {
         return (TileATM) world.getTileEntity(pos);
     }
 
-
     @Override
-    public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        if (!world.isRemote) {    //Just Server
-            if (getTile(world, pos).getPlayerUsing() == null) {     //Only one player can use GUI at time
-                getTile(world, pos).openGui(player, world, pos);
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack facing, EnumFacing hitX, float hitY, float hitZ, float p_180639_10_) {
+        if (!worldIn.isRemote) {    //Just Server
+            if (getTile(worldIn, pos).getPlayerUsing() == null) {     //Only one player can use GUI at time
+                getTile(worldIn, pos).openGui(playerIn, worldIn, pos);
                 return true;
             }
         }

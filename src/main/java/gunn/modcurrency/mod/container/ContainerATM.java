@@ -83,7 +83,7 @@ public class ContainerATM extends Container implements INBTInventory{
 
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
-        ItemStack sourceStack = ItemStack.EMPTY;
+        ItemStack sourceStack = null;
         Slot slot = this.inventorySlots.get(index);
 
         if (slot != null && slot.getHasStack()) {
@@ -93,16 +93,16 @@ public class ContainerATM extends Container implements INBTInventory{
 
                 if (index < PLAYER_TOTAL_COUNT) {
                     if (!this.mergeItemStack(copyStack, TE_SLOT, TE_SLOT + 1, false)) {
-                        return ItemStack.EMPTY;
+                        return null;
                     }
                 } else if (index == TE_SLOT) {
                     if (!this.mergeItemStack(copyStack, PLAYER_FIRST_SLOT_INDEX, PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT, false)) {
-                        return ItemStack.EMPTY;
+                        return null;
                     }
-                } else return ItemStack.EMPTY;
+                } else return null;
 
-                if (copyStack.getCount() == 0) {
-                    slot.putStack(ItemStack.EMPTY);
+                if (copyStack.stackSize == 0) {
+                    slot.putStack(null);
                 } else {
                     slot.onSlotChanged();
                 }

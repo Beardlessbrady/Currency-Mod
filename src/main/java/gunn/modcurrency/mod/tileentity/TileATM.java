@@ -56,34 +56,34 @@ public class TileATM extends TileEntity implements ICapabilityProvider, INBTInve
     }
 
     public void withdraw(int amount) {
-        if (moneySlot.getStackInSlot(0) == ItemStack.EMPTY) {
+        if (moneySlot.getStackInSlot(0) == null) {
             BankAccountSavedData bankData = BankAccountSavedData.getData(getWorld());
             BankAccount account = bankData.getBankAccount(playerUsing.getUniqueID().toString());
             if (amount <= account.getBalance() - this.fee && amount <= 6400) {
                 ItemStack cash = new ItemStack(ModItems.itemBanknote);
 
                 if (amount % 100 == 0) {
-                    cash.setCount(amount / 100);
+                    cash.stackSize=(amount / 100);
                     cash.setItemDamage(5);
                     moneySlot.setStackInSlot(0, cash);
                 }else if (amount % 50 == 0) {
-                    cash.setCount(amount / 50);
+                    cash.stackSize=(amount / 50);
                     cash.setItemDamage(4);
                     moneySlot.setStackInSlot(0, cash);
                 }else if (amount % 20 == 0) {
-                    cash.setCount(amount / 20);
+                    cash.stackSize=(amount / 20);
                     cash.setItemDamage(3);
                     moneySlot.setStackInSlot(0, cash);
                 }else if (amount % 10 == 0) {
-                    cash.setCount(amount / 10);
+                    cash.stackSize=(amount / 10);
                     cash.setItemDamage(2);
                     moneySlot.setStackInSlot(0, cash);
                 }else if (amount % 5 == 0) {
-                    cash.setCount(amount / 5);
+                    cash.stackSize=(amount / 5);
                     cash.setItemDamage(1);
                     moneySlot.setStackInSlot(0, cash);
                 }else{
-                    cash.setCount(amount);
+                    cash.stackSize=(amount);
                     cash.setItemDamage(0);
                     moneySlot.setStackInSlot(0, cash);
                 }
@@ -96,7 +96,7 @@ public class TileATM extends TileEntity implements ICapabilityProvider, INBTInve
 
     public void deposit() {
         if (!world.isRemote) {
-            if (moneySlot.getStackInSlot(0) != ItemStack.EMPTY) {
+            if (moneySlot.getStackInSlot(0) != null) {
                 if (moneySlot.getStackInSlot(0).getItem() == ModItems.itemBanknote) {
                     int amount;
                     switch (moneySlot.getStackInSlot(0).getItemDamage()) {
@@ -122,9 +122,9 @@ public class TileATM extends TileEntity implements ICapabilityProvider, INBTInve
                             amount = -1;
                             break;
                     }
-                    amount = amount * moneySlot.getStackInSlot(0).getCount();
+                    amount = amount * moneySlot.getStackInSlot(0).stackSize;
                     if(amount - this.fee >= 1 || isOwner) {
-                        moneySlot.setStackInSlot(0, ItemStack.EMPTY);
+                        moneySlot.setStackInSlot(0, null);
 
                         BankAccountSavedData bankData = BankAccountSavedData.getData(world);
                         BankAccount account = bankData.getBankAccount(playerUsing.getUniqueID().toString());

@@ -77,16 +77,14 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
     }
 
     @Override
-    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
-        super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn) {
+        super.neighborChanged(state, worldIn, pos, blockIn);
         if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOBOTTOM || state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.ONE) {   //Bottom or one block machine
-            if (pos.down().equals(fromPos)) { //Change is under machine
-                if (worldIn.getBlockState(fromPos).getBlock() == Blocks.CHEST) {  //Chest directly under machine
-                    getTile(worldIn, pos).setField(9, 1);
-                } else if (worldIn.getBlockState(fromPos.down()).getBlock() == Blocks.CHEST) { //Chest two blocks under machine
-                    getTile(worldIn, pos).setField(9, 2);
-                } else getTile(worldIn, pos).setField(9, 0); //If no chest under or two deep, set output as normal
-            }
+            if (worldIn.getBlockState(pos.down()).getBlock() == Blocks.CHEST) {  //Chest directly under machine
+                getTile(worldIn, pos).setField(9, 1);
+            } else if (worldIn.getBlockState((pos.down()).down()).getBlock() == Blocks.CHEST) { //Chest two blocks under machine
+                getTile(worldIn, pos).setField(9, 2);
+            } else getTile(worldIn, pos).setField(9, 0); //If no chest under or two deep, set output as normal
         }
     }
 
@@ -104,7 +102,7 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
     }
 
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack facing, EnumFacing hitX, float hitY, float hitZ, float p_180639_10_) {
         if (getTile(worldIn, pos).getPlayerUsing() == null) {
             getTile(worldIn, pos).setField(5, playerIn.isCreative() ? 1 : 0);
             if (!worldIn.isRemote) {
@@ -252,7 +250,7 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
 
     @Nullable
     @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
         switch (getMetaFromState(blockState)% 4) {
             default:
             case 2: return BOUND_BOX_N;

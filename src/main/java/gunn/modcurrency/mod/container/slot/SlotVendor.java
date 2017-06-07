@@ -36,7 +36,7 @@ public class SlotVendor extends SlotItemHandler{
         int maxAdd = stack.getMaxStackSize();
         if(currentStack == null ) return 64;
         if(!ItemHandlerHelper.canItemStacksStack(stack, currentStack))  return 64;
-        int stackSize = currentStack.getCount() + stack.getCount();
+        int stackSize = currentStack.stackSize + stack.stackSize;
         if(stackSize > maxAdd) stackSize = maxAdd;
         return stackSize;
     }

@@ -55,8 +55,9 @@ public class BlockEntityMarket extends Block implements ITileEntityProvider{
         return (TileBlockEntityMarket) world.getTileEntity(pos);
     }
 
+
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack facing, EnumFacing hitX, float hitY, float hitZ, float p_180639_10_) {
         if (!worldIn.isRemote && playerIn.isSneaking() && (getTile(worldIn, pos).getOwner().equals(playerIn.getUniqueID().toString()))) {
 
             //Searches for mobs in the surrounding area (5 block in each direction

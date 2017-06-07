@@ -2,6 +2,7 @@ package gunn.modcurrency.mod;
 
 import gunn.modcurrency.mod.item.ModItems;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -18,10 +19,10 @@ public class TabCurrency extends CreativeTabs{
         super(index, label);
     }
 
+
     @Override
-    @SideOnly(Side.CLIENT)
-    public ItemStack getTabIconItem() {
-        return new ItemStack(ModItems.itemBanknote);
+    public Item getTabIconItem() {
+        return ModItems.itemBanknote;
     }
 
     @Override

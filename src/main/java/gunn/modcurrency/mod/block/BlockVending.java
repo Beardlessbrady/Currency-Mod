@@ -88,7 +88,7 @@ public class BlockVending extends Block implements ITileEntityProvider {
     }
 
     @Override
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, @Nullable ItemStack facing, EnumFacing hitX, float hitY, float hitZ, float p_180639_10_) {
         if (getTile(worldIn, pos).getPlayerUsing() == null) {
             getTile(worldIn, pos).setField(5, playerIn.isCreative() ? 1 : 0);
             if (!worldIn.isRemote) {
@@ -229,9 +229,10 @@ public class BlockVending extends Block implements ITileEntityProvider {
         }
     }
 
+
     @Nullable
     @Override
-    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) {
+    public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, World worldIn, BlockPos pos) {
         switch (getMetaFromState(blockState)% 4) {
                 default:
                 case 2: return BOUND_BOX_N;

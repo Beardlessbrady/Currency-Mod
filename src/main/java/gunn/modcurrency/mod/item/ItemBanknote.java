@@ -4,14 +4,14 @@ import gunn.modcurrency.mod.ModConfig;
 import gunn.modcurrency.mod.ModCurrency;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import java.util.List;
 
 /**
  * Distributed with the Currency-Mod for Minecraft.
@@ -140,9 +140,9 @@ public class ItemBanknote extends Item {
     }
 
     @Override
-    public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> subItems) {
+    public void getSubItems(Item itemIn, CreativeTabs tab, List<ItemStack> subItems) {
         for(int i = 0; i < noteLength; i++){
-            ItemStack stack = new ItemStack(item,1,i);
+            ItemStack stack = new ItemStack(itemIn,1,i);
             subItems.add(stack);
         }
     }

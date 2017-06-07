@@ -134,18 +134,18 @@ public class ContainerExchanger extends Container implements INBTInventory{
                 InventoryPlayer inventoryPlayer = player.inventory;
                 Slot ghostSlot = this.inventorySlots.get(slotId);
                 if (clickTypeIn == ClickType.PICKUP) {      //LEFT
-                    if (inventoryPlayer.getItemStack() != ItemStack.EMPTY && inventorySlots.get(slotId).getStack() == ItemStack.EMPTY) {
+                    if (inventoryPlayer.getItemStack() != null && inventorySlots.get(slotId).getStack() == null) {
                         ItemStack ghostStack = inventoryPlayer.getItemStack().copy();
                         int gCount = 1;
                         if (tile.getItemAmount(slotId - 37) > 1) {
                             gCount = tile.getItemAmount(slotId - 37);
                         }
 
-                        ghostStack.setCount(gCount);
+                        ghostStack.stackSize=(gCount);
                         ghostSlot.putStack(ghostStack);
                     } else {
                         tile.setItemAmount(-1, slotId - 37);
-                        ghostSlot.putStack(ItemStack.EMPTY);
+                        ghostSlot.putStack(null);
                     }
                 }
                 return inventoryPlayer.getItemStack();
@@ -157,24 +157,24 @@ public class ContainerExchanger extends Container implements INBTInventory{
                     tile.setSelectedName("No Item");
                 }
                 tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
-                return ItemStack.EMPTY;
+                return null;
             } else if (slotId > 66 && slotId < 73) {
                 return super.slotClick(slotId, dragType, clickTypeIn, player); //Buffer Slots
-            } else return ItemStack.EMPTY;
+            } else return null;
         } else {  //Sell Mode
             if (slotId >= 0 && slotId <= 36) {           //Is Players Inv or Input Slot
                 return super.slotClick(slotId, dragType, clickTypeIn, player);
             } else if (slotId >= 37 && slotId < 67) {  //Is TE Inv
-                return ItemStack.EMPTY;
+                return null;
             }
         }
-       return ItemStack.EMPTY;
+       return null;
     }
 
     @Nullable
     @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int index) {
-        ItemStack sourceStack = ItemStack.EMPTY;
+        ItemStack sourceStack = null;
         Slot slot = this.inventorySlots.get(index);
 
         if (slot != null && slot.getHasStack()) {
@@ -184,31 +184,31 @@ public class ContainerExchanger extends Container implements INBTInventory{
             if (index < PLAYER_TOTAL_COUNT) {        //Player Inventory Slots
                 if (tile.getField(2) == 0) {     //SELL MODE
                     if (!this.mergeItemStack(copyStack, TE_MONEY_FIRST_SLOT_INDEX, TE_MONEY_FIRST_SLOT_INDEX + 1, false)) {
-                        return ItemStack.EMPTY;
+                        return null;
                     }
                 } else {
                     if (tile.getField(2) == 1) {
                         if (inventorySlots.get(index).getStack().getItem() == ModItems.itemBanknote) {
                             if (!this.mergeItemStack(copyStack, TE_MONEY_FIRST_SLOT_INDEX, TE_MONEY_FIRST_SLOT_INDEX + 1, false)) {
-                                return ItemStack.EMPTY;
+                                return null;
                             }
-                        } else return ItemStack.EMPTY;
+                        } else return null;
                     } else {
-                        return ItemStack.EMPTY;
+                        return null;
                     }
                 }
             } else if (index >= TE_VEND_FIRST_SLOT_INDEX && index < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT + 1) {  //TE Inventory
                 if (!this.mergeItemStack(copyStack, 0, PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT, false)) {
-                    return ItemStack.EMPTY;
+                    return null;
                 }
             } else if (index == TE_MONEY_FIRST_SLOT_INDEX) {
                 if (!this.mergeItemStack(copyStack, 0, PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT, false)) {
-                    return ItemStack.EMPTY;
+                    return null;
                 }
             }
 
-            if (copyStack.getCount() == 0) {
-                slot.putStack(ItemStack.EMPTY);
+            if (copyStack.stackSize == 0) {
+                slot.putStack(null);
             } else {
                 slot.onSlotChanged();
             }

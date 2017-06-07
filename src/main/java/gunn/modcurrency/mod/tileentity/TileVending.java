@@ -78,7 +78,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     public void update() {
         if(playerUsing != null){
             if (!world.isRemote) {
-                if (inputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
+                if (inputStackHandler.getStackInSlot(0) != null) {
                     if (inputStackHandler.getStackInSlot(0).getItem() == ModItems.itemBanknote) {
                         //<editor-fold desc="Dealing with a Banknote">
                         int amount;
@@ -105,8 +105,8 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                                 amount = -1;
                                 break;
                         }
-                        amount = amount * inputStackHandler.getStackInSlot(0).getCount();
-                        inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
+                        amount = amount * inputStackHandler.getStackInSlot(0).stackSize;
+                        inputStackHandler.setStackInSlot(0, null);
                         bank = bank + amount;
                         markDirty();
                         //</editor-fold>
@@ -119,12 +119,12 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                 if (profit >= 20) {
                     //<editor-fold desc="Dealing with Buffer Slots">
                     if(locked) {
-                        if (bufferStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
-                            if (bufferStackHandler.getStackInSlot(0).getItemDamage() == 3 && bufferStackHandler.getStackInSlot(0).getCount() < bufferStackHandler.getStackInSlot(0).getMaxStackSize()) {
+                        if (bufferStackHandler.getStackInSlot(0) != null) {
+                            if (bufferStackHandler.getStackInSlot(0).getItemDamage() == 3 && bufferStackHandler.getStackInSlot(0).stackSize < bufferStackHandler.getStackInSlot(0).getMaxStackSize()) {
                                 profit = profit - 20;
-                                bufferStackHandler.getStackInSlot(0).grow(1);
+                                bufferStackHandler.getStackInSlot(0).stackSize++;
                             }
-                        } else if (bufferStackHandler.getStackInSlot(0) == ItemStack.EMPTY) {
+                        } else if (bufferStackHandler.getStackInSlot(0) == null) {
                             ItemStack newStack = new ItemStack(ModItems.itemBanknote);
                             newStack.setItemDamage(3);
                             bufferStackHandler.setStackInSlot(0, newStack);
@@ -141,16 +141,16 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     public void dropItems() {
         for (int i = 0; i < vendStackHandler.getSlots(); i++) {
             ItemStack item = vendStackHandler.getStackInSlot(i);
-            if (item != ItemStack.EMPTY) {
+            if (item != null) {
                 world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), item));
-                vendStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
+                vendStackHandler.setStackInSlot(i, null);   //Just in case
             }
         }
         for (int i = 0; i < bufferStackHandler.getSlots(); i++){
             ItemStack item = bufferStackHandler.getStackInSlot(i);
-            if (item != ItemStack.EMPTY) {
+            if (item != null) {
                 world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), item));
-                vendStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
+                vendStackHandler.setStackInSlot(i, null);   //Just in case
             }
         }
     }
@@ -159,16 +159,16 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     public void dropTopItems() {
         for (int i = 15; i < vendStackHandler.getSlots(); i++) {
             ItemStack item = vendStackHandler.getStackInSlot(i);
-            if (item != ItemStack.EMPTY) {
+            if (item != null) {
                 world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), item));
-                vendStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
+                vendStackHandler.setStackInSlot(i, null);   //Just in case
             }
         }
         for (int i = 3; i < bufferStackHandler.getSlots(); i++){
             ItemStack item = bufferStackHandler.getStackInSlot(i);
-            if (item != ItemStack.EMPTY) {
+            if (item != null) {
                 world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), item));
-                bufferStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
+                bufferStackHandler.setStackInSlot(i, null);   //Just in case
             }
         }
     }
@@ -189,25 +189,25 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
 
             int totalCash = 0;
             for (int i = 0; i < itemStackHandler.getSlots(); i++) {
-                if (itemStackHandler.getStackInSlot(i) != ItemStack.EMPTY) {
+                if (itemStackHandler.getStackInSlot(i) != null) {
                     switch (itemStackHandler.getStackInSlot(i).getItemDamage()) {
                         case 0:
-                            totalCash = totalCash + itemStackHandler.getStackInSlot(i).getCount();
+                            totalCash = totalCash + itemStackHandler.getStackInSlot(i).stackSize;
                             break;
                         case 1:
-                            totalCash = totalCash + 5 * itemStackHandler.getStackInSlot(i).getCount();
+                            totalCash = totalCash + 5 * itemStackHandler.getStackInSlot(i).stackSize;
                             break;
                         case 2:
-                            totalCash = totalCash + 10 * itemStackHandler.getStackInSlot(i).getCount();
+                            totalCash = totalCash + 10 * itemStackHandler.getStackInSlot(i).stackSize;
                             break;
                         case 3:
-                            totalCash = totalCash + 20 * itemStackHandler.getStackInSlot(i).getCount();
+                            totalCash = totalCash + 20 * itemStackHandler.getStackInSlot(i).stackSize;
                             break;
                         case 4:
-                            totalCash = totalCash + 50 * itemStackHandler.getStackInSlot(i).getCount();
+                            totalCash = totalCash + 50 * itemStackHandler.getStackInSlot(i).stackSize;
                             break;
                         case 5:
-                            totalCash = totalCash + 100 * itemStackHandler.getStackInSlot(i).getCount();
+                            totalCash = totalCash + 100 * itemStackHandler.getStackInSlot(i).stackSize;
                             break;
                         default:
                             totalCash = -1;
@@ -255,7 +255,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                 if (out[i] != 0) {
                     ItemStack item = new ItemStack(ModItems.itemBanknote);
                     item.setItemDamage(i);
-                    item.setCount(out[i]);
+                    item.stackSize=(out[i]);
 
                     if (mode) {
                         profit = 0;
@@ -305,7 +305,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         if (inputStackHandler.getStackInSlot(0).getItem() != Item.getItemFromBlock(Blocks.AIR)) {
             if (!world.isRemote) {
                 ItemStack item = inputStackHandler.getStackInSlot(0);
-                inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
+                inputStackHandler.setStackInSlot(0, null);
 
                 int x = getPos().getX();
                 int z = getPos().getZ();

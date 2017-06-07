@@ -26,7 +26,7 @@ public class ItemHandlerVendor extends ItemStackHandler {
         if (this.getStackInSlot(slot).getItem() == stack.getItem()) {
             if (isGhost(slot)) {
                 setGhost(slot, false);
-                stack.shrink(1);
+                stack.stackSize--;
             }
             return super.insertItem(slot, stack, simulate);
         } else {
