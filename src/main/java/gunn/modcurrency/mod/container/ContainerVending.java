@@ -195,7 +195,7 @@ public class ContainerVending extends Container implements INBTInventory{
         int cost = tile.getItemCost(slotId - PLAYER_TOTAL_COUNT - 1);
 
         if (slotStack != null) {
-            if (playStack.getItem() != Item.getItemFromBlock(Blocks.AIR)) {
+            if (playStack != null) {
                 if (!(playStack.getItem().equals(slotStack.getItem()) && (playStack.getItemDamage() == slotStack.getItemDamage()))) {
                     return null; //Checks if player is holding stack, if its different then one being clicked do nothing
                 }

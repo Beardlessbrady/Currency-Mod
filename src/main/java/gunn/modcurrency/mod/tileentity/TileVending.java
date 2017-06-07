@@ -302,7 +302,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     }
 
     public void outInputSlot(){
-        if (inputStackHandler.getStackInSlot(0).getItem() != Item.getItemFromBlock(Blocks.AIR)) {
+        if (inputStackHandler.getStackInSlot(0) != null) {
             if (!world.isRemote) {
                 ItemStack item = inputStackHandler.getStackInSlot(0);
                 inputStackHandler.setStackInSlot(0, null);
