@@ -5,10 +5,14 @@ import gunn.modcurrency.mod.client.gui.util.INBTInventory;
 import gunn.modcurrency.mod.container.itemhandler.ItemHandlerCustom;
 import gunn.modcurrency.mod.container.itemhandler.ItemHandlerVendor;
 import gunn.modcurrency.mod.handler.StateHandler;
+import gunn.modcurrency.mod.item.ItemWallet;
 import gunn.modcurrency.mod.item.ModItems;
+import net.minecraft.block.BlockChest;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -79,28 +83,28 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
 
     @Override
     public void update() {
-        if(chestOutput != 0 && bufferStackHandler.getStackInSlot(0) != null && world.getBlockState(pos).getValue(StateHandler.TWOTALL) != StateHandler.EnumTwoBlock.TWOTOP){
+        if(chestOutput != 0 && bufferStackHandler.getStackInSlot(0) != ItemStack.EMPTY && world.getBlockState(pos).getValue(StateHandler.TWOTALL) != StateHandler.EnumTwoBlock.TWOTOP){
             TileEntityChest chest = (TileEntityChest) world.getTileEntity(pos.down());
             if (chestOutput == 2) chest = (TileEntityChest) world.getTileEntity(pos.down().down());
             IItemHandler itemHandler = chest.getCapability(net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
             loop:
             for(int i = 0; i < itemHandler.getSlots(); i++){
-                if(itemHandler.getStackInSlot(i) == null){
+                if(itemHandler.getStackInSlot(i).isEmpty()){
                     itemHandler.insertItem(i, bufferStackHandler.getStackInSlot(0), false);
-                    bufferStackHandler.setStackInSlot(0, null);
+                    bufferStackHandler.setStackInSlot(0, ItemStack.EMPTY);
                     break loop;
                 }else{
                     if(itemHandler.getStackInSlot(i).getItem().equals(bufferStackHandler.getStackInSlot(0).getItem()) && itemHandler.getStackInSlot(i).getItemDamage() == bufferStackHandler.getStackInSlot(0).getItemDamage() &&
-                            itemHandler.getStackInSlot(i).stackSize != itemHandler.getStackInSlot(i).getMaxStackSize()){
-                        int wiggleRoom = itemHandler.getStackInSlot(i).getMaxStackSize() - itemHandler.getStackInSlot(i).stackSize;
-                        int buffCount = bufferStackHandler.getStackInSlot(0).stackSize;
+                            itemHandler.getStackInSlot(i).getCount() != itemHandler.getStackInSlot(i).getMaxStackSize()){
+                        int wiggleRoom = itemHandler.getStackInSlot(i).getMaxStackSize() - itemHandler.getStackInSlot(i).getCount();
+                        int buffCount = bufferStackHandler.getStackInSlot(0).getCount();
                         if(wiggleRoom >= buffCount){
                             wiggleRoom = buffCount;
-                            bufferStackHandler.setStackInSlot(0, null);
+                            bufferStackHandler.setStackInSlot(0, ItemStack.EMPTY);
                         }else{
-                            bufferStackHandler.getStackInSlot(0).stackSize=(buffCount - wiggleRoom);
+                            bufferStackHandler.getStackInSlot(0).setCount(buffCount - wiggleRoom);
                         }
-                        itemHandler.getStackInSlot(i).stackSize=(itemHandler.getStackInSlot(i).stackSize + wiggleRoom);
+                        itemHandler.getStackInSlot(i).setCount(itemHandler.getStackInSlot(i).getCount() + wiggleRoom);
                         break loop;
                     }
                 }
@@ -109,7 +113,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
 
         if(playerUsing != null) {
             if (!world.isRemote) {
-                if (automationInputStackHandler.getStackInSlot(0) != null) {
+                if (automationInputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
                     if (automationInputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemBanknote)) {
                         int amount;
                         switch (automationInputStackHandler.getStackInSlot(0).getItemDamage()) {
@@ -135,27 +139,27 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                                 amount = -1;
                                 break;
                         }
-                        amount = amount * automationInputStackHandler.getStackInSlot(0).stackSize;
-                        automationInputStackHandler.setStackInSlot(0, null);
+                        amount = amount * automationInputStackHandler.getStackInSlot(0).getCount();
+                        automationInputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
                         cashRegister = cashRegister + amount;
                     }
                 }
 
                 if (!mode) {        //SELL MODE
-                    if (inputStackHandler.getStackInSlot(0) != null) {
+                    if (inputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
                         searchLoop:
                         for (int i = 0; i < vendStackHandler.getSlots(); i++) {
-                            if (vendStackHandler.getStackInSlot(i) != null) {
+                            if (vendStackHandler.getStackInSlot(i) != ItemStack.EMPTY) {
                                 if (inputStackHandler.getStackInSlot(0).getItem().equals(vendStackHandler.getStackInSlot(i).getItem()) &&
                                         inputStackHandler.getStackInSlot(0).getItemDamage() == vendStackHandler.getStackInSlot(i).getItemDamage()) {
                                     int cost = getItemCost(i);
                                     boolean isThereRoom = false;
                                     int buffSlot = 0;
 
-                                    if (bufferStackHandler.getStackInSlot(0) != null) {
+                                    if (bufferStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
                                         if ((bufferStackHandler.getStackInSlot(0).getItem().equals(inputStackHandler.getStackInSlot(0).getItem()) &&
                                                 bufferStackHandler.getStackInSlot(0).getItemDamage() == inputStackHandler.getStackInSlot(0).getItemDamage()
-                                                && (bufferStackHandler.getStackInSlot(0).stackSize < bufferStackHandler.getStackInSlot(0).getMaxStackSize())))
+                                                && (bufferStackHandler.getStackInSlot(0).getCount() < bufferStackHandler.getStackInSlot(0).getMaxStackSize())))
                                             isThereRoom = true;
                                     } else isThereRoom = true;
 
@@ -165,33 +169,33 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                                         bank = bank + cost;
                                         if (!infinite) {
                                             cashRegister = cashRegister - cost;
-                                            if (bufferStackHandler.getStackInSlot(buffSlot) != null)
-                                                bufferStackHandler.getStackInSlot(buffSlot).stackSize++;
-                                            if (bufferStackHandler.getStackInSlot(buffSlot) == null) {
+                                            if (bufferStackHandler.getStackInSlot(buffSlot) != ItemStack.EMPTY)
+                                                bufferStackHandler.getStackInSlot(buffSlot).grow(1);
+                                            if (bufferStackHandler.getStackInSlot(buffSlot) == ItemStack.EMPTY) {
                                                 ItemStack newStack = inputItem.copy();
-                                                newStack.stackSize=(1);
+                                                newStack.setCount(1);
                                                 bufferStackHandler.setStackInSlot(buffSlot, newStack);
                                             }
                                         }
-                                        inputItem.stackSize--;
+                                        inputItem.shrink(1);
                                         if (itemAmounts[i] > 1) {
-                                            vendStackHandler.getStackInSlot(i).stackSize--;
+                                            vendStackHandler.getStackInSlot(i).shrink(1);
                                             itemAmounts[i]--;
                                         }else if (itemAmounts[i] == 1){
-                                            vendStackHandler.setStackInSlot(i, null);
+                                            vendStackHandler.setStackInSlot(i, ItemStack.EMPTY);
                                             itemAmounts[i] = -1;
                                         }
                                     }
                                 }
                             }
-                            if (inputStackHandler.getStackInSlot(0).stackSize == 0) {
-                                inputStackHandler.setStackInSlot(0, null);
+                            if (inputStackHandler.getStackInSlot(0).getCount() == 0) {
+                                inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
                                 break searchLoop;
                             }
                         }
                     }
                 } else {        //EDIT MODE
-                    if (inputStackHandler.getStackInSlot(0) != null) {
+                    if (inputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
                         if (inputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemBanknote)) {
                             int amount;
                             switch (inputStackHandler.getStackInSlot(0).getItemDamage()) {
@@ -217,8 +221,8 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                                     amount = -1;
                                     break;
                             }
-                            amount = amount * inputStackHandler.getStackInSlot(0).stackSize;
-                            inputStackHandler.setStackInSlot(0, null);
+                            amount = amount * inputStackHandler.getStackInSlot(0).getCount();
+                            inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
                             cashRegister = cashRegister + amount;
                         }
                     }
@@ -232,9 +236,9 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     public void dropItems() {
         for (int i = 0; i < bufferStackHandler.getSlots(); i++){
             ItemStack item = bufferStackHandler.getStackInSlot(i);
-            if (item != null) {
+            if (item != ItemStack.EMPTY) {
                 world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), item));
-                vendStackHandler.setStackInSlot(i, null);   //Just in case
+                vendStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
             }
         }
     }
@@ -243,16 +247,16 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     public void dropTopItems() {
         for (int i = 15; i < vendStackHandler.getSlots(); i++) {
             ItemStack item = vendStackHandler.getStackInSlot(i);
-            if (item != null) {
+            if (item != ItemStack.EMPTY) {
                 world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), item));
-                vendStackHandler.setStackInSlot(i, null);   //Just in case
+                vendStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
             }
         }
         for (int i = 3; i < bufferStackHandler.getSlots(); i++){
             ItemStack item = bufferStackHandler.getStackInSlot(i);
-            if (item != null) {
+            if (item != ItemStack.EMPTY) {
                 world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), item));
-                bufferStackHandler.setStackInSlot(i, null);   //Just in case
+                bufferStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
             }
         }
     }
@@ -290,7 +294,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                 if (out[i] != 0) {
                     ItemStack item = new ItemStack(ModItems.itemBanknote);
                     item.setItemDamage(i);
-                    item.stackSize=(out[i]);
+                    item.setCount(out[i]);
 
                     if(mode){
                         cashRegister = 0;
@@ -337,10 +341,10 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     }
 
     public void outInputSlot(){
-        if (inputStackHandler.getStackInSlot(0) != null) {
+        if (inputStackHandler.getStackInSlot(0).getItem() != Item.getItemFromBlock(Blocks.AIR)) {
             if (!world.isRemote) {
                 ItemStack item = inputStackHandler.getStackInSlot(0);
-                inputStackHandler.setStackInSlot(0, null);
+                inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
 
                 int x = getPos().getX();
                 int z = getPos().getZ();
@@ -597,13 +601,11 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     }
 
     public void setItemAmount(int amount, int index){
-        if(vendStackHandler.getStackInSlot(index) != null){
-            itemAmounts[index] = amount;
-            if (amount == -1) {
-                vendStackHandler.getStackInSlot(index).stackSize = (1);
-            } else {
-                vendStackHandler.getStackInSlot(index).stackSize = (itemAmounts[index]);
-            }
+        itemAmounts[index] = amount;
+        if(amount == -1){
+            vendStackHandler.getStackInSlot(index).setCount(1);
+        }else {
+            vendStackHandler.getStackInSlot(index).setCount(itemAmounts[index]);
         }
     }
 
