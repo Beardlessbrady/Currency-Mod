@@ -256,6 +256,7 @@ public class GuiExchanger extends GuiContainer {
             fontRendererObj.drawString(I18n.format("tile.modcurrency:guivending.infinitestock"), -86, 93 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY(), Integer.parseInt("42401c", 16));
             fontRendererObj.drawString(I18n.format("tile.modcurrency:guivending.infinitestock"), -85, 92 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY(), Integer.parseInt("fff200", 16));
         }
+
     }
 
     private void drawIcons() {
@@ -330,13 +331,11 @@ public class GuiExchanger extends GuiContainer {
 
         int kMax = 0;
 
-        if(tile.getOwner() != "") {
-            if (UUID.fromString(tile.getOwner()).equals(player.getUniqueID())) {
-                kMax++;
-                if (tile.getField(2) == 1) {
-                    kMax = kMax + 2;
-                    if (player.isCreative()) kMax++;
-                }
+        if(UUID.fromString(tile.getOwner()).equals(player.getUniqueID())) {
+            kMax++;
+            if (tile.getField(2) == 1) {
+                kMax = kMax + 2;
+                if (player.isCreative()) kMax++;
             }
         }
 
