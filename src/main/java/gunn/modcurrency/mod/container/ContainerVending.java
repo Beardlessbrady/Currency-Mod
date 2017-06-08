@@ -51,8 +51,6 @@ public class ContainerVending extends Container implements INBTInventory{
     private final int TE_VEND_FIRST_SLOT_INDEX = TE_MONEY_FIRST_SLOT_INDEX + 1;
     //private final int TE_VEND_BUFFER_SLOT = TE_VEND_MAIN_TOTAL_COUNT + 1;
 
-    private int maxStack = 100;
-
     private Item[] specialSlotItems = new Item[2];
     private TileVending tile;
     private int[] cachedFields;
@@ -161,25 +159,7 @@ public class ContainerVending extends Container implements INBTInventory{
                     this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).getStackInSlot(slotId - PLAYER_TOTAL_COUNT).shrink(1);
                     tile.setGhostSlot(slotId - PLAYER_TOTAL_COUNT - 1, false);
                 }
-
-                //If current stack or players hand isn't empty and items are the same, try to add to count OTHERWISE normal
-                if(player.inventory.getItemStack().getItem() == Items.AIR || getSlot(slotId).getStack().getItem() == Items.AIR || !equalStacks(player.inventory.getItemStack(), getSlot(slotId).getStack())){
-                    return super.slotClick(slotId, dragType, clickTypeIn, player);
-                }else if(getSlot(slotId).getStack().getCount() < maxStack){
-                    int add = player.inventory.getItemStack().getCount();
-                    int current = getSlot(slotId).getStack().getCount();
-                    int leftover = 0;
-                    if(add + current > maxStack){
-                        leftover = add + current - maxStack;
-                        add = maxStack - current;
-                    }
-                    getSlot(slotId).getStack().setCount(current + add);
-                    if(leftover == 0) {
-                        player.inventory.setItemStack(ItemStack.EMPTY);
-                    }else player.inventory.getItemStack().setCount(leftover);
-                }
-
-
+                return super.slotClick(slotId, dragType, clickTypeIn, player);
             } else return super.slotClick(slotId, dragType, clickTypeIn, player);
         } else {  //Sell Mode
             if (slotId >= 0 && slotId <= 36) {           //Is Players Inv or Input Slot
