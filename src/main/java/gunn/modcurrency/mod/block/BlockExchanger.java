@@ -12,6 +12,7 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -203,7 +204,8 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
             }
         } else if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOBOTTOM) {   //BOTTOM BLOCK
             if(getTile(worldIn, pos).getPlayerUsing() != null) getTile(worldIn, pos).getPlayerUsing().closeScreen();
-            worldIn.setBlockState(pos.up(), worldIn.getBlockState(pos.up()).withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.ONE));
+            worldIn.setBlockToAir(pos.up());
+            worldIn.spawnEntity(new EntityItem(worldIn, pos.getX(), pos.up().getY(), pos.getZ(), new ItemStack(ModBlocks.blockExchanger)));
         }
 
         if (state.getValue(StateHandler.TWOTALL) != StateHandler.EnumTwoBlock.TWOTOP) {

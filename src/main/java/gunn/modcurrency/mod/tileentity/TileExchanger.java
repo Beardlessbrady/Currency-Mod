@@ -5,14 +5,10 @@ import gunn.modcurrency.mod.client.gui.util.INBTInventory;
 import gunn.modcurrency.mod.container.itemhandler.ItemHandlerCustom;
 import gunn.modcurrency.mod.container.itemhandler.ItemHandlerVendor;
 import gunn.modcurrency.mod.handler.StateHandler;
-import gunn.modcurrency.mod.item.ItemWallet;
 import gunn.modcurrency.mod.item.ModItems;
-import net.minecraft.block.BlockChest;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -341,7 +337,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     }
 
     public void outInputSlot(){
-        if (inputStackHandler.getStackInSlot(0).getItem() != Item.getItemFromBlock(Blocks.AIR)) {
+        if (inputStackHandler.getStackInSlot(0) != null) {
             if (!world.isRemote) {
                 ItemStack item = inputStackHandler.getStackInSlot(0);
                 inputStackHandler.setStackInSlot(0, null);
@@ -601,11 +597,13 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     }
 
     public void setItemAmount(int amount, int index){
-        itemAmounts[index] = amount;
-        if(amount == -1){
-            vendStackHandler.getStackInSlot(index).stackSize=(1);
-        }else {
-            vendStackHandler.getStackInSlot(index).stackSize=(itemAmounts[index]);
+        if(vendStackHandler.getStackInSlot(index) != null){
+            itemAmounts[index] = amount;
+            if (amount == -1) {
+                vendStackHandler.getStackInSlot(index).stackSize = (1);
+            } else {
+                vendStackHandler.getStackInSlot(index).stackSize = (itemAmounts[index]);
+            }
         }
     }
 
