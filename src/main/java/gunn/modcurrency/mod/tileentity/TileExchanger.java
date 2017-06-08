@@ -601,7 +601,6 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     }
 
     public void setItemAmount(int amount, int index){
-        System.out.println(index + ":" + amount);
         itemAmounts[index] = amount;
         if(amount == -1){
             vendStackHandler.getStackInSlot(index).setCount(1);
