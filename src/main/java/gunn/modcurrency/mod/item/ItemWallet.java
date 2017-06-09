@@ -43,7 +43,7 @@ public class ItemWallet extends Item{
                 "ABA",
                 ".A.",
                 'A', Items.LEATHER,
-                'B', new ItemStack (ModItems.itemBanknote, 1, 0));
+                'B', Items.PAPER);
     }
 
     @SideOnly(Side.CLIENT)
