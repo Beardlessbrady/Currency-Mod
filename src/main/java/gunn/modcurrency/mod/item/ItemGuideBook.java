@@ -2,9 +2,13 @@ package gunn.modcurrency.mod.item;
 
 import gunn.modcurrency.mod.ModCurrency;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
@@ -32,5 +36,11 @@ public class ItemGuideBook extends Item {
     public void recipe() {
         GameRegistry.addShapelessRecipe(new ItemStack(ModItems.itemGuide, 1, 0),
                 Items.BOOK, Items.GOLD_INGOT);
+    }
+
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+        playerIn.openGui(ModCurrency.instance, 34, worldIn, playerIn.getPosition().getX(), playerIn.getPosition().down().getY(), playerIn.getPosition().getZ());
+        return super.onItemRightClick(worldIn, playerIn, handIn);
     }
 }
