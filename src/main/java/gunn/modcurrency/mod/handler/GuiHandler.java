@@ -1,9 +1,6 @@
 package gunn.modcurrency.mod.handler;
 
-import gunn.modcurrency.mod.client.gui.GuiATM;
-import gunn.modcurrency.mod.client.gui.GuiExchanger;
-import gunn.modcurrency.mod.client.gui.GuiVending;
-import gunn.modcurrency.mod.client.gui.GuiWallet;
+import gunn.modcurrency.mod.client.gui.*;
 import gunn.modcurrency.mod.container.ContainerATM;
 import gunn.modcurrency.mod.container.ContainerExchanger;
 import gunn.modcurrency.mod.container.ContainerVending;
@@ -29,6 +26,7 @@ public class GuiHandler implements IGuiHandler{
     //Id 31 = BlockSeller
     //Id 32 = Wallet
     //Id 33 = ATM
+    //ID 34 = Guide Book
 
 
     @Override
@@ -79,6 +77,10 @@ public class GuiHandler implements IGuiHandler{
         if(tileEntity instanceof TileATM && ID == 33){
             TileATM tileATM = (TileATM) tileEntity;
             return new GuiATM(player, tileATM);
+        }
+
+        if(ID == 34 && player.inventory.getCurrentItem().getItem() == ModItems.itemGuide){
+            return new GuiGuide(player.inventory.getCurrentItem());
         }
         return null;
     }
