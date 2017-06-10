@@ -37,6 +37,9 @@ public class GuiGuide extends GuiScreen{
         super.drawScreen(mouseX, mouseY, partialTicks);
         Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
         drawTexturedModalRect(guiLeft, guiTop, 20, 1, xSize, ySize);
+
+        drawTexturedModalRect(guiLeft + 33, guiTop + 10, 45, 192, 77,23);
+
     }
 
     @Override
