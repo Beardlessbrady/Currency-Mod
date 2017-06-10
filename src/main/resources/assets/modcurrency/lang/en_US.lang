@@ -6,6 +6,7 @@ item.modcurrency:banknote_3.name=Twenty-Dollar Bill
 item.modcurrency:banknote_4.name=Fifty-Dollar Bill
 item.modcurrency:banknote_5.name=One Hundred-Dollar Bill
 item.modcurrency:wallet.name=Wallet
+item.modcurrency:guidebook.name=Currency for Blockheads
 
 //Block names
 tile.modcurrency:blockvending.name=Vending Machine
