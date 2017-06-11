@@ -331,11 +331,13 @@ public class GuiExchanger extends GuiContainer {
 
         int kMax = 0;
 
-        if(UUID.fromString(tile.getOwner()).equals(player.getUniqueID())) {
-            kMax++;
-            if (tile.getField(2) == 1) {
-                kMax = kMax + 2;
-                if (player.isCreative()) kMax++;
+        if(tile.getOwner() != "") {
+            if (UUID.fromString(tile.getOwner()).equals(player.getUniqueID())) {
+                kMax++;
+                if (tile.getField(2) == 1) {
+                    kMax = kMax + 2;
+                    if (player.isCreative()) kMax++;
+                }
             }
         }
 
