@@ -1,0 +1,16 @@
+[
+{
+  "modid": "modcurrency",
+  "name": "Good Ol' Currency Mod",
+  "description": "Adds tools to create an economy on servers.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "https://github.com/BeardlessBrady/Currency-Mod",
+  "updateUrl": "",
+  "authorList": ["BeardlessBrady"],
+  "credits": "The Forge and FML guys, for making this example",
+  "logoFile": "logo.png",
+  "screenshots": [],
+  "dependencies": []
+}
+]
