@@ -241,13 +241,10 @@ public class ContainerVending extends Container implements INBTInventory{
 
     private boolean equalStacks(ItemStack one, ItemStack two){
         boolean basic = one.getItem().equals(two.getItem()) && (one.getItemDamage() == two.getItemDamage());
-        boolean ench;
-        if(one.isItemEnchanted() == two.isItemEnchanted()){
-           ench = one.getEnchantmentTagList() == two.getEnchantmentTagList();
-        }else{
-            ench = false;
+        boolean ench = true;
+        if(one.hasTagCompound() && two.hasTagCompound()) {
+            ench = (one.getTagCompound().equals(two.getTagCompound()));
         }
-
         return basic && ench;
     }
 
