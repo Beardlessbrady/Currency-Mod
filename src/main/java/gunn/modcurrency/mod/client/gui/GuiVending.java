@@ -15,6 +15,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -100,6 +102,7 @@ public class GuiVending extends GuiContainer {
     @Override
     public void onGuiClosed() {
         super.onGuiClosed();
+
     }
 
     private void updateTextField() {
@@ -380,11 +383,7 @@ public class GuiVending extends GuiContainer {
             int column = ((j - startY) / 18);
             int slot = row + (column * 5);
             if(tile.getField(7) != 1)slot = slot -5;
-
-            ItemStack currStack = tile.getStack(slot);
-
-            List<String> list = new ArrayList<>();
-            list.add(String.valueOf(currStack.getDisplayName()));
+            List<String> list = stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips);
 
             if(tile.getField(2) == 0){
                 if(!tile.canAfford(slot)){
@@ -397,6 +396,19 @@ public class GuiVending extends GuiContainer {
                 }
             }else{
                 list.add("$" + (String.valueOf(tile.getItemCost(slot))));
+            }
+
+            //Color text normally
+            for (int k = 0; k < list.size(); ++k)
+            {
+                if (k == 0)
+                {
+                    list.set(k, stack.getRarity().rarityColor + (String)list.get(k));
+                }
+                else
+                {
+                    list.set(k, TextFormatting.GRAY + (String)list.get(k));
+                }
             }
 
             FontRenderer font = stack.getItem().getFontRenderer(stack);
