@@ -45,20 +45,20 @@ public class GuiGuide extends GuiScreen{
         super.initGui();
         this.guiLeft = (this.width - this.xSize) / 2;
         this.guiTop = (this.height - this.ySize) / 2;
-
-        this.buttonList.add(new GuiButton(0, guiLeft, guiTop, 45, 20, ""));
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        super.drawScreen(mouseX, mouseY, partialTicks);
+        int i = (mouseX - (this.width - this.xSize) / 2);
+        int j = (mouseY - (this.height - this.ySize) / 2);
+
         Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
         drawTexturedModalRect(guiLeft, guiTop, 20, 1, xSize, ySize);
         RenderHelper.enableGUIStandardItemLighting();
 
-
         switch (page) {
             case 0:     //Front Page
+                Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
                 drawTexturedModalRect(guiLeft + 33, guiTop + 10, 45, 192, 77, 23);    //Logo
 
                 GL11.glPushMatrix();
@@ -68,14 +68,44 @@ public class GuiGuide extends GuiScreen{
                 fontRendererObj.drawSplitString(I18n.format(introText), wrapX, wrapY, wrapWidth, Color.BLACK.getRGB());
                 GL11.glPopMatrix();
 
-                this.itemRender.renderItemIntoGUI(new ItemStack(ModBlocks.blockExchanger), guiLeft + 35, guiTop + 90);
-                this.itemRender.renderItemIntoGUI(new ItemStack(ModBlocks.blockVending), guiLeft + 55, guiTop + 90);
-                this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemGuide), guiLeft + 75, guiTop + 90);
-                this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemBanknote), guiLeft + 95, guiTop + 90);
-                this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemWallet), guiLeft + 35, guiTop + 110);
+
+                if ((i >= 35 && i <= 35 + 15) && (j >= 90 && j <= 90 + 15)) {
+                    GL11.glPushMatrix();
+                    GL11.glTranslatef(guiLeft + 1.5F, guiTop  + 1.5F, wrapScale);
+                    GL11.glScalef(1.5F, 1.5F, 1.5F);
+                    this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemBanknote), 20, 57);
+                    GL11.glPopMatrix();
+                }else this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemBanknote), guiLeft + 35, guiTop + 90);
+
+                if ((i >= 55 && i <= 55 + 15) && (j >= 90 && j <= 90 + 15)) {
+                    GL11.glPushMatrix();
+                    GL11.glTranslatef(guiLeft + 1.5F, guiTop  + 1.5F, wrapScale);
+                    GL11.glScalef(1.5F, 1.5F, 1.5F);
+                    this.itemRender.renderItemIntoGUI(new ItemStack(ModBlocks.blockVending), 33, 57);
+                    GL11.glPopMatrix();
+                }else this.itemRender.renderItemIntoGUI(new ItemStack(ModBlocks.blockVending), guiLeft + 55, guiTop + 90);
+
+                if ((i >= 75 && i <= 75 + 15) && (j >= 90 && j <= 90 + 15)) {
+                    GL11.glPushMatrix();
+                    GL11.glTranslatef(guiLeft + 1.5F, guiTop  + 1.5F, wrapScale);
+                    GL11.glScalef(1.5F, 1.5F, 1.5F);
+                    this.itemRender.renderItemIntoGUI(new ItemStack(ModBlocks.blockExchanger), 47, 57);
+                    GL11.glPopMatrix();
+                }else this.itemRender.renderItemIntoGUI(new ItemStack(ModBlocks.blockExchanger), guiLeft + 75, guiTop + 90);
+
+                if ((i >= 95 && i <= 95 + 15) && (j >= 90 && j <= 90 + 15)) {
+                    GL11.glPushMatrix();
+                    GL11.glTranslatef(guiLeft + 1.5F, guiTop  + 1.5F, wrapScale);
+                    GL11.glScalef(1.5F, 1.5F, 1.5F);
+                    this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemWallet,1,1), 60, 57);
+                    GL11.glPopMatrix();
+                }else this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemWallet,1,1), guiLeft + 95, guiTop + 90);
+                //this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemWallet), guiLeft + 35, guiTop + 110);
             break;
             case 1: //
         }
+
+        super.drawScreen(mouseX, mouseY, partialTicks);
     }
 
 
