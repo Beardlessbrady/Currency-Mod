@@ -1,5 +1,6 @@
 package gunn.modcurrency.mod.container.itemhandler;
 
+import gunn.modcurrency.mod.utils.UtilMethods;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -23,7 +24,7 @@ public class ItemHandlerVendor extends ItemStackHandler {
     @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-        if (equalStacks(this.getStackInSlot(slot),stack)) {
+        if (UtilMethods.equalStacks(this.getStackInSlot(slot),stack)) {
             if (isGhost(slot)) {
                 setGhost(slot, false);
                 stack.shrink(1);
@@ -40,14 +41,5 @@ public class ItemHandlerVendor extends ItemStackHandler {
 
     public void setGhost(int slot, boolean bool) {
         ghostItems[slot] = bool;
-    }
-
-    private boolean equalStacks(ItemStack one, ItemStack two){
-        boolean basic = one.getItem().equals(two.getItem()) && (one.getItemDamage() == two.getItemDamage());
-        boolean ench = true;
-        if(one.hasTagCompound() && two.hasTagCompound()) {
-            ench = (one.getTagCompound().equals(two.getTagCompound()));
-        }
-        return basic && ench;
     }
 }

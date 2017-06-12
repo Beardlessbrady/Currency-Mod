@@ -387,9 +387,9 @@ public class GuiVending extends GuiContainer {
 
             if(tile.getField(2) == 0){
                 if(!tile.canAfford(slot)){
-                    list.add(TextFormatting.RED + "$" + (String.valueOf(tile.getItemCost(slot))));
+                    list.add(TextFormatting.RED + "Price: $" + (String.valueOf(tile.getItemCost(slot))));
                 }else{
-                    list.add("$" + (String.valueOf(tile.getItemCost(slot))));
+                    list.add(TextFormatting.GREEN + "Price: $" + (String.valueOf(tile.getItemCost(slot))));
                 }
                 if(tile.isGhostSlot(slot)) {
                     list.add(TextFormatting.RED + "OUT OF STOCK");

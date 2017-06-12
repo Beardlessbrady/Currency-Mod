@@ -14,6 +14,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -409,13 +410,23 @@ public class GuiExchanger extends GuiContainer {
             int column = ((j - startY) / 18);
             int slot = row + (column * 5);
             if(tile.getField(7) != 1)slot = slot -5;
+            List<String> list = stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips);
 
-            ItemStack currStack = tile.getStack(slot);
+            list.add((TextFormatting.GREEN + "Price: $" + (String.valueOf(tile.getItemCost(slot)))));
 
-            List<String> list = new ArrayList<>();
-            list.add(String.valueOf(currStack.getDisplayName()));
 
-            list.add("$" + (String.valueOf(tile.getItemCost(slot))));
+            //Color text normally
+            for (int k = 0; k < list.size(); ++k)
+            {
+                if (k == 0)
+                {
+                    list.set(k, stack.getRarity().rarityColor + (String)list.get(k));
+                }
+                else
+                {
+                    list.set(k, TextFormatting.GRAY + (String)list.get(k));
+                }
+            }
 
             FontRenderer font = stack.getItem().getFontRenderer(stack);
             net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(stack);
