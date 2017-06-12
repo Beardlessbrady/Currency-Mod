@@ -8,6 +8,7 @@ import gunn.modcurrency.mod.item.ModItems;
 import gunn.modcurrency.mod.network.PacketHandler;
 import gunn.modcurrency.mod.network.PacketItemSpawnToServer;
 import gunn.modcurrency.mod.tileentity.TileVending;
+import gunn.modcurrency.mod.utils.UtilMethods;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
@@ -200,7 +201,7 @@ public class ContainerVending extends Container implements INBTInventory{
 
         if (slotStack != ItemStack.EMPTY) {
             if (playStack.getItem() != Item.getItemFromBlock(Blocks.AIR)) {
-                if (!equalStacks(playStack, slotStack)) {
+                if (!UtilMethods.equalStacks(playStack, slotStack)) {
                     return ItemStack.EMPTY; //Checks if player is holding stack, if its different then one being clicked do nothing
                 }
             }
@@ -239,14 +240,6 @@ public class ContainerVending extends Container implements INBTInventory{
         return ItemStack.EMPTY;
     }
 
-    private boolean equalStacks(ItemStack one, ItemStack two){
-        boolean basic = one.getItem().equals(two.getItem()) && (one.getItemDamage() == two.getItemDamage());
-        boolean ench = true;
-        if(one.hasTagCompound() && two.hasTagCompound()) {
-            ench = (one.getTagCompound().equals(two.getTagCompound()));
-        }
-        return basic && ench;
-    }
 
     @Nullable
     @Override

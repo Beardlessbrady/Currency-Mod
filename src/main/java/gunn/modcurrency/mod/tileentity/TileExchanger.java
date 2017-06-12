@@ -7,6 +7,7 @@ import gunn.modcurrency.mod.container.itemhandler.ItemHandlerVendor;
 import gunn.modcurrency.mod.handler.StateHandler;
 import gunn.modcurrency.mod.item.ItemWallet;
 import gunn.modcurrency.mod.item.ModItems;
+import gunn.modcurrency.mod.utils.UtilMethods;
 import net.minecraft.block.BlockChest;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -94,8 +95,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                     bufferStackHandler.setStackInSlot(0, ItemStack.EMPTY);
                     break loop;
                 }else{
-                    if(itemHandler.getStackInSlot(i).getItem().equals(bufferStackHandler.getStackInSlot(0).getItem()) && itemHandler.getStackInSlot(i).getItemDamage() == bufferStackHandler.getStackInSlot(0).getItemDamage() &&
-                            itemHandler.getStackInSlot(i).getCount() != itemHandler.getStackInSlot(i).getMaxStackSize()){
+                    if(UtilMethods.equalStacks(itemHandler.getStackInSlot(i), bufferStackHandler.getStackInSlot(0))){
                         int wiggleRoom = itemHandler.getStackInSlot(i).getMaxStackSize() - itemHandler.getStackInSlot(i).getCount();
                         int buffCount = bufferStackHandler.getStackInSlot(0).getCount();
                         if(wiggleRoom >= buffCount){
@@ -150,16 +150,15 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                         searchLoop:
                         for (int i = 0; i < vendStackHandler.getSlots(); i++) {
                             if (vendStackHandler.getStackInSlot(i) != ItemStack.EMPTY) {
-                                if (inputStackHandler.getStackInSlot(0).getItem().equals(vendStackHandler.getStackInSlot(i).getItem()) &&
+                                if (UtilMethods.equalStacks(inputStackHandler.getStackInSlot(0), vendStackHandler.getStackInSlot(i)) &&
                                         inputStackHandler.getStackInSlot(0).getItemDamage() == vendStackHandler.getStackInSlot(i).getItemDamage()) {
                                     int cost = getItemCost(i);
                                     boolean isThereRoom = false;
                                     int buffSlot = 0;
 
                                     if (bufferStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
-                                        if ((bufferStackHandler.getStackInSlot(0).getItem().equals(inputStackHandler.getStackInSlot(0).getItem()) &&
-                                                bufferStackHandler.getStackInSlot(0).getItemDamage() == inputStackHandler.getStackInSlot(0).getItemDamage()
-                                                && (bufferStackHandler.getStackInSlot(0).getCount() < bufferStackHandler.getStackInSlot(0).getMaxStackSize())))
+                                        if (UtilMethods.equalStacks(bufferStackHandler.getStackInSlot(0), inputStackHandler.getStackInSlot(0))
+                                                && (bufferStackHandler.getStackInSlot(0).getCount() < bufferStackHandler.getStackInSlot(0).getMaxStackSize()))
                                             isThereRoom = true;
                                     } else isThereRoom = true;
 
