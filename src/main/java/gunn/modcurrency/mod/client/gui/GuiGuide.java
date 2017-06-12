@@ -3,6 +3,7 @@ package gunn.modcurrency.mod.client.gui;
 import gunn.modcurrency.mod.block.ModBlocks;
 import gunn.modcurrency.mod.item.ModItems;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
@@ -44,6 +45,8 @@ public class GuiGuide extends GuiScreen{
         super.initGui();
         this.guiLeft = (this.width - this.xSize) / 2;
         this.guiTop = (this.height - this.ySize) / 2;
+
+        this.buttonList.add(new GuiButton(0, guiLeft, guiTop, 45, 20, ""));
     }
 
     @Override
