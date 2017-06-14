@@ -35,7 +35,7 @@ public final class UtilRecipe {
         NonNullList<Ingredient> ingredients = NonNullList.create();
 
         for (int i = 0; i < ingredientList.length; i++) {
-            ingredients.add(i, Ingredient.EMPTY);
+            ingredients.add(i, Ingredient.fromStacks((ingredientList[i])));
         }
 
         CraftingManager.register(new ResourceLocation(ModCurrency.MODID, "recipe" + name), new ShapelessRecipes(name, output, ingredients));

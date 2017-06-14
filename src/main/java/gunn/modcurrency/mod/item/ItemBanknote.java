@@ -6,6 +6,7 @@ import gunn.modcurrency.mod.block.ModBlocks;
 import gunn.modcurrency.mod.utils.UtilRecipe;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -62,7 +63,7 @@ public class ItemBanknote extends Item {
         ItemStack bill100 = new ItemStack(ModItems.itemBanknote,1,5);
 
         //Output 100 Dollar
-        ItemStack[] itemList = {bill1, bill1, bill1, bill1, bill1, bill5, bill20, bill20, bill50};
+        ItemStack[] itemList = {bill1, bill1, bill1, bill1, bill1, bill5, bill20, bill20, bill50,  new ItemStack(Blocks.BONE_BLOCK)};
         UtilRecipe.addShapelessRecipe("itemdollarbill_100_0", bill100, itemList);
 
         itemList = new ItemStack[] {bill1, bill1, bill1, bill1, bill1, bill5, bill20, bill20, bill50};
