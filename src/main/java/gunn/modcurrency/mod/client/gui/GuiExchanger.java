@@ -146,6 +146,8 @@ public class GuiExchanger extends GuiContainer {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
+        drawToolTips(mouseX - (this.width - this.xSize) / 2, mouseY - (this.height - this.ySize) / 2);
+        this.renderHoveredToolTip(mouseX,mouseY);
         if (tile.getField(8) == 1 && tile.getField(2) == 1) {
             priceField.drawTextBox();
             amountField.drawTextBox();
@@ -226,7 +228,6 @@ public class GuiExchanger extends GuiContainer {
             drawIcons();
         }
         drawText();
-        drawToolTips(mouseX - (this.width - this.xSize) / 2, mouseY - (this.height - this.ySize) / 2);
     }
 
     private void drawText(){
