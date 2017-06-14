@@ -19,9 +19,13 @@ public final class UtilRecipe {
         NonNullList<Ingredient> ingredients = NonNullList.create();
 
         for (int i = 0; i < ingredientList.length; i++) {
-            ingredients.add(i, Ingredient.func_193369_a((ingredientList[i])));
+            if(ingredientList[i] == ItemStack.EMPTY){
+                ingredients.add(i, Ingredient.EMPTY);
+            }else {
+                ingredients.add(i, Ingredient.fromStacks((ingredientList[i])));
+            }
         }
 
-        CraftingManager.func_193372_a(registryName, new ShapedRecipes(name, w, h, ingredients, output));
+        CraftingManager.register(registryName, new ShapedRecipes(name, w, h, ingredients, output));
     }
 }

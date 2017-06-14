@@ -38,29 +38,25 @@ public class TabButton extends GuiButton{
 
     }
 
-    /**
-     * Draws this button to the screen.
-     */
     @Override
-    //Previously drawButton
-    public void func_191745_a(Minecraft mc , int mouseX, int mouseY, float p_191745_4_){
+    public void drawButton(Minecraft mc , int mouseX, int mouseY, float p_191745_4_){
         if (this.visible) {
-            FontRenderer fontrenderer = mc.fontRendererObj;
+            FontRenderer fontrenderer = mc.fontRenderer;
             mc.getTextureManager().bindTexture(CUSTOM_TEXTURES);
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            this.hovered = mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
+            this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
             int i = this.getHoverState(this.hovered);
             GlStateManager.enableBlend();
             GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
             GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-            this.drawTexturedModalRect(this.xPosition, this.yPosition, minU, minV, maxU, maxV);
+            this.drawTexturedModalRect(this.x, this.y, minU, minV, maxU, maxV);
             this.mouseDragged(mc, mouseX, mouseY);
         }
     }
 
     public int getButtonY(){
-        if(openState) return yPosition + openY;
-        return yPosition;
+        if(openState) return y + openY;
+        return y;
     }
 
     public boolean openState(){

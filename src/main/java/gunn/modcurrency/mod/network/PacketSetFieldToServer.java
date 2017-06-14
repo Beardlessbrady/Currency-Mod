@@ -55,7 +55,7 @@ public class PacketSetFieldToServer implements IMessage {
         }
 
         private void handle(PacketSetFieldToServer message, MessageContext ctx){
-            EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
+            EntityPlayerMP playerEntity = ctx.getServerHandler().player;
             World world = playerEntity.world;
             if(world.getTileEntity(message.blockPos) instanceof TileVending)((TileVending) world.getTileEntity(message.blockPos)).setField(message.field, message.data);
             if(world.getTileEntity(message.blockPos) instanceof TileExchanger) ((TileExchanger) world.getTileEntity(message.blockPos)).setField(message.field, message.data);
