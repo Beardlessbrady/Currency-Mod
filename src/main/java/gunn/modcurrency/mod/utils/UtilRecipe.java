@@ -15,7 +15,7 @@ import net.minecraft.util.ResourceLocation;
  */
 public final class UtilRecipe {
 
-    public static void addShapelessRecipe(ResourceLocation registryName, String name, int w, int h, ItemStack output, ItemStack[] ingredientList) {
+    public static void addShapedRecipe(ResourceLocation registryName, String name, int w, int h, ItemStack output, ItemStack[] ingredientList) {
         NonNullList<Ingredient> ingredients = NonNullList.create();
 
         for (int i = 0; i < ingredientList.length; i++) {
