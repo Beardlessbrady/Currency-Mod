@@ -332,7 +332,7 @@ public class GuiExchanger extends GuiContainer {
 
         int kMax = 0;
 
-        if(tile.getOwner() != "") {
+      if(tile.getOwner() != "") {
             if (UUID.fromString(tile.getOwner()).equals(player.getUniqueID())) {
                 kMax++;
                 if (tile.getField(2) == 1) {
@@ -359,27 +359,27 @@ public class GuiExchanger extends GuiContainer {
                         list.add("Lock Tab");
                         list.add("Enable/Disable");
                         list.add("pipe interaction");
-                        if(tile.getField(8) == 0) {
+                        if (tile.getField(8) == 0) {
                             this.drawHoveringText(list, -116, 48, fontRendererObj);
-                        }else this.drawHoveringText(list, -116, 39, fontRendererObj);
+                        } else this.drawHoveringText(list, -116, 39, fontRendererObj);
                         break;
                     case 2:
                         list.add("Settings Tab");
                         list.add("Set item costs");
                         list.add("and prices");
-                        if(tile.getField(8) == 0 && !creativeExtended) {
+                        if (tile.getField(8) == 0 && !creativeExtended) {
                             this.drawHoveringText(list, -108, 72, fontRendererObj);
-                        }else if(creativeExtended && tile.getField(8) == 0){
+                        } else if (creativeExtended && tile.getField(8) == 0) {
                             this.drawHoveringText(list, -108, 61, fontRendererObj);
-                        }else this.drawHoveringText(list, -108, 39, fontRendererObj);
+                        } else this.drawHoveringText(list, -108, 39, fontRendererObj);
                         break;
                     case 3:
                         list.add("Creative Tab");
                         list.add("Infinite Stock");
 
-                        if(tile.getField(8) == 0 && !creativeExtended) {
+                        if (tile.getField(8) == 0 && !creativeExtended) {
                             this.drawHoveringText(list, -104, 98, fontRendererObj);
-                        }else if(tile.getField(8) == 0 && creativeExtended) {
+                        } else if (tile.getField(8) == 0 && creativeExtended) {
                             this.drawHoveringText(list, -104, 72, fontRendererObj);
                         }
                         break;
@@ -387,15 +387,16 @@ public class GuiExchanger extends GuiContainer {
                         list.add("Creative Tab");
                         list.add("Infinite Stock");
 
-                        if(tile.getField(8) == 1 && !creativeExtended) {
+                        if (tile.getField(8) == 1 && !creativeExtended) {
                             this.drawHoveringText(list, -104, 130, fontRendererObj);
-                        }else if (tile.getField(8) == 1 && creativeExtended){
+                        } else if (tile.getField(8) == 1 && creativeExtended) {
                             this.drawHoveringText(list, -104, 178, fontRendererObj);
                         }
                         break;
                 }
             }
         }
+
     }
 
     @Override
