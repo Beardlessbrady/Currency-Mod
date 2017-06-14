@@ -4,6 +4,7 @@ import gunn.modcurrency.mod.ModCurrency;
 import gunn.modcurrency.mod.container.itemhandler.ItemHandlerVendor;
 import gunn.modcurrency.mod.handler.StateHandler;
 import gunn.modcurrency.mod.tileentity.TileVending;
+import gunn.modcurrency.mod.utils.UtilRecipe;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
@@ -60,17 +61,11 @@ public class BlockVending extends Block implements ITileEntityProvider {
     }
 
     void recipe() {
-        /*
-        ItemStack basic = new ItemStack(Item.getItemFromBlock(this));
-        basic.setItemDamage(0);
+        ItemStack[] itemList = {new ItemStack(Items.IRON_INGOT), new ItemStack(Blocks.DROPPER), new ItemStack(Items.IRON_INGOT),
+                new ItemStack(Items.IRON_INGOT), new ItemStack(Blocks.CHEST), new ItemStack(Items.IRON_INGOT),
+                new ItemStack(Items.IRON_INGOT), new ItemStack(Items.IRON_DOOR), new ItemStack(Items.IRON_INGOT)};
 
-        GameRegistry.addRecipe(basic,
-                "ABA", "ACA", "ADA",
-                'A', Items.IRON_INGOT,
-                'B', Items.COMPARATOR,
-                'C', Item.getItemFromBlock(Blocks.CHEST),
-                'D', Items.IRON_DOOR);
-                */
+        UtilRecipe.addShapedRecipe("blockvending", 3, 3, new ItemStack(ModBlocks.blockVending), itemList);
     }
 
     void initModel() {

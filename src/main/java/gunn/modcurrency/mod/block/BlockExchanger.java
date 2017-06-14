@@ -67,7 +67,7 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
                 new ItemStack(Items.IRON_INGOT), new ItemStack(Blocks.CHEST), new ItemStack(Items.IRON_INGOT),
                 new ItemStack(Items.IRON_INGOT), new ItemStack(Items.IRON_DOOR), new ItemStack(Items.IRON_INGOT)};
 
-        UtilRecipe.addShapedRecipe(getRegistryName(), "blockexchanger", 3, 3, new ItemStack(Item.getItemFromBlock(this)), itemList);
+        UtilRecipe.addShapedRecipe("blockexchanger", 3, 3, new ItemStack(ModBlocks.blockExchanger), itemList);
     }
 
     void initModel() {
