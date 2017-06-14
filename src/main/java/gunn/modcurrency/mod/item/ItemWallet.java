@@ -38,12 +38,14 @@ public class ItemWallet extends Item{
     }
 
     public void recipe(){
+        /*
         GameRegistry.addRecipe(new ItemStack(ModItems.itemWallet, 1, 0),
                 "A.A",
                 "ABA",
                 ".A.",
                 'A', Items.LEATHER,
                 'B', Items.PAPER);
+                */
     }
 
     @SideOnly(Side.CLIENT)

@@ -4,6 +4,7 @@ package gunn.modcurrency.mod.block;
 import gunn.modcurrency.mod.ModCurrency;
 import gunn.modcurrency.mod.handler.StateHandler;
 import gunn.modcurrency.mod.tileentity.TileExchanger;
+import gunn.modcurrency.mod.utils.UtilRecipe;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
@@ -19,10 +20,11 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -32,6 +34,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 
 /**
  * Distributed with the Currency-Mod for Minecraft
@@ -60,17 +63,11 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
     }
 
     void recipe() {
-        ItemStack basic = new ItemStack(Item.getItemFromBlock(this));
-        basic.setItemDamage(0);
+        ItemStack[] itemList = {new ItemStack(Items.IRON_INGOT), new ItemStack(Items.REPEATER), new ItemStack(Items.IRON_INGOT),
+                new ItemStack(Items.IRON_INGOT), new ItemStack(Blocks.CHEST), new ItemStack(Items.IRON_INGOT),
+                new ItemStack(Items.IRON_INGOT), new ItemStack(Blocks.IRON_DOOR), new ItemStack(Items.IRON_INGOT)};
 
-        GameRegistry.addRecipe(basic,
-                "ABA",
-                "ACA",
-                "ADA",
-                'A', Items.IRON_INGOT,
-                'B', Items.REPEATER,
-                'C', Item.getItemFromBlock(Blocks.CHEST),
-                'D', Items.IRON_DOOR);
+        UtilRecipe.addShapledRecipe(getRegistryName(), "blockexchanger", 3, 3, new ItemStack(Item.getItemFromBlock(this)), itemList);
     }
 
     void initModel() {

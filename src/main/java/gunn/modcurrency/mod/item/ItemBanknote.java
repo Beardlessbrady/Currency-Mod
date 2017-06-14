@@ -22,7 +22,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ItemBanknote extends Item {
     public static final int noteLength = 6;
 
-    public ItemBanknote(){
+    public ItemBanknote() {
         setHasSubtypes(true);
         setRegistryName("banknote");
         setCreativeTab(ModCurrency.tabCurrency);
@@ -30,7 +30,7 @@ public class ItemBanknote extends Item {
     }
 
     @SideOnly(Side.CLIENT)
-    public void initModel(){
+    public void initModel() {
         switch (ModConfig.textureType) {
             default:
             case 0:
@@ -51,7 +51,8 @@ public class ItemBanknote extends Item {
         }
     }
 
-    public void recipe(){
+    public void recipe() {
+        /*
         ItemStack bill1 = new ItemStack(ModItems.itemBanknote,1, 0);
         ItemStack bill5 = new ItemStack(ModItems.itemBanknote,1,1);
         ItemStack bill10 = new ItemStack(ModItems.itemBanknote,1,2);
@@ -130,7 +131,9 @@ public class ItemBanknote extends Item {
         GameRegistry.addShapelessRecipe(bill1,bill20);
         bill1 = new ItemStack(ModItems.itemBanknote, 50, 0);
         GameRegistry.addShapelessRecipe(bill1,bill50);
+    */
     }
+
 
 
 
@@ -140,10 +143,10 @@ public class ItemBanknote extends Item {
     }
 
     @Override
-    public void getSubItems(Item item, CreativeTabs tab, NonNullList<ItemStack> subItems) {
+    public void getSubItems(CreativeTabs itemIn, NonNullList<ItemStack> tab) {
         for(int i = 0; i < noteLength; i++){
-            ItemStack stack = new ItemStack(item,1,i);
-            subItems.add(stack);
+            ItemStack stack = new ItemStack(this,1,i);
+            tab.add(stack);
         }
     }
 }

@@ -42,7 +42,8 @@ public class TabButton extends GuiButton{
      * Draws this button to the screen.
      */
     @Override
-    public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+    //Previously drawButton
+    public void func_191745_a(Minecraft mc , int mouseX, int mouseY, float p_191745_4_){
         if (this.visible) {
             FontRenderer fontrenderer = mc.fontRendererObj;
             mc.getTextureManager().bindTexture(CUSTOM_TEXTURES);

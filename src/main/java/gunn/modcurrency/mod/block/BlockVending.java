@@ -60,6 +60,7 @@ public class BlockVending extends Block implements ITileEntityProvider {
     }
 
     void recipe() {
+        /*
         ItemStack basic = new ItemStack(Item.getItemFromBlock(this));
         basic.setItemDamage(0);
 
@@ -69,6 +70,7 @@ public class BlockVending extends Block implements ITileEntityProvider {
                 'B', Items.COMPARATOR,
                 'C', Item.getItemFromBlock(Blocks.CHEST),
                 'D', Items.IRON_DOOR);
+                */
     }
 
     void initModel() {

@@ -3,7 +3,7 @@ package gunn.modcurrency.mod.worldsaveddata.bank;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldSavedData;
+import net.minecraft.world.storage.WorldSavedData;
 
 import java.util.ArrayList;
 
@@ -13,7 +13,8 @@ import java.util.ArrayList;
  *
  * File Created on 2017-03-18
  */
-public class BankAccountSavedData extends WorldSavedData{
+
+public class BankAccountSavedData extends WorldSavedData {
     ArrayList<BankAccount> bankArray = new ArrayList<>();
     public static String IDENTIFIER = "currency_bankdata";
 

@@ -34,8 +34,8 @@ public class ItemGuideBook extends Item {
     }
 
     public void recipe() {
-        GameRegistry.addShapelessRecipe(new ItemStack(ModItems.itemGuide, 1, 0),
-                Items.BOOK, Items.GOLD_INGOT);
+    //    GameRegistry.addShapelessRecipe(new ItemStack(ModItems.itemGuide, 1, 0),
+      //          Items.BOOK, Items.GOLD_INGOT);
     }
 
     @Override
