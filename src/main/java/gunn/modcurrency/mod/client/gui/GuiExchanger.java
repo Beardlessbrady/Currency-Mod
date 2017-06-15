@@ -146,7 +146,6 @@ public class GuiExchanger extends GuiContainer {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
-        drawToolTips(mouseX - (this.width - this.xSize) / 2, mouseY - (this.height - this.ySize) / 2);
         this.renderHoveredToolTip(mouseX,mouseY);
         if (tile.getField(8) == 1 && tile.getField(2) == 1) {
             priceField.drawTextBox();
@@ -231,7 +230,7 @@ public class GuiExchanger extends GuiContainer {
     }
 
     private void drawText(){
-        fontRenderer.drawString(I18n.format("tile.modcurrency:blockvending.name"), 5, 6, Color.darkGray.getRGB());
+        fontRenderer.drawString(I18n.format("Exchange Machine"), 5, 6, Color.darkGray.getRGB());
         fontRenderer.drawString(I18n.format("tile.modcurrency:gui.playerinventory"), 4, 142, Color.darkGray.getRGB());
         if (tile.getField(2) == 1){
             fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.funds") + ": $" + Integer.toString(tile.getField(4)), 5, 16, Color.darkGray.getRGB());
@@ -325,80 +324,6 @@ public class GuiExchanger extends GuiContainer {
             Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
             drawTexturedModalRect(24 + (18 * slotRow), 30 + (18 * slotColumn), 177, 0, 20, 20); //Selection Box
         }
-    }
-
-    private void drawToolTips(int i, int j) {
-        int xMin = -21;
-        int xMax = 0;
-        int yMin, yMax;
-
-        int kMax = 0;
-
-      if(tile.getOwner() != "") {
-            if (UUID.fromString(tile.getOwner()).equals(player.getUniqueID())) {
-                kMax++;
-                if (tile.getField(2) == 1) {
-                    kMax = kMax + 2;
-                    if (player.isCreative()) kMax++;
-                }
-            }
-        }
-
-        for (int k = 0; k < kMax; k++) {
-            yMin = (22 * (k)) + 20;
-            yMax = yMin + 21;
-
-            if ((i >= xMin && i <= xMax) && (j >= yMin && j <= yMax)) {
-                List<String> list = new ArrayList<>();
-                switch (k) {
-                    case 0:
-                        list.add("Mode Tab");
-                        list.add("Change to 'Stock'");
-                        list.add("or 'Sell' mode");
-                        this.drawHoveringText(list, -125, 29, fontRenderer);
-                        break;
-                    case 1:
-                        list.add("Lock Tab");
-                        list.add("Enable/Disable");
-                        list.add("pipe interaction");
-                        if (tile.getField(8) == 0) {
-                            this.drawHoveringText(list, -116, 48, fontRenderer);
-                        } else this.drawHoveringText(list, -116, 39, fontRenderer);
-                        break;
-                    case 2:
-                        list.add("Settings Tab");
-                        list.add("Set item costs");
-                        list.add("and prices");
-                        if (tile.getField(8) == 0 && !creativeExtended) {
-                            this.drawHoveringText(list, -108, 72, fontRenderer);
-                        } else if (creativeExtended && tile.getField(8) == 0) {
-                            this.drawHoveringText(list, -108, 61, fontRenderer);
-                        } else this.drawHoveringText(list, -108, 39, fontRenderer);
-                        break;
-                    case 3:
-                        list.add("Creative Tab");
-                        list.add("Infinite Stock");
-
-                        if (tile.getField(8) == 0 && !creativeExtended) {
-                            this.drawHoveringText(list, -104, 98, fontRenderer);
-                        } else if (tile.getField(8) == 0 && creativeExtended) {
-                            this.drawHoveringText(list, -104, 72, fontRenderer);
-                        }
-                        break;
-                    case 4:
-                        list.add("Creative Tab");
-                        list.add("Infinite Stock");
-
-                        if (tile.getField(8) == 1 && !creativeExtended) {
-                            this.drawHoveringText(list, -104, 130, fontRenderer);
-                        } else if (tile.getField(8) == 1 && creativeExtended) {
-                            this.drawHoveringText(list, -104, 178, fontRenderer);
-                        }
-                        break;
-                }
-            }
-        }
-
     }
 
     @Override

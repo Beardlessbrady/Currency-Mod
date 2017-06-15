@@ -22,20 +22,20 @@ public class ModItems {
 
     private static void setupItems(){
         itemBanknote = new ItemBanknote();
-        itemGuide = new ItemGuideBook();
+      //  itemGuide = new ItemGuideBook();
         if(ModConfig.enableWallet) itemWallet = new ItemWallet();
     }
 
     @SideOnly(Side.CLIENT)
     public static void ItemModels(){
         itemBanknote.initModel();
-        itemGuide.initModel();;
+       // itemGuide.initModel();;
         if(ModConfig.enableWallet) itemWallet.initModel();
     }
 
     public static void addRecipes(){
         if(ModConfig.enableWallet) if(ModConfig.recipeWallet) itemWallet.recipe();
         itemBanknote.recipe();
-        itemGuide.recipe();
+     //   itemGuide.recipe();
     }
 }
