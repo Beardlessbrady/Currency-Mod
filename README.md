@@ -8,6 +8,10 @@
 [![](https://img.shields.io/badge/Latest%20Version-1.1.1-blue.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
 [![](https://img.shields.io/badge/Supported-Fully-brightgreen.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
 
+[![](https://img.shields.io/badge/1.12-release-green.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
+[![](https://img.shields.io/badge/Latest%20Version-1.1.1-blue.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
+[![](https://img.shields.io/badge/Supported-Fully-brightgreen.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
+
 Welcome to the Good Ol' Currency github repository!
 
 I've created this mod because I've always wanted some sort of base economy for minecraft. If you have any critisms, feature requests, or anything to say at all you can contact me on the 'Issues Tab' or through various places listed below.
