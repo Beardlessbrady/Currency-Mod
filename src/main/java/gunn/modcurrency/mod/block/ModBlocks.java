@@ -30,10 +30,5 @@ public class ModBlocks {
         if(ModConfig.enableSeller) blockExchanger.initModel();
      //   if(ModConfig.enableATM) blockATM.initModel();
     }
-    
-    public static void addRecipes(){
-        if(ModConfig.enableVendor && ModConfig.recipeVendor) blockVending.recipe();
-        if(ModConfig.enableSeller && ModConfig.recipeSeller) blockExchanger.recipe();
-    //    if(ModConfig.enableATM && ModConfig.recipeATM) blockATM.recipe();
-    }
+
 }

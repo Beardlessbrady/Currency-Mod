@@ -2,11 +2,8 @@ package gunn.modcurrency.mod.item;
 
 import gunn.modcurrency.mod.ModConfig;
 import gunn.modcurrency.mod.ModCurrency;
-import gunn.modcurrency.mod.block.ModBlocks;
-import gunn.modcurrency.mod.utils.UtilRecipe;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -38,15 +35,6 @@ public class ItemWallet extends Item{
         GameRegistry.register(this);
         setHasSubtypes(true);
         setMaxStackSize(1);
-    }
-
-    public void recipe(){
-        ItemStack[] itemList = {new ItemStack(Items.LEATHER), ItemStack.EMPTY, new ItemStack(Items.LEATHER),
-                new ItemStack(Items.LEATHER), new ItemStack(Items.PAPER), new ItemStack(Items.LEATHER),
-                ItemStack.EMPTY, new ItemStack(Items.LEATHER), ItemStack.EMPTY};
-
-
-        UtilRecipe.addShapedRecipe("itemwallet", 3, 3, new ItemStack(ModItems.itemWallet), itemList);
     }
 
     @SideOnly(Side.CLIENT)

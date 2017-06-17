@@ -4,7 +4,6 @@ package gunn.modcurrency.mod.block;
 import gunn.modcurrency.mod.ModCurrency;
 import gunn.modcurrency.mod.handler.StateHandler;
 import gunn.modcurrency.mod.tileentity.TileExchanger;
-import gunn.modcurrency.mod.utils.UtilRecipe;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
@@ -20,9 +19,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -34,7 +30,6 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 
 /**
  * Distributed with the Currency-Mod for Minecraft
@@ -60,14 +55,6 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
         GameRegistry.register(this);
         GameRegistry.register(new ItemBlock(this), getRegistryName());
         GameRegistry.registerTileEntity(TileExchanger.class, ModCurrency.MODID + "_teexchanger");
-    }
-
-    void recipe() {
-        ItemStack[] itemList = {new ItemStack(Items.IRON_INGOT), new ItemStack(Items.REPEATER), new ItemStack(Items.IRON_INGOT),
-                new ItemStack(Items.IRON_INGOT), new ItemStack(Blocks.CHEST), new ItemStack(Items.IRON_INGOT),
-                new ItemStack(Items.IRON_INGOT), new ItemStack(Items.IRON_DOOR), new ItemStack(Items.IRON_INGOT)};
-
-        UtilRecipe.addShapedRecipe("blockexchanger", 3, 3, new ItemStack(ModBlocks.blockExchanger), itemList);
     }
 
     void initModel() {

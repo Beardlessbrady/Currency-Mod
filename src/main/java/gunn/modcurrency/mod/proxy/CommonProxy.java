@@ -37,8 +37,6 @@ public class CommonProxy {
     }
 
     public void Init(FMLInitializationEvent e){
-        ModBlocks.addRecipes();
-        ModItems.addRecipes();
         MinecraftForge.EVENT_BUS.register(new EventHandlerCommon());
     }
 

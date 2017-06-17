@@ -1,0 +1,17 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "group": "modcurrency",
+    "ingredients": [
+        { "item": "modcurrency:banknote", "data": 0},
+        { "item": "modcurrency:banknote", "data": 0},
+        { "item": "modcurrency:banknote", "data": 0},
+        { "item": "modcurrency:banknote", "data": 0},
+        { "item": "modcurrency:banknote", "data": 0},
+        { "item": "modcurrency:banknote", "data": 1},
+        { "item": "modcurrency:banknote", "data": 2}
+    ],
+    "result": {
+        "item": "modcurrency:banknote",
+        "data": 3
+    }
+}

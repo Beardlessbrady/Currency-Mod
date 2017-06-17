@@ -32,10 +32,4 @@ public class ModItems {
        // itemGuide.initModel();;
         if(ModConfig.enableWallet) itemWallet.initModel();
     }
-
-    public static void addRecipes(){
-        if(ModConfig.enableWallet) if(ModConfig.recipeWallet) itemWallet.recipe();
-        itemBanknote.recipe();
-     //   itemGuide.recipe();
-    }
 }
