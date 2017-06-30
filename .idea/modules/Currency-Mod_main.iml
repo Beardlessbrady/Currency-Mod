@@ -8,6 +8,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="Currency-Mod_api" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -17,7 +18,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module" module-name="Currency-Mod_api" />
     <orderEntry type="module-library">
       <library>
         <CLASSES>
@@ -30,11 +30,11 @@
     <orderEntry type="module-library">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/.gradle/caches/minecraft/net/minecraftforge/forge/1.12-14.21.0.2333/snapshot/20170613/forgeSrc-1.12-14.21.0.2333.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/caches/minecraft/net/minecraftforge/forge/1.12-14.21.1.2387/snapshot/20170613/forgeSrc-1.12-14.21.1.2387.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="jar://$USER_HOME$/.gradle/caches/minecraft/net/minecraftforge/forge/1.12-14.21.0.2333/snapshot/20170613/forgeSrc-1.12-14.21.0.2333-sources.jar!/" />
+          <root url="jar://$USER_HOME$/.gradle/caches/minecraft/net/minecraftforge/forge/1.12-14.21.1.2387/snapshot/20170613/forgeSrc-1.12-14.21.1.2387-sources.jar!/" />
         </SOURCES>
       </library>
     </orderEntry>
@@ -99,7 +99,7 @@
     <orderEntry type="module-library" scope="RUNTIME">
       <library>
         <CLASSES>
-          <root url="file://$USER_HOME$/.gradle/caches/minecraft/net/minecraftforge/forge/1.12-14.21.0.2333/start" />
+          <root url="file://$USER_HOME$/.gradle/caches/minecraft/net/minecraftforge/forge/1.12-14.21.1.2387/start" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
