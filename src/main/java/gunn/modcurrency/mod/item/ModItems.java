@@ -1,6 +1,10 @@
 package gunn.modcurrency.mod.item;
 
 import gunn.modcurrency.mod.ModConfig;
+import net.minecraft.item.Item;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -11,25 +15,24 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  * File Created on 2016-10-28.
  */
 public class ModItems {
-    public static ItemBanknote itemBanknote;
-    public static ItemWallet itemWallet;
-    public static ItemGuideBook itemGuide;
+    public static ItemBanknote itemBanknote = new ItemBanknote();
+    public static ItemWallet itemWallet = new ItemWallet();
+    public static ItemGuideBook itemGuide = new ItemGuideBook();
 
-
-    public static void preInit(){
-        setupItems();
-    }
-
-    private static void setupItems(){
-        itemBanknote = new ItemBanknote();
-      //  itemGuide = new ItemGuideBook();
-        if(ModConfig.enableWallet) itemWallet = new ItemWallet();
+    @SubscribeEvent
+    public void registerItems(RegistryEvent.Register<Item> event){
+        event.getRegistry().register(itemBanknote);
+        event.getRegistry().register(itemGuide);
+        if(ModConfig.enableWallet) event.getRegistry().register(itemWallet);
     }
 
     @SideOnly(Side.CLIENT)
-    public static void ItemModels(){
+    @SubscribeEvent
+    public void registerModels(ModelRegistryEvent event){
         itemBanknote.initModel();
-       // itemGuide.initModel();;
+        itemGuide.initModel();
         if(ModConfig.enableWallet) itemWallet.initModel();
     }
+
 }
+

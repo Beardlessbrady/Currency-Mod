@@ -54,8 +54,6 @@ public class BlockVending extends Block implements ITileEntityProvider {
         setCreativeTab(ModCurrency.tabCurrency);
         setSoundType(SoundType.METAL);
 
-        GameRegistry.register(this);
-        GameRegistry.register(new ItemBlock(this), getRegistryName());
         GameRegistry.registerTileEntity(TileVending.class, ModCurrency.MODID + "_tevending");
     }
 

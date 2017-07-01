@@ -32,7 +32,6 @@ public class ItemWallet extends Item{
         setRegistryName("wallet");
         setCreativeTab(ModCurrency.tabCurrency);
         setUnlocalizedName(getRegistryName().toString());
-        GameRegistry.register(this);
         setHasSubtypes(true);
         setMaxStackSize(1);
     }

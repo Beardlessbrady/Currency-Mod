@@ -29,9 +29,9 @@ public class CommonProxy {
         File directory = e.getModConfigurationDirectory();
         config = new Configuration(new File(directory.getPath(), "GoodOlCurrency.cfg"));
         ModConfig.readConfig();
+        MinecraftForge.EVENT_BUS.register(new ModBlocks());
+        MinecraftForge.EVENT_BUS.register(new ModItems());
 
-        ModItems.preInit();
-        ModBlocks.preInit();
         NetworkRegistry.INSTANCE.registerGuiHandler(ModCurrency.instance, new GuiHandler());
         PacketHandler.registerCommonMessages("modcurrency");
     }

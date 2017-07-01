@@ -26,7 +26,6 @@ public class ItemBanknote extends Item {
         setHasSubtypes(true);
         setRegistryName("banknote");
         setCreativeTab(ModCurrency.tabCurrency);
-        GameRegistry.register(this);
     }
 
     @SideOnly(Side.CLIENT)

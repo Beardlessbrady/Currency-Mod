@@ -52,8 +52,6 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
         setCreativeTab(ModCurrency.tabCurrency);
         setSoundType(SoundType.METAL);
 
-        GameRegistry.register(this);
-        GameRegistry.register(new ItemBlock(this), getRegistryName());
         GameRegistry.registerTileEntity(TileExchanger.class, ModCurrency.MODID + "_teexchanger");
     }
 

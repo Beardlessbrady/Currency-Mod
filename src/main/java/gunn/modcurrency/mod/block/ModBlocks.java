@@ -1,6 +1,13 @@
 package gunn.modcurrency.mod.block;
 
 import gunn.modcurrency.mod.ModConfig;
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraftforge.client.event.ModelRegistryEvent;
+import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * Distributed with the Currency-Mod for Minecraft.
@@ -9,26 +16,26 @@ import gunn.modcurrency.mod.ModConfig;
  * File Created on 2016-10-30.
  */
 public class ModBlocks {
-    public static BlockVending blockVending;
-    public static BlockExchanger blockExchanger;
- //   public static BlockATM blockATM;
-    //public static BlockEntityMarket blockEntityMarket;
+    public static BlockVending blockVending = new BlockVending();
+    public static BlockExchanger blockExchanger = new BlockExchanger();
 
-    public static void preInit(){
-        setupBlocks();
+    @SubscribeEvent
+    public void registerBlocks(RegistryEvent.Register<Block> event) {
+        if(ModConfig.enableSeller) event.getRegistry().register(blockExchanger);
+        if(ModConfig.enableVendor) event.getRegistry().register(blockVending);
     }
 
-    private static void setupBlocks(){
-        if(ModConfig.enableVendor) blockVending = new BlockVending();
-        if(ModConfig.enableSeller) blockExchanger = new BlockExchanger();
-    //    if(ModConfig.enableATM) blockATM = new BlockATM();
-        //blockEntityMarket = new BlockEntityMarket();
+    @SubscribeEvent
+    public void registerItems(RegistryEvent.Register<Item> event){
+        if(ModConfig.enableSeller) event.getRegistry().register(Item.getItemFromBlock(blockExchanger));
+        if(ModConfig.enableVendor) event.getRegistry().register(Item.getItemFromBlock(blockVending));
     }
 
-    public static void ItemModels(){
-        if(ModConfig.enableVendor)  blockVending.initModel();
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public void registerModels(ModelRegistryEvent event){
         if(ModConfig.enableSeller) blockExchanger.initModel();
-     //   if(ModConfig.enableATM) blockATM.initModel();
+        if(ModConfig.enableVendor) blockVending.initModel();
     }
 
 }

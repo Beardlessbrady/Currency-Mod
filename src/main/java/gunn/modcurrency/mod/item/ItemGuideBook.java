@@ -25,7 +25,6 @@ public class ItemGuideBook extends Item {
         setRegistryName("guidebook");
         setUnlocalizedName(this.getRegistryName().toString());
         setCreativeTab(ModCurrency.tabCurrency);
-        GameRegistry.register(this);
     }
 
     @SideOnly(Side.CLIENT)

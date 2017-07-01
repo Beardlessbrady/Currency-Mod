@@ -40,8 +40,6 @@ public class BlockEntityMarket extends Block implements ITileEntityProvider{
         setCreativeTab(ModCurrency.tabCurrency);
         setSoundType(SoundType.METAL);
 
-        GameRegistry.register(this);
-        GameRegistry.register(new ItemBlock(this), getRegistryName());
         GameRegistry.registerTileEntity(TileBlockEntityMarket.class, ModCurrency.MODID + "_teshopmob");
     }
 

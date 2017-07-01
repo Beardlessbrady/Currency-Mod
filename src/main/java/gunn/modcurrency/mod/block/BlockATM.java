@@ -46,8 +46,6 @@ public class BlockATM extends Block implements ITileEntityProvider {
         setCreativeTab(ModCurrency.tabCurrency);
         setSoundType(SoundType.METAL);
 
-        GameRegistry.register(this);
-        GameRegistry.register(new ItemBlock(this), getRegistryName());
         GameRegistry.registerTileEntity(TileATM.class, ModCurrency.MODID + "_teatm");
     }
 
