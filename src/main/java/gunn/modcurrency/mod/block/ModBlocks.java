@@ -28,8 +28,8 @@ public class ModBlocks {
 
     @SubscribeEvent
     public void registerItems(RegistryEvent.Register<Item> event){
-        if(ModConfig.enableSeller) event.getRegistry().register(new ItemBlock(blockExchanger));
-        if(ModConfig.enableVendor) event.getRegistry().register(new ItemBlock(blockVending));
+        if(ModConfig.enableSeller) event.getRegistry().register(new ItemBlock(blockExchanger).setRegistryName(blockExchanger.getRegistryName()));
+        if(ModConfig.enableVendor) event.getRegistry().register(new ItemBlock(blockVending).setRegistryName(blockVending.getRegistryName()));
     }
 
     @SideOnly(Side.CLIENT)
