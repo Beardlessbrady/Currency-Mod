@@ -3,6 +3,7 @@ package gunn.modcurrency.mod.block;
 import gunn.modcurrency.mod.ModConfig;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -27,8 +28,8 @@ public class ModBlocks {
 
     @SubscribeEvent
     public void registerItems(RegistryEvent.Register<Item> event){
-        if(ModConfig.enableSeller) event.getRegistry().register(Item.getItemFromBlock(blockExchanger));
-        if(ModConfig.enableVendor) event.getRegistry().register(Item.getItemFromBlock(blockVending));
+        if(ModConfig.enableSeller) event.getRegistry().register(new ItemBlock(blockExchanger));
+        if(ModConfig.enableVendor) event.getRegistry().register(new ItemBlock(blockVending));
     }
 
     @SideOnly(Side.CLIENT)
