@@ -66,7 +66,7 @@ public class GuiGuide extends GuiScreen{
         int i = (mouseX - (this.width - this.xSize) / 2);
         int j = (mouseY - (this.height - this.ySize) / 2);
 
-        Minecraft.getMinecraft().fontRendererObj.setUnicodeFlag(true);
+        Minecraft.getMinecraft().fontRenderer.setUnicodeFlag(true);
 
 
         Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
@@ -82,7 +82,7 @@ public class GuiGuide extends GuiScreen{
                 drawTexturedModalRect(guiLeft + 33, guiTop + 10, 45, 192, 77, 23);    //Logo
 
                 text = "Starting or trying to get involved in an economy? This is your guide to the items and blocks that will help you survive and thrive in this economical era.";
-                fontRendererObj.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 32, 112, Color.BLACK.getRGB());
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 32, 112, Color.BLACK.getRGB());
 
                 for(int k = buttonStart; k < buttonTotal; k++) {
                     this.buttonList.set(k,new TabButton(Integer.toString(k), k, guiLeft + 26 + (25 * (k-3)), guiTop + 90, 0, 250, 16, 16, "", BACKGROUND_TEXTURE));
@@ -133,15 +133,15 @@ public class GuiGuide extends GuiScreen{
 
                 //Chapter Title
                 text = TextFormatting.BOLD + "The Dollar Bill";
-                fontRendererObj.drawSplitString(I18n.format(text), guiLeft + 50, guiTop + 21, 148, Color.BLACK.getRGB());
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 50, guiTop + 21, 148, Color.BLACK.getRGB());
 
 
                 text = "These " + TextFormatting.DARK_GREEN + "Coloured " + TextFormatting.BLACK + "pieces of paper are the most important part of your economy.";
-                fontRendererObj.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 32, 112, Color.BLACK.getRGB());
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 32, 112, Color.BLACK.getRGB());
 
                 text = "Each has a higher value then the last. This way you won't have one-thousand one dollar bills filling your inventory. You can of course " + TextFormatting.BOLD + "convert "
                         + TextFormatting.RESET + "between each bill in any crafting table.";
-                fontRendererObj.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 85, 112, Color.BLACK.getRGB());
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 85, 112, Color.BLACK.getRGB());
 
                 this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemBanknote,1, 0), guiLeft + 35, guiTop + 60);
                 this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemBanknote,1, 1), guiLeft + 55, guiTop + 60);
@@ -156,7 +156,7 @@ public class GuiGuide extends GuiScreen{
             break;
         }
 
-        Minecraft.getMinecraft().fontRendererObj.setUnicodeFlag(false);
+        Minecraft.getMinecraft().fontRenderer.setUnicodeFlag(false);
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 

@@ -68,12 +68,12 @@ public class GuiExchanger extends GuiContainer {
         this.buttonList.add(new TabButton("Gear", GEAR_ID, i - 20, 22 + ((TabButton) this.buttonList.get(LOCK_ID)).getButtonY(), 0, 0, 20, 21, "", TAB_TEXTURE));
         this.buttonList.add(new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton) this.buttonList.get(GEAR_ID)).getButtonY(), 0, 44, 20, 21, "", TAB_TEXTURE));
 
-        this.priceField = new GuiTextField(0, fontRendererObj, i - 50, j + 91, 45, 10);        //Setting Costs
+        this.priceField = new GuiTextField(0, fontRenderer, i - 50, j + 91, 45, 10);        //Setting Costs
         this.priceField.setTextColor(Integer.parseInt("0099ff", 16));
         this.priceField.setEnableBackgroundDrawing(false);
         this.priceField.setMaxStringLength(7);
 
-        this.amountField = new GuiTextField(0, fontRendererObj, i - 38, j + 101, 45, 10);        //Setting Amounts
+        this.amountField = new GuiTextField(0, fontRenderer, i - 38, j + 101, 45, 10);        //Setting Amounts
         this.amountField.setTextColor(Integer.parseInt("0099ff", 16));
         this.amountField.setEnableBackgroundDrawing(false);
         this.amountField.setMaxStringLength(7);
@@ -229,33 +229,33 @@ public class GuiExchanger extends GuiContainer {
     }
 
     private void drawText(){
-        fontRendererObj.drawString(I18n.format("tile.modcurrency:blockvending.name"), 5, 6, Color.darkGray.getRGB());
-        fontRendererObj.drawString(I18n.format("tile.modcurrency:gui.playerinventory"), 4, 142, Color.darkGray.getRGB());
+        fontRenderer.drawString(I18n.format("tile.modcurrency:blockvending.name"), 5, 6, Color.darkGray.getRGB());
+        fontRenderer.drawString(I18n.format("tile.modcurrency:gui.playerinventory"), 4, 142, Color.darkGray.getRGB());
         if (tile.getField(2) == 1){
-            fontRendererObj.drawString(I18n.format("tile.modcurrency:guivending.funds") + ": $" + Integer.toString(tile.getField(4)), 5, 16, Color.darkGray.getRGB());
+            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.funds") + ": $" + Integer.toString(tile.getField(4)), 5, 16, Color.darkGray.getRGB());
         }else{
-            fontRendererObj.drawString(I18n.format("tile.modcurrency:guivending.cash") + ": $" + tile.getField(0), 5, 15, Color.darkGray.getRGB());
+            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.cash") + ": $" + tile.getField(0), 5, 15, Color.darkGray.getRGB());
         }
 
         if (tile.getField(8) == 1) {
-            fontRendererObj.drawString(I18n.format("tile.modcurrency:guivending.slotsettings"), -81, 71, Integer.parseInt("42401c", 16));
-            fontRendererObj.drawString(I18n.format("tile.modcurrency:guivending.slotsettings"), -80, 70, Integer.parseInt("fff200", 16));
-            fontRendererObj.drawString(I18n.format("tile.modcurrency:guivending.cost"), -84, 92, Integer.parseInt("211d1b", 16));
-            fontRendererObj.drawString(I18n.format("tile.modcurrency:guivending.cost"), -83, 91, Color.lightGray.getRGB());
-            fontRendererObj.drawString(I18n.format("tile.modcurrency:guivending.amount"), -84, 102, Integer.parseInt("211d1b", 16));
-            fontRendererObj.drawString(I18n.format("tile.modcurrency:guivending.amount"), -83, 101, Color.lightGray.getRGB());
-            fontRendererObj.drawString(I18n.format("$"), -57, 91, Integer.parseInt("0099ff", 16));
-            fontRendererObj.drawString(I18n.format("$"), -45, 101, Integer.parseInt("0099ff", 16));
+            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.slotsettings"), -81, 71, Integer.parseInt("42401c", 16));
+            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.slotsettings"), -80, 70, Integer.parseInt("fff200", 16));
+            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.cost"), -84, 92, Integer.parseInt("211d1b", 16));
+            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.cost"), -83, 91, Color.lightGray.getRGB());
+            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.amount"), -84, 102, Integer.parseInt("211d1b", 16));
+            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.amount"), -83, 101, Color.lightGray.getRGB());
+            fontRenderer.drawString(I18n.format("$"), -57, 91, Integer.parseInt("0099ff", 16));
+            fontRenderer.drawString(I18n.format("$"), -45, 101, Integer.parseInt("0099ff", 16));
 
             GL11.glPushMatrix();
             GL11.glScaled(0.7, 0.7, 0.7);
-            fontRendererObj.drawString(I18n.format("[" + tile.getSelectedName() + "]"), -117, 115, Integer.parseInt("001f33", 16));
-            fontRendererObj.drawString(I18n.format("[" + tile.getSelectedName() + "]"), -118, 114, Integer.parseInt("0099ff", 16));
+            fontRenderer.drawString(I18n.format("[" + tile.getSelectedName() + "]"), -117, 115, Integer.parseInt("001f33", 16));
+            fontRenderer.drawString(I18n.format("[" + tile.getSelectedName() + "]"), -118, 114, Integer.parseInt("0099ff", 16));
             GL11.glPopMatrix();
         }
         if (creativeExtended) {
-            fontRendererObj.drawString(I18n.format("tile.modcurrency:guivending.infinitestock"), -86, 93 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY(), Integer.parseInt("42401c", 16));
-            fontRendererObj.drawString(I18n.format("tile.modcurrency:guivending.infinitestock"), -85, 92 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY(), Integer.parseInt("fff200", 16));
+            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.infinitestock"), -86, 93 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY(), Integer.parseInt("42401c", 16));
+            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.infinitestock"), -85, 92 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY(), Integer.parseInt("fff200", 16));
         }
 
     }
@@ -353,34 +353,34 @@ public class GuiExchanger extends GuiContainer {
                         list.add("Mode Tab");
                         list.add("Change to 'Stock'");
                         list.add("or 'Sell' mode");
-                        this.drawHoveringText(list, -125, 29, fontRendererObj);
+                        this.drawHoveringText(list, -125, 29, fontRenderer);
                         break;
                     case 1:
                         list.add("Lock Tab");
                         list.add("Enable/Disable");
                         list.add("pipe interaction");
                         if (tile.getField(8) == 0) {
-                            this.drawHoveringText(list, -116, 48, fontRendererObj);
-                        } else this.drawHoveringText(list, -116, 39, fontRendererObj);
+                            this.drawHoveringText(list, -116, 48, fontRenderer);
+                        } else this.drawHoveringText(list, -116, 39, fontRenderer);
                         break;
                     case 2:
                         list.add("Settings Tab");
                         list.add("Set item costs");
                         list.add("and prices");
                         if (tile.getField(8) == 0 && !creativeExtended) {
-                            this.drawHoveringText(list, -108, 72, fontRendererObj);
+                            this.drawHoveringText(list, -108, 72, fontRenderer);
                         } else if (creativeExtended && tile.getField(8) == 0) {
-                            this.drawHoveringText(list, -108, 61, fontRendererObj);
-                        } else this.drawHoveringText(list, -108, 39, fontRendererObj);
+                            this.drawHoveringText(list, -108, 61, fontRenderer);
+                        } else this.drawHoveringText(list, -108, 39, fontRenderer);
                         break;
                     case 3:
                         list.add("Creative Tab");
                         list.add("Infinite Stock");
 
                         if (tile.getField(8) == 0 && !creativeExtended) {
-                            this.drawHoveringText(list, -104, 98, fontRendererObj);
+                            this.drawHoveringText(list, -104, 98, fontRenderer);
                         } else if (tile.getField(8) == 0 && creativeExtended) {
-                            this.drawHoveringText(list, -104, 72, fontRendererObj);
+                            this.drawHoveringText(list, -104, 72, fontRenderer);
                         }
                         break;
                     case 4:
@@ -388,9 +388,9 @@ public class GuiExchanger extends GuiContainer {
                         list.add("Infinite Stock");
 
                         if (tile.getField(8) == 1 && !creativeExtended) {
-                            this.drawHoveringText(list, -104, 130, fontRendererObj);
+                            this.drawHoveringText(list, -104, 130, fontRenderer);
                         } else if (tile.getField(8) == 1 && creativeExtended) {
-                            this.drawHoveringText(list, -104, 178, fontRendererObj);
+                            this.drawHoveringText(list, -104, 178, fontRenderer);
                         }
                         break;
                 }
@@ -431,7 +431,7 @@ public class GuiExchanger extends GuiContainer {
 
             FontRenderer font = stack.getItem().getFontRenderer(stack);
             net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(stack);
-            this.drawHoveringText(list, x, y, (font == null ? fontRendererObj : font));
+            this.drawHoveringText(list, x, y, (font == null ? fontRenderer : font));
             net.minecraftforge.fml.client.config.GuiUtils.postItemToolTip();
 
             tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);

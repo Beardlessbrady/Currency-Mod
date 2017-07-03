@@ -55,7 +55,7 @@ public class PacketSetItemAmountToServer implements IMessage {
         }
 
         private void handle(PacketSetItemAmountToServer message, MessageContext ctx){
-            EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
+            EntityPlayerMP playerEntity = ctx.getServerHandler().player;
             World world = playerEntity.world;
             TileExchanger tile = ((TileExchanger) world.getTileEntity(message.blockPos));
             tile.setItemAmount(message.data, message.index);
