@@ -8,7 +8,9 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.opengl.GL11;
@@ -24,6 +26,7 @@ import java.io.IOException;
  */
 public class GuiGuide extends GuiScreen{
     private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/guiguide.png");
+    private static final ResourceLocation VENDOR_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/guivendortexture.png");
 
     private int guiTop, guiLeft;
     protected final int xSize = 146;
@@ -31,13 +34,13 @@ public class GuiGuide extends GuiScreen{
 
 
     private ItemStack item;
-    private int page;
+    private String page;
     private final int buttonStart=3;
     private final int buttonTotal=7;
 
     public GuiGuide(ItemStack item){
         this.item = item;
-        this.page = 0;
+        this.page = "root";
     }
 
     @Override
@@ -75,7 +78,7 @@ public class GuiGuide extends GuiScreen{
         String text = "";
 
         switch (page) {
-            case 0:
+            case "root":
                 //<editor-fold desc="Root Page">
                 Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
                 drawTexturedModalRect(guiLeft + 33, guiTop + 10, 45, 192, 77, 23);    //Logo
@@ -125,7 +128,7 @@ public class GuiGuide extends GuiScreen{
                 //this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemWallet), guiLeft + 35, guiTop + 110);
                 //</editor-fold>
                 break;
-            case 1:
+            case "bill":
                 //<editor-fold desc="Dollar Bill Page">
                 //Item Icon
                 GL11.glPushMatrix();
@@ -157,14 +160,92 @@ public class GuiGuide extends GuiScreen{
                 this.buttonList.get(0).visible = true;
                 //</editor-fold>
                 break;
+            case "wallet":
+                //<editor-fold desc="Wallet Page">
+                //Item Icon
+                GL11.glPushMatrix();
+                GL11.glTranslatef(guiLeft + 1.2F, guiTop + 1.2F, 0.8F);
+                GL11.glScalef(1.2F, 1.2F, 1.2F);
+                this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemWallet, 1,1), 23, 11);
+                GL11.glPopMatrix();
+
+                //Chapter Title
+                text = TextFormatting.BOLD + "The Wallet";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 50, guiTop + 21, 148, Color.BLACK.getRGB());
+
+
+                text = " This revolutionary piece of leather is a convenient way to keep all your hard earned cash in one place.";
+               fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 32, 112, Color.BLACK.getRGB());
+
+               text = " Unfortunately it can" + TextFormatting.BOLD + " ONLY " + TextFormatting.RESET + "hold bills from the mod, preventing you from taking advantage of cheap portable storage.";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 75, 112, Color.BLACK.getRGB());
+
+                text =  "There is also " + TextFormatting.RED + "special " + TextFormatting.BLACK + "interaction features with vending machines...";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 125, 112, Color.BLACK.getRGB());
+
+
+                this.buttonList.get(0).visible = true;
+                this.buttonList.get(2).visible = true;
+                break;
+            case "wallet1":
+                GL11.glPushMatrix();
+                GL11.glTranslatef(guiLeft + 0.5F, guiTop + 0.5F, 0.8F);
+                GL11.glScalef(0.5F, 0.5F, 0.5F);
+                Minecraft.getMinecraft().getTextureManager().bindTexture(VENDOR_TEXTURE);
+                drawTexturedModalRect(184, 62, 198, 0, 16,16);
+                GL11.glPopMatrix();
+
+                Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
+                drawTexturedModalRect(guiLeft + 46, guiTop + 84, 167, 0, 54,54);
+
+                this.itemRender.renderItemIntoGUI(new ItemStack(Items.APPLE, 1,0), guiLeft + 47, guiTop + 85);
+                this.itemRender.renderItemIntoGUI(new ItemStack(Items.APPLE, 1,0), guiLeft + 65, guiTop + 85);
+                this.itemRender.renderItemIntoGUI(new ItemStack(Items.APPLE, 1,0), guiLeft + 83, guiTop + 85);
+
+                this.itemRender.renderItemIntoGUI(new ItemStack(Items.APPLE, 1,0), guiLeft + 47, guiTop + 103);
+                this.itemRender.renderItemIntoGUI(new ItemStack(Items.APPLE, 1,0), guiLeft + 65, guiTop + 103);
+                this.itemRender.renderItemIntoGUI(new ItemStack(Items.APPLE, 1,0), guiLeft + 83, guiTop + 103);
+
+                this.itemRender.renderItemIntoGUI(new ItemStack(Items.APPLE, 1,0), guiLeft + 47, guiTop + 121);
+                this.itemRender.renderItemIntoGUI(new ItemStack(Items.APPLE, 1,0), guiLeft + 65, guiTop + 121);
+                this.itemRender.renderItemIntoGUI(new ItemStack(Items.APPLE, 1,0), guiLeft + 83, guiTop + 121);
+
+                text = "When placed in the vending machine input slot [   ] all purchases will go through the wallet, you will never need to collect your change again!";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 22, 112, Color.BLACK.getRGB());
+
+                text = "Wallet Recipe";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 49, guiTop + 75, 112, Color.BLACK.getRGB());
+
+
+
+                this.buttonList.get(0).visible = true;
+                this.buttonList.get(1).visible = true;
+                //</editor-fold>
+                break;
+
         }
         Minecraft.getMinecraft().fontRenderer.setUnicodeFlag(false);
         super.drawScreen(mouseX, mouseY, partialTicks);
 
+        Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
+        //Back
         if (this.buttonList.get(0).visible == true) {
             if ((i >= 14 && i <= 14 + 20) && (j >= 10 && j <= 10 + 10)) {
-                Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
-                drawTexturedModalRect(guiLeft + 14, guiTop + 10, 23, 219, 21,11);
+                drawTexturedModalRect(guiLeft + 14, guiTop + 10, 23, 219, 21, 11);
+            }
+        }
+
+        //Prev
+        if (this.buttonList.get(1).visible == true) {
+            if ((i >= 20 && i <= 20 + 17) && (j >= 156 && j <= 156 + 9)) {
+                drawTexturedModalRect(guiLeft + 20, guiTop + 154, 26, 206, 18,11);
+            }
+        }
+
+        //Next
+        if (this.buttonList.get(2).visible == true) {
+            if ((i >= 100 && i <= 100 + 17) && (j >= 156 && j <= 156 + 9)) {
+                drawTexturedModalRect(guiLeft + 100, guiTop + 155, 26, 194, 18,11);
             }
         }
 
@@ -188,19 +269,27 @@ public class GuiGuide extends GuiScreen{
         switch (button.id) {
             case 0: //Back
                 switch (page){
-                    default: break;
-                    case 1: page = 0;
+                    default: page = "root";
                         break;
                 }
                 break;
-            case 1: //Next
+            case 1: //Prev
+                switch (page){
+                    case "wallet1": page = "wallet";
+                        break;
+                }
                 break;
-            case 2: //Prev
+            case 2: //Next
+                switch (page){
+                    case "wallet": page = "wallet1";
+                        break;
+                }
                 break;
-            case 3:
-                clean();
-                this.page =1;
+            case 3: //Bill Button
+                this.page ="bill";
                 break;
+            case 4: //Wallet Button
+                this.page ="wallet";
         }
         clean();
     }
