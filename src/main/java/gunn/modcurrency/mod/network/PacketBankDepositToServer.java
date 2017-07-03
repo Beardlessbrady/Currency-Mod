@@ -46,7 +46,7 @@ public class PacketBankDepositToServer implements IMessage {
         }
 
         private void handle(PacketBankDepositToServer message, MessageContext ctx){
-            EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
+            EntityPlayerMP playerEntity = ctx.getServerHandler().player;
             World world = playerEntity.world;
             ((TileATM) world.getTileEntity(message.pos)).deposit();
         }

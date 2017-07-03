@@ -53,7 +53,7 @@ public class PacketSetItemCostToServer implements IMessage {
         }
 
         private void handle(PacketSetItemCostToServer message, MessageContext ctx){
-            EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
+            EntityPlayerMP playerEntity = ctx.getServerHandler().player;
             World world = playerEntity.world;
             TileEntity tile = world.getTileEntity(message.blockPos);
 

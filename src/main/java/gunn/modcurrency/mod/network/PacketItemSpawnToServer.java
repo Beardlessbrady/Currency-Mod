@@ -49,7 +49,7 @@ public class PacketItemSpawnToServer implements IMessage {
         }
 
         private void handle(PacketItemSpawnToServer message, MessageContext ctx){
-            EntityPlayerMP playerEntity = ctx.getServerHandler().playerEntity;
+            EntityPlayerMP playerEntity = ctx.getServerHandler().player;
             World world = playerEntity.world;
             TileEntity te = world.getTileEntity(message.blockPos);
             if(te instanceof TileVending) ((TileVending) te).outChange();

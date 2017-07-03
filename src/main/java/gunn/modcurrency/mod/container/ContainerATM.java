@@ -127,7 +127,7 @@ public class ContainerATM extends Container implements INBTInventory{
 
         for (IContainerListener listener : this.listeners) {
             for (int field = 0; field < tile.getFieldCount(); ++field) {
-                if (fieldChanged[field]) listener.sendProgressBarUpdate(this, field, cachedFields[field]);
+                if (fieldChanged[field]) listener.sendWindowProperty(this, field, cachedFields[field]);
             }
         }
     }

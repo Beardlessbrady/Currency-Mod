@@ -61,10 +61,10 @@ public class GuiATM extends GuiContainer{
         super.initGui();
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
-        this.withdrawField = new GuiTextField(0, fontRendererObj, i + 65, j + 75, 46, 10);
+        this.withdrawField = new GuiTextField(0, fontRenderer, i + 65, j + 75, 46, 10);
         this.withdrawField.setMaxStringLength(7);
 
-        this.feeField = new GuiTextField(0, fontRendererObj, i-55, j + 48, 46, 10);
+        this.feeField = new GuiTextField(0, fontRenderer, i-55, j + 48, 46, 10);
         this.feeField.setEnableBackgroundDrawing(false);
         this.feeField.setTextColor((Integer.parseInt("0099ff", 16)));
         this.feeField.setText(Integer.toString(te.getField(2)));
@@ -87,13 +87,13 @@ public class GuiATM extends GuiContainer{
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-        fontRendererObj.drawString(I18n.format("tile.modcurrency:blockatm.name"), 5, 6, Color.darkGray.getRGB());
-        fontRendererObj.drawString(I18n.format("tile.modcurrency:gui.playerinventory"), 7, 100, Color.darkGray.getRGB());
+        fontRenderer.drawString(I18n.format("tile.modcurrency:blockatm.name"), 5, 6, Color.darkGray.getRGB());
+        fontRenderer.drawString(I18n.format("tile.modcurrency:gui.playerinventory"), 7, 100, Color.darkGray.getRGB());
 
         BankAccountSavedData bankData = BankAccountSavedData.getData(te.getWorld());
         BankAccount account = bankData.getBankAccount(player.getUniqueID().toString());
-        fontRendererObj.drawString(I18n.format("Balance: $" + account.getBalance()), 5,15, Color.darkGray.getRGB());
-        fontRendererObj.drawString(I18n.format("$"), 57,76, Color.darkGray.getRGB());
+        fontRenderer.drawString(I18n.format("Balance: $" + account.getBalance()), 5,15, Color.darkGray.getRGB());
+        fontRenderer.drawString(I18n.format("$"), 57,76, Color.darkGray.getRGB());
 
         String text = withdrawField.getText();
         if (withdrawField.getText().length() > 0) {
@@ -105,8 +105,8 @@ public class GuiATM extends GuiContainer{
         }
 
         if(te.getField(2) != 0) {
-            fontRendererObj.drawString(I18n.format("Fee: $" + te.getField(2)), 68, 40, Integer.parseInt("540909", 16));
-            fontRendererObj.drawString(I18n.format("Fee: $" + te.getField(2)), 67, 40, Integer.parseInt("9B1A1A", 16));
+            fontRenderer.drawString(I18n.format("Fee: $" + te.getField(2)), 68, 40, Integer.parseInt("540909", 16));
+            fontRenderer.drawString(I18n.format("Fee: $" + te.getField(2)), 67, 40, Integer.parseInt("9B1A1A", 16));
         }
 
         if (te.getField(0) == 1) {
@@ -117,11 +117,11 @@ public class GuiATM extends GuiContainer{
                 Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
                 GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                 drawTexturedModalRect(-91, 20, 27, 0, 91, 47);
-                fontRendererObj.drawString(I18n.format("tile.modcurrency:guiatm.feesettings"), -81, 27, Integer.parseInt("42401c", 16));
-                fontRendererObj.drawString(I18n.format("tile.modcurrency:guiatm.feesettings"), -80, 26, Integer.parseInt("fff200", 16));
-                fontRendererObj.drawString(I18n.format("tile.modcurrency:guiatm.fee"), -84, 48, Integer.parseInt("211d1b", 16));
-                fontRendererObj.drawString(I18n.format("tile.modcurrency:guiatm.fee"), -83, 47, Color.lightGray.getRGB());
-                fontRendererObj.drawString(I18n.format("$"), -62, 48, Integer.parseInt("0099ff", 16));
+                fontRenderer.drawString(I18n.format("tile.modcurrency:guiatm.feesettings"), -81, 27, Integer.parseInt("42401c", 16));
+                fontRenderer.drawString(I18n.format("tile.modcurrency:guiatm.feesettings"), -80, 26, Integer.parseInt("fff200", 16));
+                fontRenderer.drawString(I18n.format("tile.modcurrency:guiatm.fee"), -84, 48, Integer.parseInt("211d1b", 16));
+                fontRenderer.drawString(I18n.format("tile.modcurrency:guiatm.fee"), -83, 47, Color.lightGray.getRGB());
+                fontRenderer.drawString(I18n.format("$"), -62, 48, Integer.parseInt("0099ff", 16));
 
                 this.feeField.setMaxStringLength(6);
             }
@@ -170,8 +170,8 @@ public class GuiATM extends GuiContainer{
                         list.add("Set atm fee");
                         //list.add("and prices");
                         if(((TabButton)buttonList.get(GEARBUTTON_ID)).openState()){
-                            this.drawHoveringText(list, -100, 6, fontRendererObj);
-                        }else this.drawHoveringText(list, -100, 32, fontRendererObj);
+                            this.drawHoveringText(list, -100, 6, fontRenderer);
+                        }else this.drawHoveringText(list, -100, 32, fontRenderer);
                         break;
                 }
             }
