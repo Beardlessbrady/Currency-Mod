@@ -1,0 +1,13 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "group": "modcurrency",
+    "ingredients": [
+        { "item": "minecraft:book", "data": 0},
+        { "item": "minecraft:gold_ingot", "data": 0}
+    ],
+    "result": {
+        "item": "modcurrency:guidebook",
+        "data": 0,
+        "count": 1
+    }
+}

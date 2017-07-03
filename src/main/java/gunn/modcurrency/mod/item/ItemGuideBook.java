@@ -32,11 +32,6 @@ public class ItemGuideBook extends Item {
         ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(getRegistryName(), "inventory"));
     }
 
-    public void recipe() {
-    //    GameRegistry.addShapelessRecipe(new ItemStack(ModItems.itemGuide, 1, 0),
-      //          Items.BOOK, Items.GOLD_INGOT);
-    }
-
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
         playerIn.openGui(ModCurrency.instance, 34, worldIn, playerIn.getPosition().getX(), playerIn.getPosition().down().getY(), playerIn.getPosition().getZ());
