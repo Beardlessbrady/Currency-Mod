@@ -8,9 +8,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
 import net.minecraft.util.NonNullList;
@@ -31,6 +29,7 @@ import java.io.IOException;
 public class GuiGuide extends GuiScreen{
     private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/guiguide.png");
     private static final ResourceLocation VENDOR_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/guivendortexture.png");
+    private static final ResourceLocation TAB_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/guivendortabtexture.png");
 
     private int guiTop, guiLeft;
     protected final int xSize = 146;
@@ -143,14 +142,14 @@ public class GuiGuide extends GuiScreen{
                 GL11.glPopMatrix();
 
                 //Chapter Title
-                text = TextFormatting.BOLD + "The Dollar Bill";
-                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 50, guiTop + 21, 148, Color.BLACK.getRGB());
+                text = TextFormatting.BOLD + "Dollar Bill";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 52, guiTop + 21, 148, Color.BLACK.getRGB());
 
 
                 text = "These " + TextFormatting.DARK_GREEN + "Coloured " + TextFormatting.BLACK + "pieces of paper are the most important part of your economy.";
                 fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 32, 112, Color.BLACK.getRGB());
 
-                text = "Each has a higher value then the last. This way you won't have one-thousand one dollar bills filling your inventory. You can of course " + TextFormatting.BOLD + "convert "
+                text = "Each has a higher value then the last. This way you won't have a million one dollar bills filling your inventory. You can of course " + TextFormatting.BOLD + "convert "
                         + TextFormatting.RESET + "between each bill in any crafting table.";
                 fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 85, 112, Color.BLACK.getRGB());
 
@@ -175,7 +174,7 @@ public class GuiGuide extends GuiScreen{
                 GL11.glPopMatrix();
 
                 //Chapter Title
-                text = TextFormatting.BOLD + "The Wallet";
+                text = TextFormatting.BOLD + "Wallet";
                 fontRenderer.drawSplitString(I18n.format(text), guiLeft + 50, guiTop + 21, 148, Color.BLACK.getRGB());
 
 
@@ -183,16 +182,18 @@ public class GuiGuide extends GuiScreen{
                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 32, 112, Color.BLACK.getRGB());
 
                text = " Unfortunately it can" + TextFormatting.BOLD + " ONLY " + TextFormatting.RESET + "hold bills from the mod, preventing you from taking advantage of cheap portable storage.";
-                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 75, 112, Color.BLACK.getRGB());
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 72, 112, Color.BLACK.getRGB());
 
                 text =  "There is also " + TextFormatting.RED + "special " + TextFormatting.BLACK + "interaction features with vending machines...";
-                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 125, 112, Color.BLACK.getRGB());
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 122, 112, Color.BLACK.getRGB());
 
 
                 this.buttonList.get(0).visible = true;
                 this.buttonList.get(2).visible = true;
+                //</editor-fold>
                 break;
             case "wallet1":
+                //<editor-fold desc="Wallet Page 01">
                 GL11.glPushMatrix();
                 GL11.glTranslatef(guiLeft + 0.5F, guiTop + 0.5F, 0.8F);
                 GL11.glScalef(0.5F, 0.5F, 0.5F);
@@ -229,11 +230,132 @@ public class GuiGuide extends GuiScreen{
                 this.buttonList.get(1).visible = true;
                 //</editor-fold>
                 break;
+            case "vending":
+                //<editor-fold desc="Vending Machine Page">
+                //Item Icon
+                GL11.glPushMatrix();
+                GL11.glTranslatef(guiLeft + 1.2F, guiTop + 1.2F, 0.8F);
+                GL11.glScalef(1.2F, 1.2F, 1.2F);
+                this.itemRender.renderItemIntoGUI(new ItemStack(ModBlocks.blockVending, 1, 0), 23, 11);
+                GL11.glPopMatrix();
+
+                GL11.glPushMatrix();
+                GL11.glTranslatef(guiLeft + 0.8F, guiTop + 0.8F, 0.8F);
+                GL11.glScalef(0.7F, 0.7F, 0.7F);
+                Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
+                drawTexturedModalRect(96, 124, 236, 73, 19,17);
+                GL11.glPopMatrix();
+
+                //Chapter Title
+                text = TextFormatting.BOLD + "Vending Machine";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 47, guiTop + 21, 148, Color.BLACK.getRGB());
+
+
+                text = " Why have a villager sell your goods when you can have a machine do it?";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 32, 112, Color.BLACK.getRGB());
+
+                text = " Once your vending machine is placed it will instantly recognize you as its owner. Clicking the [    ] icon in the gui will change it between " + TextFormatting.BOLD + "'Stock'" +
+                TextFormatting.RESET + " and " + TextFormatting.BOLD + "'Sell'" + TextFormatting.RESET + " mode.";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 62, 112, Color.BLACK.getRGB());
+
+                text = "You can also create a " + TextFormatting.BOLD + "double" + TextFormatting.RESET + " vending machine...";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 120, 112, Color.BLACK.getRGB());
+
+                this.buttonList.get(0).visible = true;
+                this.buttonList.get(2).visible = true;
+                //</editor-fold>
+                break;
+            case "vending1":
+                //<editor-fold desc="Vending Machine Page 01">
+                text = "...by simply placing one on top of another one. Besides the " + TextFormatting.BOLD + "aesthetic" + TextFormatting.RESET +
+                        " change the machine also gets " + TextFormatting.BOLD + "double the inventory space.";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 22, 112, Color.BLACK.getRGB());
+
+                text = TextFormatting.UNDERLINE + "Sell Mode" + TextFormatting.RESET + ". This is where players can" + TextFormatting.BOLD +
+                        " buy " + TextFormatting.RESET + "items. When hovering over items a " + TextFormatting.ITALIC + "price " +
+                        TextFormatting.RESET + "will be shown. If it is " + TextFormatting.RED + "RED" + TextFormatting.BLACK +
+                        " it means the player didn't put enough cash in the machine to afford it. If it is " + TextFormatting.GREEN + "GREEN" + TextFormatting.BLACK +
+                        " it means the player has...";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 72, 112, Color.BLACK.getRGB());
+
+                this.buttonList.get(0).visible = true;
+                this.buttonList.get(1).visible = true;
+                this.buttonList.get(2).visible = true;
+                //</editor-fold>
+                break;
+            case "vending2":
+                //<editor-fold desc="Vending Machine Page 02">
+            GL11.glPushMatrix();
+            GL11.glTranslatef(guiLeft + 0.5F, guiTop + 0.5F, 0.8F);
+            GL11.glScalef(0.5F, 0.5F, 0.5F);
+            Minecraft.getMinecraft().getTextureManager().bindTexture(VENDOR_TEXTURE);
+            drawTexturedModalRect(73, 98, 198, 0, 16,16);
+            GL11.glPopMatrix();
+
+            text = "...enough money to buy " + TextFormatting.BOLD + "at least one " + TextFormatting.RESET + "of the items. Insert cash by placing it in the [   ] slot or by shift " +
+                    "clicking it. You can also click the [" + TextFormatting.BOLD + "Change" + TextFormatting.RESET + "] button to get your remaining cash back. You can different amounts of items by:" +
+                    "";
+            fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 22, 112, Color.BLACK.getRGB());
+
+            text = "\u2022 Right click = 1 item";
+            fontRenderer.drawSplitString(I18n.format(text), guiLeft + 30, guiTop + 105, 112, Color.BLACK.getRGB());
+            text = "\u2022 Left click = 10 items";
+            fontRenderer.drawSplitString(I18n.format(text), guiLeft + 30, guiTop + 115, 112, Color.BLACK.getRGB());
+            text = "\u2022 Shift click = Whole stack";
+            fontRenderer.drawSplitString(I18n.format(text), guiLeft + 30, guiTop + 125, 112, Color.BLACK.getRGB());
+
+            this.buttonList.get(0).visible = true;
+            this.buttonList.get(1).visible = true;
+            this.buttonList.get(2).visible = true;
+            //</editor-fold>
+                break;
+            case "vending3":
+                //<editor-fold desc="Vending Machine Page 03">
+                GL11.glPushMatrix();
+                GL11.glTranslatef(guiLeft + 0.8F, guiTop + 0.8F, 0.8F);
+                GL11.glScalef(0.7F, 0.7F, 0.7F);
+                Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
+                drawTexturedModalRect(55, 122, 236, 1, 19,17);
+                GL11.glPopMatrix();
+
+                text = TextFormatting.UNDERLINE + "Stock Mode" + TextFormatting.RESET + ". This is where owners can set their prices and stock the items they want to sell." +
+                        " You can click the [" + TextFormatting.BOLD + "Profit" + TextFormatting.RESET + "] button to receive all the money you've made so far.";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 22, 112, Color.BLACK.getRGB());
+
+                text = " The [   ] tab enables and disables the automation feature of the machine. Once enabled the machine profit will be transformed into 20 dollar bills in a hidden slot and will sit there...";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 88, 112, Color.BLACK.getRGB());
+
+
+                      //  "till a hopper or any other type or interaction is made with the machine";
+
+                this.buttonList.get(0).visible = true;
+                this.buttonList.get(1).visible = true;
+                this.buttonList.get(2).visible = true;
+                //</editor-fold>
+                break;
+            case "vending4":
+                //<editor-fold desc="Vending Machine Page 03">
+                text = "...until the owner either disables automation (in which money will go back into the machines profit) or places a hopper under it" +
+                        " in which the money will be siphoned out.";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 22, 112, Color.BLACK.getRGB());
+
+                text = " You can setup a " + TextFormatting.BOLD + "quicker" + TextFormatting.RESET + " way to pull out of the machine. Placing a vanilla chest [   ] " +
+                        TextFormatting.BOLD + "one " + TextFormatting.RESET + "or " + TextFormatting.BOLD + "two blocks directly under " +
+                        TextFormatting.RESET + "the machine will causes all output to " + TextFormatting.BOLD +
+                        "quickly...";// + TextFormatting.RESET + "move into the chest, much faster than a hopper.";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 80, 112, Color.BLACK.getRGB());
+
+                this.buttonList.get(0).visible = true;
+                this.buttonList.get(1).visible = true;
+                this.buttonList.get(2).visible = true;
+                break;
+                //</editor-fold>
 
         }
         Minecraft.getMinecraft().fontRenderer.setUnicodeFlag(false);
         super.drawScreen(mouseX, mouseY, partialTicks);
 
+        //<editor-fold desc="Usual Buttons">
         Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
         //Back
         if (this.buttonList.get(0).visible == true) {
@@ -255,7 +377,7 @@ public class GuiGuide extends GuiScreen{
                 drawTexturedModalRect(guiLeft + 100, guiTop + 155, 26, 194, 18,11);
             }
         }
-
+        //</editor-fold>
     }
 
     public void clean(){
@@ -286,7 +408,6 @@ public class GuiGuide extends GuiScreen{
         return null;
     }
 
-
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         if(Minecraft.getMinecraft().gameSettings.keyBindInventory.getKeyCode() == keyCode) this.mc.displayGuiScreen(null);  //Closes gui when inventory button is clicked
@@ -306,12 +427,27 @@ public class GuiGuide extends GuiScreen{
                 switch (page){
                     case "wallet1": page = "wallet";
                         break;
+                    case "vending1": page = "vending";
+                        break;
+                    case "vending2": page = "vending1";
+                        break;
+                    case "vending3": page = "vending2";
+                        break;
+                    case "vending4": page = "vending3";
+                        break;
                 }
                 break;
             case 2: //Next
                 switch (page){
                     case "wallet": page = "wallet1";
                         break;
+                    case "vending": page = "vending1";
+                        break;
+                    case "vending1": page = "vending2";
+                        break;
+                    case "vending2": page = "vending3";
+                        break;
+                    case "vending3": page = "vending4";
                 }
                 break;
             case 3: //Bill Button
@@ -319,6 +455,9 @@ public class GuiGuide extends GuiScreen{
                 break;
             case 4: //Wallet Button
                 this.page ="wallet";
+                break;
+            case 5: //Vending Button
+                this.page ="vending";
         }
         clean();
     }
