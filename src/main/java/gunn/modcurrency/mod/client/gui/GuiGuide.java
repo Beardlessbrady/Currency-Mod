@@ -8,6 +8,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.Ingredient;
@@ -202,21 +203,21 @@ public class GuiGuide extends GuiScreen{
                 GL11.glPopMatrix();
 
                 Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
-                drawTexturedModalRect(guiLeft + 46, guiTop + 84, 167, 0, 58,58);
+                drawTexturedModalRect(guiLeft + 44, guiTop + 84, 167, 0, 58,58);
 
                 ItemStack[] ingredients = recipe(new ItemStack(ModItems.itemWallet));
 
-                this.itemRender.renderItemIntoGUI(ingredients[0], guiLeft + 48, guiTop + 86);
-                this.itemRender.renderItemIntoGUI(ingredients[1], guiLeft + 67, guiTop + 86);
-                this.itemRender.renderItemIntoGUI(ingredients[2], guiLeft + 86, guiTop + 86);
+                this.itemRender.renderItemIntoGUI(ingredients[0], guiLeft + 46, guiTop + 86);
+                this.itemRender.renderItemIntoGUI(ingredients[1], guiLeft + 65, guiTop + 86);
+                this.itemRender.renderItemIntoGUI(ingredients[2], guiLeft + 84, guiTop + 86);
 
-                this.itemRender.renderItemIntoGUI(ingredients[3], guiLeft + 48, guiTop + 105);
-                this.itemRender.renderItemIntoGUI(ingredients[4], guiLeft + 67, guiTop + 105);
-                this.itemRender.renderItemIntoGUI(ingredients[5], guiLeft + 86, guiTop + 105);
+                this.itemRender.renderItemIntoGUI(ingredients[3], guiLeft + 46, guiTop + 105);
+                this.itemRender.renderItemIntoGUI(ingredients[4], guiLeft + 65, guiTop + 105);
+                this.itemRender.renderItemIntoGUI(ingredients[5], guiLeft + 84, guiTop + 105);
 
-                this.itemRender.renderItemIntoGUI(ingredients[6], guiLeft + 48, guiTop + 124);
-                this.itemRender.renderItemIntoGUI(ingredients[7], guiLeft + 67, guiTop + 124);
-                this.itemRender.renderItemIntoGUI(ingredients[8], guiLeft + 86, guiTop + 124);
+                this.itemRender.renderItemIntoGUI(ingredients[6], guiLeft + 46, guiTop + 124);
+                this.itemRender.renderItemIntoGUI(ingredients[7], guiLeft + 65, guiTop + 124);
+                this.itemRender.renderItemIntoGUI(ingredients[8], guiLeft + 84, guiTop + 124);
 
                 text = "When placed in the vending machine input slot [   ] all purchases will go through the wallet, you will never need to collect your change again!";
                 fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 22, 112, Color.BLACK.getRGB());
@@ -334,7 +335,10 @@ public class GuiGuide extends GuiScreen{
                 //</editor-fold>
                 break;
             case "vending4":
-                //<editor-fold desc="Vending Machine Page 03">
+                //<editor-fold desc="Vending Machine Page 04">
+
+                this.itemRender.renderItemIntoGUI(new ItemStack(Blocks.CHEST, 1, 0), guiLeft + 41, guiTop + 103);
+
                 text = "...until the owner either disables automation (in which money will go back into the machines profit) or places a hopper under it" +
                         " in which the money will be siphoned out.";
                 fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 22, 112, Color.BLACK.getRGB());
@@ -342,14 +346,78 @@ public class GuiGuide extends GuiScreen{
                 text = " You can setup a " + TextFormatting.BOLD + "quicker" + TextFormatting.RESET + " way to pull out of the machine. Placing a vanilla chest [   ] " +
                         TextFormatting.BOLD + "one " + TextFormatting.RESET + "or " + TextFormatting.BOLD + "two blocks directly under " +
                         TextFormatting.RESET + "the machine will causes all output to " + TextFormatting.BOLD +
-                        "quickly...";// + TextFormatting.RESET + "move into the chest, much faster than a hopper.";
+                        "quickly...";
                 fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 80, 112, Color.BLACK.getRGB());
 
                 this.buttonList.get(0).visible = true;
                 this.buttonList.get(1).visible = true;
                 this.buttonList.get(2).visible = true;
-                break;
                 //</editor-fold>
+                break;
+            case "vending5":
+                //<editor-fold desc="Vending Machine Page 05">
+                GL11.glPushMatrix();
+                GL11.glTranslatef(guiLeft + 0.8F, guiTop + 0.8F, 0.8F);
+                GL11.glScalef(0.7F, 0.7F, 0.7F);
+                Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
+                drawTexturedModalRect(55, 115, 236, 19, 19,17);
+                GL11.glPopMatrix();
+
+                text = "...move into the chest, much faster than a hopper.";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 22, 112, Color.BLACK.getRGB());
+
+                text = " You can also pump items into the machine by hooking up a hopper to the " + TextFormatting.BOLD + "side " + TextFormatting.RESET +
+                    "of the machine.";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 43, 112, Color.BLACK.getRGB());
+
+                text = " The [   ] tab is used to edit the prices of the items sold. Change which item you are editing by simply " + TextFormatting.BOLD + "right clicking.";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 83, 112, Color.BLACK.getRGB());
+
+                this.buttonList.get(0).visible = true;
+                this.buttonList.get(1).visible = true;
+                this.buttonList.get(2).visible = true;
+                //</editor-fold>
+                break;
+            case "vending6":
+                //<editor-fold desc="Vending Machine Page 06">
+                GL11.glPushMatrix();
+                GL11.glTranslatef(guiLeft + 0.8F, guiTop + 0.8F, 0.8F);
+                GL11.glScalef(0.7F, 0.7F, 0.7F);
+                Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
+                drawTexturedModalRect(55, 28, 236, 55, 19,17);
+                GL11.glPopMatrix();
+
+                Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
+                drawTexturedModalRect(guiLeft + 44, guiTop + 84, 167, 0, 58,58);
+
+                text = " The [   ] tab can only be accessed if the owner is in " + TextFormatting.BOLD + "creative " + TextFormatting.RESET + "It allows the owner to make stock infinite.";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 22, 112, Color.BLACK.getRGB());
+
+                ItemStack[] ingredientsv = recipe(new ItemStack(ModBlocks.blockVending));
+
+                this.itemRender.renderItemIntoGUI(ingredientsv[0], guiLeft + 46, guiTop + 86);
+                this.itemRender.renderItemIntoGUI(ingredientsv[1], guiLeft + 65, guiTop + 86);
+                this.itemRender.renderItemIntoGUI(ingredientsv[2], guiLeft + 84, guiTop + 86);
+
+                this.itemRender.renderItemIntoGUI(ingredientsv[3], guiLeft + 46, guiTop + 105);
+                this.itemRender.renderItemIntoGUI(ingredientsv[4], guiLeft + 65, guiTop + 105);
+                this.itemRender.renderItemIntoGUI(ingredientsv[5], guiLeft + 84, guiTop + 105);
+
+                this.itemRender.renderItemIntoGUI(ingredientsv[6], guiLeft + 46, guiTop + 124);
+                this.itemRender.renderItemIntoGUI(ingredientsv[7], guiLeft + 65, guiTop + 124);
+                this.itemRender.renderItemIntoGUI(ingredientsv[8], guiLeft + 84, guiTop + 124);
+
+                text = "Vending Machine Recipe";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 30, guiTop + 75, 112, Color.BLACK.getRGB());
+
+
+
+
+
+                this.buttonList.get(0).visible = true;
+                this.buttonList.get(1).visible = true;
+                //</editor-fold>
+                break;
 
         }
         Minecraft.getMinecraft().fontRenderer.setUnicodeFlag(false);
@@ -435,6 +503,9 @@ public class GuiGuide extends GuiScreen{
                         break;
                     case "vending4": page = "vending3";
                         break;
+                    case "vending5": page = "vending4";
+                        break;
+                    case "vending6": page = "vending5";
                 }
                 break;
             case 2: //Next
@@ -448,7 +519,12 @@ public class GuiGuide extends GuiScreen{
                     case "vending2": page = "vending3";
                         break;
                     case "vending3": page = "vending4";
-                }
+                        break;
+                    case "vending4": page = "vending5";
+                        break;
+                    case "vending5": page = "vending6";
+                        break;
+            }
                 break;
             case 3: //Bill Button
                 this.page ="bill";
