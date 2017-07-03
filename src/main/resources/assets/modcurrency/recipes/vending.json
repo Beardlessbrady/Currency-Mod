@@ -1,6 +1,6 @@
 {
     "type": "minecraft:crafting_shaped",
-    "group": "modcurrency",
+    "group": "modcurrency_vending",
     "pattern": [
         "aba",
         "aca",

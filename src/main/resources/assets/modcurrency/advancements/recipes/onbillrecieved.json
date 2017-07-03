@@ -1,0 +1,63 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "modcurrency:guide",
+      "modcurrency:exchanger",
+      "modcurrency:vending",
+      "modcurrency:wallet",
+      "modcurrency:billexchange/bill1",
+      "modcurrency:billexchange/bill1_1",
+      "modcurrency:billexchange/bill1_2",
+      "modcurrency:billexchange/bill1_3",
+      "modcurrency:billexchange/bill5",
+      "modcurrency:billexchange/bill5_1",
+      "modcurrency:billexchange/bill5_2",
+      "modcurrency:billexchange/bill5_3",
+      "modcurrency:billexchange/bill5_4",
+      "modcurrency:billexchange/bill10",
+      "modcurrency:billexchange/bill10_1",
+      "modcurrency:billexchange/bill10_2",
+      "modcurrency:billexchange/bill10_3",
+      "modcurrency:billexchange/bill10_4",
+      "modcurrency:billexchange/bill20",
+      "modcurrency:billexchange/bill20_1",
+      "modcurrency:billexchange/bill20_2",
+      "modcurrency:billexchange/bill20_3",
+      "modcurrency:billexchange/bill50",
+      "modcurrency:billexchange/bill50_1",
+      "modcurrency:billexchange/bill50_2",
+      "modcurrency:billexchange/bill50_3",
+      "modcurrency:billexchange/bill50_4",
+      "modcurrency:billexchange/bill50_5",
+      "modcurrency:billexchange/bill50_6",
+      "modcurrency:billexchange/bill100",
+      "modcurrency:billexchange/bill100_1",
+      "modcurrency:billexchange/bill100_2",
+      "modcurrency:billexchange/bill100_3",
+      "modcurrency:billexchange/bill100_4",
+      "modcurrency:billexchange/bill100_5",
+      "modcurrency:billexchange/bill100_6",
+      "modcurrency:billexchange/bill100_7",
+      "modcurrency:billexchange/bill100_8",
+      "modcurrency:billexchange/bill100_9"
+    ]
+  },
+  "criteria": {
+    "has_bill":{
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "modcurrency:banknote"
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_bill"
+    ]
+  ]
+}
