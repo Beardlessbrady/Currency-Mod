@@ -25,6 +25,7 @@ public class ItemGuideBook extends Item {
         setRegistryName("guidebook");
         setUnlocalizedName(this.getRegistryName().toString());
         setCreativeTab(ModCurrency.tabCurrency);
+        setMaxStackSize(1);
     }
 
     @SideOnly(Side.CLIENT)

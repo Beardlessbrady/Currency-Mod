@@ -294,7 +294,7 @@ public class GuiGuide extends GuiScreen{
             GL11.glPopMatrix();
 
             text = "...enough money to buy " + TextFormatting.BOLD + "at least one " + TextFormatting.RESET + "of the items. Insert cash by placing it in the [   ] slot or by shift " +
-                    "clicking it. You can also click the [" + TextFormatting.BOLD + "Change" + TextFormatting.RESET + "] button to get your remaining cash back. You can different amounts of items by:" +
+                    "clicking it. You can also click the [" + TextFormatting.BOLD + "Change" + TextFormatting.RESET + "] button to get your remaining cash back. You can get different amounts of items by:" +
                     "";
             fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 22, 112, Color.BLACK.getRGB());
 
@@ -326,9 +326,6 @@ public class GuiGuide extends GuiScreen{
                 text = " The [   ] tab enables and disables the automation feature of the machine. Once enabled the machine profit will be transformed into 20 dollar bills in a hidden slot and will sit there...";
                 fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 88, 112, Color.BLACK.getRGB());
 
-
-                      //  "till a hopper or any other type or interaction is made with the machine";
-
                 this.buttonList.get(0).visible = true;
                 this.buttonList.get(1).visible = true;
                 this.buttonList.get(2).visible = true;
@@ -336,7 +333,6 @@ public class GuiGuide extends GuiScreen{
                 break;
             case "vending4":
                 //<editor-fold desc="Vending Machine Page 04">
-
                 this.itemRender.renderItemIntoGUI(new ItemStack(Blocks.CHEST, 1, 0), guiLeft + 41, guiTop + 103);
 
                 text = "...until the owner either disables automation (in which money will go back into the machines profit) or places a hopper under it" +
@@ -345,7 +341,7 @@ public class GuiGuide extends GuiScreen{
 
                 text = " You can setup a " + TextFormatting.BOLD + "quicker" + TextFormatting.RESET + " way to pull out of the machine. Placing a vanilla chest [   ] " +
                         TextFormatting.BOLD + "one " + TextFormatting.RESET + "or " + TextFormatting.BOLD + "two blocks directly under " +
-                        TextFormatting.RESET + "the machine will causes all output to " + TextFormatting.BOLD +
+                        TextFormatting.RESET + "the machine will causes all outputs to " + TextFormatting.BOLD +
                         "quickly...";
                 fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 80, 112, Color.BLACK.getRGB());
 
@@ -410,15 +406,169 @@ public class GuiGuide extends GuiScreen{
                 text = "Vending Machine Recipe";
                 fontRenderer.drawSplitString(I18n.format(text), guiLeft + 30, guiTop + 75, 112, Color.BLACK.getRGB());
 
+                this.buttonList.get(0).visible = true;
+                this.buttonList.get(1).visible = true;
+                //</editor-fold>
+                break;
+            case "exchange":
+                //<editor-fold desc="Exchange Machine Page">
+                //Item Icon
+                GL11.glPushMatrix();
+                GL11.glTranslatef(guiLeft + 1.2F, guiTop + 1.2F, 0.8F);
+                GL11.glScalef(1.2F, 1.2F, 1.2F);
+                this.itemRender.renderItemIntoGUI(new ItemStack(ModBlocks.blockExchanger, 1, 0), 23, 11);
+                GL11.glPopMatrix();
 
+                GL11.glPushMatrix();
+                GL11.glTranslatef(guiLeft + 0.8F, guiTop + 0.8F, 0.8F);
+                GL11.glScalef(0.7F, 0.7F, 0.7F);
+                Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
+                drawTexturedModalRect(96, 164, 236, 73, 19,17);
+                GL11.glPopMatrix();
 
+                //Chapter Title
+                text = TextFormatting.BOLD + "Exchange Machine";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 47, guiTop + 21, 148, Color.BLACK.getRGB());
 
+                text = " Too lazy to go mining? Have tons of money? Setup an exchange machine and have people come to YOU and bring you everything you ever wanted.";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 32, 112, Color.BLACK.getRGB());
+
+                text = " Once your exchange machine is placed it will instantly recognize you as its owner. Clicking the [    ] icon in the gui will change it between " + TextFormatting.BOLD + "'Stock'" +
+                        TextFormatting.RESET + " and " + TextFormatting.BOLD + "'Sell'" + TextFormatting.RESET + " mode.";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 90, 112, Color.BLACK.getRGB());
+
+                this.buttonList.get(0).visible = true;
+                this.buttonList.get(2).visible = true;
+                //</editor-fold>
+                break;
+            case "exchange1":
+                //<editor-fold desc="Exchange Machine Page 01">
+                GL11.glPushMatrix();
+                GL11.glTranslatef(guiLeft + 0.5F, guiTop + 0.5F, 0.8F);
+                GL11.glScalef(0.5F, 0.5F, 0.5F);
+                Minecraft.getMinecraft().getTextureManager().bindTexture(VENDOR_TEXTURE);
+                drawTexturedModalRect(133, 238, 198, 17, 16,16);
+                GL11.glPopMatrix();
+
+                text = "You can also create a " + TextFormatting.BOLD + "double" + TextFormatting.RESET + " exchange machine by simply placing one on top of another one. Besides the " +
+                        TextFormatting.BOLD + "aesthetic" + TextFormatting.RESET + " change the machine also gets " + TextFormatting.BOLD + "double the inventory space.";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 22, 112, Color.BLACK.getRGB());
+
+                text = TextFormatting.UNDERLINE + "Sell Mode" + TextFormatting.RESET + ". This is where players can" + TextFormatting.BOLD +
+                        " sell " + TextFormatting.RESET + "items for cash. Insert items by placing them in the [   ] slot or by shift " +
+                        "clicking it. You can also click the...";//
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 92, 112, Color.BLACK.getRGB());
+
+                this.buttonList.get(0).visible = true;
+                this.buttonList.get(1).visible = true;
+                this.buttonList.get(2).visible = true;
+                //</editor-fold>
+                break;
+            case "exchange2":
+                //<editor-fold desc="Exchange Machine Page 02">
+
+                text = "[" + TextFormatting.BOLD + "Cash" + TextFormatting.RESET + "] button to receive your newly earned cash. You can get different amounts of items by:";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 22, 112, Color.BLACK.getRGB());
+
+                text = "\u2022 Right click = 1 item";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 30, guiTop + 55, 112, Color.BLACK.getRGB());
+                text = "\u2022 Left click = 10 items";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 30, guiTop + 65, 112, Color.BLACK.getRGB());
+                text = "\u2022 Shift click = Whole stack";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 30, guiTop + 75, 112, Color.BLACK.getRGB());
+
+                text = TextFormatting.UNDERLINE + "Stock Mode" + TextFormatting.RESET + ". This is where owners can set their prices and stock the items they want to sell." +
+                        " You can click the [" + TextFormatting.BOLD + "Profit" + TextFormatting.RESET + "] button to receive all the money you've made so far.";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 90, 112, Color.BLACK.getRGB());
+
+                this.buttonList.get(0).visible = true;
+                this.buttonList.get(1).visible = true;
+                this.buttonList.get(2).visible = true;
+                //</editor-fold>
+                break;
+            case "exchange3":
+                //<editor-fold desc="Exchange Machine Page 03">
+                GL11.glPushMatrix();
+                GL11.glTranslatef(guiLeft + 0.8F, guiTop + 0.8F, 0.8F);
+                GL11.glScalef(0.7F, 0.7F, 0.7F);
+                Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
+                drawTexturedModalRect(55, 27, 236, 1, 19, 17);
+                GL11.glPopMatrix();
+
+                text = " The [   ] tab enables and disables the automation feature of the machine. Whenever an item is sold to the machine it is moved to the hidden output slot" +
+                        ". If there is no automation enabled your machine will become backed up quickly. Once enabled the owner must attach a hopper to the bottom of the machine" +
+                        " in which sold items will be siphoned out.";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 22, 112, Color.BLACK.getRGB());
+
+                this.buttonList.get(0).visible = true;
+                this.buttonList.get(1).visible = true;
+                this.buttonList.get(2).visible = true;
+                //</editor-fold>
+                break;
+            case "exchange4":
+                //<editor-fold desc="Exchange Machine Page 04">
+                GL11.glPushMatrix();
+                GL11.glTranslatef(guiLeft + 0.8F, guiTop + 0.8F, 0.8F);
+                GL11.glScalef(0.7F, 0.7F, 0.7F);
+                Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
+                drawTexturedModalRect(55, 151, 236, 19, 19,17);
+                GL11.glPopMatrix();
+
+                this.itemRender.renderItemIntoGUI(new ItemStack(Blocks.CHEST, 1, 0), guiLeft + 41, guiTop + 45);
+
+                text = " You can setup a " + TextFormatting.BOLD + "quicker" + TextFormatting.RESET + " way to pull out of the machine. Placing a vanilla chest [   ] " +
+                        TextFormatting.BOLD + "one " + TextFormatting.RESET + "or " + TextFormatting.BOLD + "two blocks directly under " +
+                        TextFormatting.RESET + "the machine will causes all outputs to " + TextFormatting.BOLD +
+                        "quickly " + TextFormatting.RESET + "move into the chest, much faster than a hopper.";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 22, 112, Color.BLACK.getRGB());
+
+                text = " The [   ] tab is used to edit the amount of cash you are willing to give per item. Change which item you are editing by simply...";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 108, 112, Color.BLACK.getRGB());
+
+                this.buttonList.get(0).visible = true;
+                this.buttonList.get(1).visible = true;
+                this.buttonList.get(2).visible = true;
+                //</editor-fold>
+                break;
+            case "exchange5":
+                //<editor-fold desc="Exchange Machine Page 05">
+                GL11.glPushMatrix();
+                GL11.glTranslatef(guiLeft + 0.8F, guiTop + 0.8F, 0.8F);
+                GL11.glScalef(0.7F, 0.7F, 0.7F);
+                Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
+                drawTexturedModalRect(55, 51, 236, 55, 19,17);
+                GL11.glPopMatrix();
+
+                Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
+                drawTexturedModalRect(guiLeft + 44, guiTop + 94, 167, 0, 58,58);
+
+                text = "..." + TextFormatting.BOLD + "right clicking.";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 22, 112, Color.BLACK.getRGB());
+
+                text = " The [   ] tab can only be accessed if the owner is in " + TextFormatting.BOLD + "creative " + TextFormatting.RESET + "It allows the owner to make stock infinite.";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 38, 112, Color.BLACK.getRGB());
+
+                ItemStack[] ingredientse = recipe(new ItemStack(ModBlocks.blockExchanger));
+
+                this.itemRender.renderItemIntoGUI(ingredientse[0], guiLeft + 46, guiTop + 96);
+                this.itemRender.renderItemIntoGUI(ingredientse[1], guiLeft + 65, guiTop + 96);
+                this.itemRender.renderItemIntoGUI(ingredientse[2], guiLeft + 84, guiTop + 96);
+
+                this.itemRender.renderItemIntoGUI(ingredientse[3], guiLeft + 46, guiTop + 115);
+                this.itemRender.renderItemIntoGUI(ingredientse[4], guiLeft + 65, guiTop + 115);
+                this.itemRender.renderItemIntoGUI(ingredientse[5], guiLeft + 84, guiTop + 115);
+
+                this.itemRender.renderItemIntoGUI(ingredientse[6], guiLeft + 46, guiTop + 134);
+                this.itemRender.renderItemIntoGUI(ingredientse[7], guiLeft + 65, guiTop + 134);
+                this.itemRender.renderItemIntoGUI(ingredientse[8], guiLeft + 84, guiTop + 134);
+
+                text = "Exchange Machine Recipe";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 30, guiTop + 85, 112, Color.BLACK.getRGB());
 
                 this.buttonList.get(0).visible = true;
                 this.buttonList.get(1).visible = true;
                 //</editor-fold>
                 break;
-
         }
         Minecraft.getMinecraft().fontRenderer.setUnicodeFlag(false);
         super.drawScreen(mouseX, mouseY, partialTicks);
@@ -506,6 +656,16 @@ public class GuiGuide extends GuiScreen{
                     case "vending5": page = "vending4";
                         break;
                     case "vending6": page = "vending5";
+                        break;
+                    case "exchange1": page = "exchange";
+                        break;
+                    case "exchange2": page = "exchange1";
+                        break;
+                    case "exchange3": page = "exchange2";
+                        break;
+                    case "exchange4": page = "exchange3";
+                        break;
+                    case "exchange5": page = "exchange4";
                 }
                 break;
             case 2: //Next
@@ -524,6 +684,16 @@ public class GuiGuide extends GuiScreen{
                         break;
                     case "vending5": page = "vending6";
                         break;
+                    case "exchange": page = "exchange1";
+                        break;
+                    case "exchange1": page = "exchange2";
+                        break;
+                    case "exchange2": page = "exchange3";
+                        break;
+                    case "exchange3": page = "exchange4";
+                        break;
+                    case "exchange4": page = "exchange5";
+                        break;
             }
                 break;
             case 3: //Bill Button
@@ -534,6 +704,9 @@ public class GuiGuide extends GuiScreen{
                 break;
             case 5: //Vending Button
                 this.page ="vending";
+                break;
+            case 6: //Exchange Button
+                this.page ="exchange";
         }
         clean();
     }
