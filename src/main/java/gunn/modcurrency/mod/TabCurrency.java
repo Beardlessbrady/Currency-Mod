@@ -21,7 +21,7 @@ public class TabCurrency extends CreativeTabs{
     @Override
     @SideOnly(Side.CLIENT)
     public ItemStack getTabIconItem() {
-        return new ItemStack(ModItems.itemBanknote);
+        return new ItemStack(ModItems.itemBanknote, 1, 0);
     }
 
     @Override

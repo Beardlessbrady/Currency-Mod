@@ -2,6 +2,7 @@ package gunn.modcurrency.mod.item;
 
 import gunn.modcurrency.mod.ModConfig;
 import gunn.modcurrency.mod.ModCurrency;
+import gunn.modcurrency.mod.TabCurrency;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
@@ -25,7 +26,6 @@ public class ItemBanknote extends Item {
     public ItemBanknote() {
         setHasSubtypes(true);
         setRegistryName("banknote");
-        setCreativeTab(ModCurrency.tabCurrency);
     }
 
     @SideOnly(Side.CLIENT)
@@ -57,9 +57,11 @@ public class ItemBanknote extends Item {
 
     @Override
     public void getSubItems(CreativeTabs itemIn, NonNullList<ItemStack> tab) {
-        for(int i = 0; i < noteLength; i++){
-            ItemStack stack = new ItemStack(this,1,i);
-            tab.add(stack);
+        if(itemIn == ModCurrency.tabCurrency){
+            for (int i = 0; i < noteLength; i++) {
+                ItemStack stack = new ItemStack(this, 1, i);
+                tab.add(stack);
+            }
         }
     }
 }
