@@ -11,8 +11,12 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.Ingredient;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -45,6 +49,7 @@ public class GuiGuide extends GuiScreen{
 
     @Override
     public void initGui() {
+        recipe(new ItemStack(ModItems.itemWallet));
         super.initGui();
         this.guiLeft = (this.width - this.xSize) / 2;
         this.guiTop = (this.height - this.ySize) / 2;
@@ -196,19 +201,21 @@ public class GuiGuide extends GuiScreen{
                 GL11.glPopMatrix();
 
                 Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
-                drawTexturedModalRect(guiLeft + 46, guiTop + 84, 167, 0, 54,54);
+                drawTexturedModalRect(guiLeft + 46, guiTop + 84, 167, 0, 58,58);
 
-                this.itemRender.renderItemIntoGUI(new ItemStack(Items.APPLE, 1,0), guiLeft + 47, guiTop + 85);
-                this.itemRender.renderItemIntoGUI(new ItemStack(Items.APPLE, 1,0), guiLeft + 65, guiTop + 85);
-                this.itemRender.renderItemIntoGUI(new ItemStack(Items.APPLE, 1,0), guiLeft + 83, guiTop + 85);
+                ItemStack[] ingredients = recipe(new ItemStack(ModItems.itemWallet));
 
-                this.itemRender.renderItemIntoGUI(new ItemStack(Items.APPLE, 1,0), guiLeft + 47, guiTop + 103);
-                this.itemRender.renderItemIntoGUI(new ItemStack(Items.APPLE, 1,0), guiLeft + 65, guiTop + 103);
-                this.itemRender.renderItemIntoGUI(new ItemStack(Items.APPLE, 1,0), guiLeft + 83, guiTop + 103);
+                this.itemRender.renderItemIntoGUI(ingredients[0], guiLeft + 48, guiTop + 86);
+                this.itemRender.renderItemIntoGUI(ingredients[1], guiLeft + 67, guiTop + 86);
+                this.itemRender.renderItemIntoGUI(ingredients[2], guiLeft + 86, guiTop + 86);
 
-                this.itemRender.renderItemIntoGUI(new ItemStack(Items.APPLE, 1,0), guiLeft + 47, guiTop + 121);
-                this.itemRender.renderItemIntoGUI(new ItemStack(Items.APPLE, 1,0), guiLeft + 65, guiTop + 121);
-                this.itemRender.renderItemIntoGUI(new ItemStack(Items.APPLE, 1,0), guiLeft + 83, guiTop + 121);
+                this.itemRender.renderItemIntoGUI(ingredients[3], guiLeft + 48, guiTop + 105);
+                this.itemRender.renderItemIntoGUI(ingredients[4], guiLeft + 67, guiTop + 105);
+                this.itemRender.renderItemIntoGUI(ingredients[5], guiLeft + 86, guiTop + 105);
+
+                this.itemRender.renderItemIntoGUI(ingredients[6], guiLeft + 48, guiTop + 124);
+                this.itemRender.renderItemIntoGUI(ingredients[7], guiLeft + 67, guiTop + 124);
+                this.itemRender.renderItemIntoGUI(ingredients[8], guiLeft + 86, guiTop + 124);
 
                 text = "When placed in the vending machine input slot [   ] all purchases will go through the wallet, you will never need to collect your change again!";
                 fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 22, 112, Color.BLACK.getRGB());
@@ -255,6 +262,28 @@ public class GuiGuide extends GuiScreen{
         for(int i = 0; i < buttonTotal; i++){
             this.buttonList.get(i).visible = false;
         }
+    }
+
+    public ItemStack[] recipe(ItemStack out){
+        for (IRecipe recipe : ForgeRegistries.RECIPES.getValues()) {
+            ItemStack output = null;
+            try {
+                output = recipe.getRecipeOutput();
+            } catch (Exception e) {
+            }
+            if (output != null && output.getItem() == out.getItem()) {
+                ItemStack[] items = new ItemStack[9];
+                NonNullList<Ingredient> ingredients = recipe.getIngredients();
+
+                for(int i = 0; i < ingredients.size(); i++) {
+                    if (ingredients.get(i) != Ingredient.EMPTY) {
+                        items[i] = ingredients.get(i).getMatchingStacks()[0];
+                    }else items[i] = ItemStack.EMPTY;
+                }
+                return items;
+            }
+        }
+        return null;
     }
 
 
