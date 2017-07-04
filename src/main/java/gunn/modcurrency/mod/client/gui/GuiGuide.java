@@ -203,16 +203,13 @@ public class GuiGuide extends GuiScreen{
                 drawTexturedModalRect(guiLeft + 44, guiTop + 84, 167, 0, 58,58);
 
                 this.itemRender.renderItemIntoGUI(new ItemStack(Items.LEATHER), guiLeft + 46, guiTop + 86);
-                this.itemRender.renderItemIntoGUI(null, guiLeft + 65, guiTop + 86);
                 this.itemRender.renderItemIntoGUI(new ItemStack(Items.LEATHER), guiLeft + 84, guiTop + 86);
 
                 this.itemRender.renderItemIntoGUI(new ItemStack(Items.LEATHER), guiLeft + 46, guiTop + 105);
                 this.itemRender.renderItemIntoGUI(new ItemStack(Items.PAPER), guiLeft + 65, guiTop + 105);
                 this.itemRender.renderItemIntoGUI(new ItemStack(Items.LEATHER), guiLeft + 84, guiTop + 105);
 
-                this.itemRender.renderItemIntoGUI(null, guiLeft + 46, guiTop + 124);
                 this.itemRender.renderItemIntoGUI(new ItemStack(Items.LEATHER), guiLeft + 65, guiTop + 124);
-                this.itemRender.renderItemIntoGUI(null, guiLeft + 84, guiTop + 124);
 
                 text = "When placed in the vending machine input slot [   ] all purchases will go through the wallet, you will never need to collect your change again!";
                 fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 22, 112, Color.BLACK.getRGB());
