@@ -38,6 +38,7 @@ public class ItemGuideBook extends Item {
                 Items.BOOK, Items.GOLD_INGOT);
     }
 
+
     @Override
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
         playerIn.openGui(ModCurrency.instance, 34, worldIn, playerIn.getPosition().getX(), playerIn.getPosition().down().getY(), playerIn.getPosition().getZ());
