@@ -340,7 +340,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     }
 
     public void outInputSlot(){
-        if (inputStackHandler.getStackInSlot(0).getItem() != null) {
+        if (inputStackHandler.getStackInSlot(0) != null) {
             if (!world.isRemote) {
                 ItemStack item = inputStackHandler.getStackInSlot(0);
                 inputStackHandler.setStackInSlot(0, null);
@@ -601,10 +601,12 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
 
     public void setItemAmount(int amount, int index){
         itemAmounts[index] = amount;
-        if(amount == -1){
-            vendStackHandler.getStackInSlot(index).stackSize = 1;
-        }else {
-            vendStackHandler.getStackInSlot(index).stackSize = (itemAmounts[index]);
+        if(vendStackHandler.getStackInSlot(index) != null) {
+            if (amount == -1) {
+                vendStackHandler.getStackInSlot(index).stackSize = 1;
+            } else {
+                vendStackHandler.getStackInSlot(index).stackSize = (itemAmounts[index]);
+            }
         }
     }
 
