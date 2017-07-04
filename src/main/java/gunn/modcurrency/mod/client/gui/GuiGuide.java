@@ -49,7 +49,6 @@ public class GuiGuide extends GuiScreen{
 
     @Override
     public void initGui() {
-        recipe(new ItemStack(ModItems.itemWallet));
         super.initGui();
         this.guiLeft = (this.width - this.xSize) / 2;
         this.guiTop = (this.height - this.ySize) / 2;
