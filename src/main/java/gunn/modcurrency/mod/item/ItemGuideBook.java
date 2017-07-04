@@ -38,10 +38,9 @@ public class ItemGuideBook extends Item {
                 Items.BOOK, Items.GOLD_INGOT);
     }
 
-
     @Override
-    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
-        playerIn.openGui(ModCurrency.instance, 34, worldIn, playerIn.getPosition().getX(), playerIn.getPosition().down().getY(), playerIn.getPosition().getZ());
-        return super.onItemRightClick(worldIn, playerIn, handIn);
+    public ActionResult<ItemStack> onItemRightClick(ItemStack worldIn, World playerIn, EntityPlayer handIn, EnumHand p_77659_4_) {
+        handIn.openGui(ModCurrency.instance, 34, playerIn, handIn.getPosition().getX(), handIn.getPosition().down().getY(), handIn.getPosition().getZ());
+        return super.onItemRightClick(worldIn, playerIn, handIn, p_77659_4_);
     }
 }
