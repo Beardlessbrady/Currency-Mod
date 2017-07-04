@@ -24,15 +24,17 @@ public class ItemHandlerVendor extends ItemStackHandler {
     @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-        if (UtilMethods.equalStacks(this.getStackInSlot(slot),stack)) {
-            if (isGhost(slot)) {
-                setGhost(slot, false);
-                stack.stackSize--;
+        if (stack != null && this.getStackInSlot(slot) != null) {
+            if (UtilMethods.equalStacks(this.getStackInSlot(slot), stack)) {
+                if (isGhost(slot)) {
+                    setGhost(slot, false);
+                    stack.stackSize--;
+                }
+                return super.insertItem(slot, stack, simulate);
             }
-            return super.insertItem(slot, stack, simulate);
-        } else {
             return stack;
         }
+        return stack;
     }
 
     public boolean isGhost(int slot) {
