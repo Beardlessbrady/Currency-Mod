@@ -13,7 +13,10 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntityHopper;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.items.CapabilityItemHandler;
@@ -200,6 +203,7 @@ public class GuiVending extends GuiContainer {
             }
             drawIcons();
         }
+        warnings();
         drawText();
     }
 
@@ -264,6 +268,19 @@ public class GuiVending extends GuiContainer {
                     break;
             }
         }
+    }
+
+    private void warnings(){
+        if(tile.getField(1) == 1){
+            if(tile.getWorld().getBlockState(tile.getPos().down()).getBlock() == Blocks.HOPPER){
+            //todo
+
+            }
+        }
+
+       // if(!this.tile.getBufferStackHandler().getStackInSlot(0).isEmpty() )
+        //    drawTexturedModalRect(151, 30, 236, 109, 19, 16);
+
     }
 
     private void drawSelectionOverlay() {

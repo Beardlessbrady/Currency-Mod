@@ -138,7 +138,8 @@ public class ContainerVending extends Container implements INBTInventory{
     @Nullable
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-        if (clickTypeIn == ClickType.PICKUP_ALL || slotId == -999) return ItemStack.EMPTY;
+        System.out.println("SLOT ID:" + slotId + "DRAGTYPE:" + dragType + "CLICKTYPE:" + clickTypeIn);
+        if (clickTypeIn == ClickType.PICKUP_ALL) return ItemStack.EMPTY;
         if (tile.getField(2) == 1) {               //EDIT MODE
             if (slotId >= 0 && slotId <= 36) {  //Player Inv or Input Slot
                 return super.slotClick(slotId, dragType, clickTypeIn, player);
