@@ -5,10 +5,8 @@ import gunn.modcurrency.mod.client.gui.util.INBTInventory;
 import gunn.modcurrency.mod.container.itemhandler.ItemHandlerCustom;
 import gunn.modcurrency.mod.container.itemhandler.ItemHandlerVendor;
 import gunn.modcurrency.mod.handler.StateHandler;
-import gunn.modcurrency.mod.item.ItemWallet;
 import gunn.modcurrency.mod.item.ModItems;
 import gunn.modcurrency.mod.utils.UtilMethods;
-import net.minecraft.block.BlockChest;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -43,7 +41,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     private static final int INPUT_SLOT_COUNT = 1;
     public static final int VEND_SLOT_COUNT = 30;
 
-    private int bank, selectedSlot, cashRegister, chestOutput;
+    private int bank, selectedSlot, cashRegister;
     private String owner, selectedName;
     private boolean locked, mode, creative, infinite, gearExtended, twoBlock;
     private int[] itemCosts = new int[VEND_SLOT_COUNT];
@@ -66,7 +64,6 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         infinite = false;
         gearExtended = false;
         twoBlock = false;
-        chestOutput = 0;
         automationInputStackHandler.setAllowedItem(ModItems.itemBanknote);
 
         for (int i = 0; i < itemCosts.length; i++){
@@ -84,32 +81,6 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
 
     @Override
     public void update() {
-        if(chestOutput != 0 && bufferStackHandler.getStackInSlot(0) != ItemStack.EMPTY && world.getBlockState(pos).getValue(StateHandler.TWOTALL) != StateHandler.EnumTwoBlock.TWOTOP){
-            TileEntityChest chest = (TileEntityChest) world.getTileEntity(pos.down());
-            if (chestOutput == 2) chest = (TileEntityChest) world.getTileEntity(pos.down().down());
-            IItemHandler itemHandler = chest.getCapability(net.minecraftforge.items.CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-            loop:
-            for(int i = 0; i < itemHandler.getSlots(); i++){
-                if(itemHandler.getStackInSlot(i).isEmpty()){
-                    itemHandler.insertItem(i, bufferStackHandler.getStackInSlot(0), false);
-                    bufferStackHandler.setStackInSlot(0, ItemStack.EMPTY);
-                    break loop;
-                }else{
-                    if(UtilMethods.equalStacks(itemHandler.getStackInSlot(i), bufferStackHandler.getStackInSlot(0))){
-                        int wiggleRoom = itemHandler.getStackInSlot(i).getMaxStackSize() - itemHandler.getStackInSlot(i).getCount();
-                        int buffCount = bufferStackHandler.getStackInSlot(0).getCount();
-                        if(wiggleRoom >= buffCount){
-                            wiggleRoom = buffCount;
-                            bufferStackHandler.setStackInSlot(0, ItemStack.EMPTY);
-                        }else{
-                            bufferStackHandler.getStackInSlot(0).setCount(buffCount - wiggleRoom);
-                        }
-                        itemHandler.getStackInSlot(i).setCount(itemHandler.getStackInSlot(i).getCount() + wiggleRoom);
-                        break loop;
-                    }
-                }
-            }
-        }
 
         if(playerUsing != null) {
             if (!world.isRemote) {
@@ -378,7 +349,6 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         compound.setTag("autoInput", automationInputStackHandler.serializeNBT());
         compound.setInteger("bank", bank);
         compound.setInteger("cashRegister", cashRegister);
-        compound.setInteger("chest", chestOutput);
         compound.setBoolean("locked", locked);
         compound.setBoolean("mode", mode);
         compound.setBoolean("creative", creative);
@@ -410,7 +380,6 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         if (compound.hasKey("autoInput")) automationInputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("autoInput"));
         if (compound.hasKey("bank")) bank = compound.getInteger("bank");
         if (compound.hasKey("cashRegister")) cashRegister = compound.getInteger("cashRegister");
-        if (compound.hasKey("chest")) chestOutput = compound.getInteger("chest");
         if (compound.hasKey("locked")) locked = compound.getBoolean("locked");
         if (compound.hasKey("mode")) mode = compound.getBoolean("mode");
         if (compound.hasKey("creative")) creative = compound.getBoolean("creative");
@@ -443,7 +412,6 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         NBTTagCompound tag = new NBTTagCompound();
         tag.setInteger("bank", bank);
         tag.setInteger("cashRegister", cashRegister);
-        tag.setInteger("chest", chestOutput);
         tag.setBoolean("locked", locked);
         tag.setBoolean("mode", mode);
         tag.setBoolean("creative", creative);
@@ -470,7 +438,6 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         super.onDataPacket(net, pkt);
         bank = pkt.getNbtCompound().getInteger("bank");
         cashRegister = pkt.getNbtCompound().getInteger("cashRegister");
-        chestOutput = pkt.getNbtCompound().getInteger("chest");
         locked = pkt.getNbtCompound().getBoolean("locked");
         mode = pkt.getNbtCompound().getBoolean("mode");
         creative = pkt.getNbtCompound().getBoolean("creative");
@@ -493,7 +460,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     @Override
     public boolean hasCapability(Capability<?> capability, EnumFacing facing) {
         if (capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY) {
-            return facing == null || (locked && chestOutput == 0);
+            return facing == null || locked ;
         }
         return super.hasCapability(capability, facing);
     }
@@ -543,9 +510,6 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
             case 8:
                 gearExtended = (value == 1);
                 break;
-            case 9:
-                chestOutput = value;
-                break;
         }
     }
 
@@ -569,8 +533,6 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                 return (twoBlock) ? 1 : 0;
             case 8:
                 return (gearExtended) ? 1 : 0;
-            case 9:
-                return chestOutput;
         }
         return -1;
     }
