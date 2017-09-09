@@ -10,6 +10,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -39,6 +40,7 @@ import javax.annotation.Nullable;
 public class TileVending extends TileEntity implements ICapabilityProvider, ITickable, INBTInventory, IOwnable{
     private static final int INPUT_SLOT_COUNT = 1;
     public static final int VEND_SLOT_COUNT = 30;
+    public static final int BUFFER_SLOT_COUNT = 4;
 
     private int bank, profit, selectedSlot, walletTotal;
     private String owner, selectedName;
@@ -46,7 +48,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     private int[] itemCosts = new int[VEND_SLOT_COUNT];
     private ItemStackHandler inputStackHandler = new ItemStackHandler(INPUT_SLOT_COUNT);
     private ItemHandlerVendor vendStackHandler = new ItemHandlerVendor(VEND_SLOT_COUNT);
-    private ItemStackHandler bufferStackHandler = new ItemHandlerVendor(1);
+    private ItemStackHandler bufferStackHandler = new ItemStackHandler(BUFFER_SLOT_COUNT);
     private EntityPlayer playerUsing = null;
 
     public TileVending() {

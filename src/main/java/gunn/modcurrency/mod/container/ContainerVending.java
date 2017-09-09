@@ -12,7 +12,6 @@ import gunn.modcurrency.mod.utils.UtilMethods;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
@@ -22,7 +21,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
-import org.lwjgl.Sys;
 
 import javax.annotation.Nullable;
 
@@ -46,11 +44,13 @@ public class ContainerVending extends Container implements INBTInventory{
     private int TE_VEND_COLUMN_COUNT = 3;
     private final int TE_VEND_ROW_COUNT = 5;
     private int TE_VEND_MAIN_TOTAL_COUNT = TE_VEND_COLUMN_COUNT * TE_VEND_ROW_COUNT;
+    private final int TE_BUFFR_START = 31;
+    private final int TE_BUFFER_COUNT = 4;
 
     private final int PLAYER_FIRST_SLOT_INDEX = 0;
     private final int TE_MONEY_FIRST_SLOT_INDEX = PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT;
     private final int TE_VEND_FIRST_SLOT_INDEX = TE_MONEY_FIRST_SLOT_INDEX + 1;
-    //private final int TE_VEND_BUFFER_SLOT = TE_VEND_MAIN_TOTAL_COUNT + 1;
+    private final int TE_BUFFER_FIRST_SLOT_INDEX = TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT;
 
     private Item[] specialSlotItems = new Item[2];
     private TileVending tile;
@@ -107,7 +107,6 @@ public class ContainerVending extends Container implements INBTInventory{
             TE_VEND_MAIN_TOTAL_COUNT = TE_VEND_COLUMN_COUNT * TE_VEND_ROW_COUNT;
         }
 
-
         //Main Slots
         for (int y = 0; y < TE_VEND_COLUMN_COUNT; y++) {
             for (int x = 0; x < TE_VEND_ROW_COUNT; x++) {
@@ -116,6 +115,14 @@ public class ContainerVending extends Container implements INBTInventory{
                 int ypos = TE_INV_YPOS + y * SLOT_Y_SPACING;
                 addSlotToContainer(new SlotVendor(itemHandler, slotNum, xpos, ypos));
             }
+        }
+
+        //Buffer Slots
+        int yshift = 0;
+        if(tile.getField(7) == 1)yshift = 8;
+
+        for (int i = 0; i < TE_BUFFER_COUNT; i++){
+            addSlotToContainer(new SlotCustomizable(itemHandler, TE_BUFFR_START + i, 13, 42 + yshift + i * SLOT_Y_SPACING, ModItems.itemBanknote));
         }
     }
 
