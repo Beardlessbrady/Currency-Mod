@@ -118,23 +118,8 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                     }
                 } else if (walletIn) walletIn = false;
 
-                if (profit >= 20) {
-                    //<editor-fold desc="Dealing with Buffer Slots">
-                    if(locked) {
-                        if (bufferStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
-                            if (bufferStackHandler.getStackInSlot(0).getItemDamage() == 3 && bufferStackHandler.getStackInSlot(0).getCount() < bufferStackHandler.getStackInSlot(0).getMaxStackSize()) {
-                                profit = profit - 20;
-                                bufferStackHandler.getStackInSlot(0).grow(1);
-                            }
-                        } else if (bufferStackHandler.getStackInSlot(0) == ItemStack.EMPTY) {
-                            ItemStack newStack = new ItemStack(ModItems.itemBanknote);
-                            newStack.setItemDamage(3);
-                            bufferStackHandler.setStackInSlot(0, newStack);
-                            profit = profit - 20;
-                        }
-                    }
+                //TODO How money outputs to buffer
                     //</editor-fold>
-                }
             }
         }
     }
@@ -164,13 +149,6 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
             if (item != ItemStack.EMPTY) {
                 world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), item));
                 vendStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
-            }
-        }
-        for (int i = 3; i < bufferStackHandler.getSlots(); i++){
-            ItemStack item = bufferStackHandler.getStackInSlot(i);
-            if (item != ItemStack.EMPTY) {
-                world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), item));
-                bufferStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
             }
         }
     }
