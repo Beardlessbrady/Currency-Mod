@@ -2,6 +2,8 @@ package gunn.modcurrency.mod.client.gui;
 
 import gunn.modcurrency.mod.client.gui.util.TabButton;
 import gunn.modcurrency.mod.container.ContainerVending;
+import gunn.modcurrency.mod.container.slot.SlotCustomizable;
+import gunn.modcurrency.mod.item.ModItems;
 import gunn.modcurrency.mod.network.*;
 import gunn.modcurrency.mod.tileentity.TileVending;
 import net.minecraft.client.Minecraft;
@@ -155,8 +157,6 @@ public class GuiVending extends GuiContainer {
             if(tile.getField(7) == 1) y = 41;
             drawTexturedModalRect(guiLeft + 10, guiTop + y, 178, 34, 22, 82);
         }
-
-
     }
 
     @Override
@@ -173,6 +173,12 @@ public class GuiVending extends GuiContainer {
             if(tile.getField(2) == 1) { //If in EDIT mode
                 this.buttonList.get(LOCK_ID).visible = true;
                 this.buttonList.get(GEAR_ID).visible = true;
+
+                //Hiding/Revealing slots in EDIT mode
+                this.inventorySlots.getSlot(((ContainerVending)this.inventorySlots).TE_MONEY_FIRST_SLOT_INDEX).xPos= -1000;
+                for (int k = 0; k < ((ContainerVending) this.inventorySlots).TE_BUFFER_COUNT; k++){
+                    this.inventorySlots.getSlot(((ContainerVending)this.inventorySlots).TE_BUFFER_FIRST_SLOT_INDEX+ k).xPos= 13;
+                }
 
                 ((TabButton)buttonList.get(GEAR_ID)).setOpenState(tile.getField(8) == 1, 26);   //Set Gear Tab Open state
 
@@ -206,6 +212,12 @@ public class GuiVending extends GuiContainer {
                 this.buttonList.get(GEAR_ID).visible = false;
                 this.buttonList.get(CREATIVE_ID).visible = false;
                 this.buttonList.get(INFINITEBUTTON_ID).visible = false;
+
+                //Hiding/Revealing slots in SELL mode
+                this.inventorySlots.getSlot(((ContainerVending)this.inventorySlots).TE_MONEY_FIRST_SLOT_INDEX).xPos= 152;
+                for (int k = 0; k < ((ContainerVending) this.inventorySlots).TE_BUFFER_COUNT; k++){
+                    this.inventorySlots.getSlot(((ContainerVending)this.inventorySlots).TE_BUFFER_FIRST_SLOT_INDEX + k).xPos= -1000;
+                }
             }
             drawIcons();
         }

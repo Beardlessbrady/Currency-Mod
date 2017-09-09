@@ -35,22 +35,22 @@ public class ContainerVending extends Container implements INBTInventory{
     //0-35 = Players Inv
     //36 = Input Slot
     //37-... Vend Slots & Buffer Slots
-    private final int HOTBAR_SLOT_COUNT = 9;
-    private final int PLAYER_INV_ROW_COUNT = 3;
-    private final int PLAYER_INV_COLUMN_COUNT = 9;
-    private final int PLAYER_INV_TOTAL_COUNT = PLAYER_INV_COLUMN_COUNT * PLAYER_INV_ROW_COUNT;
-    private final int PLAYER_TOTAL_COUNT = HOTBAR_SLOT_COUNT + PLAYER_INV_TOTAL_COUNT;
+    public final int HOTBAR_SLOT_COUNT = 9;
+    public final int PLAYER_INV_ROW_COUNT = 3;
+    public final int PLAYER_INV_COLUMN_COUNT = 9;
+    public final int PLAYER_INV_TOTAL_COUNT = PLAYER_INV_COLUMN_COUNT * PLAYER_INV_ROW_COUNT;
+    public final int PLAYER_TOTAL_COUNT = HOTBAR_SLOT_COUNT + PLAYER_INV_TOTAL_COUNT;
 
-    private int TE_VEND_COLUMN_COUNT = 3;
-    private final int TE_VEND_ROW_COUNT = 5;
-    private int TE_VEND_MAIN_TOTAL_COUNT = TE_VEND_COLUMN_COUNT * TE_VEND_ROW_COUNT;
-    private final int TE_BUFFR_START = 31;
-    private final int TE_BUFFER_COUNT = 4;
+    public int TE_VEND_COLUMN_COUNT = 3;
+    public final int TE_VEND_ROW_COUNT = 5;
+    public int TE_VEND_MAIN_TOTAL_COUNT = TE_VEND_COLUMN_COUNT * TE_VEND_ROW_COUNT;
+    public final int TE_BUFFR_START = 31;
+    public final int TE_BUFFER_COUNT = 4;
 
-    private final int PLAYER_FIRST_SLOT_INDEX = 0;
-    private final int TE_MONEY_FIRST_SLOT_INDEX = PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT;
-    private final int TE_VEND_FIRST_SLOT_INDEX = TE_MONEY_FIRST_SLOT_INDEX + 1;
-    private final int TE_BUFFER_FIRST_SLOT_INDEX = TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT;
+    public final int PLAYER_FIRST_SLOT_INDEX = 0;
+    public final int TE_MONEY_FIRST_SLOT_INDEX = PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT;
+    public final int TE_VEND_FIRST_SLOT_INDEX = TE_MONEY_FIRST_SLOT_INDEX + 1;
+    public int TE_BUFFER_FIRST_SLOT_INDEX = TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT;
 
     private Item[] specialSlotItems = new Item[2];
     private TileVending tile;
@@ -92,9 +92,7 @@ public class ContainerVending extends Container implements INBTInventory{
 
         //Input Slot
         int inputX = 0;
-        if (tile.getField(2) == 0) inputX = 152;
-        if (tile.getField(2) == 1) inputX = -1000;
-        addSlotToContainer(new SlotCustomizable(itemHandler, 0, inputX, 9, specialSlotItems));
+        addSlotToContainer(new SlotCustomizable(itemHandler, 0, 152, 9, specialSlotItems));
 
         final int SLOT_X_SPACING = 18;
         final int SLOT_Y_SPACING = 18;
@@ -105,6 +103,7 @@ public class ContainerVending extends Container implements INBTInventory{
             TE_INV_YPOS = 32;
             TE_VEND_COLUMN_COUNT = 6;
             TE_VEND_MAIN_TOTAL_COUNT = TE_VEND_COLUMN_COUNT * TE_VEND_ROW_COUNT;
+            TE_BUFFER_FIRST_SLOT_INDEX = TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT;
         }
 
         //Main Slots
