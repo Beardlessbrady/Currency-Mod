@@ -47,10 +47,13 @@ public class GuiVending extends GuiContainer {
 
     private static final int CHANGEBUTTON_ID = 0;
     private static final int INFINITEBUTTON_ID = 1;
-    private static final int MODE_ID = 2;
-    private static final int LOCK_ID = 3;
-    private static final int GEAR_ID = 4;
-    private static final int CREATIVE_ID = 5;
+    private static final int OUTPUTBUTTON_ID = 2;
+    private static final int MODE_ID = 3;
+    private static final int LOCK_ID = 4;
+    private static final int GEAR_ID = 5;
+    private static final int CREATIVE_ID = 6;
+
+    private final int yShift = 8;
 
     public GuiVending(EntityPlayer entityPlayer, TileVending te) {
         super(new ContainerVending(entityPlayer.inventory, te));
@@ -72,10 +75,11 @@ public class GuiVending extends GuiContainer {
 
         this.buttonList.add(new GuiButton(CHANGEBUTTON_ID, i + 103, j + 7, 45, 20, ChangeButton));
         this.buttonList.add(new GuiButton(INFINITEBUTTON_ID, i + 198, j + 85, 45, 20, "BORKED"));
-        this.buttonList.add(new TabButton("Mode", MODE_ID, i - 20, j + 20, 0, 88, 20, 21, "", TAB_TEXTURE));
-        this.buttonList.add(new TabButton("Lock", LOCK_ID, i - 20, 22 + ((TabButton) this.buttonList.get(MODE_ID)).getButtonY(), 0, 22, 20, 21, "", TAB_TEXTURE));
-        this.buttonList.add(new TabButton("Gear", GEAR_ID, i - 20, 22 + ((TabButton) this.buttonList.get(LOCK_ID)).getButtonY(), 0, 0, 20, 21, "", TAB_TEXTURE));
-        this.buttonList.add(new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton) this.buttonList.get(GEAR_ID)).getButtonY(), 0, 44, 20, 21, "", TAB_TEXTURE));
+        this.buttonList.add(new TabButton("Output", OUTPUTBUTTON_ID, i + 10, j + 116 + (yShift * tile.getField(7)), 202, 34, 22,12,23,"", BACKGROUND_TEXTURE));
+        this.buttonList.add(new TabButton("Mode", MODE_ID, i - 20, j + 20, 0, 88, 20, 21, 0,"", TAB_TEXTURE));
+        this.buttonList.add(new TabButton("Lock", LOCK_ID, i - 20, 22 + ((TabButton) this.buttonList.get(MODE_ID)).getButtonY(), 0, 22, 20, 21, 0,"", TAB_TEXTURE));
+        this.buttonList.add(new TabButton("Gear", GEAR_ID, i - 20, 22 + ((TabButton) this.buttonList.get(LOCK_ID)).getButtonY(), 0, 0, 20, 21, 0,"", TAB_TEXTURE));
+        this.buttonList.add(new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton) this.buttonList.get(GEAR_ID)).getButtonY(), 0, 44, 20, 21, 0,"", TAB_TEXTURE));
 
         this.priceField = new GuiTextField(0, fontRenderer, i - 50, j + 90, 45, 10);        //Setting Costs
         this.priceField.setTextColor(Integer.parseInt("0099ff", 16));
@@ -87,6 +91,7 @@ public class GuiVending extends GuiContainer {
         this.buttonList.get(GEAR_ID).visible = false;
         this.buttonList.get(CREATIVE_ID).visible = false;
         this.buttonList.get(INFINITEBUTTON_ID).visible = false;
+        this.buttonList.get(OUTPUTBUTTON_ID).visible = false;
 
         this.priceField.setEnabled(false);
     }
@@ -173,6 +178,7 @@ public class GuiVending extends GuiContainer {
             if(tile.getField(2) == 1) { //If in EDIT mode
                 this.buttonList.get(LOCK_ID).visible = true;
                 this.buttonList.get(GEAR_ID).visible = true;
+                this.buttonList.get(OUTPUTBUTTON_ID).visible = true;
 
                 //Hiding/Revealing slots in EDIT mode
                 this.inventorySlots.getSlot(((ContainerVending)this.inventorySlots).TE_MONEY_FIRST_SLOT_INDEX).xPos= -1000;
@@ -187,10 +193,10 @@ public class GuiVending extends GuiContainer {
                     drawSelectionOverlay();
                     this.priceField.setEnabled(true);
                     Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
-                    this.buttonList.set(CREATIVE_ID, new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton)this.buttonList.get(GEAR_ID)).getButtonY(),0, 44, 20, 21, "", TAB_TEXTURE));
+                    this.buttonList.set(CREATIVE_ID, new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton)this.buttonList.get(GEAR_ID)).getButtonY(),0, 44, 20, 21, 0,"", TAB_TEXTURE));
                 }else{  //If Gear Tab Closed
                     this.priceField.setEnabled(false);
-                    this.buttonList.set(CREATIVE_ID, new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton)this.buttonList.get(GEAR_ID)).getButtonY(),0, 44, 20, 21, "", TAB_TEXTURE));
+                    this.buttonList.set(CREATIVE_ID, new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton)this.buttonList.get(GEAR_ID)).getButtonY(),0, 44, 20, 21, 0,"", TAB_TEXTURE));
                 }
 
                 if(player.isCreative()){    //If in Creative
@@ -207,11 +213,15 @@ public class GuiVending extends GuiContainer {
 
                 }
 
+                //Render Output Button Icon
+                this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemBanknote,1, tile.getField(11)), 13, 115 + (yShift * tile.getField(7)));
+
             }else{  //In SELL mode
                 this.buttonList.get(LOCK_ID).visible = false;
                 this.buttonList.get(GEAR_ID).visible = false;
                 this.buttonList.get(CREATIVE_ID).visible = false;
                 this.buttonList.get(INFINITEBUTTON_ID).visible = false;
+                this.buttonList.get(OUTPUTBUTTON_ID).visible = false;
 
                 //Hiding/Revealing slots in SELL mode
                 this.inventorySlots.getSlot(((ContainerVending)this.inventorySlots).TE_MONEY_FIRST_SLOT_INDEX).xPos= 152;
@@ -219,6 +229,7 @@ public class GuiVending extends GuiContainer {
                     this.inventorySlots.getSlot(((ContainerVending)this.inventorySlots).TE_BUFFER_FIRST_SLOT_INDEX + k).xPos= -1000;
                 }
             }
+            Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
             drawIcons();
         }
         warnings();
@@ -449,6 +460,17 @@ public class GuiVending extends GuiContainer {
                 break;
             case CREATIVE_ID: //Creative Button
                 creativeExtended = !creativeExtended;
+                break;
+            case OUTPUTBUTTON_ID: //Output Button
+                int out = tile.getField(11);
+                if(out < 5) {
+                    out++;
+                }else out = 0;
+
+                tile.setField(11, out);
+                PacketSetFieldToServer packOut = new PacketSetFieldToServer();
+                packOut.setData(out, 11, tile.getPos());
+                PacketHandler.INSTANCE.sendToServer(packOut);
                 break;
         }
     }

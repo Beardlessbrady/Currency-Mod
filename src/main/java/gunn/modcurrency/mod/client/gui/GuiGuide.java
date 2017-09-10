@@ -54,15 +54,15 @@ public class GuiGuide extends GuiScreen{
         this.guiTop = (this.height - this.ySize) / 2;
 
 
-        this.buttonList.add(0, new TabButton("Back", 0, guiLeft + 14, guiTop + 10, 1, 219, 21, 11, "", BACKGROUND_TEXTURE));
-        this.buttonList.add(1, new TabButton("Prev", 1, guiLeft + 20, guiTop + 155, 3, 207, 18, 10, "", BACKGROUND_TEXTURE));
-        this.buttonList.add(2, new TabButton("Next", 2, guiLeft + 100, guiTop + 155, 3, 194, 18, 10, "", BACKGROUND_TEXTURE));
+        this.buttonList.add(0, new TabButton("Back", 0, guiLeft + 14, guiTop + 10, 1, 219, 21, 11, 0,"", BACKGROUND_TEXTURE));
+        this.buttonList.add(1, new TabButton("Prev", 1, guiLeft + 20, guiTop + 155, 3, 207, 18, 10, 0,"", BACKGROUND_TEXTURE));
+        this.buttonList.add(2, new TabButton("Next", 2, guiLeft + 100, guiTop + 155, 3, 194, 18, 10, 0,"", BACKGROUND_TEXTURE));
         this.buttonList.get(0).visible = false;
         this.buttonList.get(1).visible = false;
         this.buttonList.get(2).visible = false;
 
         for(int i = buttonStart; i < buttonTotal; i++) {
-            this.buttonList.add(i,new TabButton(Integer.toString(i), i, guiLeft + 35 + (20 * i), guiTop + 90, 0, 220, 16, 16, "", BACKGROUND_TEXTURE));
+            this.buttonList.add(i,new TabButton(Integer.toString(i), i, guiLeft + 35 + (20 * i), guiTop + 90, 0, 220, 16, 16, 0,"", BACKGROUND_TEXTURE));
             this.buttonList.get(i).visible = false;
         }
     }
@@ -91,7 +91,7 @@ public class GuiGuide extends GuiScreen{
                 fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 32, 112, Color.BLACK.getRGB());
 
                 for (int k = buttonStart; k < buttonTotal; k++) {
-                    this.buttonList.set(k, new TabButton(Integer.toString(k), k, guiLeft + 26 + (25 * (k - 3)), guiTop + 90, 0, 250, 16, 16, "", BACKGROUND_TEXTURE));
+                    this.buttonList.set(k, new TabButton(Integer.toString(k), k, guiLeft + 26 + (25 * (k - 3)), guiTop + 90, 0, 250, 16, 16, 0,"", BACKGROUND_TEXTURE));
                 }
 
                 if ((i >= 26 && i <= 26 + 16) && (j >= 90 && j <= 90 + 16)) {

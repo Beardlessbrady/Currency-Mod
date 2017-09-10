@@ -71,7 +71,7 @@ public class GuiATM extends GuiContainer{
 
         this.buttonList.add(new GuiButton(DEPOSIT_ID, i + 107, j + 51, 45, 20, "Deposit"));
         this.buttonList.add(new GuiButton(WITHDRAW_ID, i + 21, j + 51, 48, 20, "Withdraw"));
-        this.buttonList.add(new TabButton("Gear", GEARBUTTON_ID, i - 20, j + 20, 0, 0, 20, 21, "", TAB_TEXTURE));
+        this.buttonList.add(new TabButton("Gear", GEARBUTTON_ID, i - 20, j + 20, 0, 0, 20, 21, 0,"", TAB_TEXTURE));
 
         this.buttonList.get(GEARBUTTON_ID).visible = false;
     }

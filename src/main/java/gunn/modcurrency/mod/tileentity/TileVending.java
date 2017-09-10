@@ -6,11 +6,11 @@ import gunn.modcurrency.mod.container.itemhandler.ItemHandlerVendor;
 import gunn.modcurrency.mod.handler.StateHandler;
 import gunn.modcurrency.mod.item.ItemWallet;
 import gunn.modcurrency.mod.item.ModItems;
+import gunn.modcurrency.mod.utils.UtilMethods;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -42,7 +42,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     public static final int VEND_SLOT_COUNT = 30;
     public static final int BUFFER_SLOT_COUNT = 4;
 
-    private int bank, profit, selectedSlot, walletTotal;
+    private int bank, profit, selectedSlot, walletTotal, outputBill;
     private String owner, selectedName;
     private boolean locked, mode, creative, infinite, gearExtended, walletIn, twoBlock;
     private int[] itemCosts = new int[VEND_SLOT_COUNT];
@@ -56,6 +56,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         profit = 0;
         selectedSlot = 37;
         walletTotal = 0;
+        outputBill = 0;
         owner = "";
         selectedName = "No Item";
         locked = false;
@@ -118,8 +119,28 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                     }
                 } else if (walletIn) walletIn = false;
 
-                //TODO How money outputs to buffer
-                    //</editor-fold>
+                //<editor-fold desc="Dealing with Buffer Slots">
+                    if (locked) {
+                        int outputAmnt = getCashConversion(outputBill);
+                        outLoop:
+                        if(profit >= outputAmnt) {
+                            for (int i = 0; i < bufferStackHandler.getSlots(); i++) {
+                                if (bufferStackHandler.getStackInSlot(i).isEmpty()){
+                                    //Insert new stack
+                                    bufferStackHandler.setStackInSlot(i, new ItemStack(ModItems.itemBanknote, 1, outputBill));
+                                    profit = profit - outputAmnt;
+                                    break outLoop;
+                                }else if (UtilMethods.equalStacks(bufferStackHandler.getStackInSlot(i), new ItemStack(ModItems.itemBanknote,1,outputBill)) && bufferStackHandler.getStackInSlot(i).getCount() < bufferStackHandler.getStackInSlot(i).getMaxStackSize()){
+                                    //Grow Stack
+                                    bufferStackHandler.getStackInSlot(i).grow(1);
+                                    profit = profit - outputAmnt;
+                                    break outLoop;
+                                }
+                            }
+                            //JAM and no hopper
+                        }
+                    }
+                //</editor-fold>
             }
         }
     }
@@ -162,6 +183,18 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     }
 
     //<editor-fold desc="Money Methods-------------------------------------------------------------------------------------------------------">
+    public int getCashConversion(int meta){
+        switch(meta){
+            case 0: return 1;
+            case 1: return 5;
+            case 2: return 10;
+            case 3: return 20;
+            case 4: return 50;
+            case 5: return 100;
+        }
+        return -1;
+    }
+
     private int getTotalCash(){
         ItemStack item = inputStackHandler.getStackInSlot(0);
         if(item.hasTagCompound()) {
@@ -320,6 +353,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         compound.setInteger("bank", bank);
         compound.setInteger("profit", profit);
         compound.setInteger("walletTotal", walletTotal);
+        compound.setInteger("output", outputBill);
         compound.setBoolean("locked", locked);
         compound.setBoolean("mode", mode);
         compound.setBoolean("creative", creative);
@@ -347,6 +381,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         if (compound.hasKey("bank")) bank = compound.getInteger("bank");
         if (compound.hasKey("profit")) profit = compound.getInteger("profit");
         if (compound.hasKey("walletTotal")) walletTotal = compound.getInteger("walletTotal");
+        if (compound.hasKey("output")) outputBill = compound.getInteger("output");
         if (compound.hasKey("locked")) locked = compound.getBoolean("locked");
         if (compound.hasKey("mode")) mode = compound.getBoolean("mode");
         if (compound.hasKey("creative")) creative = compound.getBoolean("creative");
@@ -376,6 +411,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         tag.setInteger("bank", bank);
         tag.setInteger("profit", profit);
         tag.setInteger("walletTotal", walletTotal);
+        tag.setInteger("output", outputBill);
         tag.setBoolean("locked", locked);
         tag.setBoolean("mode", mode);
         tag.setBoolean("creative", creative);
@@ -399,6 +435,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         super.onDataPacket(net, pkt);
         bank = pkt.getNbtCompound().getInteger("bank");
         profit = pkt.getNbtCompound().getInteger("profit");
+        outputBill = pkt.getNbtCompound().getInteger("output");
         walletTotal = pkt.getNbtCompound().getInteger("walletTotal");
         locked = pkt.getNbtCompound().getBoolean("locked");
         mode = pkt.getNbtCompound().getBoolean("mode");
@@ -438,7 +475,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
 
     //<editor-fold desc="Getter & Setter Methods---------------------------------------------------------------------------------------------">
     public int getFieldCount() {
-        return 11;
+        return 12;
     }
 
     public void setField(int id, int value) {
@@ -476,6 +513,8 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
             case 10:
                 walletTotal = value;
                 break;
+            case 11:
+                outputBill = value;
         }
     }
 
@@ -503,6 +542,8 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                 return (walletIn) ? 1 : 0;
             case 10:
                 return walletTotal;
+            case 11:
+                return outputBill;
         }
         return -1;
     }

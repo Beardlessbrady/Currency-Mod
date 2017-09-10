@@ -14,13 +14,13 @@ import net.minecraft.util.ResourceLocation;
  */
 public class TabButton extends GuiButton{
     protected ResourceLocation CUSTOM_TEXTURES;
-    int minU, minV, maxU, maxV, openY, buttonid;
+    int minU, minV, maxU, maxV, openY, buttonid, hoverXShift;
     String name;
     ResourceLocation textureLoc;
     boolean openState;
 
     //Allows a button with a custom texture, yes it is very butchered together
-    public TabButton(String name, int buttonId, int x, int y, int minU, int minV, int maxU, int maxV, String buttonText, ResourceLocation texture) {
+    public TabButton(String name, int buttonId, int x, int y, int minU, int minV, int maxU, int maxV, int hoverXShift, String buttonText, ResourceLocation texture) {
         super(buttonId, x, y, minU - maxU, minV - maxV, buttonText);
         this.CUSTOM_TEXTURES = texture;
         this.width = maxU;
@@ -29,6 +29,7 @@ public class TabButton extends GuiButton{
         this.minV = minV;
         this.maxU = maxU;
         this.maxV = maxV;
+        this.hoverXShift = hoverXShift;
 
         this.name = name;
         this.buttonid = buttonId;
@@ -41,15 +42,14 @@ public class TabButton extends GuiButton{
     @Override
     public void drawButton(Minecraft mc , int mouseX, int mouseY, float p_191745_4_){
         if (this.visible) {
-            FontRenderer fontrenderer = mc.fontRenderer;
             mc.getTextureManager().bindTexture(CUSTOM_TEXTURES);
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
-            int i = this.getHoverState(this.hovered);
+            int i = (this.hovered == true) ? 1 : 0;
             GlStateManager.enableBlend();
             GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
             GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-            this.drawTexturedModalRect(this.x, this.y, minU, minV, maxU, maxV);
+            this.drawTexturedModalRect(this.x, this.y, minU + (i * hoverXShift), minV, maxU, maxV);
             this.mouseDragged(mc, mouseX, mouseY);
         }
     }
