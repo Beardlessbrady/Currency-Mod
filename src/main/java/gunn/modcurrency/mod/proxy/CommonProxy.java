@@ -33,7 +33,6 @@ public class CommonProxy {
         MinecraftForge.EVENT_BUS.register(new ModItems());
 
         NetworkRegistry.INSTANCE.registerGuiHandler(ModCurrency.instance, new GuiHandler());
-        PacketHandler.registerCommonMessages("modcurrency");
     }
 
     public void Init(FMLInitializationEvent e){

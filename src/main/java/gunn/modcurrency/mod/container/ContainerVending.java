@@ -5,11 +5,13 @@ import gunn.modcurrency.mod.container.slot.SlotCustomizable;
 import gunn.modcurrency.mod.container.slot.SlotVendor;
 import gunn.modcurrency.mod.item.ItemWallet;
 import gunn.modcurrency.mod.item.ModItems;
+import gunn.modcurrency.mod.network.PacketCheckGhostStacksToClient;
 import gunn.modcurrency.mod.network.PacketHandler;
 import gunn.modcurrency.mod.network.PacketItemSpawnToServer;
 import gunn.modcurrency.mod.tileentity.TileVending;
 import gunn.modcurrency.mod.utils.UtilMethods;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.ClickType;
@@ -30,7 +32,7 @@ import javax.annotation.Nullable;
  *
  * File Created on 2017-05-08
  */
-public class ContainerVending extends Container implements INBTInventory{
+public class ContainerVending extends Container implements INBTInventory {
     //Slot Index
     //0-35 = Players Inv
     //36 = Input Slot
@@ -99,7 +101,7 @@ public class ContainerVending extends Container implements INBTInventory{
         final int TE_INV_XPOS = 44;
         int TE_INV_YPOS = 50;
 
-        if(tile.getField(7) == 1) {
+        if (tile.getField(7) == 1) {
             TE_INV_YPOS = 32;
             TE_VEND_COLUMN_COUNT = 6;
             TE_VEND_MAIN_TOTAL_COUNT = TE_VEND_COLUMN_COUNT * TE_VEND_ROW_COUNT;
@@ -118,9 +120,9 @@ public class ContainerVending extends Container implements INBTInventory{
 
         //Buffer Slots
         int yshift = 0;
-        if(tile.getField(7) == 1)yshift = 8;
+        if (tile.getField(7) == 1) yshift = 8;
 
-        for (int i = 0; i < TE_BUFFER_COUNT; i++){
+        for (int i = 0; i < TE_BUFFER_COUNT; i++) {
             addSlotToContainer(new SlotCustomizable(itemHandler, TE_BUFFR_START + i, 13, 42 + yshift + i * SLOT_Y_SPACING, ModItems.itemBanknote));
         }
     }
@@ -145,10 +147,10 @@ public class ContainerVending extends Container implements INBTInventory{
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
         //Allows drag clicking
-        if(slotId == -999) return super.slotClick(slotId, dragType, clickTypeIn, player);
+        if (slotId == -999) return super.slotClick(slotId, dragType, clickTypeIn, player);
 
         //Ensures Pickup_All works without duplicating blocks
-        if(clickTypeIn == ClickType.PICKUP_ALL && slotId >= 0 && slotId <= PLAYER_TOTAL_COUNT) {
+        if (clickTypeIn == ClickType.PICKUP_ALL && slotId >= 0 && slotId <= PLAYER_TOTAL_COUNT) {
             Slot slot = this.inventorySlots.get(slotId);
             ItemStack itemstack1 = player.inventory.getItemStack();
 
@@ -180,7 +182,7 @@ public class ContainerVending extends Container implements INBTInventory{
             }
             this.detectAndSendChanges();
             return ItemStack.EMPTY;
-        }else if (clickTypeIn == ClickType.PICKUP_ALL && slotId > PLAYER_TOTAL_COUNT) {
+        } else if (clickTypeIn == ClickType.PICKUP_ALL && slotId > PLAYER_TOTAL_COUNT) {
             return ItemStack.EMPTY;
         }
 
@@ -203,7 +205,7 @@ public class ContainerVending extends Container implements INBTInventory{
             }
             return super.slotClick(slotId, dragType, clickTypeIn, player);
 
-        }else {  //Sell Mode
+        } else {  //Sell Mode
             if (slotId >= 0 && slotId <= 36) {           //Is Players Inv or Input Slot
                 return super.slotClick(slotId, dragType, clickTypeIn, player);
             } else if (slotId >= 37 && slotId < (37 + TE_VEND_MAIN_TOTAL_COUNT)) {  //Is TE Inv
@@ -211,7 +213,6 @@ public class ContainerVending extends Container implements INBTInventory{
                     if (clickTypeIn == ClickType.PICKUP && dragType == 0) {   //Left Click = 1 item
                         return checkAfford(slotId, 1, player);
                     } else if (clickTypeIn == ClickType.PICKUP && dragType == 1) {   //Right Click = 10 item
-
 
 
                         return checkAfford(slotId, 10, player);
@@ -296,7 +297,6 @@ public class ContainerVending extends Container implements INBTInventory{
     @Nullable
     @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int index) {
-        checkGhostStacks();
         ItemStack sourceStack = ItemStack.EMPTY;
         Slot slot = this.inventorySlots.get(index);
 
@@ -349,6 +349,13 @@ public class ContainerVending extends Container implements INBTInventory{
 
     @Override
     public void detectAndSendChanges() {
+        checkGhostStacks();
+        if (tile.getPlayerUsing() instanceof EntityPlayerMP) {
+            PacketCheckGhostStacksToClient pack = new PacketCheckGhostStacksToClient();
+            pack.setData(tile.getPos());
+            PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) tile.getPlayerUsing());
+        }
+
         super.detectAndSendChanges();
         boolean fieldChanged[] = new boolean[tile.getFieldCount()];
 
@@ -363,7 +370,7 @@ public class ContainerVending extends Container implements INBTInventory{
 
         for (IContainerListener listener : this.listeners) {
             for (int field = 0; field < tile.getFieldCount(); ++field) {
-                if (fieldChanged[field]){
+                if (fieldChanged[field]) {
                     listener.sendWindowProperty(this, field, cachedFields[field]);
                 }
             }
@@ -534,11 +541,12 @@ public class ContainerVending extends Container implements INBTInventory{
         return cash * stackSize;
     }
 
-    private void checkGhostStacks(){
+    private void checkGhostStacks() {
         IItemHandler itemHandler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-        for(int i=0; i < TE_VEND_MAIN_TOTAL_COUNT; i++){
-            if(tile.isGhostSlot(i) && itemHandler.getStackInSlot(i+1).getCount() > 1){
-                itemHandler.getStackInSlot(i+1).shrink(1);
+        for (int i = 0; i < TE_VEND_MAIN_TOTAL_COUNT; i++) {
+            if (tile.isGhostSlot(i) && itemHandler.getStackInSlot(i + 1).getCount() > 1) {
+                System.out.println("GHOOSST");
+                itemHandler.getStackInSlot(i + 1).shrink(1);
                 tile.setGhostSlot(i, false);
             }
         }
