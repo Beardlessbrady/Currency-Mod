@@ -211,6 +211,9 @@ public class ContainerVending extends Container implements INBTInventory{
                     if (clickTypeIn == ClickType.PICKUP && dragType == 0) {   //Left Click = 1 item
                         return checkAfford(slotId, 1, player);
                     } else if (clickTypeIn == ClickType.PICKUP && dragType == 1) {   //Right Click = 10 item
+
+
+
                         return checkAfford(slotId, 10, player);
                     } else if (clickTypeIn == ClickType.QUICK_MOVE) {
                         return checkAfford(slotId, 64, player);
@@ -230,14 +233,14 @@ public class ContainerVending extends Container implements INBTInventory{
         ItemStack playBuyStack;
 
         boolean wallet = false;
-        int bank = 0;
+        int bank = tile.getField(0);
 
         if (itemHandler.getStackInSlot(0) != ItemStack.EMPTY) {
             if (itemHandler.getStackInSlot(0).getItem() == ModItems.itemWallet) {
                 wallet = true;
                 bank = tile.getField(10);
             }
-        } else bank = tile.getField(0);
+        }
         int cost = tile.getItemCost(slotId - PLAYER_TOTAL_COUNT - 1);
 
         if (slotStack != ItemStack.EMPTY) {
@@ -248,6 +251,13 @@ public class ContainerVending extends Container implements INBTInventory{
             }
             if (tile.getField(6) == 0)
                 if (slotStack.getCount() < amnt && slotStack.getCount() != 0) amnt = slotStack.getCount();
+
+            //If cant afford amount requested lowers amount till can afford or till amount is 1
+            lower:
+            while ((cost * amnt) > bank) {
+                if (amnt == 1) break lower;
+                amnt--;
+            }
 
             if ((bank >= (cost * amnt))) {   //If has enough money, buy it
                 if (slotStack.getCount() >= amnt || tile.getField(6) == 1) {
@@ -274,6 +284,7 @@ public class ContainerVending extends Container implements INBTInventory{
                     tile.setField(4, tile.getField(4) + cost * amnt);
                 }
             } else {
+                System.out.println("CANT");
                 tile.unsucessfulNoise();
             }
             return slotStack;
@@ -285,6 +296,7 @@ public class ContainerVending extends Container implements INBTInventory{
     @Nullable
     @Override
     public ItemStack transferStackInSlot(EntityPlayer player, int index) {
+        checkGhostStacks();
         ItemStack sourceStack = ItemStack.EMPTY;
         Slot slot = this.inventorySlots.get(index);
 
@@ -318,7 +330,7 @@ public class ContainerVending extends Container implements INBTInventory{
                         }
                     }
                 }
-            } else if (index >= TE_VEND_FIRST_SLOT_INDEX && index < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT + 1) {  //TE Inventory
+            } else if (index >= TE_VEND_FIRST_SLOT_INDEX && index < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT + 4) {  //TE Inventory
                 if (!this.mergeItemStack(copyStack, 0, PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT, false)) {
                     return ItemStack.EMPTY;
                 }
