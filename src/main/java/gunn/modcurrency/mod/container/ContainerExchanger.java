@@ -31,20 +31,22 @@ public class ContainerExchanger extends Container implements INBTInventory{
     //0-35 = Players Inv
     //36 = Input Slot
     //37-... Vend Slots & Buffer Slots
-    private final int HOTBAR_SLOT_COUNT = 9;
-    private final int PLAYER_INV_ROW_COUNT = 3;
-    private final int PLAYER_INV_COLUMN_COUNT = 9;
-    private final int PLAYER_INV_TOTAL_COUNT = PLAYER_INV_COLUMN_COUNT * PLAYER_INV_ROW_COUNT;
-    private final int PLAYER_TOTAL_COUNT = HOTBAR_SLOT_COUNT + PLAYER_INV_TOTAL_COUNT;
+    public final int HOTBAR_SLOT_COUNT = 9;
+    public final int PLAYER_INV_ROW_COUNT = 3;
+    public final int PLAYER_INV_COLUMN_COUNT = 9;
+    public final int PLAYER_INV_TOTAL_COUNT = PLAYER_INV_COLUMN_COUNT * PLAYER_INV_ROW_COUNT;
+    public final int PLAYER_TOTAL_COUNT = HOTBAR_SLOT_COUNT + PLAYER_INV_TOTAL_COUNT;
 
-    private int TE_VEND_COLUMN_COUNT = 3;
-    private final int TE_VEND_ROW_COUNT = 5;
-    private int TE_VEND_MAIN_TOTAL_COUNT = TE_VEND_COLUMN_COUNT * TE_VEND_ROW_COUNT;
+    public int TE_VEND_COLUMN_COUNT = 3;
+    public final int TE_VEND_ROW_COUNT = 5;
+    public int TE_VEND_MAIN_TOTAL_COUNT = TE_VEND_COLUMN_COUNT * TE_VEND_ROW_COUNT;
+    public final int TE_BUFFR_START = 31;
+    public final int TE_BUFFER_COUNT = 4;
 
-    private final int PLAYER_FIRST_SLOT_INDEX = 0;
-    private final int TE_MONEY_FIRST_SLOT_INDEX = PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT;
-    private final int TE_VEND_FIRST_SLOT_INDEX = TE_MONEY_FIRST_SLOT_INDEX + 1;
-    //private final int TE_VEND_BUFFER_SLOT = TE_VEND_MAIN_TOTAL_COUNT + 1;
+    public final int PLAYER_FIRST_SLOT_INDEX = 0;
+    public final int TE_MONEY_FIRST_SLOT_INDEX = PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT;
+    public final int TE_VEND_FIRST_SLOT_INDEX = TE_MONEY_FIRST_SLOT_INDEX + 1;
+    public int TE_BUFFER_FIRST_SLOT_INDEX = TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT;
 
     private Item specialSlotItems;
     private TileExchanger tile;
@@ -84,18 +86,18 @@ public class ContainerExchanger extends Container implements INBTInventory{
         IItemHandler itemHandler = this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 
         //Input Slot
-        if (tile.getField(2) == 0) addSlotToContainer(new SlotItemHandler(itemHandler, 0, 152, 9));
-        if (tile.getField(2) == 1) addSlotToContainer(new SlotCustomizable(itemHandler, 0, 152, 9, specialSlotItems));
+        addSlotToContainer(new SlotItemHandler(itemHandler, 0, 152, 9));
 
         final int SLOT_X_SPACING = 18;
         final int SLOT_Y_SPACING = 18;
         final int TE_INV_XPOS = 44;
         int TE_INV_YPOS = 50;
 
-        if(tile.getField(7) == 1) {
+        if (tile.getField(7) == 1) {
             TE_INV_YPOS = 32;
             TE_VEND_COLUMN_COUNT = 6;
             TE_VEND_MAIN_TOTAL_COUNT = TE_VEND_COLUMN_COUNT * TE_VEND_ROW_COUNT;
+            TE_BUFFER_FIRST_SLOT_INDEX = TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT;
         }
 
         //Main Slots
@@ -106,6 +108,14 @@ public class ContainerExchanger extends Container implements INBTInventory{
                 int ypos = TE_INV_YPOS + y * SLOT_Y_SPACING;
                 addSlotToContainer(new SlotVendor(itemHandler, slotNum, xpos, ypos));
             }
+        }
+
+        //Buffer Slots
+        int yshift = 0;
+        if (tile.getField(7) == 1) yshift = 8;
+
+        for (int i = 0; i < TE_BUFFER_COUNT; i++) {
+            addSlotToContainer(new SlotItemHandler(itemHandler, TE_BUFFR_START + i, 13, 42 + yshift + i * SLOT_Y_SPACING));
         }
     }
 
@@ -168,28 +178,28 @@ public class ContainerExchanger extends Container implements INBTInventory{
         }
 
         if (tile.getField(2) == 1) {      //EDIT MODE
-            if (slotId >= 0 && slotId <= 36) {
+            if (slotId >= 0 && slotId <= PLAYER_TOTAL_COUNT) {
                 return super.slotClick(slotId, dragType, clickTypeIn, player);
-            } else if ((slotId >= 37 && slotId < 67 && tile.getField(8) == 0)) {    //Vend Slots, not in Selection mode
+            } else if ((slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT && tile.getField(8) == 0)) {    //Vend Slots, not in Selection mode
                 InventoryPlayer inventoryPlayer = player.inventory;
                 Slot ghostSlot = this.inventorySlots.get(slotId);
                 if (clickTypeIn == ClickType.PICKUP) {      //LEFT
                     if (inventoryPlayer.getItemStack() != ItemStack.EMPTY && inventorySlots.get(slotId).getStack() == ItemStack.EMPTY) {
                         ItemStack ghostStack = inventoryPlayer.getItemStack().copy();
                         int gCount = 1;
-                        if (tile.getItemAmount(slotId - 37) > 1) {
-                            gCount = tile.getItemAmount(slotId - 37);
+                        if (tile.getItemAmount(slotId - TE_VEND_FIRST_SLOT_INDEX) > 1) {
+                            gCount = tile.getItemAmount(slotId - TE_VEND_FIRST_SLOT_INDEX);
                         }
 
                         ghostStack.setCount(gCount);
                         ghostSlot.putStack(ghostStack);
                     } else {
-                        tile.setItemAmount(-1, slotId - 37);
+                        tile.setItemAmount(-1, slotId - TE_VEND_FIRST_SLOT_INDEX);
                         ghostSlot.putStack(ItemStack.EMPTY);
                     }
                 }
                 return inventoryPlayer.getItemStack();
-            } else if (slotId >= 37 && slotId < 67 && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 0) {
+            } else if (slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 0) {
                 tile.setField(3, slotId);
                 if (getSlot(slotId).getHasStack()) {
                     tile.setSelectedName(getSlot(slotId).getStack().getDisplayName());
@@ -198,15 +208,12 @@ public class ContainerExchanger extends Container implements INBTInventory{
                 }
                 tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
                 return ItemStack.EMPTY;
-            } else if (slotId > 66 && slotId < 73) {
-                return super.slotClick(slotId, dragType, clickTypeIn, player); //Buffer Slots
-            } else return ItemStack.EMPTY;
-        }
-
-        else {  //Sell Mode
-            if (slotId >= 0 && slotId <= 36) {           //Is Players Inv or Input Slot
+            }
+            return super.slotClick(slotId, dragType, clickTypeIn, player);
+        } else {  //Sell Mode
+            if (slotId >= 0 && slotId <= PLAYER_TOTAL_COUNT) {           //Is Players Inv or Input Slot
                 return super.slotClick(slotId, dragType, clickTypeIn, player);
-            } else if (slotId >= 37 && slotId < 67) {  //Is TE Inv
+            } else if (slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT) {  //Is TE Inv
                 return ItemStack.EMPTY;
             }
         }

@@ -40,6 +40,7 @@ import javax.annotation.Nullable;
 public class TileExchanger extends TileEntity implements ICapabilityProvider, ITickable, INBTInventory, IOwnable{
     private static final int INPUT_SLOT_COUNT = 1;
     public static final int VEND_SLOT_COUNT = 30;
+    public static final int BUFFER_SLOT_COUNT = 4;
 
     private int bank, selectedSlot, cashRegister;
     private String owner, selectedName;
@@ -48,7 +49,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     private int[] itemAmounts = new int[VEND_SLOT_COUNT];
     private ItemStackHandler inputStackHandler = new ItemStackHandler(INPUT_SLOT_COUNT);
     private ItemStackHandler vendStackHandler = new ItemStackHandler(VEND_SLOT_COUNT);
-    private ItemStackHandler bufferStackHandler = new ItemHandlerVendor(1);
+    private ItemStackHandler bufferStackHandler = new ItemStackHandler(BUFFER_SLOT_COUNT);
     private ItemHandlerCustom automationInputStackHandler = new ItemHandlerCustom(1);
     private EntityPlayer playerUsing = null;
 
@@ -215,14 +216,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
 
     //Drop Items
     public void dropTopItems() {
-        for (int i = 15; i < vendStackHandler.getSlots(); i++) {
-            ItemStack item = vendStackHandler.getStackInSlot(i);
-            if (item != ItemStack.EMPTY) {
-                world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), item));
-                vendStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
-            }
-        }
-        for (int i = 3; i < bufferStackHandler.getSlots(); i++){
+        for (int i = 0; i < bufferStackHandler.getSlots(); i++){
             ItemStack item = bufferStackHandler.getStackInSlot(i);
             if (item != ItemStack.EMPTY) {
                 world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), item));

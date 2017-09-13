@@ -93,7 +93,6 @@ public class ContainerVending extends Container implements INBTInventory {
         IItemHandler itemHandler = this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 
         //Input Slot
-        int inputX = 0;
         addSlotToContainer(new SlotCustomizable(itemHandler, 0, 152, 9, specialSlotItems));
 
         final int SLOT_X_SPACING = 18;
@@ -187,7 +186,7 @@ public class ContainerVending extends Container implements INBTInventory {
         }
 
         if (tile.getField(2) == 1) {               //EDIT MODE
-            if (slotId >= 37 && slotId < (37 + TE_VEND_MAIN_TOTAL_COUNT) && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 0) {
+            if (slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < (TE_VEND_FIRST_SLOT_INDEX+ TE_VEND_MAIN_TOTAL_COUNT) && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 0) {
                 if (getSlot(slotId).getHasStack()) {
                     tile.setSelectedName(getSlot(slotId).getStack().getDisplayName());
                 } else tile.setSelectedName("No Item");
@@ -196,7 +195,7 @@ public class ContainerVending extends Container implements INBTInventory {
                     tile.setField(3, slotId);
                     return ItemStack.EMPTY;
                 }
-            } else if (slotId >= 37 && slotId < (37 + TE_VEND_MAIN_TOTAL_COUNT) && tile.getField(8) == 0) {
+            } else if (slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < (TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT) && tile.getField(8) == 0) {
                 //If an item is a ghost and clicked on with an item
                 if (tile.isGhostSlot(slotId - PLAYER_TOTAL_COUNT - 1)) {
                     this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).getStackInSlot(slotId - PLAYER_TOTAL_COUNT).shrink(1);
@@ -206,9 +205,9 @@ public class ContainerVending extends Container implements INBTInventory {
             return super.slotClick(slotId, dragType, clickTypeIn, player);
 
         } else {  //Sell Mode
-            if (slotId >= 0 && slotId <= 36) {           //Is Players Inv or Input Slot
+            if (slotId >= 0 && slotId <= PLAYER_TOTAL_COUNT) {           //Is Players Inv or Input Slot
                 return super.slotClick(slotId, dragType, clickTypeIn, player);
-            } else if (slotId >= 37 && slotId < (37 + TE_VEND_MAIN_TOTAL_COUNT)) {  //Is TE Inv
+            } else if (slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < (TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT)) {  //Is TE Inv
                 if (!tile.isGhostSlot(slotId - PLAYER_TOTAL_COUNT - 1)) {
                     if (clickTypeIn == ClickType.PICKUP && dragType == 0) {   //Left Click = 1 item
                         return checkAfford(slotId, 1, player);

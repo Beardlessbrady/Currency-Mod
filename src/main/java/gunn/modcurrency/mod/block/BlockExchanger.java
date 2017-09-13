@@ -59,20 +59,6 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
     }
 
-    @Override
-    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
-        super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
-        if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOBOTTOM || state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.ONE) {   //Bottom or one block machine
-            if (pos.down().equals(fromPos)) { //Change is under machine
-                if (worldIn.getBlockState(fromPos).getBlock() == Blocks.CHEST) {  //Chest directly under machine
-                    getTile(worldIn, pos).setField(9, 1);
-                } else if (worldIn.getBlockState(fromPos.down()).getBlock() == Blocks.CHEST) { //Chest two blocks under machine
-                    getTile(worldIn, pos).setField(9, 2);
-                } else getTile(worldIn, pos).setField(9, 0); //If no chest under or two deep, set output as normal
-            }
-        }
-    }
-
     @Nullable
     @Override
     public TileEntity createNewTileEntity(World worldIn, int meta) {
