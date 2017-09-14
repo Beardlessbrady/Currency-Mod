@@ -1,13 +1,11 @@
 package gunn.modcurrency.mod.container;
 
 import gunn.modcurrency.mod.client.gui.util.INBTInventory;
-import gunn.modcurrency.mod.container.slot.SlotCustomizable;
 import gunn.modcurrency.mod.container.slot.SlotVendor;
 import gunn.modcurrency.mod.item.ModItems;
 import gunn.modcurrency.mod.tileentity.TileExchanger;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
@@ -40,7 +38,7 @@ public class ContainerExchanger extends Container implements INBTInventory{
     public int TE_VEND_COLUMN_COUNT = 3;
     public final int TE_VEND_ROW_COUNT = 5;
     public int TE_VEND_MAIN_TOTAL_COUNT = TE_VEND_COLUMN_COUNT * TE_VEND_ROW_COUNT;
-    public final int TE_BUFFR_START = 31;
+    public final int TE_BUFFER_START = 31;
     public final int TE_BUFFER_COUNT = 4;
 
     public final int PLAYER_FIRST_SLOT_INDEX = 0;
@@ -115,7 +113,7 @@ public class ContainerExchanger extends Container implements INBTInventory{
         if (tile.getField(7) == 1) yshift = 8;
 
         for (int i = 0; i < TE_BUFFER_COUNT; i++) {
-            addSlotToContainer(new SlotItemHandler(itemHandler, TE_BUFFR_START + i, 13, 42 + yshift + i * SLOT_Y_SPACING));
+            addSlotToContainer(new SlotItemHandler(itemHandler, TE_BUFFER_START + i, 13, 42 + yshift + i * SLOT_Y_SPACING));
         }
     }
 
@@ -180,25 +178,15 @@ public class ContainerExchanger extends Container implements INBTInventory{
         if (tile.getField(2) == 1) {      //EDIT MODE
             if (slotId >= 0 && slotId <= PLAYER_TOTAL_COUNT) {
                 return super.slotClick(slotId, dragType, clickTypeIn, player);
-            } else if ((slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT && tile.getField(8) == 0)) {    //Vend Slots, not in Selection mode
-                InventoryPlayer inventoryPlayer = player.inventory;
-                Slot ghostSlot = this.inventorySlots.get(slotId);
-                if (clickTypeIn == ClickType.PICKUP) {      //LEFT
-                    if (inventoryPlayer.getItemStack() != ItemStack.EMPTY && inventorySlots.get(slotId).getStack() == ItemStack.EMPTY) {
-                        ItemStack ghostStack = inventoryPlayer.getItemStack().copy();
-                        int gCount = 1;
-                        if (tile.getItemAmount(slotId - TE_VEND_FIRST_SLOT_INDEX) > 1) {
-                            gCount = tile.getItemAmount(slotId - TE_VEND_FIRST_SLOT_INDEX);
-                        }
-
-                        ghostStack.setCount(gCount);
-                        ghostSlot.putStack(ghostStack);
-                    } else {
-                        tile.setItemAmount(-1, slotId - TE_VEND_FIRST_SLOT_INDEX);
-                        ghostSlot.putStack(ItemStack.EMPTY);
-                    }
+            } else if ((slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT && tile.getField(8) == 0)) {    //Vend Slots, normal Edit Mode
+                if (player.inventory.getItemStack() != ItemStack.EMPTY && inventorySlots.get(slotId).getStack() == ItemStack.EMPTY) { //Player hand FULL, Slot EMPTY. Put ghost stack here
+                    ItemStack ghostStack = player.inventory.getItemStack().copy();
+                    ghostStack.setCount(1);
+                    this.inventorySlots.get(slotId).putStack(ghostStack);
+                } else { //Anything else, remove stack in slot
+                    this.inventorySlots.get(slotId).putStack(ItemStack.EMPTY);
                 }
-                return inventoryPlayer.getItemStack();
+                return player.inventory.getItemStack();
             } else if (slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 0) {
                 tile.setField(3, slotId);
                 if (getSlot(slotId).getHasStack()) {
@@ -208,8 +196,9 @@ public class ContainerExchanger extends Container implements INBTInventory{
                 }
                 tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
                 return ItemStack.EMPTY;
+            }else if (slotId >= TE_BUFFER_FIRST_SLOT_INDEX && slotId < TE_BUFFER_FIRST_SLOT_INDEX + TE_BUFFER_COUNT){
+                return super.slotClick(slotId, dragType, clickTypeIn, player);
             }
-            return super.slotClick(slotId, dragType, clickTypeIn, player);
         } else {  //Sell Mode
             if (slotId >= 0 && slotId <= PLAYER_TOTAL_COUNT) {           //Is Players Inv or Input Slot
                 return super.slotClick(slotId, dragType, clickTypeIn, player);
@@ -252,6 +241,14 @@ public class ContainerExchanger extends Container implements INBTInventory{
                 }
             } else if (index == TE_MONEY_FIRST_SLOT_INDEX) {
                 if (!this.mergeItemStack(copyStack, 0, PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT, false)) {
+                    return ItemStack.EMPTY;
+                }
+            } else if (index >= TE_BUFFER_FIRST_SLOT_INDEX && index < TE_BUFFER_FIRST_SLOT_INDEX + TE_BUFFER_COUNT){
+                if(tile.getField(2) == 1){
+                    if (!this.mergeItemStack(copyStack, 0, PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT, false)) {
+                        return ItemStack.EMPTY;
+                    }
+                }else{
                     return ItemStack.EMPTY;
                 }
             }

@@ -46,7 +46,7 @@ public class ContainerVending extends Container implements INBTInventory {
     public int TE_VEND_COLUMN_COUNT = 3;
     public final int TE_VEND_ROW_COUNT = 5;
     public int TE_VEND_MAIN_TOTAL_COUNT = TE_VEND_COLUMN_COUNT * TE_VEND_ROW_COUNT;
-    public final int TE_BUFFR_START = 31;
+    public final int TE_BUFFER_START = 31;
     public final int TE_BUFFER_COUNT = 4;
 
     public final int PLAYER_FIRST_SLOT_INDEX = 0;
@@ -122,7 +122,7 @@ public class ContainerVending extends Container implements INBTInventory {
         if (tile.getField(7) == 1) yshift = 8;
 
         for (int i = 0; i < TE_BUFFER_COUNT; i++) {
-            addSlotToContainer(new SlotCustomizable(itemHandler, TE_BUFFR_START + i, 13, 42 + yshift + i * SLOT_Y_SPACING, ModItems.itemBanknote));
+            addSlotToContainer(new SlotCustomizable(itemHandler, TE_BUFFER_START + i, 13, 42 + yshift + i * SLOT_Y_SPACING, ModItems.itemBanknote));
         }
     }
 

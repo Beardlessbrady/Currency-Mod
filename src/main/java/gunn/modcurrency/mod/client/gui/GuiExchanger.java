@@ -2,6 +2,7 @@ package gunn.modcurrency.mod.client.gui;
 
 import gunn.modcurrency.mod.client.gui.util.TabButton;
 import gunn.modcurrency.mod.container.ContainerExchanger;
+import gunn.modcurrency.mod.container.ContainerVending;
 import gunn.modcurrency.mod.network.*;
 import gunn.modcurrency.mod.tileentity.TileExchanger;
 import net.minecraft.client.Minecraft;
@@ -172,6 +173,10 @@ public class GuiExchanger extends GuiContainer {
             drawTexturedModalRect(guiLeft + 152, guiTop + 9, 198, 17, 15, 15);
         } else {
             drawTexturedModalRect(guiLeft + 152, guiTop + 9, 198, 0, 15, 15);
+            //Draw Buffer Slot Backgrounds
+            int y = 33;
+            if(tile.getField(7) == 1) y = 41;
+            drawTexturedModalRect(guiLeft + 10, guiTop + y, 178, 34, 22, 82);
         }
     }
 
@@ -189,6 +194,11 @@ public class GuiExchanger extends GuiContainer {
             if(tile.getField(2) == 1) { //If in EDIT mode
                 this.buttonList.get(LOCK_ID).visible = true;
                 this.buttonList.get(GEAR_ID).visible = true;
+
+                //Hiding/Revealing slots in EDIT mode
+                for (int k = 0; k < ((ContainerExchanger) this.inventorySlots).TE_BUFFER_COUNT; k++){
+                    this.inventorySlots.getSlot(((ContainerExchanger) this.inventorySlots).TE_BUFFER_FIRST_SLOT_INDEX+ k).xPos= 13;
+                }
 
                 ((TabButton)buttonList.get(GEAR_ID)).setOpenState(tile.getField(8) == 1, 26);
                 if(((TabButton)buttonList.get(GEAR_ID)).openState()){
@@ -223,6 +233,11 @@ public class GuiExchanger extends GuiContainer {
                 this.buttonList.get(GEAR_ID).visible = false;
                 this.buttonList.get(CREATIVE_ID).visible = false;
                 this.buttonList.get(INFINITEBUTTON_ID).visible = false;
+
+                //Hiding/Revealing slots in SELL mode
+                for (int k = 0; k < ((ContainerExchanger) this.inventorySlots).TE_BUFFER_COUNT; k++){
+                    this.inventorySlots.getSlot(((ContainerExchanger) this.inventorySlots).TE_BUFFER_FIRST_SLOT_INDEX + k).xPos= -1000;
+                }
             }
             drawIcons();
         }

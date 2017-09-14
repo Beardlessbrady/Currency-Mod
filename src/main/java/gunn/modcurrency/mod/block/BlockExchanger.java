@@ -169,8 +169,6 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
                 tile.setField(6, infinite ? 1 : 0);
                 for (int i = 0; i < itemCosts.length; i++) tile.setItemCost(itemCosts[i], i);
                 for (int i = 0; i < itemAmounts.length; i++) tile.setItemAmount(itemAmounts[i], i);
-
-                tile.dropTopItems();
             }
         } else if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOBOTTOM) {   //BOTTOM BLOCK
             if(getTile(worldIn, pos).getPlayerUsing() != null) getTile(worldIn, pos).getPlayerUsing().closeScreen();
