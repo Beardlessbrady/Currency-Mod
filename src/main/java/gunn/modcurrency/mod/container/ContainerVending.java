@@ -465,7 +465,7 @@ public class ContainerVending extends Container implements INBTInventory {
                 }
             }
 
-            //Calculates change be deducting the bills worth with the amount deductible that was left
+            //Calculates change by deducting the bills worth with the amount deductible that was left
             int change = 0;
             switch (billDamage) {
                 case 0:
@@ -490,11 +490,6 @@ public class ContainerVending extends Container implements INBTInventory {
 
             //Adds change to the bank variable in vendor
             tile.setField(0, tile.getField(0) + change);
-
-            //Forces the vendor to output the change
-            PacketItemSpawnToServer pack = new PacketItemSpawnToServer();
-            pack.setBlockPos(tile.getPos());
-            PacketHandler.INSTANCE.sendToServer(pack);
         }
 
         writeInventoryTag(wallet, itemHandler);

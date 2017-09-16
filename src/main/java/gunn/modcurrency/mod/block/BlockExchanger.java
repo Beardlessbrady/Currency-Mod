@@ -160,7 +160,15 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
                 tile = (TileExchanger) worldIn.getTileEntity(pos.down());
                 tile.setField(7, 0);
                 tile.setInputStackHandler(inputStack);
+
+                System.out.println(vendStack.getStackInSlot(0));
+
+
+
                 tile.setVendStackHandler(vendStack);
+
+                System.out.println(tile.getVendStackHandler().getStackInSlot(0));
+
                 tile.setBufferStackHandler(buffStack);
                 tile.setField(0, bank);
                 tile.setField(4, profit);
