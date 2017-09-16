@@ -120,7 +120,60 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
 
                 if (!mode) {        //SELL MODE
                     if (inputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
-                        //TODO Moving input items to buffer slots
+                        searchLoop:
+                        for (int i = 0; i < vendStackHandler.getSlots(); i++) {
+                            if (vendStackHandler.getStackInSlot(i) != ItemStack.EMPTY) {
+                                if (UtilMethods.equalStacks(inputStackHandler.getStackInSlot(0), vendStackHandler.getStackInSlot(i)) &&
+                                        inputStackHandler.getStackInSlot(0).getItemDamage() == vendStackHandler.getStackInSlot(i).getItemDamage()) {
+                                    int cost = getItemCost(i);
+                                    boolean isThereRoom = false;
+                                    int buffSlot = 0;
+
+                                    //Search buffer to see if it has an empty slot OR a slot has the sae block as what is sold
+                                    bufferLoop:
+                                    for (int j = 0; j < bufferStackHandler.getSlots(); j++) {
+                                        if(!bufferStackHandler.getStackInSlot(j).isEmpty()){
+                                            if (UtilMethods.equalStacks(bufferStackHandler.getStackInSlot(j), inputStackHandler.getStackInSlot(0))
+                                                    && (bufferStackHandler.getStackInSlot(j).getCount() < bufferStackHandler.getStackInSlot(j).getMaxStackSize())) {
+                                                isThereRoom = true;
+                                                buffSlot = j;
+                                                break bufferLoop;
+                                            }
+                                        } else{
+                                            isThereRoom = true;
+                                            buffSlot = j;
+                                            break bufferLoop;
+                                        }
+                                    }
+                                    if ((cashRegister >= cost || infinite) && isThereRoom) {
+                                        ItemStack inputItem = inputStackHandler.getStackInSlot(0);
+                                        bank = bank + cost;
+                                        if (!infinite) {
+                                            cashRegister = cashRegister - cost;
+                                            if (bufferStackHandler.getStackInSlot(buffSlot) != ItemStack.EMPTY)
+                                                bufferStackHandler.getStackInSlot(buffSlot).grow(1);
+                                            if (bufferStackHandler.getStackInSlot(buffSlot) == ItemStack.EMPTY) {
+                                                ItemStack newStack = inputItem.copy();
+                                                newStack.setCount(1);
+                                                bufferStackHandler.setStackInSlot(buffSlot, newStack);
+                                            }
+                                        }
+                                        inputItem.shrink(1);
+                                        if (itemAmounts[i] > 1) {
+                                            vendStackHandler.getStackInSlot(i).shrink(1);
+                                            itemAmounts[i]--;
+                                        }else if (itemAmounts[i] == 1){
+                                            vendStackHandler.setStackInSlot(i, ItemStack.EMPTY);
+                                            itemAmounts[i] = -1;
+                                        }
+                                    }
+                                }
+                            }
+                            if (inputStackHandler.getStackInSlot(0).getCount() == 0) {
+                                inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
+                                break searchLoop;
+                            }
+                        }
                     }
                 } else {        //EDIT MODE
                     if (inputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
