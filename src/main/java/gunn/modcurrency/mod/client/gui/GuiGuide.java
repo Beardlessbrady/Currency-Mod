@@ -322,7 +322,7 @@ public class GuiGuide extends GuiScreen{
                         " You can click the [" + TextFormatting.BOLD + "Profit" + TextFormatting.RESET + "] button to receive all the money you've made so far.";
                 fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 22, 112, Color.BLACK.getRGB());
 
-                text = " The [   ] tab enables and disables the automation feature of the machine. Once enabled the machine profit will be transformed into 20 dollar bills in a hidden slot and will sit there...";
+                text = " The [   ] tab enables and disables the automation feature of the machine. This will transform your hard earned money into dolla bills!...Well actually the output bill can be chosen by...";
                 fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 88, 112, Color.BLACK.getRGB());
 
                 this.buttonList.get(0).visible = true;
@@ -332,17 +332,24 @@ public class GuiGuide extends GuiScreen{
                 break;
             case "vending4":
                 //<editor-fold desc="Vending Machine Page 04">
-                this.itemRender.renderItemIntoGUI(new ItemStack(Blocks.CHEST, 1, 0), guiLeft + 41, guiTop + 103);
+                GL11.glPushMatrix();
+                GL11.glTranslatef(guiLeft + 0.8F, guiTop + 0.8F, 0.8F);
+                GL11.glScalef(0.7F, 0.7F, 0.7F);
+                Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
+                drawTexturedModalRect(55, 154, 236, 19, 19,17);
+                GL11.glPopMatrix();
 
-                text = "...until the owner either disables automation (in which money will go back into the machines profit) or places a hopper under it" +
-                        " in which the money will be siphoned out.";
+
+                text = "...clicking the button directly under the buffer. Placing a hopper under the machine" +
+                        " will cause any bills in the buffer slots to be siphoned out.";
                 fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 22, 112, Color.BLACK.getRGB());
 
-                text = " You can setup a " + TextFormatting.BOLD + "quicker" + TextFormatting.RESET + " way to pull out of the machine. Placing a vanilla chest [   ] " +
-                        TextFormatting.BOLD + "one " + TextFormatting.RESET + "or " + TextFormatting.BOLD + "two blocks directly under " +
-                        TextFormatting.RESET + "the machine will causes all outputs to " + TextFormatting.BOLD +
-                        "quickly...";
-                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 80, 112, Color.BLACK.getRGB());
+                text = " You can also pump money into the machine by hooking up a hopper to the " + TextFormatting.BOLD + "side " + TextFormatting.RESET +
+                        "of it.";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 70, 112, Color.BLACK.getRGB());
+
+                text = " The [   ] tab is used to edit the prices of the items sold. Change which item you are editing by simply " + TextFormatting.BOLD + "right clicking.";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 110, 112, Color.BLACK.getRGB());
 
                 this.buttonList.get(0).visible = true;
                 this.buttonList.get(1).visible = true;
@@ -350,30 +357,6 @@ public class GuiGuide extends GuiScreen{
                 //</editor-fold>
                 break;
             case "vending5":
-                //<editor-fold desc="Vending Machine Page 05">
-                GL11.glPushMatrix();
-                GL11.glTranslatef(guiLeft + 0.8F, guiTop + 0.8F, 0.8F);
-                GL11.glScalef(0.7F, 0.7F, 0.7F);
-                Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
-                drawTexturedModalRect(55, 115, 236, 19, 19,17);
-                GL11.glPopMatrix();
-
-                text = "...move into the chest, much faster than a hopper.";
-                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 22, 112, Color.BLACK.getRGB());
-
-                text = " You can also pump items into the machine by hooking up a hopper to the " + TextFormatting.BOLD + "side " + TextFormatting.RESET +
-                    "of the machine.";
-                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 43, 112, Color.BLACK.getRGB());
-
-                text = " The [   ] tab is used to edit the prices of the items sold. Change which item you are editing by simply " + TextFormatting.BOLD + "right clicking.";
-                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 83, 112, Color.BLACK.getRGB());
-
-                this.buttonList.get(0).visible = true;
-                this.buttonList.get(1).visible = true;
-                this.buttonList.get(2).visible = true;
-                //</editor-fold>
-                break;
-            case "vending6":
                 //<editor-fold desc="Vending Machine Page 06">
                 GL11.glPushMatrix();
                 GL11.glTranslatef(guiLeft + 0.8F, guiTop + 0.8F, 0.8F);
@@ -494,9 +477,9 @@ public class GuiGuide extends GuiScreen{
                 drawTexturedModalRect(55, 27, 236, 1, 19, 17);
                 GL11.glPopMatrix();
 
-                text = " The [   ] tab enables and disables the automation feature of the machine. Whenever an item is sold to the machine it is moved to the hidden output slot" +
+                text = " The [   ] tab enables and disables the automation feature of the machine. Whenever an item is sold to the machine it is moved to the buffer slots" +
                         ". If there is no automation enabled your machine will become backed up quickly. Once enabled the owner must attach a hopper to the bottom of the machine" +
-                        " in which sold items will be siphoned out.";
+                        " so that buffer stacks will be siphoned out.";
                 fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 22, 112, Color.BLACK.getRGB());
 
                 this.buttonList.get(0).visible = true;
@@ -510,19 +493,15 @@ public class GuiGuide extends GuiScreen{
                 GL11.glTranslatef(guiLeft + 0.8F, guiTop + 0.8F, 0.8F);
                 GL11.glScalef(0.7F, 0.7F, 0.7F);
                 Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
-                drawTexturedModalRect(55, 151, 236, 19, 19,17);
+                drawTexturedModalRect(55, 28, 236, 19, 19,17);
+                drawTexturedModalRect(55, 111, 236, 37, 19,17);
                 GL11.glPopMatrix();
 
-                this.itemRender.renderItemIntoGUI(new ItemStack(Blocks.CHEST, 1, 0), guiLeft + 41, guiTop + 45);
-
-                text = " You can setup a " + TextFormatting.BOLD + "quicker" + TextFormatting.RESET + " way to pull out of the machine. Placing a vanilla chest [   ] " +
-                        TextFormatting.BOLD + "one " + TextFormatting.RESET + "or " + TextFormatting.BOLD + "two blocks directly under " +
-                        TextFormatting.RESET + "the machine will causes all outputs to " + TextFormatting.BOLD +
-                        "quickly " + TextFormatting.RESET + "move into the chest, much faster than a hopper.";
+                text = " The [   ] tab is used to edit the amount of cash you are willing to give per item. Change which item you are editing by simply right clicking.";
                 fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 22, 112, Color.BLACK.getRGB());
 
-                text = " The [   ] tab is used to edit the amount of cash you are willing to give per item. Change which item you are editing by simply...";
-                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 108, 112, Color.BLACK.getRGB());
+                text = " The [   ] tab can only be accessed if the owner is in " + TextFormatting.BOLD + "creative " + TextFormatting.RESET + "It allows the owner to make stock infinite.";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 80, 112, Color.BLACK.getRGB());
 
                 this.buttonList.get(0).visible = true;
                 this.buttonList.get(1).visible = true;
@@ -531,38 +510,25 @@ public class GuiGuide extends GuiScreen{
                 break;
             case "exchange5":
                 //<editor-fold desc="Exchange Machine Page 05">
-                GL11.glPushMatrix();
-                GL11.glTranslatef(guiLeft + 0.8F, guiTop + 0.8F, 0.8F);
-                GL11.glScalef(0.7F, 0.7F, 0.7F);
-                Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
-                drawTexturedModalRect(55, 51, 236, 37, 19,17);
-                GL11.glPopMatrix();
-
                 Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
-                drawTexturedModalRect(guiLeft + 44, guiTop + 94, 167, 0, 58,58);
-
-                text = "..." + TextFormatting.BOLD + "right clicking.";
-                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 22, 112, Color.BLACK.getRGB());
-
-                text = " The [   ] tab can only be accessed if the owner is in " + TextFormatting.BOLD + "creative " + TextFormatting.RESET + "It allows the owner to make stock infinite.";
-                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 38, 112, Color.BLACK.getRGB());
+                drawTexturedModalRect(guiLeft + 44, guiTop + 34, 167, 0, 58,58);
 
                 ItemStack[] ingredientse = recipe(new ItemStack(ModBlocks.blockExchanger));
 
-                this.itemRender.renderItemIntoGUI(ingredientse[0], guiLeft + 46, guiTop + 96);
-                this.itemRender.renderItemIntoGUI(ingredientse[1], guiLeft + 65, guiTop + 96);
-                this.itemRender.renderItemIntoGUI(ingredientse[2], guiLeft + 84, guiTop + 96);
+                this.itemRender.renderItemIntoGUI(ingredientse[0], guiLeft + 46, guiTop + 36);
+                this.itemRender.renderItemIntoGUI(ingredientse[1], guiLeft + 65, guiTop + 36);
+                this.itemRender.renderItemIntoGUI(ingredientse[2], guiLeft + 84, guiTop + 36);
 
-                this.itemRender.renderItemIntoGUI(ingredientse[3], guiLeft + 46, guiTop + 115);
-                this.itemRender.renderItemIntoGUI(ingredientse[4], guiLeft + 65, guiTop + 115);
-                this.itemRender.renderItemIntoGUI(ingredientse[5], guiLeft + 84, guiTop + 115);
+                this.itemRender.renderItemIntoGUI(ingredientse[3], guiLeft + 46, guiTop + 55);
+                this.itemRender.renderItemIntoGUI(ingredientse[4], guiLeft + 65, guiTop + 55);
+                this.itemRender.renderItemIntoGUI(ingredientse[5], guiLeft + 84, guiTop + 55);
 
-                this.itemRender.renderItemIntoGUI(ingredientse[6], guiLeft + 46, guiTop + 134);
-                this.itemRender.renderItemIntoGUI(ingredientse[7], guiLeft + 65, guiTop + 134);
-                this.itemRender.renderItemIntoGUI(ingredientse[8], guiLeft + 84, guiTop + 134);
+                this.itemRender.renderItemIntoGUI(ingredientse[6], guiLeft + 46, guiTop + 74);
+                this.itemRender.renderItemIntoGUI(ingredientse[7], guiLeft + 65, guiTop + 74);
+                this.itemRender.renderItemIntoGUI(ingredientse[8], guiLeft + 84, guiTop + 74);
 
                 text = "Exchange Machine Recipe";
-                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 30, guiTop + 85, 112, Color.BLACK.getRGB());
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 30, guiTop + 20, 112, Color.BLACK.getRGB());
 
                 this.buttonList.get(0).visible = true;
                 this.buttonList.get(1).visible = true;
