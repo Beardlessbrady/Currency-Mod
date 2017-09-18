@@ -124,7 +124,7 @@ public class ContainerWallet extends Container implements INBTInventory {
                 return stack;
             }
         }
-        return null;
+        return super.slotClick(slotId,dragType,clickTypeIn,player);
     }
 
     @Nullable
