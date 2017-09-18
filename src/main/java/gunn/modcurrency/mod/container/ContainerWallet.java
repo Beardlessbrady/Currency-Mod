@@ -121,7 +121,7 @@ public class ContainerWallet extends Container implements INBTInventory {
                 ItemStack stack = super.slotClick(slotId, dragType, clickTypeIn, player);
                 writeInventoryTag(player.getHeldItemMainhand(), itemStackHandler);
                 checkmetadataOpen(player.getHeldItemMainhand());
-                return stack;
+                return super.slotClick(slotId,dragType,clickTypeIn,player);
             }
         }
         return ItemStack.EMPTY;

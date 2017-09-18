@@ -375,7 +375,7 @@ public class GuiGuide extends GuiScreen{
                 GL11.glTranslatef(guiLeft + 0.8F, guiTop + 0.8F, 0.8F);
                 GL11.glScalef(0.7F, 0.7F, 0.7F);
                 Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
-                drawTexturedModalRect(55, 28, 236, 55, 19,17);
+                drawTexturedModalRect(55, 28, 236, 37, 19,17);
                 GL11.glPopMatrix();
 
                 Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
@@ -529,7 +529,7 @@ public class GuiGuide extends GuiScreen{
                 GL11.glTranslatef(guiLeft + 0.8F, guiTop + 0.8F, 0.8F);
                 GL11.glScalef(0.7F, 0.7F, 0.7F);
                 Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
-                drawTexturedModalRect(55, 51, 236, 55, 19,17);
+                drawTexturedModalRect(55, 51, 236, 37, 19,17);
                 GL11.glPopMatrix();
 
                 Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);

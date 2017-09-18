@@ -138,38 +138,75 @@ public class ContainerVending extends Container implements INBTInventory{
     @Nullable
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-        if (clickTypeIn == ClickType.PICKUP_ALL || slotId == -999) return ItemStack.EMPTY;
+        //Allows drag clicking
+        if (slotId == -999) return super.slotClick(slotId, dragType, clickTypeIn, player);
+
+        //Ensures Pickup_All works without duplicating blocks
+        if (clickTypeIn == ClickType.PICKUP_ALL && slotId >= 0 && slotId <= PLAYER_TOTAL_COUNT) {
+            Slot slot = this.inventorySlots.get(slotId);
+            ItemStack itemstack1 = player.inventory.getItemStack();
+
+            if (!itemstack1.isEmpty() && (slot == null || !slot.getHasStack() || !slot.canTakeStack(player))) {
+                int i = dragType == 0 ? 0 : this.inventorySlots.size() - 1;
+                int j = dragType == 0 ? 1 : -1;
+
+                for (int k = 0; k < 2; ++k) {
+                    for (int l = i; l >= 0 && l <= PLAYER_TOTAL_COUNT && itemstack1.getCount() < itemstack1.getMaxStackSize(); l += j) {
+                        Slot slot1 = this.inventorySlots.get(l);
+
+                        if (slot1.getHasStack() && canAddItemToSlot(slot1, itemstack1, true) && slot1.canTakeStack(player) && this.canMergeSlot(itemstack1, slot1)) {
+                            ItemStack itemstack2 = slot1.getStack();
+
+                            if (k != 0 || itemstack2.getCount() != itemstack2.getMaxStackSize()) {
+                                int i1 = Math.min(itemstack1.getMaxStackSize() - itemstack1.getCount(), itemstack2.getCount());
+                                ItemStack itemstack3 = slot1.decrStackSize(i1);
+                                itemstack1.grow(i1);
+
+                                if (itemstack3.isEmpty()) {
+                                    slot1.putStack(ItemStack.EMPTY);
+                                }
+
+                                slot1.onTake(player, itemstack3);
+                            }
+                        }
+                    }
+                }
+            }
+            this.detectAndSendChanges();
+            return ItemStack.EMPTY;
+        } else if (clickTypeIn == ClickType.PICKUP_ALL && slotId > PLAYER_TOTAL_COUNT) {
+            return ItemStack.EMPTY;
+        }
+
         if (tile.getField(2) == 1) {               //EDIT MODE
-            if (slotId >= 0 && slotId <= 36) {  //Player Inv or Input Slot
-                return super.slotClick(slotId, dragType, clickTypeIn, player);
-            } else if (slotId >= 37 && slotId < (37 + TE_VEND_MAIN_TOTAL_COUNT) && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 0) {
-                tile.setField(3, slotId);
+            if (slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < (TE_VEND_FIRST_SLOT_INDEX+ TE_VEND_MAIN_TOTAL_COUNT) && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 0) {
                 if (getSlot(slotId).getHasStack()) {
                     tile.setSelectedName(getSlot(slotId).getStack().getDisplayName());
-                } else {
-                    tile.setSelectedName("No Item");
-                }
+                } else tile.setSelectedName("No Item");
                 tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
-                return ItemStack.EMPTY;
-            } else if (slotId >= 37 && slotId < (37 + TE_VEND_MAIN_TOTAL_COUNT) && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 1) {
-                return super.slotClick(slotId, 0, clickTypeIn, player);
-            } else if (slotId >= 37 && slotId < (37 + TE_VEND_MAIN_TOTAL_COUNT) && tile.getField(8) == 0) {
-
+                if (!(tile.getField(3) == slotId)) {
+                    tile.setField(3, slotId);
+                    return ItemStack.EMPTY;
+                }
+            } else if (slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < (TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT) && tile.getField(8) == 0) {
                 //If an item is a ghost and clicked on with an item
                 if (tile.isGhostSlot(slotId - PLAYER_TOTAL_COUNT - 1)) {
                     this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).getStackInSlot(slotId - PLAYER_TOTAL_COUNT).shrink(1);
                     tile.setGhostSlot(slotId - PLAYER_TOTAL_COUNT - 1, false);
                 }
-                return super.slotClick(slotId, dragType, clickTypeIn, player);
-            } else return super.slotClick(slotId, dragType, clickTypeIn, player);
+            }
+            return super.slotClick(slotId, dragType, clickTypeIn, player);
+
         } else {  //Sell Mode
-            if (slotId >= 0 && slotId <= 36) {           //Is Players Inv or Input Slot
+            if (slotId >= 0 && slotId <= PLAYER_TOTAL_COUNT) {           //Is Players Inv or Input Slot
                 return super.slotClick(slotId, dragType, clickTypeIn, player);
-            } else if (slotId >= 37 && slotId < (37 + TE_VEND_MAIN_TOTAL_COUNT)) {  //Is TE Inv
+            } else if (slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < (TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT)) {  //Is TE Inv
                 if (!tile.isGhostSlot(slotId - PLAYER_TOTAL_COUNT - 1)) {
                     if (clickTypeIn == ClickType.PICKUP && dragType == 0) {   //Left Click = 1 item
                         return checkAfford(slotId, 1, player);
                     } else if (clickTypeIn == ClickType.PICKUP && dragType == 1) {   //Right Click = 10 item
+
+
                         return checkAfford(slotId, 10, player);
                     } else if (clickTypeIn == ClickType.QUICK_MOVE) {
                         return checkAfford(slotId, 64, player);
