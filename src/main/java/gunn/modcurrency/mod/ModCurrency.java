@@ -23,7 +23,7 @@ public class ModCurrency {
     public static final String MODNAME = "Currency Mod";
     public static final String VERSION = "1.12-1.2.5";
 
-    @SidedProxy(clientSide = "gunn.modcurrency.mod.proxy.ClientProxy", serverSide = "gunn.modcurrency.mod.proxy.CommonProxy")
+    @SidedProxy(clientSide = "gunn.modcurrency.mod.proxy.ClientProxy", serverSide = "gunn.modcurrency.mod.proxy.ServerProxy")
     public static CommonProxy proxy;
 
     @Mod.Instance

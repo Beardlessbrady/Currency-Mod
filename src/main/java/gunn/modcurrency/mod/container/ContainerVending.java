@@ -349,7 +349,7 @@ public class ContainerVending extends Container implements INBTInventory {
     @Override
     public void detectAndSendChanges() {
         checkGhostStacks();
-        if (tile.getPlayerUsing() instanceof EntityPlayerMP) {
+        if(!tile.getWorld().isRemote && tile.getPlayerUsing() != null && PacketHandler.INSTANCE != null){
             PacketCheckGhostStacksToClient pack = new PacketCheckGhostStacksToClient();
             pack.setData(tile.getPos());
             PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) tile.getPlayerUsing());
