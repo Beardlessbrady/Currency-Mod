@@ -100,7 +100,7 @@ public class ContainerVending extends Container implements INBTInventory {
         final int TE_INV_XPOS = 44;
         int TE_INV_YPOS = 50;
 
-        if (tile.getField(7) == 1) {
+        if (tile.getField(tile.FIELD_TWOBLOCK) == 1) {
             TE_INV_YPOS = 32;
             TE_VEND_COLUMN_COUNT = 6;
             TE_VEND_MAIN_TOTAL_COUNT = TE_VEND_COLUMN_COUNT * TE_VEND_ROW_COUNT;
@@ -119,7 +119,7 @@ public class ContainerVending extends Container implements INBTInventory {
 
         //Buffer Slots
         int yshift = 0;
-        if (tile.getField(7) == 1) yshift = 8;
+        if (tile.getField(tile.FIELD_TWOBLOCK) == 1) yshift = 8;
 
         for (int i = 0; i < TE_BUFFER_COUNT; i++) {
             addSlotToContainer(new SlotCustomizable(itemHandler, TE_BUFFER_START + i, 13, 42 + yshift + i * SLOT_Y_SPACING, ModItems.itemBanknote));
@@ -130,9 +130,9 @@ public class ContainerVending extends Container implements INBTInventory {
     public void onContainerClosed(EntityPlayer playerIn) {
         checkGhostStacks();
         tile.voidPlayerUsing();
-        tile.setField(8, 0);
-        tile.setField(5, 0);
-        tile.setField(2, 0);
+        tile.setField(tile.FIELD_GEAREXT, 0);
+        tile.setField(tile.FIELD_CREATIVE, 0);
+        tile.setField(tile.FIELD_MODE, 0);
         tile.outInputSlot();
         super.onContainerClosed(playerIn);
     }
@@ -185,17 +185,17 @@ public class ContainerVending extends Container implements INBTInventory {
             return ItemStack.EMPTY;
         }
 
-        if (tile.getField(2) == 1) {               //EDIT MODE
-            if (slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < (TE_VEND_FIRST_SLOT_INDEX+ TE_VEND_MAIN_TOTAL_COUNT) && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 0) {
+        if (tile.getField(tile.FIELD_MODE) == 1) {               //EDIT MODE
+            if (slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < (TE_VEND_FIRST_SLOT_INDEX+ TE_VEND_MAIN_TOTAL_COUNT) && tile.getField(tile.FIELD_GEAREXT) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 0) {
                 if (getSlot(slotId).getHasStack()) {
                     tile.setSelectedName(getSlot(slotId).getStack().getDisplayName());
                 } else tile.setSelectedName("No Item");
                 tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
-                if (!(tile.getField(3) == slotId)) {
-                    tile.setField(3, slotId);
+                if (!(tile.getField(tile.FIELD_SELECTSLOT) == slotId)) {
+                    tile.setField(tile.FIELD_SELECTSLOT, slotId);
                     return ItemStack.EMPTY;
                 }
-            } else if (slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < (TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT) && tile.getField(8) == 0) {
+            } else if (slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < (TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT) && tile.getField(tile.FIELD_GEAREXT) == 0) {
                 //If an item is a ghost and clicked on with an item
                 if (tile.isGhostSlot(slotId - PLAYER_TOTAL_COUNT - 1)) {
                     this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).getStackInSlot(slotId - PLAYER_TOTAL_COUNT).shrink(1);
@@ -233,12 +233,12 @@ public class ContainerVending extends Container implements INBTInventory {
         ItemStack playBuyStack;
 
         boolean wallet = false;
-        int bank = tile.getField(0);
+        int bank = tile.getField(tile.FIELD_BANK);
 
         if (itemHandler.getStackInSlot(0) != ItemStack.EMPTY) {
             if (itemHandler.getStackInSlot(0).getItem() == ModItems.itemWallet) {
                 wallet = true;
-                bank = tile.getField(10);
+                bank = tile.getField(tile.FIELD_WALLETTOTAL);
             }
         }
         int cost = tile.getItemCost(slotId - PLAYER_TOTAL_COUNT - 1);
@@ -249,7 +249,7 @@ public class ContainerVending extends Container implements INBTInventory {
                     return ItemStack.EMPTY; //Checks if player is holding stack, if its different then one being clicked do nothing
                 }
             }
-            if (tile.getField(6) == 0)
+            if (tile.getField(tile.FIELD_INFINITE) == 0)
                 if (slotStack.getCount() < amnt && slotStack.getCount() != 0) amnt = slotStack.getCount();
 
             //If cant afford amount requested lowers amount till can afford or till amount is 1
@@ -260,7 +260,7 @@ public class ContainerVending extends Container implements INBTInventory {
             }
 
             if ((bank >= (cost * amnt))) {   //If has enough money, buy it
-                if (slotStack.getCount() >= amnt || tile.getField(6) == 1) {
+                if (slotStack.getCount() >= amnt || tile.getField(tile.FIELD_INFINITE) == 1) {
                     playBuyStack = slotStack.copy();
                     playBuyStack.setCount(amnt);
 
@@ -269,7 +269,7 @@ public class ContainerVending extends Container implements INBTInventory {
                     }
                     player.inventory.setItemStack(playBuyStack);
 
-                    if (tile.getField(6) == 0) {
+                    if (tile.getField(tile.FIELD_INFINITE) == 0) {
                         if (slotStack.getCount() - amnt == 0) {
                             tile.setGhostSlot(slotId - PLAYER_TOTAL_COUNT - 1, true);
                             slotStack.setCount(1);
@@ -279,9 +279,9 @@ public class ContainerVending extends Container implements INBTInventory {
                     if (wallet) {
                         sellToWallet(itemHandler.getStackInSlot(0), cost * amnt);
                     } else {
-                        tile.setField(0, bank - (cost * amnt));
+                        tile.setField(tile.FIELD_BANK, bank - (cost * amnt));
                     }
-                    tile.setField(4, tile.getField(4) + cost * amnt);
+                    tile.setField(tile.FIELD_PROFIT, tile.getField(tile.FIELD_PROFIT) + cost * amnt);
                 }
             } else {
                 System.out.println("CANT");
@@ -305,7 +305,7 @@ public class ContainerVending extends Container implements INBTInventory {
 
             if (index < PLAYER_TOTAL_COUNT) {        //Player Inventory Slots
                 if (inventorySlots.get(index).getStack().getItem() == ModItems.itemBanknote || inventorySlots.get(index).getStack().getItem() == ModItems.itemWallet) {
-                    if (tile.getField(2) == 0) {
+                    if (tile.getField(tile.FIELD_MODE) == 0) {
                         if (!this.mergeItemStack(copyStack, TE_MONEY_FIRST_SLOT_INDEX, TE_MONEY_FIRST_SLOT_INDEX + 1, false)) {
                             return ItemStack.EMPTY;
                         }
@@ -313,7 +313,7 @@ public class ContainerVending extends Container implements INBTInventory {
                         return ItemStack.EMPTY;
                     }
                 } else {
-                    if (tile.getField(2) == 1) {     //Only allow shift clicking from player inv in edit mode
+                    if (tile.getField(tile.FIELD_MODE) == 1) {     //Only allow shift clicking from player inv in edit mode
                         if (!this.mergeItemStack(copyStack, TE_VEND_FIRST_SLOT_INDEX, TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT, false)) {
                             return ItemStack.EMPTY;
                         }
@@ -322,7 +322,7 @@ public class ContainerVending extends Container implements INBTInventory {
                     }
                 }
             } else if (index == TE_MONEY_FIRST_SLOT_INDEX) {
-                if (tile.getField(2) == 0) {
+                if (tile.getField(tile.FIELD_MODE) == 0) {
                     if (index == 36) {
                         if (!this.mergeItemStack(copyStack, PLAYER_FIRST_SLOT_INDEX, PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT, false)) {
                             return ItemStack.EMPTY;
@@ -489,7 +489,7 @@ public class ContainerVending extends Container implements INBTInventory {
             }
 
             //Adds change to the bank variable in vendor
-            tile.setField(0, tile.getField(0) + change);
+            tile.setField(tile.FIELD_BANK, tile.getField(tile.FIELD_BANK) + change);
         }
 
         writeInventoryTag(wallet, itemHandler);

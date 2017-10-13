@@ -52,6 +52,19 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     private ItemStackHandler bufferStackHandler = new ItemStackHandler(BUFFER_SLOT_COUNT);
     private EntityPlayer playerUsing = null;
 
+    public byte FIELD_BANK = 0;
+    public byte FIELD_LOCKED = 1;
+    public byte FIELD_MODE = 2;
+    public byte FIELD_SELECTSLOT = 3;
+    public byte FIELD_PROFIT = 4;
+    public byte FIELD_CREATIVE = 5;
+    public byte FIELD_INFINITE = 6;
+    public byte FIELD_TWOBLOCK = 7;
+    public byte FIELD_GEAREXT = 8;
+    public byte FIELD_WALLETIN = 9;
+    public byte FIELD_WALLETTOTAL = 10;
+    public byte FIELD_OUTPUTBILL = 11;
+
     public TileVending() {
         bank = 0;
         profit = 0;
