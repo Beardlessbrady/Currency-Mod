@@ -152,10 +152,15 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                         markDirty();
                         //</editor-fold>
                     } else if (inputStackHandler.getStackInSlot(0).getItem() == ModItems.itemWallet) {      //Wallet
-                        walletIn = true;
                         walletTotal = getTotalCash();
+                        if (!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null) {
+                            PacketSetLongToClient pack = new PacketSetLongToClient();
+                            pack.setData(getPos(), DOUBLE_WALLETTOTAL, walletTotal);
+                            PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
+                        }
+
                     }
-                } else if (walletIn) walletIn = false;
+                }
 
             }
             //<editor-fold desc="Dealing with Buffer Slots">
@@ -190,6 +195,8 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
             }
             //</editor-fold>
         }
+
+        walletIn = (inputStackHandler.getStackInSlot(0).getItem() == ModItems.itemWallet);
     }
 
     //Drop Items
