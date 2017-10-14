@@ -74,10 +74,11 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
 
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        if (getTile(worldIn, pos).getPlayerUsing() == null) {
-            getTile(worldIn, pos).setField(5, playerIn.isCreative() ? 1 : 0);
+        TileExchanger tile = getTile(worldIn, pos);
+        if (tile.getPlayerUsing() == null) {
+            tile.setField(tile.FIELD_CREATIVE, playerIn.isCreative() ? 1 : 0);
             if (!worldIn.isRemote) {
-                getTile(worldIn, pos).openGui(playerIn, worldIn, pos);
+                tile.openGui(playerIn, worldIn, pos);
                 return true;
             }
         }
@@ -99,11 +100,11 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
                     ItemStackHandler inputStack = tile.getInputStackHandler();
                     ItemStackHandler vendStack = tile.getVendStackHandler();
                     ItemStackHandler buffStack = tile.getBufferStackHandler();
-                    int bank = tile.getField(0);
-                    int profit = tile.getField(4);
+                    int bank = tile.getField(tile.FIELD_BANK);
+                    int profit = tile.getField(tile.FIELD_CASHREG);
                     String owner = tile.getOwner();
-                    boolean locked = tile.getField(1) == 1;
-                    boolean infinite = tile.getField(6) == 1;
+                    boolean locked = tile.getField(tile.FIELD_LOCKED) == 1;
+                    boolean infinite = tile.getField(tile.FIELD_INFINITE) == 1;
                     int[] itemCosts = new int[tile.VEND_SLOT_COUNT];
                     for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = tile.getItemCost(i);
                     int[] itemAmounts = new int[tile.VEND_SLOT_COUNT];
@@ -117,15 +118,15 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
 
                     //Re adding important variables to below tile
                     tile = (TileExchanger) worldIn.getTileEntity(pos.down());
-                    tile.setField(7, 1);
+                    tile.setField(tile.FIELD_TWOBLOCK, 1);
                     tile.setInputStackHandler(inputStack);
                     tile.setVendStackHandler(vendStack);
                     tile.setBufferStackHandler(buffStack);
-                    tile.setField(0, bank);
-                    tile.setField(4, profit);
+                    tile.setField(tile.FIELD_BANK, bank);
+                    tile.setField(tile.FIELD_CASHREG, profit);
                     tile.setOwner(owner);
-                    tile.setField(1, locked ? 1 : 0);
-                    tile.setField(6, infinite ? 1 : 0);
+                    tile.setField(tile.FIELD_LOCKED, locked ? 1 : 0);
+                    tile.setField(tile.FIELD_INFINITE, infinite ? 1 : 0);
                     for (int i = 0; i < itemCosts.length; i++) tile.setItemCost(itemCosts[i], i);
                     for (int i = 0; i < itemAmounts.length; i++) tile.setItemAmount(itemAmounts[i], i);
                 }
@@ -143,22 +144,22 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
                 ItemStackHandler inputStack = tile.getInputStackHandler();
                 ItemStackHandler vendStack = tile.getVendStackHandler();
                 ItemStackHandler buffStack = tile.getBufferStackHandler();
-                int bank = tile.getField(0);
-                int profit = tile.getField(4);
+                int bank = tile.getField(tile.FIELD_BANK);
+                int profit = tile.getField(tile.FIELD_CASHREG);
                 String owner = tile.getOwner();
-                boolean locked = tile.getField(1) == 1;
-                boolean infinite = tile.getField(6) == 1;
+                boolean locked = tile.getField(tile.FIELD_LOCKED) == 1;
+                boolean infinite = tile.getField(tile.FIELD_INFINITE) == 1;
                 int[] itemCosts = new int[tile.VEND_SLOT_COUNT];
                 for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = tile.getItemCost(i);
                 int[] itemAmounts = new int[tile.VEND_SLOT_COUNT];
                 for (int i = 0; i < itemAmounts.length; i++) itemAmounts[i] = tile.getItemAmount(i);
 
                 worldIn.setBlockState(pos.down(), worldIn.getBlockState(pos.down()).withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.ONE));
-                ((TileExchanger) worldIn.getTileEntity(pos.down())).setField(7, 0);
+                ((TileExchanger) worldIn.getTileEntity(pos.down())).setField(tile.FIELD_TWOBLOCK, 0);
 
                 //Re adding important variables to below tile
                 tile = (TileExchanger) worldIn.getTileEntity(pos.down());
-                tile.setField(7, 0);
+                tile.setField(tile.FIELD_TWOBLOCK, 0);
                 tile.setInputStackHandler(inputStack);
 
                 System.out.println(vendStack.getStackInSlot(0));
@@ -170,11 +171,11 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
                 System.out.println(tile.getVendStackHandler().getStackInSlot(0));
 
                 tile.setBufferStackHandler(buffStack);
-                tile.setField(0, bank);
-                tile.setField(4, profit);
+                tile.setField(tile.FIELD_BANK, bank);
+                tile.setField(tile.FIELD_CASHREG, profit);
                 tile.setOwner(owner);
-                tile.setField(1, locked ? 1 : 0);
-                tile.setField(6, infinite ? 1 : 0);
+                tile.setField(tile.FIELD_LOCKED, locked ? 1 : 0);
+                tile.setField(tile.FIELD_INFINITE, infinite ? 1 : 0);
                 for (int i = 0; i < itemCosts.length; i++) tile.setItemCost(itemCosts[i], i);
                 for (int i = 0; i < itemAmounts.length; i++) tile.setItemAmount(itemAmounts[i], i);
             }
@@ -185,12 +186,12 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
         }
 
         if (state.getValue(StateHandler.TWOTALL) != StateHandler.EnumTwoBlock.TWOTOP) {
-            TileExchanger te = getTile(worldIn, pos);
-            te.setField(2, 1);
-            te.outChange();
-            te.setField(2, 0);
-            te.outChange();
-            te.dropItems();
+            TileExchanger tile = getTile(worldIn, pos);
+            tile.setField(tile.FIELD_MODE, 1);
+            tile.outChange();
+            tile.setField(tile.FIELD_MODE, 0);
+            tile.outChange();
+            tile.dropItems();
         }
         super.breakBlock(worldIn, pos, state);
     }

@@ -91,7 +91,7 @@ public class ContainerExchanger extends Container implements INBTInventory{
         final int TE_INV_XPOS = 44;
         int TE_INV_YPOS = 50;
 
-        if (tile.getField(7) == 1) {
+        if (tile.getField(tile.FIELD_TWOBLOCK) == 1) {
             TE_INV_YPOS = 32;
             TE_VEND_COLUMN_COUNT = 6;
             TE_VEND_MAIN_TOTAL_COUNT = TE_VEND_COLUMN_COUNT * TE_VEND_ROW_COUNT;
@@ -110,7 +110,7 @@ public class ContainerExchanger extends Container implements INBTInventory{
 
         //Buffer Slots
         int yshift = 0;
-        if (tile.getField(7) == 1) yshift = 8;
+        if (tile.getField(tile.FIELD_TWOBLOCK) == 1) yshift = 8;
 
         for (int i = 0; i < TE_BUFFER_COUNT; i++) {
             addSlotToContainer(new SlotItemHandler(itemHandler, TE_BUFFER_START + i, 13, 42 + yshift + i * SLOT_Y_SPACING));
@@ -120,9 +120,9 @@ public class ContainerExchanger extends Container implements INBTInventory{
     @Override
     public void onContainerClosed(EntityPlayer playerIn) {
         tile.voidPlayerUsing();
-        tile.setField(8, 0);
-        tile.setField(5, 0);
-        tile.setField(2, 0);
+        tile.setField(tile.FIELD_GEAREXT, 0);
+        tile.setField(tile.FIELD_CREATIVE, 0);
+        tile.setField(tile.FIELD_MODE, 0);
         tile.outInputSlot();
         super.onContainerClosed(playerIn);
     }
@@ -175,10 +175,10 @@ public class ContainerExchanger extends Container implements INBTInventory{
             return ItemStack.EMPTY;
         }
 
-        if (tile.getField(2) == 1) {      //EDIT MODE
+        if (tile.getField(tile.FIELD_MODE) == 1) {      //EDIT MODE
             if (slotId >= 0 && slotId <= PLAYER_TOTAL_COUNT) {
                 return super.slotClick(slotId, dragType, clickTypeIn, player);
-            } else if ((slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT && tile.getField(8) == 0)) {    //Vend Slots, normal Edit Mode
+            } else if ((slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT && tile.getField(tile.FIELD_GEAREXT) == 0)) {    //Vend Slots, normal Edit Mode
                 if (player.inventory.getItemStack() != ItemStack.EMPTY && inventorySlots.get(slotId).getStack() == ItemStack.EMPTY) { //Player hand FULL, Slot EMPTY. Put ghost stack here
                     ItemStack ghostStack = player.inventory.getItemStack().copy();
                     ghostStack.setCount(1);
@@ -187,8 +187,8 @@ public class ContainerExchanger extends Container implements INBTInventory{
                     this.inventorySlots.get(slotId).putStack(ItemStack.EMPTY);
                 }
                 return player.inventory.getItemStack();
-            } else if (slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT && tile.getField(8) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 0) {
-                tile.setField(3, slotId);
+            } else if (slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT && tile.getField(tile.FIELD_GEAREXT) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 0) {
+                tile.setField(tile.FIELD_SELECTSLOT, slotId);
                 if (getSlot(slotId).getHasStack()) {
                     tile.setSelectedName(getSlot(slotId).getStack().getDisplayName());
                 } else {
@@ -220,12 +220,12 @@ public class ContainerExchanger extends Container implements INBTInventory{
             sourceStack = copyStack.copy();
 
             if (index < PLAYER_TOTAL_COUNT) {        //Player Inventory Slots
-                if (tile.getField(2) == 0) {     //SELL MODE
+                if (tile.getField(tile.FIELD_MODE) == 0) {     //SELL MODE
                     if (!this.mergeItemStack(copyStack, TE_MONEY_FIRST_SLOT_INDEX, TE_MONEY_FIRST_SLOT_INDEX + 1, false)) {
                         return ItemStack.EMPTY;
                     }
                 } else {
-                    if (tile.getField(2) == 1) {
+                    if (tile.getField(tile.FIELD_MODE) == 1) {
                         if (inventorySlots.get(index).getStack().getItem() == ModItems.itemBanknote) {
                             if (!this.mergeItemStack(copyStack, TE_MONEY_FIRST_SLOT_INDEX, TE_MONEY_FIRST_SLOT_INDEX + 1, false)) {
                                 return ItemStack.EMPTY;
@@ -244,7 +244,7 @@ public class ContainerExchanger extends Container implements INBTInventory{
                     return ItemStack.EMPTY;
                 }
             } else if (index >= TE_BUFFER_FIRST_SLOT_INDEX && index < TE_BUFFER_FIRST_SLOT_INDEX + TE_BUFFER_COUNT){
-                if(tile.getField(2) == 1){
+                if(tile.getField(tile.FIELD_MODE) == 1){
                     if (!this.mergeItemStack(copyStack, 0, PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT, false)) {
                         return ItemStack.EMPTY;
                     }

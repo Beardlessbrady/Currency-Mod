@@ -54,6 +54,20 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     private ItemHandlerCustom automationInputStackHandler = new ItemHandlerCustom(1);
     private EntityPlayer playerUsing = null;
 
+    public final byte FIELD_BANK = 0;
+    public final byte FIELD_LOCKED = 1;
+    public final byte FIELD_MODE = 2;
+    public final byte FIELD_SELECTSLOT = 3;
+    public final byte FIELD_CASHREG = 4;
+    public final byte FIELD_CREATIVE = 5;
+    public final byte FIELD_INFINITE = 6;
+    public final byte FIELD_TWOBLOCK = 7;
+    public final byte FIELD_GEAREXT = 8;
+
+    // public final byte DOUBLE_BANK = 0;
+    //  public final byte DOUBLE_PROFIT = 1;
+    //  public final byte DOUBLE_WALLETTOTAL = 2;
+
     public TileExchanger() {
         bank = 0;
         cashRegister = 0;
