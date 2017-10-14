@@ -43,7 +43,8 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     public static final int VEND_SLOT_COUNT = 30;
     public static final int BUFFER_SLOT_COUNT = 4;
 
-    private int bank, profit, selectedSlot, walletTotal, outputBill;
+    private double bank, profit, walletTotal;
+    private int selectedSlot, outputBill;
     private String owner, selectedName;
     private boolean locked, mode, creative, infinite, gearExtended, walletIn, twoBlock;
     private int[] itemCosts = new int[VEND_SLOT_COUNT];
@@ -52,18 +53,22 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     private ItemStackHandler bufferStackHandler = new ItemStackHandler(BUFFER_SLOT_COUNT);
     private EntityPlayer playerUsing = null;
 
-    public byte FIELD_BANK = 0;
-    public byte FIELD_LOCKED = 1;
-    public byte FIELD_MODE = 2;
-    public byte FIELD_SELECTSLOT = 3;
-    public byte FIELD_PROFIT = 4;
-    public byte FIELD_CREATIVE = 5;
-    public byte FIELD_INFINITE = 6;
-    public byte FIELD_TWOBLOCK = 7;
-    public byte FIELD_GEAREXT = 8;
-    public byte FIELD_WALLETIN = 9;
-    public byte FIELD_WALLETTOTAL = 10;
-    public byte FIELD_OUTPUTBILL = 11;
+  //  public byte FIELD_BANK = 0;
+    public final byte FIELD_LOCKED = 1;
+    public final byte FIELD_MODE = 2;
+    public final byte FIELD_SELECTSLOT = 3;
+   // public byte FIELD_PROFIT = 4;
+   public final byte FIELD_CREATIVE = 5;
+    public final byte FIELD_INFINITE = 6;
+    public final byte FIELD_TWOBLOCK = 7;
+    public final byte FIELD_GEAREXT = 8;
+    public final byte FIELD_WALLETIN = 9;
+   // public byte FIELD_WALLETTOTAL = 10;
+   public final byte FIELD_OUTPUTBILL = 11;
+
+    public final byte DOUBLE_BANK = 0;
+    public final byte DOUBLE_PROFIT = 1;
+    public final byte DOUBLE_WALLETTOTAL = 2;
 
     public TileVending() {
         bank = 0;
@@ -255,8 +260,9 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     }
 
     public void outChange() {
-        int amount = bank;
-        if (mode) amount = profit;
+        //TODO Calculating as long until implement coins
+        long amount = (long)bank;
+        if (mode) amount = (long)profit;
 
         int[] out = new int[6];
 
@@ -364,9 +370,9 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         compound.setTag("item", vendStackHandler.serializeNBT());
         compound.setTag("buffer", bufferStackHandler.serializeNBT());
         compound.setTag("input", inputStackHandler.serializeNBT());
-        compound.setInteger("bank", bank);
-        compound.setInteger("profit", profit);
-        compound.setInteger("walletTotal", walletTotal);
+        compound.setDouble("bank", bank);
+        compound.setDouble("profit", profit);
+        compound.setDouble("walletTotal", walletTotal);
         compound.setInteger("output", outputBill);
         compound.setBoolean("locked", locked);
         compound.setBoolean("mode", mode);
@@ -422,9 +428,9 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound tag = new NBTTagCompound();
-        tag.setInteger("bank", bank);
-        tag.setInteger("profit", profit);
-        tag.setInteger("walletTotal", walletTotal);
+        tag.setDouble("bank", bank);
+        tag.setDouble("profit", profit);
+        tag.setDouble("walletTotal", walletTotal);
         tag.setInteger("output", outputBill);
         tag.setBoolean("locked", locked);
         tag.setBoolean("mode", mode);
@@ -489,75 +495,86 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
 
     //<editor-fold desc="Getter & Setter Methods---------------------------------------------------------------------------------------------">
     public int getFieldCount() {
-        return 12;
+        return 9;
     }
 
     public void setField(int id, int value) {
         switch (id) {
-            case 0:
-                bank = value;
-                break;
-            case 1:
+            case FIELD_LOCKED:
                 locked = (value == 1);
                 break;
-            case 2:
+            case FIELD_MODE:
                 mode = (value == 1);
                 break;
-            case 3:
+            case FIELD_SELECTSLOT:
                 selectedSlot = value;
                 break;
-            case 4:
-                profit = value;
-                break;
-            case 5:
+            case FIELD_CREATIVE:
                 creative = (value == 1);
                 break;
-            case 6:
+            case FIELD_INFINITE:
                 infinite = (value == 1);
                 break;
-            case 7:
+            case FIELD_TWOBLOCK:
                 twoBlock = (value == 1);
                 break;
-            case 8:
+            case FIELD_GEAREXT:
                 gearExtended = (value == 1);
                 break;
-            case 9:
+            case FIELD_WALLETIN:
                 walletIn = (value == 1);
                 break;
-            case 10:
-                walletTotal = value;
-                break;
-            case 11:
+            case FIELD_OUTPUTBILL:
                 outputBill = value;
         }
     }
 
     public int getField(int id) {
         switch (id) {
-            case 0:
-                return bank;
-            case 1:
+            case FIELD_LOCKED:
                 return (locked) ? 1 : 0;
-            case 2:
+            case FIELD_MODE:
                 return (mode) ? 1 : 0;
-            case 3:
+            case FIELD_SELECTSLOT:
                 return selectedSlot;
-            case 4:
-                return profit;
-            case 5:
+            case FIELD_CREATIVE:
                 return (creative) ? 1 : 0;
-            case 6:
+            case FIELD_INFINITE:
                 return (infinite) ? 1 : 0;
-            case 7:
+            case FIELD_TWOBLOCK:
                 return (twoBlock) ? 1 : 0;
-            case 8:
+            case FIELD_GEAREXT:
                 return (gearExtended) ? 1 : 0;
-            case 9:
+            case FIELD_WALLETIN:
                 return (walletIn) ? 1 : 0;
-            case 10:
-                return walletTotal;
-            case 11:
+            case FIELD_OUTPUTBILL:
                 return outputBill;
+        }
+        return -1;
+    }
+
+    public void setDouble(byte id, double value){
+        switch(id){
+            case DOUBLE_BANK:
+                bank = value;
+                break;
+            case DOUBLE_PROFIT:
+                profit = value;
+                break;
+            case DOUBLE_WALLETTOTAL:
+                walletTotal = value;
+                break;
+        }
+    }
+
+    public double getDouble(byte id){
+        switch(id){
+            case DOUBLE_BANK:
+                return bank;
+            case DOUBLE_PROFIT:
+                return profit;
+            case DOUBLE_WALLETTOTAL:
+                return walletTotal;
         }
         return -1;
     }
