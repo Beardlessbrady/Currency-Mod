@@ -6,9 +6,12 @@ import gunn.modcurrency.mod.container.itemhandler.ItemHandlerVendor;
 import gunn.modcurrency.mod.handler.StateHandler;
 import gunn.modcurrency.mod.item.ItemWallet;
 import gunn.modcurrency.mod.item.ModItems;
+import gunn.modcurrency.mod.network.PacketHandler;
+import gunn.modcurrency.mod.network.PacketSetLongToClient;
 import gunn.modcurrency.mod.utils.UtilMethods;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.SoundEvents;
@@ -26,7 +29,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
@@ -94,12 +96,23 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
             player.openGui(ModCurrency.instance, 30, world, pos.getX(), pos.down().getY(), pos.getZ());
         }else player.openGui(ModCurrency.instance, 30, world, pos.getX(), pos.getY(), pos.getZ());
         playerUsing = player;
+
+        if(!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null){
+            PacketSetLongToClient pack = new PacketSetLongToClient();
+            pack.setData(getPos(), DOUBLE_BANK, bank);
+            PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) player);
+
+            PacketSetLongToClient pack1 = new PacketSetLongToClient();
+            pack1.setData(getPos(), DOUBLE_PROFIT, profit);
+            PacketHandler.INSTANCE.sendTo(pack1, (EntityPlayerMP) player);
+
+        }
     }
 
     @Override
     public void update() {
-        if(playerUsing != null){
-            if (!world.isRemote) {
+        if (!world.isRemote) {
+            if (playerUsing != null) {
                 if (inputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
                     if (inputStackHandler.getStackInSlot(0).getItem() == ModItems.itemBanknote) {
                         //<editor-fold desc="Dealing with a Banknote">
@@ -130,6 +143,12 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                         amount = amount * inputStackHandler.getStackInSlot(0).getCount();
                         inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
                         bank = bank + amount;
+
+                        if (!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null) {
+                            PacketSetLongToClient pack = new PacketSetLongToClient();
+                            pack.setData(getPos(), DOUBLE_BANK, bank);
+                            PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
+                        }
                         markDirty();
                         //</editor-fold>
                     } else if (inputStackHandler.getStackInSlot(0).getItem() == ModItems.itemWallet) {      //Wallet
@@ -138,29 +157,38 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                     }
                 } else if (walletIn) walletIn = false;
 
-                //<editor-fold desc="Dealing with Buffer Slots">
-                    if (locked) {
-                        int outputAmnt = getCashConversion(outputBill);
-                        outLoop:
-                        if(profit >= outputAmnt) {
-                            for (int i = 0; i < bufferStackHandler.getSlots(); i++) {
-                                if (bufferStackHandler.getStackInSlot(i).isEmpty()){
-                                    //Insert new stack
-                                    bufferStackHandler.setStackInSlot(i, new ItemStack(ModItems.itemBanknote, 1, outputBill));
-                                    profit = profit - outputAmnt;
-                                    break outLoop;
-                                }else if (UtilMethods.equalStacks(bufferStackHandler.getStackInSlot(i), new ItemStack(ModItems.itemBanknote,1,outputBill)) && bufferStackHandler.getStackInSlot(i).getCount() < bufferStackHandler.getStackInSlot(i).getMaxStackSize()){
-                                    //Grow Stack
-                                    bufferStackHandler.getStackInSlot(i).grow(1);
-                                    profit = profit - outputAmnt;
-                                    break outLoop;
-                                }
+            }
+            //<editor-fold desc="Dealing with Buffer Slots">
+            if (locked) {
+                int outputAmnt = getCashConversion(outputBill);
+                outLoop:
+                if (profit >= outputAmnt) {
+                    for (int i = 0; i < bufferStackHandler.getSlots(); i++) {
+                        if (bufferStackHandler.getStackInSlot(i).isEmpty()) {
+                            //Insert new stack
+                            bufferStackHandler.setStackInSlot(i, new ItemStack(ModItems.itemBanknote, 1, outputBill));
+                            profit = profit - outputAmnt;
+                            if (!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null) {
+                                PacketSetLongToClient pack = new PacketSetLongToClient();
+                                pack.setData(getPos(), DOUBLE_PROFIT, profit);
+                                PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
                             }
-                            //JAM and no hopper
+                            break outLoop;
+                        } else if (UtilMethods.equalStacks(bufferStackHandler.getStackInSlot(i), new ItemStack(ModItems.itemBanknote, 1, outputBill)) && bufferStackHandler.getStackInSlot(i).getCount() < bufferStackHandler.getStackInSlot(i).getMaxStackSize()) {
+                            //Grow Stack
+                            bufferStackHandler.getStackInSlot(i).grow(1);
+                            profit = profit - outputAmnt;
+                            if (!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null) {
+                                PacketSetLongToClient pack = new PacketSetLongToClient();
+                                pack.setData(getPos(), DOUBLE_PROFIT, profit);
+                                PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
+                            }
+                            break outLoop;
                         }
                     }
-                //</editor-fold>
+                }
             }
+            //</editor-fold>
         }
     }
 
@@ -292,8 +320,18 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
 
                     if (mode) {
                         profit = 0;
+                        if(!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null){
+                            PacketSetLongToClient pack = new PacketSetLongToClient();
+                            pack.setData(getPos(), DOUBLE_PROFIT, 0);
+                            PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
+                        }
                     } else {
                         bank = 0;
+                        if(!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null){
+                            PacketSetLongToClient pack = new PacketSetLongToClient();
+                            pack.setData(getPos(), DOUBLE_BANK, 0);
+                            PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
+                        }
                     }
 
                     boolean playerInGui= false;
@@ -398,9 +436,9 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         if (compound.hasKey("item")) vendStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("item"));
         if (compound.hasKey("buffer")) bufferStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("buffer"));
         if (compound.hasKey("input")) inputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("input"));
-        if (compound.hasKey("bank")) bank = compound.getInteger("bank");
-        if (compound.hasKey("profit")) profit = compound.getInteger("profit");
-        if (compound.hasKey("walletTotal")) walletTotal = compound.getInteger("walletTotal");
+        if (compound.hasKey("bank")) bank = compound.getDouble("bank");
+        if (compound.hasKey("profit")) profit = compound.getDouble("profit");
+        if (compound.hasKey("walletTotal")) walletTotal = compound.getDouble("walletTotal");
         if (compound.hasKey("output")) outputBill = compound.getInteger("output");
         if (compound.hasKey("locked")) locked = compound.getBoolean("locked");
         if (compound.hasKey("mode")) mode = compound.getBoolean("mode");
@@ -453,10 +491,10 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         super.onDataPacket(net, pkt);
-        bank = pkt.getNbtCompound().getInteger("bank");
-        profit = pkt.getNbtCompound().getInteger("profit");
+        bank = pkt.getNbtCompound().getDouble("bank");
+        profit = pkt.getNbtCompound().getDouble("profit");
         outputBill = pkt.getNbtCompound().getInteger("output");
-        walletTotal = pkt.getNbtCompound().getInteger("walletTotal");
+        walletTotal = pkt.getNbtCompound().getDouble("walletTotal");
         locked = pkt.getNbtCompound().getBoolean("locked");
         mode = pkt.getNbtCompound().getBoolean("mode");
         creative = pkt.getNbtCompound().getBoolean("creative");
@@ -564,6 +602,11 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
             case DOUBLE_WALLETTOTAL:
                 walletTotal = value;
                 break;
+        }
+        if(!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null){
+            PacketSetLongToClient pack = new PacketSetLongToClient();
+            pack.setData(getPos(), DOUBLE_WALLETTOTAL, walletTotal);
+            PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
         }
     }
 

@@ -233,12 +233,12 @@ public class ContainerVending extends Container implements INBTInventory {
         ItemStack playBuyStack;
 
         boolean wallet = false;
-        int bank = tile.getField(tile.FIELD_BANK);
+        double bank = tile.getDouble(tile.DOUBLE_BANK);
 
         if (itemHandler.getStackInSlot(0) != ItemStack.EMPTY) {
             if (itemHandler.getStackInSlot(0).getItem() == ModItems.itemWallet) {
                 wallet = true;
-                bank = tile.getField(tile.FIELD_WALLETTOTAL);
+                bank = tile.getDouble(tile.DOUBLE_WALLETTOTAL);
             }
         }
         int cost = tile.getItemCost(slotId - PLAYER_TOTAL_COUNT - 1);
@@ -279,9 +279,9 @@ public class ContainerVending extends Container implements INBTInventory {
                     if (wallet) {
                         sellToWallet(itemHandler.getStackInSlot(0), cost * amnt);
                     } else {
-                        tile.setField(tile.FIELD_BANK, bank - (cost * amnt));
+                        tile.setDouble(tile.DOUBLE_BANK, bank - (cost * amnt));
                     }
-                    tile.setField(tile.FIELD_PROFIT, tile.getField(tile.FIELD_PROFIT) + cost * amnt);
+                    tile.setDouble(tile.DOUBLE_PROFIT, tile.getField(tile.DOUBLE_PROFIT) + cost * amnt);
                 }
             } else {
                 System.out.println("CANT");
@@ -489,7 +489,7 @@ public class ContainerVending extends Container implements INBTInventory {
             }
 
             //Adds change to the bank variable in vendor
-            tile.setField(tile.FIELD_BANK, tile.getField(tile.FIELD_BANK) + change);
+            tile.setDouble(tile.DOUBLE_BANK, tile.getField(tile.DOUBLE_BANK) + change);
         }
 
         writeInventoryTag(wallet, itemHandler);
