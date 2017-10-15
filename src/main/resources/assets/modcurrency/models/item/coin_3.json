@@ -1,7 +1,7 @@
 {
   "parent": "builtin/generated",
   "textures": {
-    "layer0": "modcurrency:items/dollarbill16/16_dollarone"
+    "layer0": "modcurrency:items/coin/coin_3"
   },
   "display": {
     "thirdperson_righthand": {
@@ -88,6 +88,11 @@
         0.60,
         0.20
       ]
+    },
+    "fixed": {
+      "rotation": [0, -180, 0],
+      "translation": [ 0.00, -2.50, 0.00 ],
+      "scale": [ 1.00, 1.00, 1.00 ]
     },
     "fixed": {
       "rotation": [0, -180, 0],

@@ -16,12 +16,14 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  */
 public class ModItems {
     public static ItemBanknote itemBanknote = new ItemBanknote();
+    public static ItemCoin itemCoin = new ItemCoin();
     public static ItemWallet itemWallet = new ItemWallet();
     public static ItemGuideBook itemGuide = new ItemGuideBook();
 
     @SubscribeEvent
     public void registerItems(RegistryEvent.Register<Item> event){
         event.getRegistry().register(itemBanknote);
+        event.getRegistry().register(itemCoin);
         event.getRegistry().register(itemGuide);
         if(ModConfig.enableWallet) event.getRegistry().register(itemWallet);
     }
@@ -30,6 +32,7 @@ public class ModItems {
     @SubscribeEvent
     public void registerModels(ModelRegistryEvent event){
         itemBanknote.initModel();
+        itemCoin.initModel();
         itemGuide.initModel();
         if(ModConfig.enableWallet) itemWallet.initModel();
     }
