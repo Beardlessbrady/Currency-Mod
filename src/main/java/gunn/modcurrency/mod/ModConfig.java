@@ -72,7 +72,7 @@ public class ModConfig {
         dropATM = cfg.getBoolean("Drop ATM when broken", CATEGORY_GENERAL, dropATM, "This changes if the ATM will drop itself when broken or not");
         invincibleVendSell = cfg.getBoolean("Invincible Machine", CATEGORY_GENERAL, invincibleVendSell, "Enabling this makes it so only the player who placed the machine can break it");
         walletSize = cfg.getInt("Wallet Size", CATEGORY_GENERAL, walletSize, 0, 4, "This changes how many rows of inventory slot there are in the wallet");
-        textureType = cfg.getInt("Item Textures", CATEGORY_GENERAL, textureType, 0, 2,"Default=0, 16x16=1, Foolcraft=2");
+        textureType = cfg.getInt("Item Textures", CATEGORY_GENERAL, textureType, 0, 1,"Default=0, Foolcraft=1");
 
     }
 }

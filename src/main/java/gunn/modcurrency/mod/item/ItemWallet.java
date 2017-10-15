@@ -4,7 +4,6 @@ import gunn.modcurrency.mod.ModConfig;
 import gunn.modcurrency.mod.ModCurrency;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
@@ -12,7 +11,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
-import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
@@ -37,26 +35,11 @@ public class ItemWallet extends Item{
     }
 
     @SideOnly(Side.CLIENT)
-    public void initModel(){
-        switch (ModConfig.textureType){
-            default:
-            case 0:
-                for (int i = 0; i < walletLength; i++) {
-                    ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName() + "_" + i, "inventory"));
-                }
-                break;
-            case 1:
-                for (int i = 0; i < walletLength; i++) {
-                    if(i == 2) {
-                        ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName() + "16" + "_" + 2, "inventory"));
-                    }else if(i == 3) {
-                        ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName() + "16" + "_" + 3, "inventory"));
-                    }else {
-                        ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName() + "16" + "_" + i, "inventory"));
-                    }
-                }
-                break;
+    public void initModel() {
+        for (int i = 0; i < walletLength; i++) {
+            ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName() + "_" + i, "inventory"));
         }
+
     }
 
     public void openGui(EntityPlayer player, World world, BlockPos pos) {

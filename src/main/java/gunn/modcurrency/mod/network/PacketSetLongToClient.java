@@ -1,5 +1,6 @@
 package gunn.modcurrency.mod.network;
 
+import gunn.modcurrency.mod.tileentity.TileExchanger;
 import gunn.modcurrency.mod.tileentity.TileVending;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -60,6 +61,7 @@ public class PacketSetLongToClient implements IMessage {
             final WorldClient worldClient = Minecraft.getMinecraft().world;
 
             if(worldClient.getTileEntity(message.blockPos) instanceof TileVending)((TileVending) worldClient.getTileEntity(message.blockPos)).setDouble(message.field, message.data);
+            if(worldClient.getTileEntity(message.blockPos) instanceof TileExchanger)((TileExchanger) worldClient.getTileEntity(message.blockPos)).setDouble(message.field, message.data);
         }
     }
 

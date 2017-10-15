@@ -612,7 +612,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         }
         if(!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null){
             PacketSetLongToClient pack = new PacketSetLongToClient();
-            pack.setData(getPos(), DOUBLE_WALLETTOTAL, walletTotal);
+            pack.setData(getPos(), id, value);
             PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
         }
     }

@@ -100,8 +100,8 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
                     ItemStackHandler inputStack = tile.getInputStackHandler();
                     ItemStackHandler vendStack = tile.getVendStackHandler();
                     ItemStackHandler buffStack = tile.getBufferStackHandler();
-                    int bank = tile.getField(tile.FIELD_BANK);
-                    int profit = tile.getField(tile.FIELD_CASHREG);
+                    double bank = tile.getDouble(tile.DOUBLE_BANK);
+                    double profit = tile.getDouble(tile.DOUBLE_CASHREG);
                     String owner = tile.getOwner();
                     boolean locked = tile.getField(tile.FIELD_LOCKED) == 1;
                     boolean infinite = tile.getField(tile.FIELD_INFINITE) == 1;
@@ -122,8 +122,8 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
                     tile.setInputStackHandler(inputStack);
                     tile.setVendStackHandler(vendStack);
                     tile.setBufferStackHandler(buffStack);
-                    tile.setField(tile.FIELD_BANK, bank);
-                    tile.setField(tile.FIELD_CASHREG, profit);
+                    tile.setDouble(tile.DOUBLE_BANK, bank);
+                    tile.setDouble(tile.DOUBLE_CASHREG, profit);
                     tile.setOwner(owner);
                     tile.setField(tile.FIELD_LOCKED, locked ? 1 : 0);
                     tile.setField(tile.FIELD_INFINITE, infinite ? 1 : 0);
@@ -144,8 +144,8 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
                 ItemStackHandler inputStack = tile.getInputStackHandler();
                 ItemStackHandler vendStack = tile.getVendStackHandler();
                 ItemStackHandler buffStack = tile.getBufferStackHandler();
-                int bank = tile.getField(tile.FIELD_BANK);
-                int profit = tile.getField(tile.FIELD_CASHREG);
+                double bank = tile.getDouble(tile.DOUBLE_BANK);
+                double profit = tile.getDouble(tile.DOUBLE_CASHREG);
                 String owner = tile.getOwner();
                 boolean locked = tile.getField(tile.FIELD_LOCKED) == 1;
                 boolean infinite = tile.getField(tile.FIELD_INFINITE) == 1;
@@ -171,8 +171,8 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
                 System.out.println(tile.getVendStackHandler().getStackInSlot(0));
 
                 tile.setBufferStackHandler(buffStack);
-                tile.setField(tile.FIELD_BANK, bank);
-                tile.setField(tile.FIELD_CASHREG, profit);
+                tile.setDouble(tile.DOUBLE_BANK, bank);
+                tile.setDouble(tile.DOUBLE_CASHREG, profit);
                 tile.setOwner(owner);
                 tile.setField(tile.FIELD_LOCKED, locked ? 1 : 0);
                 tile.setField(tile.FIELD_INFINITE, infinite ? 1 : 0);

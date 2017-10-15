@@ -248,9 +248,9 @@ public class GuiExchanger extends GuiContainer {
         fontRenderer.drawString(I18n.format("Exchange Machine"), 5, 6, Color.darkGray.getRGB());
         fontRenderer.drawString(I18n.format("tile.modcurrency:gui.playerinventory"), 4, 142, Color.darkGray.getRGB());
         if (tile.getField(tile.FIELD_MODE) == 1){
-            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.funds") + ": $" + Integer.toString(tile.getField(tile.FIELD_CASHREG)), 5, 15, Color.darkGray.getRGB());
+            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.funds") + ": $" + Double.toString(tile.getDouble(tile.DOUBLE_CASHREG)), 5, 15, Color.darkGray.getRGB());
         }else{
-            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.cash") + ": $" + tile.getField(tile.FIELD_BANK), 5, 15, Color.darkGray.getRGB());
+            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.cash") + ": $" + tile.getDouble(tile.DOUBLE_BANK), 5, 15, Color.darkGray.getRGB());
         }
 
         if (tile.getField(tile.FIELD_GEAREXT) == 1) {

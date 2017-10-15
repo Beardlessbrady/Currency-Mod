@@ -39,11 +39,6 @@ public class ItemBanknote extends Item {
                 break;
             case 1:
                 for (int i = 0; i < noteLength; i++) {
-                    ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName() + "16" + "_" + i, "inventory"));
-                }
-                break;
-            case 2:
-                for (int i = 0; i < noteLength; i++) {
                     ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName() + "fool" + "_" + i, "inventory"));
                 }
                 break;
