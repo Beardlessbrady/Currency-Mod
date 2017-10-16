@@ -5,6 +5,12 @@ item.modcurrency:banknote_2.name=Ten-Dollar Bill
 item.modcurrency:banknote_3.name=Twenty-Dollar Bill
 item.modcurrency:banknote_4.name=Fifty-Dollar Bill
 item.modcurrency:banknote_5.name=One Hundred-Dollar Bill
+item.modcurrency:coin_0.name=One-Cent
+item.modcurrency:coin_1.name=Five-Cents
+item.modcurrency:coin_2.name=Ten-Cents
+item.modcurrency:coin_3.name=Twenty Five-Cents
+item.modcurrency:coin_4.name=One-Dollar Coin
+item.modcurrency:coin_5.name=Two-Dollar Coin
 item.modcurrency:wallet.name=Wallet
 item.modcurrency:guidebook.name=Currency for Blockheads
 
