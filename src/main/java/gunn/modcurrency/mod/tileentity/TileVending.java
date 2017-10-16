@@ -55,18 +55,15 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     private ItemStackHandler bufferStackHandler = new ItemStackHandler(BUFFER_SLOT_COUNT);
     private EntityPlayer playerUsing = null;
 
-  //  public byte FIELD_BANK = 0;
     public final byte FIELD_LOCKED = 1;
     public final byte FIELD_MODE = 2;
     public final byte FIELD_SELECTSLOT = 3;
-   // public byte FIELD_PROFIT = 4;
-   public final byte FIELD_CREATIVE = 5;
+    public final byte FIELD_CREATIVE = 5;
     public final byte FIELD_INFINITE = 6;
     public final byte FIELD_TWOBLOCK = 7;
     public final byte FIELD_GEAREXT = 8;
     public final byte FIELD_WALLETIN = 9;
-   // public byte FIELD_WALLETTOTAL = 10;
-   public final byte FIELD_OUTPUTBILL = 11;
+    public final byte FIELD_OUTPUTBILL = 11;
 
     public final byte DOUBLE_BANK = 0;
     public final byte DOUBLE_PROFIT = 1;
@@ -115,7 +112,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
             if (playerUsing != null) {
                 if (inputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
                     if (inputStackHandler.getStackInSlot(0).getItem() == ModItems.itemBanknote) {
-                        //<editor-fold desc="Dealing with a Banknote">
+                        //<editor-fold desc="Banknote Update">
                         int amount;
                         switch (inputStackHandler.getStackInSlot(0).getItemDamage()) {
                             case 0:
@@ -151,13 +148,51 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                         }
                         markDirty();
                         //</editor-fold>
-                    } else if (inputStackHandler.getStackInSlot(0).getItem() == ModItems.itemWallet) {      //Wallet
+                    } else if(inputStackHandler.getStackInSlot(0).getItem() == ModItems.itemCoin){
+                        double amount;
+                        switch(inputStackHandler.getStackInSlot(0).getItemDamage()) {
+                            case 0:
+                                amount = 0.01;
+                                break;
+                            case 1:
+                                amount = 0.05;
+                                break;
+                            case 2:
+                                amount = 0.10;
+                                break;
+                            case 3:
+                                amount = 0.25;
+                                break;
+                            case 4:
+                                amount = 1;
+                                break;
+                            case 5:
+                                amount = 2;
+                                break;
+                            default:
+                                amount = -1;
+                                break;
+                        }
+                        amount = amount * inputStackHandler.getStackInSlot(0).getCount();
+                        inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
+                        bank = bank + amount;
+                        if (!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null) {
+                            PacketSetLongToClient pack = new PacketSetLongToClient();
+                            pack.setData(getPos(), DOUBLE_BANK, bank);
+                            PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
+                        }
+                        markDirty();
+
+                    } else if (inputStackHandler.getStackInSlot(0).getItem() == ModItems.itemWallet) {
+
+                        //<editor-fold desc="Wallet Up">
                         walletTotal = getTotalCash();
                         if (!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null) {
                             PacketSetLongToClient pack = new PacketSetLongToClient();
                             pack.setData(getPos(), DOUBLE_WALLETTOTAL, walletTotal);
                             PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
                         }
+                        //</editor-fold>
 
                     }
                 }
@@ -295,9 +330,8 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     }
 
     public void outChange() {
-        //TODO Calculating as long until implement coins
         long amount = (long)bank;
-        if (mode) amount = (long)profit;
+        double change = bank - amount;
 
         int[] out = new int[6];
 

@@ -27,6 +27,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -242,7 +243,8 @@ public class GuiVending extends GuiContainer {
         if (tile.getField(tile.FIELD_MODE) == 1){
             fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.profit") + ": $" + Double.toString(tile.getDouble(tile.DOUBLE_PROFIT)), 5, 15, Color.darkGray.getRGB());
         }else{
-            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.cash") + ": $" + tile.getDouble(tile.DOUBLE_BANK), 5, 15, Color.darkGray.getRGB());
+            DecimalFormat df = new DecimalFormat("0.00");
+            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.cash") + ": $" + df.format(tile.getDouble(tile.DOUBLE_BANK)), 5, 15, Color.darkGray.getRGB());
         }
 
         if (tile.getField(tile.FIELD_GEAREXT) == 1) {

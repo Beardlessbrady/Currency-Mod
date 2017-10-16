@@ -54,13 +54,14 @@ public class ContainerVending extends Container implements INBTInventory {
     public final int TE_VEND_FIRST_SLOT_INDEX = TE_MONEY_FIRST_SLOT_INDEX + 1;
     public int TE_BUFFER_FIRST_SLOT_INDEX = TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT;
 
-    private Item[] specialSlotItems = new Item[2];
+    private Item[] specialSlotItems = new Item[3];
     private TileVending tile;
     private int[] cachedFields;
 
     public ContainerVending(InventoryPlayer invPlayer, TileVending te) {
         specialSlotItems[0] = ModItems.itemBanknote;
-        specialSlotItems[1] = ModItems.itemWallet;
+        specialSlotItems[1] = ModItems.itemCoin;
+        specialSlotItems[2] = ModItems.itemWallet;
 
         tile = te;
         setupPlayerInv(invPlayer);
@@ -304,7 +305,7 @@ public class ContainerVending extends Container implements INBTInventory {
             sourceStack = copyStack.copy();
 
             if (index < PLAYER_TOTAL_COUNT) {        //Player Inventory Slots
-                if (inventorySlots.get(index).getStack().getItem() == ModItems.itemBanknote || inventorySlots.get(index).getStack().getItem() == ModItems.itemWallet) {
+                if (inventorySlots.get(index).getStack().getItem() == ModItems.itemBanknote || inventorySlots.get(index).getStack().getItem() == ModItems.itemWallet || inventorySlots.get(index).getStack().getItem() == ModItems.itemCoin) {
                     if (tile.getField(tile.FIELD_MODE) == 0) {
                         if (!this.mergeItemStack(copyStack, TE_MONEY_FIRST_SLOT_INDEX, TE_MONEY_FIRST_SLOT_INDEX + 1, false)) {
                             return ItemStack.EMPTY;
