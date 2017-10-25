@@ -21,12 +21,12 @@ import net.minecraftforge.items.IItemHandler;
  */
 public class PacketSetLongToClient implements IMessage {
     private BlockPos blockPos;
-    private double data;
+    private long data;
     private byte field;
 
     public PacketSetLongToClient(){}
 
-    public void setData(BlockPos pos, byte id, double data) {
+    public void setData(BlockPos pos, byte id, long data) {
         this.blockPos = pos;
         this.field = id;
         this.data = data;
@@ -37,7 +37,7 @@ public class PacketSetLongToClient implements IMessage {
     public void fromBytes(ByteBuf buf) {
         blockPos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
         field = buf.readByte();
-        data = buf.readDouble();
+        data = buf.readLong();
     }
 
     @Override
@@ -46,7 +46,7 @@ public class PacketSetLongToClient implements IMessage {
         buf.writeInt(blockPos.getY());
         buf.writeInt(blockPos.getZ());
         buf.writeByte(field);
-        buf.writeDouble(data);
+        buf.writeLong(data);
     }
 
     public static class Handler implements IMessageHandler<PacketSetLongToClient, IMessage> {
@@ -60,8 +60,8 @@ public class PacketSetLongToClient implements IMessage {
         private void handle(PacketSetLongToClient message, MessageContext ctx){
             final WorldClient worldClient = Minecraft.getMinecraft().world;
 
-            if(worldClient.getTileEntity(message.blockPos) instanceof TileVending)((TileVending) worldClient.getTileEntity(message.blockPos)).setDouble(message.field, message.data);
-            if(worldClient.getTileEntity(message.blockPos) instanceof TileExchanger)((TileExchanger) worldClient.getTileEntity(message.blockPos)).setDouble(message.field, message.data);
+            if(worldClient.getTileEntity(message.blockPos) instanceof TileVending)((TileVending) worldClient.getTileEntity(message.blockPos)).setLong(message.field, message.data);
+            if(worldClient.getTileEntity(message.blockPos) instanceof TileExchanger)((TileExchanger) worldClient.getTileEntity(message.blockPos)).setLong(message.field, message.data);
         }
     }
 

@@ -46,7 +46,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     public static final int VEND_SLOT_COUNT = 30;
     public static final int BUFFER_SLOT_COUNT = 4;
 
-    private double bank, cashRegister;
+    private long bank, cashRegister;
     private int selectedSlot;
     private String owner, selectedName;
     private boolean locked, mode, creative, infinite, gearExtended, twoBlock;
@@ -68,8 +68,8 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     public final byte FIELD_TWOBLOCK = 7;
     public final byte FIELD_GEAREXT = 8;
 
-    public final byte DOUBLE_BANK = 0;
-    public final byte DOUBLE_CASHREG = 1;
+    public final byte LONG_BANK = 0;
+    public final byte LONG_CASHREG = 1;
 
     public TileExchanger() {
         bank = 0;
@@ -135,7 +135,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
 
                         if(!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null){
                             PacketSetLongToClient pack = new PacketSetLongToClient();
-                            pack.setData(getPos(), DOUBLE_CASHREG, cashRegister);
+                            pack.setData(getPos(), LONG_CASHREG, cashRegister);
                             PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
                         }
                     }
@@ -174,7 +174,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
 
                                         if(!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null){
                                             PacketSetLongToClient pack = new PacketSetLongToClient();
-                                            pack.setData(getPos(), DOUBLE_BANK, bank);
+                                            pack.setData(getPos(), LONG_BANK, bank);
                                             PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
                                         }
                                         if (!infinite) {
@@ -182,7 +182,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
 
                                             if(!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null){
                                                 PacketSetLongToClient pack = new PacketSetLongToClient();
-                                                pack.setData(getPos(), DOUBLE_CASHREG, cashRegister);
+                                                pack.setData(getPos(), LONG_CASHREG, cashRegister);
                                                 PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
                                             }
                                             if (bufferStackHandler.getStackInSlot(buffSlot) != ItemStack.EMPTY)
@@ -243,7 +243,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
 
                             if(!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null){
                                 PacketSetLongToClient pack = new PacketSetLongToClient();
-                                pack.setData(getPos(), DOUBLE_CASHREG, cashRegister);
+                                pack.setData(getPos(), LONG_CASHREG, cashRegister);
                                 PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
                             }
                         }
@@ -305,7 +305,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
 
                         if(!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null){
                             PacketSetLongToClient pack = new PacketSetLongToClient();
-                            pack.setData(getPos(), DOUBLE_CASHREG, cashRegister);
+                            pack.setData(getPos(), LONG_CASHREG, cashRegister);
                             PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
                         }
                     }else {
@@ -313,7 +313,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
 
                         if(!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null){
                             PacketSetLongToClient pack = new PacketSetLongToClient();
-                            pack.setData(getPos(), DOUBLE_BANK, bank);
+                            pack.setData(getPos(), LONG_BANK, bank);
                             PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
                         }
                     }
@@ -393,8 +393,8 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         compound.setTag("buffer", bufferStackHandler.serializeNBT());
         compound.setTag("input", inputStackHandler.serializeNBT());
         compound.setTag("autoInput", automationInputStackHandler.serializeNBT());
-        compound.setDouble("bank", bank);
-        compound.setDouble("cashRegister", cashRegister);
+        compound.setLong("bank", bank);
+        compound.setLong("cashRegister", cashRegister);
         compound.setBoolean("locked", locked);
         compound.setBoolean("mode", mode);
         compound.setBoolean("creative", creative);
@@ -424,8 +424,8 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         if (compound.hasKey("buffer")) bufferStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("buffer"));
         if (compound.hasKey("input")) inputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("input"));
         if (compound.hasKey("autoInput")) automationInputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("autoInput"));
-        if (compound.hasKey("bank")) bank = compound.getDouble("bank");
-        if (compound.hasKey("cashRegister")) cashRegister = compound.getDouble("cashRegister");
+        if (compound.hasKey("bank")) bank = compound.getLong("bank");
+        if (compound.hasKey("cashRegister")) cashRegister = compound.getLong("cashRegister");
         if (compound.hasKey("locked")) locked = compound.getBoolean("locked");
         if (compound.hasKey("mode")) mode = compound.getBoolean("mode");
         if (compound.hasKey("creative")) creative = compound.getBoolean("creative");
@@ -456,8 +456,8 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound tag = new NBTTagCompound();
-        tag.setDouble("bank", bank);
-        tag.setDouble("cashRegister", cashRegister);
+        tag.setLong("bank", bank);
+        tag.setLong("cashRegister", cashRegister);
         tag.setBoolean("locked", locked);
         tag.setBoolean("mode", mode);
         tag.setBoolean("creative", creative);
@@ -482,8 +482,8 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         super.onDataPacket(net, pkt);
-        bank = pkt.getNbtCompound().getDouble("bank");
-        cashRegister = pkt.getNbtCompound().getDouble("cashRegister");
+        bank = pkt.getNbtCompound().getLong("bank");
+        cashRegister = pkt.getNbtCompound().getLong("cashRegister");
         locked = pkt.getNbtCompound().getBoolean("locked");
         mode = pkt.getNbtCompound().getBoolean("mode");
         creative = pkt.getNbtCompound().getBoolean("creative");
@@ -573,12 +573,12 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         return -1;
     }
 
-    public void setDouble(byte id, Double value){
+    public void setLong(byte id, long value){
         switch(id){
-            case DOUBLE_BANK:
+            case LONG_BANK:
                 bank = value;
                 break;
-            case DOUBLE_CASHREG:
+            case LONG_CASHREG:
                 cashRegister = value;
                 break;
         }
@@ -589,11 +589,11 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         }
     }
 
-    public double getDouble(int id){
+    public long getLong(int id){
         switch(id){
-            case DOUBLE_BANK:
+            case LONG_BANK:
                 return bank;
-            case DOUBLE_CASHREG:
+            case LONG_CASHREG:
                 return cashRegister;
         }
         return -1;

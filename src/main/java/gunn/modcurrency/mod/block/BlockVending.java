@@ -105,8 +105,8 @@ public class BlockVending extends Block implements ITileEntityProvider {
                     ItemStackHandler inputStack = tile.getInputStackHandler();
                     ItemHandlerVendor vendStack = tile.getVendStackHandler();
                     ItemStackHandler buffStack = tile.getBufferStackHandler();
-                    double bank = tile.getField(tile.DOUBLE_BANK);
-                    double profit = tile.getField(tile.DOUBLE_PROFIT);
+                    long bank = tile.getField(tile.LONG_BANK);
+                    long profit = tile.getField(tile.LONG_PROFIT);
                     String owner = tile.getOwner();
                     boolean locked = tile.getField(tile.FIELD_LOCKED) == 1;
                     boolean infinite = tile.getField(tile.FIELD_INFINITE) == 1;
@@ -125,8 +125,8 @@ public class BlockVending extends Block implements ITileEntityProvider {
                     tile.setInputStackHandler(inputStack);
                     tile.setVendStackHandler(vendStack);
                     tile.setBufferStackHandler(buffStack);
-                    tile.setDouble(tile.DOUBLE_BANK, bank);
-                    tile.setDouble(tile.DOUBLE_PROFIT, profit);
+                    tile.setLong(tile.LONG_BANK, bank);
+                    tile.setLong(tile.LONG_PROFIT, profit);
                     tile.setOwner(owner);
                     tile.setField(tile.FIELD_LOCKED, locked ? 1 : 0);
                     tile.setField(tile.FIELD_INFINITE, infinite ? 1 : 0);
@@ -146,8 +146,8 @@ public class BlockVending extends Block implements ITileEntityProvider {
                 ItemStackHandler inputStack = tile.getInputStackHandler();
                 ItemHandlerVendor vendStack = tile.getVendStackHandler();
                 ItemStackHandler buffStack = tile.getBufferStackHandler();
-                double bank = tile.getDouble(tile.DOUBLE_BANK);
-                double profit = tile.getDouble(tile.DOUBLE_PROFIT);
+                long bank = tile.getLong(tile.LONG_BANK);
+                long profit = tile.getLong(tile.LONG_PROFIT);
                 String owner = tile.getOwner();
                 boolean locked = tile.getField(tile.FIELD_LOCKED) == 1;
                 boolean infinite = tile.getField(tile.FIELD_INFINITE) == 1;
@@ -163,8 +163,8 @@ public class BlockVending extends Block implements ITileEntityProvider {
                 tile.setInputStackHandler(inputStack);
                 tile.setVendStackHandler(vendStack);
                 tile.setBufferStackHandler(buffStack);
-                tile.setDouble(tile.DOUBLE_BANK, bank);
-                tile.setDouble(tile.DOUBLE_PROFIT, profit);
+                tile.setLong(tile.LONG_BANK, bank);
+                tile.setLong(tile.LONG_PROFIT, profit);
                 tile.setOwner(owner);
                 tile.setField(tile.FIELD_LOCKED, locked ? 1 : 0);
                 tile.setField(tile.FIELD_INFINITE, infinite ? 1 : 0);

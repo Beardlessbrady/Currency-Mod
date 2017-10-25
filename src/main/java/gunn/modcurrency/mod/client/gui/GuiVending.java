@@ -241,10 +241,9 @@ public class GuiVending extends GuiContainer {
         fontRenderer.drawString(I18n.format("tile.modcurrency:blockvending.name"), 5, 6, Color.darkGray.getRGB());
         fontRenderer.drawString(I18n.format("tile.modcurrency:gui.playerinventory"), 4, 142, Color.darkGray.getRGB());
         if (tile.getField(tile.FIELD_MODE) == 1){
-            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.profit") + ": $" + Double.toString(tile.getDouble(tile.DOUBLE_PROFIT)), 5, 15, Color.darkGray.getRGB());
+            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.profit") + ": $" + tile.getLong(tile.LONG_PROFIT), 5, 15, Color.darkGray.getRGB());
         }else{
-            DecimalFormat df = new DecimalFormat("0.00");
-            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.cash") + ": $" + df.format(tile.getDouble(tile.DOUBLE_BANK)), 5, 15, Color.darkGray.getRGB());
+            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.cash") + ": $" + tile.getLong(tile.LONG_BANK), 5, 15, Color.darkGray.getRGB());
         }
 
         if (tile.getField(tile.FIELD_GEAREXT) == 1) {
@@ -265,7 +264,7 @@ public class GuiVending extends GuiContainer {
             fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.infinitestock"), -85, 92 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY(), Integer.parseInt("fff200", 16));
         }
 
-        if (tile.getField(tile.FIELD_WALLETIN) == 1) fontRenderer.drawString(I18n.format("Wallet") + ": $" + tile.getDouble(tile.DOUBLE_WALLETTOTAL), 5, 23, Integer.parseInt("3abd0c", 16));
+        if (tile.getField(tile.FIELD_WALLETIN) == 1) fontRenderer.drawString(I18n.format("Wallet") + ": $" + tile.getLong(tile.LONG_WALLETTOTAL), 5, 23, Integer.parseInt("3abd0c", 16));
     }
 
     private void drawIcons() {
