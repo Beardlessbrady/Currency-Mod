@@ -98,8 +98,23 @@ public class GuiVending extends GuiContainer {
     }
 
     private void setCost() {
-      /*  if (this.priceField.getText().length() > 0) {
-            int newCost = Integer.valueOf(this.priceField.getText());
+        if (this.priceField.getText().length() > 0) {
+            int newCost = 0;
+
+            if(priceField.getText().contains(".")){
+                if(priceField.getText().lastIndexOf(".") +1 != priceField.getText().length()) {
+                    if (priceField.getText().lastIndexOf(".") + 2 == priceField.getText().length()) {
+                        newCost = Integer.valueOf(this.priceField.getText().substring(priceField.getText().lastIndexOf(".") + 1) + "0");
+                    }else{
+                        newCost = Integer.valueOf(this.priceField.getText().substring(priceField.getText().lastIndexOf(".") + 1));
+                    }
+                }
+
+                if(priceField.getText().lastIndexOf(".") != 0)
+                newCost +=  Integer.valueOf(this.priceField.getText().substring(0, priceField.getText().lastIndexOf("."))) * 100;
+            }else{
+                newCost = Integer.valueOf(this.priceField.getText()) * 100;
+            }
 
             tile.setItemCost(newCost);
             PacketSetItemCostToServer pack = new PacketSetItemCostToServer();
@@ -107,8 +122,7 @@ public class GuiVending extends GuiContainer {
             PacketHandler.INSTANCE.sendToServer(pack);
 
             tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
-            updateTextField();
-        }*/
+        }
     }
 
     @Override
@@ -118,7 +132,27 @@ public class GuiVending extends GuiContainer {
     }
 
     private void updateTextField() {
-        this.priceField.setText(String.valueOf(tile.getItemCost(tile.getField(tile.FIELD_SELECTSLOT) - 37)));
+        String price = String.valueOf(tile.getItemCost(tile.getField(tile.FIELD_SELECTSLOT) - 37));
+
+        switch(price.length()) {
+            case 1:
+                if (price.equals("0")) {
+                    this.priceField.setText(price);
+                } else {
+                    this.priceField.setText("." + price);
+                }
+                break;
+            case 2:
+                this.priceField.setText("." + price);
+                break;
+            default:
+                if (price.substring(price.length() - 2, price.length()).equals("00")) {
+                    this.priceField.setText(price.substring(0, price.length() - 2));
+                } else {
+                    this.priceField.setText(price.substring(0, price.length() - 2) + "." + (price.substring(price.length() - 2, price.length())));
+                }
+                break;
+        }
     }
 
     @Override
