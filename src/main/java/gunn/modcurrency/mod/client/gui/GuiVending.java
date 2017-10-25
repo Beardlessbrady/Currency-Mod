@@ -82,7 +82,7 @@ public class GuiVending extends GuiContainer {
         this.buttonList.add(new TabButton("Gear", GEAR_ID, i - 20, 22 + ((TabButton) this.buttonList.get(LOCK_ID)).getButtonY(), 0, 0, 20, 21, 0,"", TAB_TEXTURE));
         this.buttonList.add(new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton) this.buttonList.get(GEAR_ID)).getButtonY(), 0, 44, 20, 21, 0,"", TAB_TEXTURE));
 
-        this.priceField = new GuiTextField(0, fontRenderer, i - 50, j + 90, 45, 10);        //Setting Costs
+        this.priceField = new GuiTextField(0, fontRenderer, i - 50, j + 90, 45 + 40, 10);        //Setting Costs
         this.priceField.setTextColor(Integer.parseInt("0099ff", 16));
         this.priceField.setEnableBackgroundDrawing(false);
         this.priceField.setMaxStringLength(7);
@@ -98,7 +98,7 @@ public class GuiVending extends GuiContainer {
     }
 
     private void setCost() {
-        if (this.priceField.getText().length() > 0) {
+      /*  if (this.priceField.getText().length() > 0) {
             int newCost = Integer.valueOf(this.priceField.getText());
 
             tile.setItemCost(newCost);
@@ -108,7 +108,7 @@ public class GuiVending extends GuiContainer {
 
             tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
             updateTextField();
-        }
+        }*/
     }
 
     @Override
@@ -412,8 +412,14 @@ public class GuiVending extends GuiContainer {
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         int numChar = Character.getNumericValue(typedChar);
-        if ((tile.getField(tile.FIELD_MODE) == 1) && ((numChar >= 0 && numChar <= 9) || (keyCode == 14) || keyCode == 211 || (keyCode == 203) || (keyCode == 205))) { //Ensures keys input are only numbers or backspace type keys
-            if (this.priceField.textboxKeyTyped(typedChar, keyCode)) setCost();
+        if ((tile.getField(tile.FIELD_MODE) == 1) && ((numChar >= 0 && numChar <= 9) || (keyCode == 14) || keyCode == 211 || (keyCode == 203) || (keyCode == 205) || (keyCode == 52))) { //Ensures keys input are only numbers or backspace type keys
+          if((keyCode == 52 && !priceField.getText().contains(".")) || keyCode != 52) {
+              if (this.priceField.textboxKeyTyped(typedChar, keyCode)) setCost();
+          }
+
+          if(priceField.getText().length() > 0) if(priceField.getText().substring(priceField.getText().length()-1).equals(".") ) priceField.setMaxStringLength(priceField.getText().length() + 2);
+          if(!priceField.getText().contains(".")) priceField.setMaxStringLength(7);
+
         } else {
             super.keyTyped(typedChar, keyCode);
         }
