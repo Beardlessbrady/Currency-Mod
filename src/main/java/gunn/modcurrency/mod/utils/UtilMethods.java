@@ -17,4 +17,20 @@ public final class UtilMethods {
         }
         return basic && ench;
     }
+
+    public static String translateMoney(long amount){
+       String amnt = Long.toString(amount);
+       String finalTranslation;
+
+
+        if(amnt.length() >2){   //At least one dollar
+            finalTranslation = amnt.substring(0, amnt.length()-2) + "." + amnt.substring(amnt.length()-2, amnt.length());
+        }else if(amnt.equals("0")) {
+            finalTranslation = amnt;
+        }else{
+            finalTranslation = "0." + amnt;
+        }
+
+        return finalTranslation;
+    }
 }

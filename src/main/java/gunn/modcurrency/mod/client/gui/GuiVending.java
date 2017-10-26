@@ -2,10 +2,13 @@ package gunn.modcurrency.mod.client.gui;
 
 import gunn.modcurrency.mod.client.gui.util.TabButton;
 import gunn.modcurrency.mod.container.ContainerVending;
-import gunn.modcurrency.mod.container.slot.SlotCustomizable;
 import gunn.modcurrency.mod.item.ModItems;
-import gunn.modcurrency.mod.network.*;
+import gunn.modcurrency.mod.network.PacketHandler;
+import gunn.modcurrency.mod.network.PacketItemSpawnToServer;
+import gunn.modcurrency.mod.network.PacketSetFieldToServer;
+import gunn.modcurrency.mod.network.PacketSetItemCostToServer;
 import gunn.modcurrency.mod.tileentity.TileVending;
+import gunn.modcurrency.mod.utils.UtilMethods;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -17,20 +20,13 @@ import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntityHopper;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
-import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Distributed with the Currency-Mod for Minecraft
@@ -112,6 +108,7 @@ public class GuiVending extends GuiContainer {
 
                 if(priceField.getText().lastIndexOf(".") != 0)
                 newCost +=  Integer.valueOf(this.priceField.getText().substring(0, priceField.getText().lastIndexOf("."))) * 100;
+
             }else{
                 newCost = Integer.valueOf(this.priceField.getText()) * 100;
             }
@@ -275,9 +272,9 @@ public class GuiVending extends GuiContainer {
         fontRenderer.drawString(I18n.format("tile.modcurrency:blockvending.name"), 5, 6, Color.darkGray.getRGB());
         fontRenderer.drawString(I18n.format("tile.modcurrency:gui.playerinventory"), 4, 142, Color.darkGray.getRGB());
         if (tile.getField(tile.FIELD_MODE) == 1){
-            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.profit") + ": $" + tile.getLong(tile.LONG_PROFIT), 5, 15, Color.darkGray.getRGB());
+            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.profit") + ": $" + UtilMethods.translateMoney(tile.getLong(tile.LONG_PROFIT)), 5, 15, Color.darkGray.getRGB());
         }else{
-            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.cash") + ": $" + tile.getLong(tile.LONG_BANK), 5, 15, Color.darkGray.getRGB());
+            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.cash") + ": $" + UtilMethods.translateMoney(tile.getLong(tile.LONG_BANK)), 5, 15, Color.darkGray.getRGB());
         }
 
         if (tile.getField(tile.FIELD_GEAREXT) == 1) {
@@ -395,15 +392,15 @@ public class GuiVending extends GuiContainer {
 
             if(tile.getField(tile.FIELD_MODE) == 0){
                 if(!tile.canAfford(slot)){
-                    list.add(TextFormatting.RED + "Price: $" + (String.valueOf(tile.getItemCost(slot))));
+                    list.add(TextFormatting.RED + "Price: $" + UtilMethods.translateMoney(tile.getItemCost(slot)));
                 }else{
-                    list.add(TextFormatting.GREEN + "Price: $" + (String.valueOf(tile.getItemCost(slot))));
+                    list.add(TextFormatting.GREEN + "Price: $" + UtilMethods.translateMoney(tile.getItemCost(slot)));
                 }
                 if(tile.isGhostSlot(slot)) {
                     list.add(TextFormatting.RED + "OUT OF STOCK");
                 }
             }else{
-                list.add("$" + (String.valueOf(tile.getItemCost(slot))));
+                list.add("Price: $" + UtilMethods.translateMoney(tile.getItemCost(slot)));
             }
 
             //Color text normally

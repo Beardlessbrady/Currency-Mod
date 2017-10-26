@@ -31,7 +31,6 @@ tile.modcurrency:guivending.amount=Amount:
 tile.modcurrency:guivending.cash=Cash
 tile.modcurrency:guivending.infinitestock=Infinite Stock
 tile.modcurrency:guivending.locktab=Lock Tab
-tile.modcurrency:guivending.bufferjam=Output slot is filled, put a hopper under the machine!
 
 //ATM Gui Stuff
 tile.modcurrency:guiatm.feesettings=ATM Settings
