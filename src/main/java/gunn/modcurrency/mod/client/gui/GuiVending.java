@@ -246,7 +246,11 @@ public class GuiVending extends GuiContainer {
                 }
 
                 //Render Output Button Icon
-                this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemBanknote,1, tile.getField(tile.FIELD_OUTPUTBILL)), 13, 115 + (yShift * tile.getField(tile.FIELD_TWOBLOCK)));
+                if(tile.getField(tile.FIELD_OUTPUTBILL) <= 5){
+                    this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemCoin,1, tile.getField(tile.FIELD_OUTPUTBILL)), 13, 114 + (yShift * tile.getField(tile.FIELD_TWOBLOCK)));
+                }else{
+                    this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemBanknote,1, tile.getField(tile.FIELD_OUTPUTBILL) - 5), 13, 115 + (yShift * tile.getField(tile.FIELD_TWOBLOCK)));
+                }
 
             }else{  //In SELL mode
                 this.buttonList.get(LOCK_ID).visible = false;
@@ -501,7 +505,7 @@ public class GuiVending extends GuiContainer {
                 break;
             case OUTPUTBUTTON_ID: //Output Button
                 int out = tile.getField(tile.FIELD_OUTPUTBILL);
-                if(out < 5) {
+                if(out < 10) {
                     out++;
                 }else out = 0;
 

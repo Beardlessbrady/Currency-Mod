@@ -201,36 +201,64 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
             //<editor-fold desc="Dealing with Buffer Slots">
             if (locked) {
                 int outputAmnt = getCashConversion(outputBill);
-                outLoop:
                 if (profit >= outputAmnt) {
-                    for (int i = 0; i < bufferStackHandler.getSlots(); i++) {
-                        if (bufferStackHandler.getStackInSlot(i).isEmpty()) {
-                            //Insert new stack
-                            bufferStackHandler.setStackInSlot(i, new ItemStack(ModItems.itemBanknote, 1, outputBill));
-                            profit = profit - outputAmnt;
-                            if (!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null) {
-                                PacketSetLongToClient pack = new PacketSetLongToClient();
-                                pack.setData(getPos(), LONG_PROFIT, profit);
-                                PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
+                    if (outputBill >= 0 && outputBill <= 5) {   //OUTPUT COIN
+                        outLoop:
+                        for (int i = 0; i < bufferStackHandler.getSlots(); i++) {
+                            if (bufferStackHandler.getStackInSlot(i).isEmpty()) {
+                                //Insert new stack
+
+                                bufferStackHandler.setStackInSlot(i, new ItemStack(ModItems.itemCoin, 1, outputBill));
+                                profit = profit - outputAmnt;
+                                if (!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null) {
+                                    PacketSetLongToClient pack = new PacketSetLongToClient();
+                                    pack.setData(getPos(), LONG_PROFIT, profit);
+                                    PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
+                                }
+                                break outLoop;
+                            } else if (UtilMethods.equalStacks(bufferStackHandler.getStackInSlot(i), new ItemStack(ModItems.itemCoin, 1, outputBill)) && bufferStackHandler.getStackInSlot(i).getCount() < bufferStackHandler.getStackInSlot(i).getMaxStackSize()) {
+                                //Grow Stack
+                                bufferStackHandler.getStackInSlot(i).grow(1);
+                                profit = profit - outputAmnt;
+                                if (!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null) {
+                                    PacketSetLongToClient pack = new PacketSetLongToClient();
+                                    pack.setData(getPos(), LONG_PROFIT, profit);
+                                    PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
+                                }
+                                break outLoop;
                             }
-                            break outLoop;
-                        } else if (UtilMethods.equalStacks(bufferStackHandler.getStackInSlot(i), new ItemStack(ModItems.itemBanknote, 1, outputBill)) && bufferStackHandler.getStackInSlot(i).getCount() < bufferStackHandler.getStackInSlot(i).getMaxStackSize()) {
-                            //Grow Stack
-                            bufferStackHandler.getStackInSlot(i).grow(1);
-                            profit = profit - outputAmnt;
-                            if (!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null) {
-                                PacketSetLongToClient pack = new PacketSetLongToClient();
-                                pack.setData(getPos(), LONG_PROFIT, profit);
-                                PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
+                        }
+                    } else {        //OUTPUT DOLLAR BILL
+                        outLoop:
+                        for (int i = 0; i < bufferStackHandler.getSlots(); i++) {
+                            if (bufferStackHandler.getStackInSlot(i).isEmpty()) {
+                                //Insert new stack
+
+                                bufferStackHandler.setStackInSlot(i, new ItemStack(ModItems.itemBanknote, 1, outputBill - 5));
+                                profit = profit - outputAmnt;
+                                if (!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null) {
+                                    PacketSetLongToClient pack = new PacketSetLongToClient();
+                                    pack.setData(getPos(), LONG_PROFIT, profit);
+                                    PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
+                                }
+                                break outLoop;
+                            } else if (UtilMethods.equalStacks(bufferStackHandler.getStackInSlot(i), new ItemStack(ModItems.itemBanknote, 1, outputBill - 5)) && bufferStackHandler.getStackInSlot(i).getCount() < bufferStackHandler.getStackInSlot(i).getMaxStackSize()) {
+                                //Grow Stack
+                                bufferStackHandler.getStackInSlot(i).grow(1);
+                                profit = profit - outputAmnt;
+                                if (!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null) {
+                                    PacketSetLongToClient pack = new PacketSetLongToClient();
+                                    pack.setData(getPos(), LONG_PROFIT, profit);
+                                    PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
+                                }
+                                break outLoop;
                             }
-                            break outLoop;
                         }
                     }
                 }
             }
-            //</editor-fold>
         }
-
+        //</editor-fold>
         walletIn = (inputStackHandler.getStackInSlot(0).getItem() == ModItems.itemWallet);
     }
 
@@ -272,14 +300,20 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     }
 
     //<editor-fold desc="Money Methods-------------------------------------------------------------------------------------------------------">
+    //TODO
     public int getCashConversion(int meta){
         switch(meta){
             case 0: return 1;
             case 1: return 5;
             case 2: return 10;
-            case 3: return 20;
-            case 4: return 50;
-            case 5: return 100;
+            case 3: return 25;
+            case 4: return 100;
+            case 5: return 200;
+            case 6: return 500;
+            case 7: return 1000;
+            case 8: return 2000;
+            case 9: return 5000;
+            case 10: return 10000;
         }
         return -1;
     }

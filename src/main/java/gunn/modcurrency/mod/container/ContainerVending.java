@@ -282,10 +282,11 @@ public class ContainerVending extends Container implements INBTInventory {
                     } else {
                         tile.setLong(tile.LONG_BANK, bank - (cost * amnt));
                     }
-                    tile.setLong(tile.LONG_PROFIT, tile.getField(tile.LONG_PROFIT) + cost * amnt);
+
+                    System.out.println(tile.getLong(tile.LONG_PROFIT) + cost * amnt);
+                    tile.setLong(tile.LONG_PROFIT, tile.getLong(tile.LONG_PROFIT) + cost * amnt);
                 }
             } else {
-                System.out.println("CANT");
                 tile.unsucessfulNoise();
             }
             return slotStack;
