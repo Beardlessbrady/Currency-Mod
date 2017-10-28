@@ -300,7 +300,6 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     }
 
     //<editor-fold desc="Money Methods-------------------------------------------------------------------------------------------------------">
-    //TODO
     public int getCashConversion(int meta){
         switch(meta){
             case 0: return 1;
@@ -364,51 +363,67 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     }
 
     public void outChange() {
-        long amount = (long)bank;
-        double change = bank - amount;
+        long amount = bank;
+        if (mode) amount = profit;
 
-        int[] out = new int[6];
+        int[] dollarOut = new int[6];
+        dollarOut[5] = Math.round(amount / 10000);
+        amount = amount - (dollarOut[5] * 10000);
 
-        out[5] = Math.round(amount / 100);
-        amount = amount - (out[5] * 100);
+        dollarOut[4] = Math.round(amount / 5000);
+        amount = amount - (dollarOut[4] * 5000);
 
-        out[4] = Math.round(amount / 50);
-        amount = amount - (out[4] * 50);
+        dollarOut[3] = Math.round(amount / 2000);
+        amount = amount - (dollarOut[3] * 2000);
 
-        out[3] = Math.round(amount / 20);
-        amount = amount - (out[3] * 20);
+        dollarOut[2] = Math.round(amount / 1000);
+        amount = amount - (dollarOut[2] * 1000);
 
-        out[2] = Math.round(amount / 10);
-        amount = amount - (out[2] * 10);
+        dollarOut[1] = Math.round(amount / 500);
+        amount = amount - (dollarOut[1] * 500);
 
-        out[1] = Math.round(amount / 5);
-        amount = amount - (out[1] * 5);
+        dollarOut[0] = 0;
 
-        out[0] = Math.round(amount);
+        int[] coinOut = new int[6];
+        coinOut[5] = Math.round(amount / 200);
+        amount = amount - (coinOut[5] * 200);
+
+        coinOut[4] = Math.round(amount / 100);
+        amount = amount - (coinOut[4] * 100);
+
+        coinOut[3] = Math.round(amount / 25);
+        amount = amount - (coinOut[3] * 25);
+
+        coinOut[2] = Math.round(amount / 10);
+        amount = amount - (coinOut[2] * 10);
+
+        coinOut[1] = Math.round(amount / 5);
+        amount = amount - (coinOut[1] * 5);
+
+        coinOut[0] = Math.round(amount);
 
         if (!world.isRemote) {
-            for (int i = 0; i < out.length; i++) {
-                if (out[i] != 0) {
-                    ItemStack item = new ItemStack(ModItems.itemBanknote);
+            for(int i = 0; i < dollarOut.length + coinOut.length; i++){
+                ItemStack item;
+
+                if(i < dollarOut.length){
+                    item = new ItemStack(ModItems.itemBanknote);
                     item.setItemDamage(i);
-                    item.setCount(out[i]);
+                    item.setCount(dollarOut[i]);
+                }else{
+                    item = new ItemStack(ModItems.itemCoin);
+                    item.setItemDamage(i - dollarOut.length);
+                    item.setCount(coinOut[i - dollarOut.length]);
+                }
 
-                    if (mode) {
-                        profit = 0;
-                        if(!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null){
-                            PacketSetLongToClient pack = new PacketSetLongToClient();
-                            pack.setData(getPos(), LONG_PROFIT, 0);
-                            PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
-                        }
-                    } else {
-                        bank = 0;
-                        if(!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null){
-                            PacketSetLongToClient pack = new PacketSetLongToClient();
-                            pack.setData(getPos(), LONG_BANK, 0);
-                            PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
-                        }
-                    }
+                boolean check = false;
+                if(i < dollarOut.length){
+                    check = dollarOut[i] != 0;
+                }else{
+                    check = coinOut[i - dollarOut.length] != 0;
+                }
 
+                if(check){
                     boolean playerInGui= false;
                     if (playerUsing != null) playerInGui = true;
 
@@ -444,8 +459,25 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                     }
                 }
             }
+
+            if (mode) {
+                profit = 0;
+                if(!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null){
+                    PacketSetLongToClient pack = new PacketSetLongToClient();
+                    pack.setData(getPos(), LONG_PROFIT, 0);
+                    PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
+                }
+            } else {
+                bank = 0;
+                if(!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null){
+                    PacketSetLongToClient pack = new PacketSetLongToClient();
+                    pack.setData(getPos(), LONG_BANK, 0);
+                    PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
+                }
+            }
         }
     }
+
 
     public void outInputSlot(){
         if (inputStackHandler.getStackInSlot(0).getItem() != Item.getItemFromBlock(Blocks.AIR)) {
