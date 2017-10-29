@@ -430,32 +430,27 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
 
                     if (playerInGui) {
                         InventoryPlayer inventoryPlayer = playerUsing.inventory;
-                        if (inventoryPlayer.getFirstEmptyStack() != -1) {     //If Players Inventory has room
-                            inventoryPlayer.setInventorySlotContents(inventoryPlayer.getFirstEmptyStack(), item);
-                        } else {
-                            playerInGui = false;
-                        }
-                    }
+                        boolean placed = false;
 
-                    if (!playerInGui) {       //If no room, spawn
-                        int x = getPos().getX();
-                        int z = getPos().getZ();
-
-                        switch (this.getBlockMetadata()) {
-                            case 0:
-                                z = z - 2; //North
-                                break;
-                            case 1:
-                                x = x + 2; //East
-                                break;
-                            case 2:
-                                z = z + 2; //South
-                                break;
-                            case 3:
-                                x = x - 2;//West
-                                break;
+                        //Looks for item in inventory before putting in a empty slot
+                        searchLoop:
+                        for(int j = 0; j < 36; j++){
+                            if(UtilMethods.equalStacks(item, inventoryPlayer.getStackInSlot(j))){
+                                if(inventoryPlayer.getStackInSlot(j).getCount() + item.getCount() <= inventoryPlayer.getStackInSlot(j).getMaxStackSize()){
+                                    inventoryPlayer.getStackInSlot(j).setCount(inventoryPlayer.getStackInSlot(j).getCount() + item.getCount());
+                                    placed = true;
+                                    break searchLoop;
+                                }
+                            }
                         }
-                        world.spawnEntity(new EntityItem(world, x, getPos().up().getY(), z, item));
+
+                        if(!placed){
+                            if (inventoryPlayer.getFirstEmptyStack() != -1) {     //If Players Inventory has room
+                                //Todo include a warning symbol that tells user they have no room in their inventory
+                                //Todo if player has wallet try to place in WALLET first before inventory
+                                inventoryPlayer.setInventorySlotContents(inventoryPlayer.getFirstEmptyStack(), item);
+                            }
+                        }
                     }
                 }
             }
