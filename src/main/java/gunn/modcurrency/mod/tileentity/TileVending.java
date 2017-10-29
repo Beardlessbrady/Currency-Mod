@@ -403,6 +403,10 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         coinOut[0] = Math.round(amount);
 
         if (!world.isRemote) {
+            if (mode){
+                profit = 0;
+            }else bank = 0;
+
             for(int i = 0; i < dollarOut.length + coinOut.length; i++){
                 ItemStack item;
 
@@ -416,7 +420,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                     item.setCount(coinOut[i - dollarOut.length]);
                 }
 
-                boolean check = false;
+                boolean check;
                 if(i < dollarOut.length){
                     check = dollarOut[i] != 0;
                 }else{
@@ -449,6 +453,20 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                                 //Todo include a warning symbol that tells user they have no room in their inventory
                                 //Todo if player has wallet try to place in WALLET first before inventory
                                 inventoryPlayer.setInventorySlotContents(inventoryPlayer.getFirstEmptyStack(), item);
+                            }else { //If can't place add back to bank/profit
+                                int add = 0;
+
+                                if (item.getItem().equals(ModItems.itemCoin)){
+                                    add = getCashConversion(item.getItemDamage());
+                                }else if (item.getItem().equals(ModItems.itemBanknote)){
+                                    add = getCashConversion(item.getItemDamage() + 5);
+                                }
+
+                                if (mode){
+                                    profit += add;
+                                }else{
+                                    bank += add;
+                                }
                             }
                         }
                     }
@@ -456,17 +474,15 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
             }
 
             if (mode) {
-                profit = 0;
                 if(!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null){
                     PacketSetLongToClient pack = new PacketSetLongToClient();
-                    pack.setData(getPos(), LONG_PROFIT, 0);
+                    pack.setData(getPos(), LONG_PROFIT, profit);
                     PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
                 }
             } else {
-                bank = 0;
                 if(!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null){
                     PacketSetLongToClient pack = new PacketSetLongToClient();
-                    pack.setData(getPos(), LONG_BANK, 0);
+                    pack.setData(getPos(), LONG_BANK, bank);
                     PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
                 }
             }
