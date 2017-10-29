@@ -162,13 +162,7 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
                 tile.setField(tile.FIELD_TWOBLOCK, 0);
                 tile.setInputStackHandler(inputStack);
 
-                System.out.println(vendStack.getStackInSlot(0));
-
-
-
                 tile.setVendStackHandler(vendStack);
-
-                System.out.println(tile.getVendStackHandler().getStackInSlot(0));
 
                 tile.setBufferStackHandler(buffStack);
                 tile.setLong(tile.LONG_BANK, bank);

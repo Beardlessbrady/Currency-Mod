@@ -282,8 +282,6 @@ public class ContainerVending extends Container implements INBTInventory {
                     } else {
                         tile.setLong(tile.LONG_BANK, bank - (cost * amnt));
                     }
-
-                    System.out.println(tile.getLong(tile.LONG_PROFIT) + cost * amnt);
                     tile.setLong(tile.LONG_PROFIT, tile.getLong(tile.LONG_PROFIT) + cost * amnt);
                 }
             } else {
@@ -541,7 +539,6 @@ public class ContainerVending extends Container implements INBTInventory {
         IItemHandler itemHandler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
         for (int i = 0; i < TE_VEND_MAIN_TOTAL_COUNT; i++) {
             if (tile.isGhostSlot(i) && itemHandler.getStackInSlot(i + 1).getCount() > 1) {
-                System.out.println("GHOOSST");
                 itemHandler.getStackInSlot(i + 1).shrink(1);
                 tile.setGhostSlot(i, false);
             }

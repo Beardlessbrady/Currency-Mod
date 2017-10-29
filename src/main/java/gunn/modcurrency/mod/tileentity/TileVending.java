@@ -431,16 +431,15 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                     boolean playerInGui= false;
                     if (playerUsing != null) playerInGui = true;
 
-
                     if (playerInGui) {
                         InventoryPlayer inventoryPlayer = playerUsing.inventory;
                         boolean placed = false;
 
                         //Looks for item in inventory before putting in a empty slot
                         searchLoop:
-                        for(int j = 0; j < 36; j++){
-                            if(UtilMethods.equalStacks(item, inventoryPlayer.getStackInSlot(j))){
-                                if(inventoryPlayer.getStackInSlot(j).getCount() + item.getCount() <= inventoryPlayer.getStackInSlot(j).getMaxStackSize()){
+                        for (int j = 0; j < 36; j++) {
+                            if (UtilMethods.equalStacks(item, inventoryPlayer.getStackInSlot(j))) {
+                                if (inventoryPlayer.getStackInSlot(j).getCount() + item.getCount() <= inventoryPlayer.getStackInSlot(j).getMaxStackSize()) {
                                     inventoryPlayer.getStackInSlot(j).setCount(inventoryPlayer.getStackInSlot(j).getCount() + item.getCount());
                                     placed = true;
                                     break searchLoop;
@@ -448,27 +447,36 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                             }
                         }
 
-                        if(!placed){
+                        if (!placed) {
                             if (inventoryPlayer.getFirstEmptyStack() != -1) {     //If Players Inventory has room
                                 //Todo include a warning symbol that tells user they have no room in their inventory
                                 //Todo if player has wallet try to place in WALLET first before inventory
                                 inventoryPlayer.setInventorySlotContents(inventoryPlayer.getFirstEmptyStack(), item);
-                            }else { //If can't place add back to bank/profit
-                                int add = 0;
-
-                                if (item.getItem().equals(ModItems.itemCoin)){
-                                    add = getCashConversion(item.getItemDamage());
-                                }else if (item.getItem().equals(ModItems.itemBanknote)){
-                                    add = getCashConversion(item.getItemDamage() + 5);
-                                }
-
-                                if (mode){
-                                    profit += add;
-                                }else{
-                                    bank += add;
-                                }
+                            } else {
+                                playerInGui = false;
                             }
                         }
+                    }
+
+                    if (!playerInGui) {       //If no room, spawn
+                        int x = getPos().getX();
+                        int z = getPos().getZ();
+
+                        switch (this.getBlockMetadata()) {
+                            case 0:
+                                z = z + 1; //North
+                                break;
+                            case 1:
+                                x = x - 1; //East
+                                break;
+                            case 2:
+                                z = z - 2; //South
+                                break;
+                            case 3:
+                                x = x + 1;//West
+                                break;
+                        }
+                        world.spawnEntity(new EntityItem(world, x, getPos().up().getY(), z, item));
                     }
                 }
             }
@@ -489,7 +497,6 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         }
     }
 
-
     public void outInputSlot(){
         if (inputStackHandler.getStackInSlot(0).getItem() != Item.getItemFromBlock(Blocks.AIR)) {
             if (!world.isRemote) {
@@ -500,16 +507,16 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                 int z = getPos().getZ();
                 switch (this.getBlockMetadata()) {
                     case 0:
-                        z = z - 2; //North
+                        z = z + 1; //North
                         break;
                     case 1:
-                        x = x + 2; //East
+                        x = x - 1; //East
                         break;
                     case 2:
-                        z = z + 2; //South
+                        z = z - 2; //South
                         break;
                     case 3:
-                        x = x - 2;//West
+                        x = x + 1;//West
                         break;
                 }
 
