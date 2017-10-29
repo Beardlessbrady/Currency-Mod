@@ -105,8 +105,8 @@ public class BlockVending extends Block implements ITileEntityProvider {
                     ItemStackHandler inputStack = tile.getInputStackHandler();
                     ItemHandlerVendor vendStack = tile.getVendStackHandler();
                     ItemStackHandler buffStack = tile.getBufferStackHandler();
-                    long bank = tile.getField(tile.LONG_BANK);
-                    long profit = tile.getField(tile.LONG_PROFIT);
+                    long bank = tile.getLong(tile.LONG_BANK);
+                    long profit = tile.getLong(tile.LONG_PROFIT);
                     String owner = tile.getOwner();
                     boolean locked = tile.getField(tile.FIELD_LOCKED) == 1;
                     boolean infinite = tile.getField(tile.FIELD_INFINITE) == 1;
