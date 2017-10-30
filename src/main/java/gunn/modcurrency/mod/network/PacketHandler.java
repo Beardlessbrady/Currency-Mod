@@ -36,14 +36,14 @@ public class PacketHandler {
     }
 
     public static void registerClientMessages(int index){
-        INSTANCE.registerMessage(PacketCheckGhostStacksToClient.Handler.class, PacketCheckGhostStacksToClient.class, index++, Side.CLIENT);
         INSTANCE.registerMessage(PacketSetLongToClient.Handler.class, PacketSetLongToClient.class, index++, Side.CLIENT);
+        INSTANCE.registerMessage(PacketSetGhostToClient.Handler.class, PacketSetGhostToClient.class, index++, Side.CLIENT);
         // INSTANCE.registerMessage(PacketSyncBankDataToClient.Handler.class, PacketSyncBankDataToClient.class, index++, Side.CLIENT);
     }
 
     public static void registerServerMessages(int index){
-        INSTANCE.registerMessage(PacketCheckGhostStacksToClient.DummyServerHandler.class, PacketCheckGhostStacksToClient.class, index++, Side.CLIENT);
         INSTANCE.registerMessage(PacketSetLongToClient.DummyServerHandler.class, PacketSetLongToClient.class, index++, Side.CLIENT);
+        INSTANCE.registerMessage(PacketSetGhostToClient.DummyServerHandler.class, PacketSetGhostToClient.class, index++, Side.CLIENT);
         // INSTANCE.registerMessage(PacketSyncBankDataToClient.Handler.class, PacketSyncBankDataToClient.class, index++, Side.CLIENT);
     }
 }

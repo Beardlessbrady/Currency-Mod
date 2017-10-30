@@ -400,7 +400,7 @@ public class GuiVending extends GuiContainer {
                 }else{
                     list.add(TextFormatting.GREEN + "Price: $" + UtilMethods.translateMoney(tile.getItemCost(slot)));
                 }
-                if(tile.isGhostSlot(slot)) {
+                if(tile.checkGhost(slot)) {
                     list.add(TextFormatting.RED + "OUT OF STOCK");
                 }
             }else{

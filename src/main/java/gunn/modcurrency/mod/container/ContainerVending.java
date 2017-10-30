@@ -5,13 +5,9 @@ import gunn.modcurrency.mod.container.slot.SlotCustomizable;
 import gunn.modcurrency.mod.container.slot.SlotVendor;
 import gunn.modcurrency.mod.item.ItemWallet;
 import gunn.modcurrency.mod.item.ModItems;
-import gunn.modcurrency.mod.network.PacketCheckGhostStacksToClient;
-import gunn.modcurrency.mod.network.PacketHandler;
-import gunn.modcurrency.mod.network.PacketItemSpawnToServer;
 import gunn.modcurrency.mod.tileentity.TileVending;
 import gunn.modcurrency.mod.utils.UtilMethods;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.ClickType;
@@ -129,7 +125,6 @@ public class ContainerVending extends Container implements INBTInventory {
 
     @Override
     public void onContainerClosed(EntityPlayer playerIn) {
-        checkGhostStacks();
         tile.voidPlayerUsing();
         tile.setField(tile.FIELD_GEAREXT, 0);
         tile.setField(tile.FIELD_CREATIVE, 0);
@@ -198,9 +193,9 @@ public class ContainerVending extends Container implements INBTInventory {
                 }
             } else if (slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < (TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT) && tile.getField(tile.FIELD_GEAREXT) == 0) {
                 //If an item is a ghost and clicked on with an item
-                if (tile.isGhostSlot(slotId - PLAYER_TOTAL_COUNT - 1)) {
+                if (tile.checkGhost(slotId - PLAYER_TOTAL_COUNT - 1)) {
                     this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).getStackInSlot(slotId - PLAYER_TOTAL_COUNT).shrink(1);
-                    tile.setGhostSlot(slotId - PLAYER_TOTAL_COUNT - 1, false);
+                    tile.setGhost(slotId - PLAYER_TOTAL_COUNT - 1, false);
                 }
             }
             return super.slotClick(slotId, dragType, clickTypeIn, player);
@@ -209,7 +204,7 @@ public class ContainerVending extends Container implements INBTInventory {
             if (slotId >= 0 && slotId <= PLAYER_TOTAL_COUNT) {           //Is Players Inv or Input Slot
                 return super.slotClick(slotId, dragType, clickTypeIn, player);
             } else if (slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < (TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT)) {  //Is TE Inv
-                if (!tile.isGhostSlot(slotId - PLAYER_TOTAL_COUNT - 1)) {
+                if (!tile.checkGhost(slotId - PLAYER_TOTAL_COUNT - 1)) {
                     if (clickTypeIn == ClickType.PICKUP && dragType == 0) {   //Left Click = 1 item
                         return checkAfford(slotId, 1, player);
                     } else if (clickTypeIn == ClickType.PICKUP && dragType == 1) {   //Right Click = 10 item
@@ -221,7 +216,10 @@ public class ContainerVending extends Container implements INBTInventory {
                     } else {
                         return ItemStack.EMPTY;
                     }
-                } else return ItemStack.EMPTY;
+                } else {
+                    tile.checkForWrongGhosts();
+                    return ItemStack.EMPTY;
+                }
             }
         }
         return ItemStack.EMPTY;
@@ -272,7 +270,7 @@ public class ContainerVending extends Container implements INBTInventory {
 
                     if (tile.getField(tile.FIELD_INFINITE) == 0) {
                         if (slotStack.getCount() - amnt == 0) {
-                            tile.setGhostSlot(slotId - PLAYER_TOTAL_COUNT - 1, true);
+                            tile.setGhost(slotId - PLAYER_TOTAL_COUNT - 1, true);
                             slotStack.setCount(1);
                         } else slotStack.splitStack(amnt);
                     }
@@ -316,6 +314,8 @@ public class ContainerVending extends Container implements INBTInventory {
                     if (tile.getField(tile.FIELD_MODE) == 1) {     //Only allow shift clicking from player inv in edit mode
                         if (!this.mergeItemStack(copyStack, TE_VEND_FIRST_SLOT_INDEX, TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT, false)) {
                             return ItemStack.EMPTY;
+                        }else{ //If successful transfer to vending machine inventory
+                            tile.checkForWrongGhosts();
                         }
                     } else {
                         return ItemStack.EMPTY;
@@ -348,13 +348,6 @@ public class ContainerVending extends Container implements INBTInventory {
 
     @Override
     public void detectAndSendChanges() {
-        checkGhostStacks();
-        if(!tile.getWorld().isRemote && tile.getPlayerUsing() != null && PacketHandler.INSTANCE != null){
-            PacketCheckGhostStacksToClient pack = new PacketCheckGhostStacksToClient();
-            pack.setData(tile.getPos());
-            PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) tile.getPlayerUsing());
-        }
-
         super.detectAndSendChanges();
         boolean fieldChanged[] = new boolean[tile.getFieldCount()];
 
@@ -533,15 +526,5 @@ public class ContainerVending extends Container implements INBTInventory {
         }
 
         return cash * stackSize;
-    }
-
-    private void checkGhostStacks() {
-        IItemHandler itemHandler = tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
-        for (int i = 0; i < TE_VEND_MAIN_TOTAL_COUNT; i++) {
-            if (tile.isGhostSlot(i) && itemHandler.getStackInSlot(i + 1).getCount() > 1) {
-                itemHandler.getStackInSlot(i + 1).shrink(1);
-                tile.setGhostSlot(i, false);
-            }
-        }
     }
 }

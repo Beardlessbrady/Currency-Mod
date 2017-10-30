@@ -7,6 +7,7 @@ import gunn.modcurrency.mod.handler.StateHandler;
 import gunn.modcurrency.mod.item.ItemWallet;
 import gunn.modcurrency.mod.item.ModItems;
 import gunn.modcurrency.mod.network.PacketHandler;
+import gunn.modcurrency.mod.network.PacketSetGhostToClient;
 import gunn.modcurrency.mod.network.PacketSetLongToClient;
 import gunn.modcurrency.mod.utils.UtilMethods;
 import net.minecraft.entity.item.EntityItem;
@@ -54,6 +55,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     private ItemHandlerVendor vendStackHandler = new ItemHandlerVendor(VEND_SLOT_COUNT);
     private ItemStackHandler bufferStackHandler = new ItemStackHandler(BUFFER_SLOT_COUNT);
     private EntityPlayer playerUsing = null;
+    private boolean[] ghostSlots;
 
     public final byte FIELD_LOCKED = 1;
     public final byte FIELD_MODE = 2;
@@ -77,6 +79,11 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         outputBill = 0;
         owner = "";
         selectedName = "No Item";
+        ghostSlots = new boolean[vendStackHandler.getSlots()];
+        for(int i = 0; i < ghostSlots.length; i ++){
+            ghostSlots[i] = false;
+        }
+
         locked = false;
         mode = false;
         creative = false;
@@ -103,11 +110,15 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
             pack1.setData(getPos(), LONG_PROFIT, profit);
             PacketHandler.INSTANCE.sendTo(pack1, (EntityPlayerMP) player);
 
+            checkForWrongGhosts();
         }
     }
 
     @Override
     public void update() {
+      //  if(!world.isRemote && playerUsing != null) System.out.println(checkGhost(0));
+
+
         if (!world.isRemote) {
             if (playerUsing != null) {
                 if (inputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
@@ -813,12 +824,28 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         playerUsing = null;
     }
 
-    public boolean isGhostSlot(int slot){
-        return vendStackHandler.isGhost(slot);
+    public boolean checkGhost(int slot){
+        return ghostSlots[slot];
     }
 
-    public void setGhostSlot(int slot, boolean bool){
-        vendStackHandler.setGhost(slot, bool);
+    public void setGhost(int slot, boolean bool){
+        ghostSlots[slot] = bool;
+        if(!world.isRemote){
+            PacketSetGhostToClient pack = new PacketSetGhostToClient();
+            pack.setData(getPos(), slot, bool);
+            PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) playerUsing);
+        }
+    }
+
+
+    public void checkForWrongGhosts(){
+        for(int i = 0; i < vendStackHandler.getSlots(); i++){
+            if(vendStackHandler.getStackInSlot(i).getCount() > 1 && ghostSlots[i] == true){
+                vendStackHandler.getStackInSlot(i).shrink(1);
+                setGhost(i, false);
+            }
+        }
+
     }
     //</editor-fold>
 }
