@@ -5,6 +5,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Distributed with the Currency-Mod for Minecraft
@@ -13,23 +17,24 @@ import javax.annotation.Nonnull;
  * File Created on 2017-02-25
  */
 public class ItemHandlerCustom extends ItemStackHandler {
-    Item allowed;
+    List valid;
 
     public ItemHandlerCustom(int size) {
         super(size);
+        valid = new ArrayList(1);
     }
 
     @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-        if (stack.getItem() == allowed) {
+        if (valid.contains(stack.getItem())) {
             return super.insertItem(slot, stack, simulate);
         } else {
             return stack;
         }
     }
 
-    public void setAllowedItem(Item item){
-        allowed = item;
+    public void setAllowedItem(Item item) {
+        valid.add(item);
     }
 }
