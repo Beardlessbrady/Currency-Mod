@@ -3,7 +3,6 @@ package gunn.modcurrency.mod.tileentity;
 import gunn.modcurrency.mod.ModCurrency;
 import gunn.modcurrency.mod.client.gui.util.INBTInventory;
 import gunn.modcurrency.mod.container.itemhandler.ItemHandlerCustom;
-import gunn.modcurrency.mod.container.itemhandler.ItemHandlerVendor;
 import gunn.modcurrency.mod.handler.StateHandler;
 import gunn.modcurrency.mod.item.ModItems;
 import gunn.modcurrency.mod.network.PacketHandler;
@@ -14,14 +13,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
@@ -29,7 +26,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.CapabilityItemHandler;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
@@ -58,11 +54,9 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     private ItemHandlerCustom automationInputStackHandler = new ItemHandlerCustom(1);
     private EntityPlayer playerUsing = null;
 
-    //public final byte FIELD_BANK = 0;
     public final byte FIELD_LOCKED = 1;
     public final byte FIELD_MODE = 2;
     public final byte FIELD_SELECTSLOT = 3;
-    //public final byte FIELD_CASHREG = 4;
     public final byte FIELD_CREATIVE = 5;
     public final byte FIELD_INFINITE = 6;
     public final byte FIELD_TWOBLOCK = 7;
@@ -101,10 +95,45 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     @Override
     public void update() {
 
-        if(playerUsing != null) {
-            if (!world.isRemote) {
+        if (!world.isRemote) {
+            if (playerUsing != null) {
                 if (automationInputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
+
                     if (automationInputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemBanknote)) {
+                        int amount;
+                        switch (automationInputStackHandler.getStackInSlot(0).getItemDamage()) {
+                            case 0:
+                                amount = 100;
+                                break;
+                            case 1:
+                                amount = 500;
+                                break;
+                            case 2:
+                                amount = 1000;
+                                break;
+                            case 3:
+                                amount = 2000;
+                                break;
+                            case 4:
+                                amount = 5000;
+                                break;
+                            case 5:
+                                amount = 10000;
+                                break;
+                            default:
+                                amount = -1;
+                                break;
+                        }
+                        amount = amount * automationInputStackHandler.getStackInSlot(0).getCount();
+                        automationInputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
+                        cashRegister = cashRegister + amount;
+
+                        if(!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null){
+                            PacketSetLongToClient pack = new PacketSetLongToClient();
+                            pack.setData(getPos(), LONG_CASHREG, cashRegister);
+                            PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
+                        }
+                    } else if (automationInputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemCoin)) {
                         int amount;
                         switch (automationInputStackHandler.getStackInSlot(0).getItemDamage()) {
                             case 0:
@@ -117,13 +146,13 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                                 amount = 10;
                                 break;
                             case 3:
-                                amount = 20;
+                                amount = 25;
                                 break;
                             case 4:
-                                amount = 50;
+                                amount = 100;
                                 break;
                             case 5:
-                                amount = 100;
+                                amount = 200;
                                 break;
                             default:
                                 amount = -1;
@@ -216,6 +245,40 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                             int amount;
                             switch (inputStackHandler.getStackInSlot(0).getItemDamage()) {
                                 case 0:
+                                    amount = 100;
+                                    break;
+                                case 1:
+                                    amount = 500;
+                                    break;
+                                case 2:
+                                    amount = 1000;
+                                    break;
+                                case 3:
+                                    amount = 2000;
+                                    break;
+                                case 4:
+                                    amount = 5000;
+                                    break;
+                                case 5:
+                                    amount = 10000;
+                                    break;
+                                default:
+                                    amount = -1;
+                                    break;
+                            }
+                            amount = amount * inputStackHandler.getStackInSlot(0).getCount();
+                            inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
+                            cashRegister = cashRegister + amount;
+
+                            if(!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null){
+                                PacketSetLongToClient pack = new PacketSetLongToClient();
+                                pack.setData(getPos(), LONG_CASHREG, cashRegister);
+                                PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
+                            }
+                        }else  if (inputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemCoin)) {
+                            int amount;
+                            switch (inputStackHandler.getStackInSlot(0).getItemDamage()) {
+                                case 0:
                                     amount = 1;
                                     break;
                                 case 1:
@@ -225,13 +288,13 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                                     amount = 10;
                                     break;
                                 case 3:
-                                    amount = 20;
+                                    amount = 25;
                                     break;
                                 case 4:
-                                    amount = 50;
+                                    amount = 100;
                                     break;
                                 case 5:
-                                    amount = 100;
+                                    amount = 200;
                                     break;
                                 default:
                                     amount = -1;
@@ -271,63 +334,98 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
 
     //<editor-fold desc="Money Methods-------------------------------------------------------------------------------------------------------">
     public void outChange() {
-        Long amount = (long)bank;
-        if(mode) amount = (long)cashRegister;
+        long amount = bank;
+        if (mode) amount = cashRegister;
 
-        int[] out = new int[6];
+        int[] dollarOut = new int[6];
+        dollarOut[5] = Math.round(amount / 10000);
+        amount = amount - (dollarOut[5] * 10000);
 
-        out[5] = Math.round(amount / 100);
-        amount = amount - (out[5] * 100);
+        dollarOut[4] = Math.round(amount / 5000);
+        amount = amount - (dollarOut[4] * 5000);
 
-        out[4] = Math.round(amount / 50);
-        amount = amount - (out[4] * 50);
+        dollarOut[3] = Math.round(amount / 2000);
+        amount = amount - (dollarOut[3] * 2000);
 
-        out[3] = Math.round(amount / 20);
-        amount = amount - (out[3] * 20);
+        dollarOut[2] = Math.round(amount / 1000);
+        amount = amount - (dollarOut[2] * 1000);
 
-        out[2] = Math.round(amount / 10);
-        amount = amount - (out[2] * 10);
+        dollarOut[1] = Math.round(amount / 500);
+        amount = amount - (dollarOut[1] * 500);
 
-        out[1] = Math.round(amount / 5);
-        amount = amount - (out[1] * 5);
+        dollarOut[0] = 0;
 
-        out[0] = Math.round(amount);
+        int[] coinOut = new int[6];
+        coinOut[5] = Math.round(amount / 200);
+        amount = amount - (coinOut[5] * 200);
+
+        coinOut[4] = Math.round(amount / 100);
+        amount = amount - (coinOut[4] * 100);
+
+        coinOut[3] = Math.round(amount / 25);
+        amount = amount - (coinOut[3] * 25);
+
+        coinOut[2] = Math.round(amount / 10);
+        amount = amount - (coinOut[2] * 10);
+
+        coinOut[1] = Math.round(amount / 5);
+        amount = amount - (coinOut[1] * 5);
+
+        coinOut[0] = Math.round(amount);
 
         if (!world.isRemote) {
-            for (int i = 0; i < out.length; i++) {
-                if (out[i] != 0) {
-                    ItemStack item = new ItemStack(ModItems.itemBanknote);
+            if (mode){
+                cashRegister = 0;
+            }else bank = 0;
+
+            for(int i = 0; i < dollarOut.length + coinOut.length; i++){
+                ItemStack item;
+
+                if(i < dollarOut.length){
+                    item = new ItemStack(ModItems.itemBanknote);
                     item.setItemDamage(i);
-                    item.setCount(out[i]);
+                    item.setCount(dollarOut[i]);
+                }else{
+                    item = new ItemStack(ModItems.itemCoin);
+                    item.setItemDamage(i - dollarOut.length);
+                    item.setCount(coinOut[i - dollarOut.length]);
+                }
 
-                    if(mode){
-                        cashRegister = 0;
+                boolean check;
+                if(i < dollarOut.length){
+                    check = dollarOut[i] != 0;
+                }else{
+                    check = coinOut[i - dollarOut.length] != 0;
+                }
 
-                        if(!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null){
-                            PacketSetLongToClient pack = new PacketSetLongToClient();
-                            pack.setData(getPos(), LONG_CASHREG, cashRegister);
-                            PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
-                        }
-                    }else {
-                        bank = 0;
-
-                        if(!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null){
-                            PacketSetLongToClient pack = new PacketSetLongToClient();
-                            pack.setData(getPos(), LONG_BANK, bank);
-                            PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
-                        }
-                    }
-
+                if(check){
                     boolean playerInGui= false;
                     if (playerUsing != null) playerInGui = true;
 
-
                     if (playerInGui) {
                         InventoryPlayer inventoryPlayer = playerUsing.inventory;
-                        if (inventoryPlayer.getFirstEmptyStack() != -1) {     //If Players Inventory has room
-                            inventoryPlayer.setInventorySlotContents(inventoryPlayer.getFirstEmptyStack(), item);
-                        } else {
-                            playerInGui = false;
+                        boolean placed = false;
+
+                        //Looks for item in inventory before putting in a empty slot
+                        searchLoop:
+                        for (int j = 0; j < 36; j++) {
+                            if (UtilMethods.equalStacks(item, inventoryPlayer.getStackInSlot(j))) {
+                                if (inventoryPlayer.getStackInSlot(j).getCount() + item.getCount() <= inventoryPlayer.getStackInSlot(j).getMaxStackSize()) {
+                                    inventoryPlayer.getStackInSlot(j).setCount(inventoryPlayer.getStackInSlot(j).getCount() + item.getCount());
+                                    placed = true;
+                                    break searchLoop;
+                                }
+                            }
+                        }
+
+                        if (!placed) {
+                            if (inventoryPlayer.getFirstEmptyStack() != -1) {     //If Players Inventory has room
+                                //Todo include a warning symbol that tells user they have no room in their inventory
+                                //Todo if player has wallet try to place in WALLET first before inventory
+                                inventoryPlayer.setInventorySlotContents(inventoryPlayer.getFirstEmptyStack(), item);
+                            } else {
+                                playerInGui = false;
+                            }
                         }
                     }
 
@@ -337,20 +435,34 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
 
                         switch (this.getBlockMetadata()) {
                             case 0:
-                                z = z - 2; //North
+                                z = z + 1; //North
                                 break;
                             case 1:
-                                x = x + 2; //East
+                                x = x - 1; //East
                                 break;
                             case 2:
-                                z = z + 2; //South
+                                z = z - 2; //South
                                 break;
                             case 3:
-                                x = x - 2;//West
+                                x = x + 1;//West
                                 break;
                         }
                         world.spawnEntity(new EntityItem(world, x, getPos().up().getY(), z, item));
                     }
+                }
+            }
+
+            if (mode) {
+                if(!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null){
+                    PacketSetLongToClient pack = new PacketSetLongToClient();
+                    pack.setData(getPos(), LONG_CASHREG, cashRegister);
+                    PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
+                }
+            } else {
+                if(!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null){
+                    PacketSetLongToClient pack = new PacketSetLongToClient();
+                    pack.setData(getPos(), LONG_BANK, bank);
+                    PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
                 }
             }
         }
@@ -654,10 +766,6 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
 
     public void setVendStackHandler(ItemStackHandler vend){
         vendStackHandler = vend;
-    }
-
-    public ItemStack getStack(int index) {
-        return vendStackHandler.getStackInSlot(index);
     }
 
     @Override

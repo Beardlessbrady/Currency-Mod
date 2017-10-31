@@ -226,7 +226,7 @@ public class ContainerExchanger extends Container implements INBTInventory{
                     }
                 } else {
                     if (tile.getField(tile.FIELD_MODE) == 1) {
-                        if (inventorySlots.get(index).getStack().getItem() == ModItems.itemBanknote) {
+                        if (inventorySlots.get(index).getStack().getItem() == ModItems.itemBanknote || inventorySlots.get(index).getStack().getItem() == ModItems.itemCoin) {
                             if (!this.mergeItemStack(copyStack, TE_MONEY_FIRST_SLOT_INDEX, TE_MONEY_FIRST_SLOT_INDEX + 1, false)) {
                                 return ItemStack.EMPTY;
                             }

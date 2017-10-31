@@ -5,6 +5,7 @@ import gunn.modcurrency.mod.container.ContainerExchanger;
 import gunn.modcurrency.mod.container.ContainerVending;
 import gunn.modcurrency.mod.network.*;
 import gunn.modcurrency.mod.tileentity.TileExchanger;
+import gunn.modcurrency.mod.utils.UtilMethods;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -75,7 +76,7 @@ public class GuiExchanger extends GuiContainer {
         this.priceField.setEnableBackgroundDrawing(false);
         this.priceField.setMaxStringLength(7);
 
-        this.amountField = new GuiTextField(0, fontRenderer, i - 38, j + 101, 45, 10);        //Setting Amounts
+        this.amountField = new GuiTextField(0, fontRenderer, i - 50, j + 101, 45, 10);        //Setting Amounts
         this.amountField.setTextColor(Integer.parseInt("0099ff", 16));
         this.amountField.setEnableBackgroundDrawing(false);
         this.amountField.setMaxStringLength(7);
@@ -92,7 +93,23 @@ public class GuiExchanger extends GuiContainer {
 
     private void setCost() {
         if (this.priceField.getText().length() > 0) {
-            int newCost = Integer.valueOf(this.priceField.getText());
+            int newCost = 0;
+
+            if(priceField.getText().contains(".")){
+                if(priceField.getText().lastIndexOf(".") +1 != priceField.getText().length()) {
+                    if (priceField.getText().lastIndexOf(".") + 2 == priceField.getText().length()) {
+                        newCost = Integer.valueOf(this.priceField.getText().substring(priceField.getText().lastIndexOf(".") + 1) + "0");
+                    }else{
+                        newCost = Integer.valueOf(this.priceField.getText().substring(priceField.getText().lastIndexOf(".") + 1));
+                    }
+                }
+
+                if(priceField.getText().lastIndexOf(".") != 0)
+                    newCost +=  Integer.valueOf(this.priceField.getText().substring(0, priceField.getText().lastIndexOf("."))) * 100;
+
+            }else{
+                newCost = Integer.valueOf(this.priceField.getText()) * 100;
+            }
 
             tile.setItemCost(newCost);
             PacketSetItemCostToServer pack = new PacketSetItemCostToServer();
@@ -100,7 +117,6 @@ public class GuiExchanger extends GuiContainer {
             PacketHandler.INSTANCE.sendToServer(pack);
 
             tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
-            updateTextField();
         }
     }
 
@@ -125,11 +141,26 @@ public class GuiExchanger extends GuiContainer {
     }
 
     private void updateTextField() {
-        this.priceField.setText(String.valueOf(tile.getItemCost(tile.getField(tile.FIELD_SELECTSLOT) - 37)));
-        if (tile.getItemAmount(tile.getField(tile.FIELD_SELECTSLOT) - 37) == -1) {
-            this.amountField.setText("0");
-        } else {
-            this.amountField.setText(String.valueOf(tile.getItemAmount(tile.getField(tile.FIELD_SELECTSLOT) - 37)));
+        String price = String.valueOf(tile.getItemCost(tile.getField(tile.FIELD_SELECTSLOT) - 37));
+
+        switch(price.length()) {
+            case 1:
+                if (price.equals("0")) {
+                    this.priceField.setText(price);
+                } else {
+                    this.priceField.setText("." + price);
+                }
+                break;
+            case 2:
+                this.priceField.setText("." + price);
+                break;
+            default:
+                if (price.substring(price.length() - 2, price.length()).equals("00")) {
+                    this.priceField.setText(price.substring(0, price.length() - 2));
+                } else {
+                    this.priceField.setText(price.substring(0, price.length() - 2) + "." + (price.substring(price.length() - 2, price.length())));
+                }
+                break;
         }
     }
 
@@ -248,9 +279,9 @@ public class GuiExchanger extends GuiContainer {
         fontRenderer.drawString(I18n.format("Exchange Machine"), 5, 6, Color.darkGray.getRGB());
         fontRenderer.drawString(I18n.format("tile.modcurrency:gui.playerinventory"), 4, 142, Color.darkGray.getRGB());
         if (tile.getField(tile.FIELD_MODE) == 1){
-            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.funds") + ": $" + tile.getLong(tile.LONG_CASHREG), 5, 15, Color.darkGray.getRGB());
+            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.funds") + ": $" + UtilMethods.translateMoney(tile.getLong(tile.LONG_CASHREG)), 5, 15, Color.darkGray.getRGB());
         }else{
-            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.cash") + ": $" + tile.getLong(tile.LONG_BANK), 5, 15, Color.darkGray.getRGB());
+            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.cash") + ": $" + UtilMethods.translateMoney(tile.getLong(tile.LONG_BANK)), 5, 15, Color.darkGray.getRGB());
         }
 
         if (tile.getField(tile.FIELD_GEAREXT) == 1) {
@@ -261,7 +292,7 @@ public class GuiExchanger extends GuiContainer {
             fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.amount"), -84, 102, Integer.parseInt("211d1b", 16));
             fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.amount"), -83, 101, Color.lightGray.getRGB());
             fontRenderer.drawString(I18n.format("$"), -57, 91, Integer.parseInt("0099ff", 16));
-            fontRenderer.drawString(I18n.format("$"), -45, 101, Integer.parseInt("0099ff", 16));
+            fontRenderer.drawString(I18n.format("$"), -57, 101, Integer.parseInt("0099ff", 16));
 
             GL11.glPushMatrix();
             GL11.glScaled(0.7, 0.7, 0.7);
@@ -356,7 +387,7 @@ public class GuiExchanger extends GuiContainer {
             List<String> list = stack.getTooltip(this.mc.player, ITooltipFlag.TooltipFlags.ADVANCED);
 
 
-            list.add((TextFormatting.GREEN + "Price: $" + (String.valueOf(tile.getItemCost(slot)))));
+            list.add((TextFormatting.GREEN + "Price: $" + UtilMethods.translateMoney((tile.getItemCost(slot)))));
 
 
             //Color text normally
@@ -364,11 +395,11 @@ public class GuiExchanger extends GuiContainer {
             {
                 if (k == 0)
                 {
-                    list.set(k, stack.getRarity().rarityColor + (String)list.get(k));
+                    list.set(k, stack.getRarity().rarityColor + list.get(k));
                 }
                 else
                 {
-                    list.set(k, TextFormatting.GRAY + (String)list.get(k));
+                    list.set(k, TextFormatting.GRAY + list.get(k));
                 }
             }
 
@@ -400,9 +431,15 @@ public class GuiExchanger extends GuiContainer {
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         int numChar = Character.getNumericValue(typedChar);
-        if ((tile.getField(tile.FIELD_MODE) == 1) && ((numChar >= 0 && numChar <= 9) || (keyCode == 14) || keyCode == 211 || (keyCode == 203) || (keyCode == 205))) { //Ensures keys input are only numbers or backspace type keys
-            if (this.priceField.textboxKeyTyped(typedChar, keyCode)) setCost();
-            if (this.amountField.textboxKeyTyped(typedChar, keyCode)) setAmount();
+        if ((tile.getField(tile.FIELD_MODE) == 1) && ((numChar >= 0 && numChar <= 9) || (keyCode == 14) || keyCode == 211 || (keyCode == 203) || (keyCode == 205)|| (keyCode == 52))) { //Ensures keys input are only numbers or backspace type keys
+            if((keyCode == 52 && !priceField.getText().contains(".")) || keyCode != 52) {
+                if (this.priceField.textboxKeyTyped(typedChar, keyCode)) setCost();
+            }
+            if(priceField.getText().length() > 0) if(priceField.getText().substring(priceField.getText().length()-1).equals(".") ) priceField.setMaxStringLength(priceField.getText().length() + 2);
+            if(!priceField.getText().contains(".")) priceField.setMaxStringLength(7);
+
+            if(keyCode != 52 && this.amountField.textboxKeyTyped(typedChar, keyCode)) setAmount();
+
         } else {
             super.keyTyped(typedChar, keyCode);
         }
