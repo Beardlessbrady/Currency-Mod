@@ -42,10 +42,11 @@ public class GuiExchanger extends GuiContainer {
 
     private static final int CHANGEBUTTON_ID = 0;
     private static final int INFINITEBUTTON_ID = 1;
-    private static final int MODE_ID = 2;
-    private static final int LOCK_ID = 3;
-    private static final int GEAR_ID = 4;
-    private static final int CREATIVE_ID = 5;
+    private static final int VOIDITEMSBUTTON_ID = 2;
+    private static final int MODE_ID = 3;
+    private static final int LOCK_ID = 4;
+    private static final int GEAR_ID = 5;
+    private static final int CREATIVE_ID = 6;
 
     public GuiExchanger(EntityPlayer entityPlayer, TileExchanger te) {
         super(new ContainerExchanger(entityPlayer.inventory, te));
@@ -66,6 +67,7 @@ public class GuiExchanger extends GuiContainer {
 
         this.buttonList.add(new GuiButton(CHANGEBUTTON_ID, i + 103, j + 7, 45, 20, ChangeButton));
         this.buttonList.add(new GuiButton(INFINITEBUTTON_ID, i + 198, j + 85, 45, 20, "BORKED"));
+        this.buttonList.add(new GuiButton(VOIDITEMSBUTTON_ID, i + 180, j + 85, 20, 20, ""));
         this.buttonList.add(new TabButton("Mode", MODE_ID, i - 20, j + 20, 0, 88, 20, 21, 0,"", TAB_TEXTURE));
         this.buttonList.add(new TabButton("Lock", LOCK_ID, i - 20, 22 + ((TabButton) this.buttonList.get(MODE_ID)).getButtonY(), 0, 22, 20, 21, 0,"", TAB_TEXTURE));
         this.buttonList.add(new TabButton("Gear", GEAR_ID, i - 20, 22 + ((TabButton) this.buttonList.get(LOCK_ID)).getButtonY(), 0, 0, 20, 21, 0,"", TAB_TEXTURE));
@@ -86,6 +88,7 @@ public class GuiExchanger extends GuiContainer {
         this.buttonList.get(GEAR_ID).visible = false;
         this.buttonList.get(CREATIVE_ID).visible = false;
         this.buttonList.get(INFINITEBUTTON_ID).visible = false;
+        this.buttonList.get(VOIDITEMSBUTTON_ID).visible = false;
 
         this.priceField.setEnabled(false);
         this.amountField.setEnabled(false);
@@ -250,12 +253,17 @@ public class GuiExchanger extends GuiContainer {
 
                     ((TabButton)buttonList.get(CREATIVE_ID)).setOpenState(creativeExtended, 26 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY());
                     if(((TabButton)buttonList.get(CREATIVE_ID)).openState()){
-                        this.buttonList.set(INFINITEBUTTON_ID, (new GuiButton(INFINITEBUTTON_ID, i - 69, j + 106 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY(), 45, 20, ((tile.getField(tile.FIELD_INFINITE) == 1) ? "Enabled" : "Disabled"))));
-                        drawTexturedModalRect(-91, 86 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY(), 27, 48, 91, 47);
-                    }else  this.buttonList.get(INFINITEBUTTON_ID).visible = false;
+                        this.buttonList.set(INFINITEBUTTON_ID, (new GuiButton(INFINITEBUTTON_ID, i - 79, j + 106 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY(), 45, 20, ((tile.getField(tile.FIELD_INFINITE) == 1) ? "Enabled" : "Disabled"))));
+                        drawTexturedModalRect(-91, 86 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY(), 27, 96, 91, 47);
+                        this.buttonList.set(VOIDITEMSBUTTON_ID, (new GuiButton(VOIDITEMSBUTTON_ID, i - 32, j + 106 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY(), 20, 20, "")));
+                    }else{
+                        this.buttonList.get(INFINITEBUTTON_ID).visible = false;
+                        this.buttonList.get(VOIDITEMSBUTTON_ID).visible = false;
+                    }
                 }else{  //If in Survival
                     this.buttonList.get(CREATIVE_ID).visible = false;
                     this.buttonList.get(INFINITEBUTTON_ID).visible = false;
+                    this.buttonList.get(VOIDITEMSBUTTON_ID).visible = false;
 
                 }
 
@@ -264,6 +272,7 @@ public class GuiExchanger extends GuiContainer {
                 this.buttonList.get(GEAR_ID).visible = false;
                 this.buttonList.get(CREATIVE_ID).visible = false;
                 this.buttonList.get(INFINITEBUTTON_ID).visible = false;
+                this.buttonList.get(VOIDITEMSBUTTON_ID).visible = false;
 
                 //Hiding/Revealing slots in SELL mode
                 for (int k = 0; k < ((ContainerExchanger) this.inventorySlots).TE_BUFFER_COUNT; k++){
@@ -314,6 +323,11 @@ public class GuiExchanger extends GuiContainer {
         if(tile.getField(tile.FIELD_MODE) == 1){
             size = 3;
             if(tile.getField(tile.FIELD_CREATIVE) == 1) size = 4;
+        }
+
+        if(creativeExtended){
+           drawTexturedModalRect(-31, 108 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY(), 216, 37, 19, 17);
+           if(tile.getField(tile.FIELD_VOID) == 0) drawTexturedModalRect(-31, 108 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY(), 216, 19, 19, 17);
         }
 
         for (int k = 0; k < size; k++) {
@@ -456,25 +470,36 @@ public class GuiExchanger extends GuiContainer {
                 break;
             case INFINITEBUTTON_ID: //Infinite? Button
                 PacketSetFieldToServer pack1 = new PacketSetFieldToServer();
-                pack1.setData((tile.getField(tile.FIELD_INFINITE) == 1) ? 0 : 1, 6, tile.getPos());
+                pack1.setData((tile.getField(tile.FIELD_INFINITE) == 1) ? 0 : 1, tile.FIELD_INFINITE, tile.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack1);
+
+                if(tile.getField(tile.FIELD_INFINITE) == 1){
+                    PacketSetFieldToServer pack5 = new PacketSetFieldToServer();
+                    pack5.setData((tile.getField(tile.FIELD_VOID) == 1) ? 0 : 1, tile.FIELD_VOID, tile.getPos());
+                    PacketHandler.INSTANCE.sendToServer(pack5);
+                }
+                break;
+            case VOIDITEMSBUTTON_ID: //Void Button
+                PacketSetFieldToServer pack5 = new PacketSetFieldToServer();
+                pack5.setData((tile.getField(tile.FIELD_VOID) == 1) ? 0 : 1, tile.FIELD_VOID, tile.getPos());
+                PacketHandler.INSTANCE.sendToServer(pack5);
                 break;
             case MODE_ID: //Mode Button
                 PacketSetFieldToServer pack2 = new PacketSetFieldToServer();
-                pack2.setData((tile.getField(tile.FIELD_MODE) == 1) ? 0 : 1, 2, tile.getPos());
+                pack2.setData((tile.getField(tile.FIELD_MODE) == 1) ? 0 : 1, tile.FIELD_MODE, tile.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack2);
 
                 creativeExtended = false;
 
                 tile.setField(tile.FIELD_GEAREXT, 0);
                 PacketSetFieldToServer pack2b = new PacketSetFieldToServer();
-                pack2b.setData(0, 8, tile.getPos());
+                pack2b.setData(0, tile.FIELD_GEAREXT, tile.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack2b);
                 tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
                 break;
             case LOCK_ID: //Lock Button
                 PacketSetFieldToServer pack3 = new PacketSetFieldToServer();
-                pack3.setData((tile.getField(tile.FIELD_LOCKED) == 1) ? 0 : 1, 1, tile.getPos());
+                pack3.setData((tile.getField(tile.FIELD_LOCKED) == 1) ? 0 : 1, tile.FIELD_LOCKED, tile.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack3);
                 tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
                 break;
@@ -482,7 +507,7 @@ public class GuiExchanger extends GuiContainer {
                 int newGear = tile.getField(tile.FIELD_GEAREXT) == 1 ? 0 : 1;
                 tile.setField(tile.FIELD_GEAREXT, newGear);
                 PacketSetFieldToServer pack4 = new PacketSetFieldToServer();
-                pack4.setData(newGear, 8, tile.getPos());
+                pack4.setData(newGear, tile.FIELD_GEAREXT, tile.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack4);
                 break;
             case CREATIVE_ID: //Creative Button

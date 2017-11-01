@@ -45,7 +45,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     private long bank, cashRegister;
     private int selectedSlot;
     private String owner, selectedName;
-    private boolean locked, mode, creative, infinite, gearExtended, twoBlock;
+    private boolean locked, mode, creative, infinite, gearExtended, twoBlock, voidBlock;
     private int[] itemCosts = new int[VEND_SLOT_COUNT];
     private int[] itemAmounts = new int[VEND_SLOT_COUNT];
     private ItemStackHandler inputStackHandler = new ItemStackHandler(INPUT_SLOT_COUNT);
@@ -54,13 +54,14 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     private ItemHandlerCustom automationInputStackHandler = new ItemHandlerCustom(1);
     private EntityPlayer playerUsing = null;
 
-    public final byte FIELD_LOCKED = 1;
-    public final byte FIELD_MODE = 2;
-    public final byte FIELD_SELECTSLOT = 3;
-    public final byte FIELD_CREATIVE = 5;
-    public final byte FIELD_INFINITE = 6;
-    public final byte FIELD_TWOBLOCK = 7;
-    public final byte FIELD_GEAREXT = 8;
+    public final byte FIELD_LOCKED = 0;
+    public final byte FIELD_MODE = 1;
+    public final byte FIELD_SELECTSLOT = 2;
+    public final byte FIELD_CREATIVE = 3;
+    public final byte FIELD_INFINITE = 4;
+    public final byte FIELD_TWOBLOCK = 5;
+    public final byte FIELD_GEAREXT = 6;
+    public final byte FIELD_VOID = 7;
 
     public final byte LONG_BANK = 0;
     public final byte LONG_CASHREG = 1;
@@ -75,6 +76,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         mode = false;
         creative = false;
         infinite = false;
+        voidBlock = false;
         gearExtended = false;
         twoBlock = false;
         automationInputStackHandler.setAllowedItem(ModItems.itemBanknote);
@@ -207,7 +209,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                                             pack.setData(getPos(), LONG_BANK, bank);
                                             PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
                                         }
-                                        if (!infinite) {
+                                        if (!(infinite && !voidBlock)) {
                                             cashRegister = cashRegister - cost;
 
                                             if(!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null){
@@ -512,6 +514,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         compound.setBoolean("mode", mode);
         compound.setBoolean("creative", creative);
         compound.setBoolean("infinite", infinite);
+        compound.setBoolean("voidBlock", voidBlock);
         compound.setBoolean("gearExtended", gearExtended);
         compound.setBoolean("twoBlock", twoBlock);
         compound.setInteger("selectedSlot", selectedSlot);
@@ -543,6 +546,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         if (compound.hasKey("mode")) mode = compound.getBoolean("mode");
         if (compound.hasKey("creative")) creative = compound.getBoolean("creative");
         if (compound.hasKey("infinite")) infinite = compound.getBoolean("infinite");
+        if (compound.hasKey("voidBlock")) voidBlock = compound.getBoolean("voidBlock");
         if (compound.hasKey("gearExtended")) gearExtended = compound.getBoolean("gearExtended");
         if (compound.hasKey("twoBlock")) twoBlock = compound.getBoolean("twoBlock");
         if (compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
@@ -575,6 +579,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         tag.setBoolean("mode", mode);
         tag.setBoolean("creative", creative);
         tag.setBoolean("infinite", infinite);
+        tag.setBoolean("voidBlock", voidBlock);
         tag.setBoolean("gearExtended", gearExtended);
         tag.setBoolean("twoBlock", twoBlock);
         tag.setInteger("selectedSlot", selectedSlot);
@@ -601,6 +606,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         mode = pkt.getNbtCompound().getBoolean("mode");
         creative = pkt.getNbtCompound().getBoolean("creative");
         infinite = pkt.getNbtCompound().getBoolean("infinite");
+        voidBlock = pkt.getNbtCompound().getBoolean("voidBlock");
         gearExtended = pkt.getNbtCompound().getBoolean("gearExtended");
         twoBlock = pkt.getNbtCompound().getBoolean("twoBlock");
         selectedSlot = pkt.getNbtCompound().getInteger("selectedSlot");
@@ -637,7 +643,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
 
     //<editor-fold desc="Getter & Setter Methods---------------------------------------------------------------------------------------------">
     public int getFieldCount() {
-        return 7;
+        return 8;
     }
 
     public void setField(int id, int value) {
@@ -663,6 +669,11 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
             case FIELD_GEAREXT:
                 gearExtended = (value == 1);
                 break;
+            case FIELD_VOID:
+                if(infinite) {
+                    voidBlock = (value == 1);
+                }else voidBlock = true;
+                break;
         }
     }
 
@@ -682,6 +693,8 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                 return (twoBlock) ? 1 : 0;
             case FIELD_GEAREXT:
                 return (gearExtended) ? 1 : 0;
+            case FIELD_VOID:
+                return (voidBlock) ? 1 : 0;
         }
         return -1;
     }
