@@ -299,7 +299,7 @@ public class GuiVending extends GuiContainer {
             fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.infinitestock"), -85, 92 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY(), Integer.parseInt("fff200", 16));
         }
 
-        if (tile.getField(tile.FIELD_WALLETIN) == 1) fontRenderer.drawString(I18n.format("Wallet") + ": $" + tile.getLong(tile.LONG_WALLETTOTAL), 5, 23, Integer.parseInt("3abd0c", 16));
+        if (tile.getField(tile.FIELD_WALLETIN) == 1) fontRenderer.drawString(I18n.format("Wallet") + ": $" + UtilMethods.translateMoney(tile.getLong(tile.LONG_WALLETTOTAL)), 5, 23, Integer.parseInt("3abd0c", 16));
     }
 
     private void drawIcons() {

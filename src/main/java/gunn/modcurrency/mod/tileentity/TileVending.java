@@ -335,7 +335,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
 
             int totalCash = 0;
             for (int i = 0; i < itemStackHandler.getSlots(); i++) {
-                if (itemStackHandler.getStackInSlot(i) != ItemStack.EMPTY) {
+                if (itemStackHandler.getStackInSlot(i).getItem().equals(ModItems.itemCoin)) {
                     switch (itemStackHandler.getStackInSlot(i).getItemDamage()) {
                         case 0:
                             totalCash = totalCash + itemStackHandler.getStackInSlot(i).getCount();
@@ -347,13 +347,37 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                             totalCash = totalCash + 10 * itemStackHandler.getStackInSlot(i).getCount();
                             break;
                         case 3:
-                            totalCash = totalCash + 20 * itemStackHandler.getStackInSlot(i).getCount();
+                            totalCash = totalCash + 25 * itemStackHandler.getStackInSlot(i).getCount();
                             break;
                         case 4:
-                            totalCash = totalCash + 50 * itemStackHandler.getStackInSlot(i).getCount();
+                            totalCash = totalCash + 100 * itemStackHandler.getStackInSlot(i).getCount();
                             break;
                         case 5:
+                            totalCash = totalCash + 200 * itemStackHandler.getStackInSlot(i).getCount();
+                            break;
+                        default:
+                            totalCash = -1;
+                            break;
+                    }
+                }else  if (itemStackHandler.getStackInSlot(i).getItem().equals(ModItems.itemBanknote)) {
+                    switch (itemStackHandler.getStackInSlot(i).getItemDamage()) {
+                        case 0:
                             totalCash = totalCash + 100 * itemStackHandler.getStackInSlot(i).getCount();
+                            break;
+                        case 1:
+                            totalCash = totalCash + 500 * itemStackHandler.getStackInSlot(i).getCount();
+                            break;
+                        case 2:
+                            totalCash = totalCash + 1000 * itemStackHandler.getStackInSlot(i).getCount();
+                            break;
+                        case 3:
+                            totalCash = totalCash + 2000 * itemStackHandler.getStackInSlot(i).getCount();
+                            break;
+                        case 4:
+                            totalCash = totalCash + 5000 * itemStackHandler.getStackInSlot(i).getCount();
+                            break;
+                        case 5:
+                            totalCash = totalCash + 10000 * itemStackHandler.getStackInSlot(i).getCount();
                             break;
                         default:
                             totalCash = -1;
