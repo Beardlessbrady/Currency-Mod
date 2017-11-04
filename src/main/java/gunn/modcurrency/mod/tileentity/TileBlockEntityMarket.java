@@ -1,6 +1,6 @@
 package gunn.modcurrency.mod.tileentity;
 
-import gunn.modcurrency.mod.client.gui.util.INBTInventory;
+import gunn.modcurrency.mod.container.util.INBTInventory;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;

@@ -1,4 +1,4 @@
-package gunn.modcurrency.mod.client.gui.util;
+package gunn.modcurrency.mod.container.util;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;

@@ -1,7 +1,7 @@
 package gunn.modcurrency.mod.tileentity;
 
 import gunn.modcurrency.mod.ModCurrency;
-import gunn.modcurrency.mod.client.gui.util.INBTInventory;
+import gunn.modcurrency.mod.container.util.INBTInventory;
 import gunn.modcurrency.mod.container.itemhandler.ItemHandlerCustom;
 import gunn.modcurrency.mod.handler.StateHandler;
 import gunn.modcurrency.mod.item.ModItems;

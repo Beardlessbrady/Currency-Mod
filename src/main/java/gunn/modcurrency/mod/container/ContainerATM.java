@@ -1,9 +1,9 @@
 package gunn.modcurrency.mod.container;
 
+import gunn.modcurrency.mod.container.util.INBTInventory;
 import gunn.modcurrency.mod.tileentity.TileATM;
 import gunn.modcurrency.mod.container.slot.SlotCustomizable;
 import gunn.modcurrency.mod.item.ModItems;
-import gunn.modcurrency.mod.client.gui.util.INBTInventory;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
@@ -19,7 +19,7 @@ import net.minecraftforge.items.IItemHandler;
  *
  * File Created on 2017-03-16
  */
-public class ContainerATM extends Container implements INBTInventory{
+public class ContainerATM extends Container implements INBTInventory {
     //Slot Index's
     //0-35 = Player Inventory's
     //36 = Te Slot

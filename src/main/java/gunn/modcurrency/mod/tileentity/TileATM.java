@@ -1,7 +1,7 @@
 package gunn.modcurrency.mod.tileentity;
 
 import gunn.modcurrency.mod.ModCurrency;
-import gunn.modcurrency.mod.client.gui.util.INBTInventory;
+import gunn.modcurrency.mod.container.util.INBTInventory;
 import gunn.modcurrency.mod.worldsaveddata.bank.BankAccount;
 import gunn.modcurrency.mod.worldsaveddata.bank.BankAccountSavedData;
 import gunn.modcurrency.mod.network.PacketHandler;

@@ -1,8 +1,8 @@
 package gunn.modcurrency.mod.container;
 
-import gunn.modcurrency.mod.client.gui.util.INBTInventory;
 import gunn.modcurrency.mod.container.slot.SlotCustomizable;
 import gunn.modcurrency.mod.container.slot.SlotVendor;
+import gunn.modcurrency.mod.container.util.INBTInventory;
 import gunn.modcurrency.mod.item.ItemWallet;
 import gunn.modcurrency.mod.item.ModItems;
 import gunn.modcurrency.mod.tileentity.TileVending;
@@ -22,7 +22,6 @@ import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**

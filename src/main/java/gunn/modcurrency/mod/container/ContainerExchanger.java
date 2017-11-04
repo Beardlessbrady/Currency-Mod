@@ -1,7 +1,7 @@
 package gunn.modcurrency.mod.container;
 
-import gunn.modcurrency.mod.client.gui.util.INBTInventory;
 import gunn.modcurrency.mod.container.slot.SlotVendor;
+import gunn.modcurrency.mod.container.util.INBTInventory;
 import gunn.modcurrency.mod.item.ModItems;
 import gunn.modcurrency.mod.tileentity.TileExchanger;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,7 +24,7 @@ import javax.annotation.Nullable;
  *
  * File Created on 2017-05-08
  */
-public class ContainerExchanger extends Container implements INBTInventory{
+public class ContainerExchanger extends Container implements INBTInventory {
     //Slot Index
     //0-35 = Players Inv
     //36 = Input Slot

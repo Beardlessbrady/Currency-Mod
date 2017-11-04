@@ -1,10 +1,10 @@
 package gunn.modcurrency.mod.container;
 
 import gunn.modcurrency.mod.client.gui.GuiWallet;
-import gunn.modcurrency.mod.client.gui.util.INBTInventory;
 import gunn.modcurrency.mod.container.slot.SlotCustomizable;
-import gunn.modcurrency.mod.item.ModItems;
+import gunn.modcurrency.mod.container.util.INBTInventory;
 import gunn.modcurrency.mod.item.ItemWallet;
+import gunn.modcurrency.mod.item.ModItems;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -18,6 +18,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Distributed with the Currency-Mod for Minecraft
@@ -43,8 +45,10 @@ public class ContainerWallet extends Container implements INBTInventory {
     private final int WALLET_FIRST_SLOT_INDEX = PLAYER_FIRST_SLOT_INDEX + PLAYER_TOTAL_COUNT;
 
     private final int GUI_XPOS_OFFPUT = GuiWallet.GUI_XPOS_OFFPUT;
+    private List itemsAllowed;
 
     private ItemStackHandler itemStackHandler;
+    private int slotId;
 
     public ContainerWallet(EntityPlayer player, ItemStack wallet){
         if(!wallet.hasTagCompound()){
@@ -52,7 +56,7 @@ public class ContainerWallet extends Container implements INBTInventory {
             wallet.setTagCompound(compound);
             writeInventoryTag(wallet, new ItemStackHandler(WALLET_TOTAL_COUNT));
         }
-
+        itemsAllowed = new ArrayList();
         didInventorySizeChange(wallet, player);
 
         setupPlayerInv(player.inventory);
@@ -93,15 +97,18 @@ public class ContainerWallet extends Container implements INBTInventory {
                 int slotNum = y * WALLET_COLUMN_COUNT + x;
                 int xpos =  7 + x * SLOT_X_SPACING;
 
+                itemsAllowed.add(ModItems.itemBanknote);
+                itemsAllowed.add(ModItems.itemCoin);
+
                 switch(y) {
                     default:
-                    case 0: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, 35, ModItems.itemBanknote));
+                    case 0: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, 35, itemsAllowed));
                         break;
-                    case 1: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, 54, ModItems.itemBanknote));
+                    case 1: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, 54, itemsAllowed));
                         break;
-                    case 2: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, 18, ModItems.itemBanknote));
+                    case 2: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, 18, itemsAllowed));
                         break;
-                    case 3: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, 72, ModItems.itemBanknote));
+                    case 3: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, 72, itemsAllowed));
                         break;
                 }
             }
@@ -116,15 +123,14 @@ public class ContainerWallet extends Container implements INBTInventory {
     @Nullable
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-        if(slotId >= 0 && slotId <= WALLET_FIRST_SLOT_INDEX + WALLET_TOTAL_COUNT) {
-            if(player.getHeldItemMainhand() != inventorySlots.get(slotId).getStack()) {
-                ItemStack stack = super.slotClick(slotId, dragType, clickTypeIn, player);
-                writeInventoryTag(player.getHeldItemMainhand(), itemStackHandler);
-                checkmetadataOpen(player.getHeldItemMainhand());
-                return stack;
-            }
+        if (slotId >= 0) {
+            if (inventorySlots.get(slotId).getStack().getItem().equals(ModItems.itemWallet)) return ItemStack.EMPTY;
         }
-        return super.slotClick(slotId, dragType, clickTypeIn, player);
+
+        ItemStack stack = super.slotClick(slotId, dragType, clickTypeIn, player);
+        writeInventoryTag(player.getHeldItemMainhand(), itemStackHandler);
+        checkmetadataOpen(player.getHeldItemMainhand());
+        return stack;
     }
 
     @Nullable
@@ -139,7 +145,7 @@ public class ContainerWallet extends Container implements INBTInventory {
                 sourceStack = copyStack.copy();
 
                 if (index < PLAYER_TOTAL_COUNT) {     //Player Inventory Slots
-                    if (slot.getStack().getItem() == ModItems.itemBanknote) {
+                    if (itemsAllowed.contains(slot.getStack().getItem())) {
                         if (!this.mergeItemStack(copyStack, WALLET_FIRST_SLOT_INDEX, WALLET_FIRST_SLOT_INDEX + WALLET_TOTAL_COUNT, false)) {
                             return ItemStack.EMPTY;
                         }
@@ -250,26 +256,4 @@ public class ContainerWallet extends Container implements INBTInventory {
         compound.setInteger("full", meta);
         stack.setTagCompound(compound);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
