@@ -5,6 +5,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Distributed with the Currency-Mod for Minecraft.
  * Copyright (C) 2016  Brady Gunn
@@ -12,31 +16,23 @@ import net.minecraftforge.items.SlotItemHandler;
  * File Created on 2016-11-11.
  */
 public class SlotCustomizable extends SlotItemHandler {
-    Item itemAllowed;
-    Item[] itemsAllowed;
-    boolean multiple = false;
+    List itemsAllowed;
 
     public SlotCustomizable(IItemHandler itemHandler, int index, int xPosition, int yPosition, Item onlyItemAllowed) {
         super(itemHandler, index, xPosition, yPosition);
-        itemAllowed = onlyItemAllowed;
+        itemsAllowed = new ArrayList();
+        itemsAllowed.add(onlyItemAllowed);
     }
 
-    public SlotCustomizable(IItemHandler itemHandler, int index, int xPosition, int yPosition, Item[] onlyItemsAllowed) {
+    public SlotCustomizable(IItemHandler itemHandler, int index, int xPosition, int yPosition, List onlyItemsAllowed) {
         super(itemHandler, index, xPosition, yPosition);
-        itemsAllowed= onlyItemsAllowed.clone();
-        multiple = true;
+        itemsAllowed = new ArrayList();
+        itemsAllowed.addAll(onlyItemsAllowed);
     }
 
     @Override
     public boolean isItemValid(ItemStack stack) {
-        if(multiple == false) {
-            return stack.getItem() == itemAllowed;
-        }else{
-            for(int i = 0; i < itemsAllowed.length; i++){
-                if(stack.getItem() == itemsAllowed[i]) return true;
-            }
-            return false;
-        }
-
+        if(itemsAllowed.contains(stack.getItem())) return true;
+        return false;
     }
 }

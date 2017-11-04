@@ -21,6 +21,9 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Distributed with the Currency-Mod for Minecraft
@@ -50,14 +53,15 @@ public class ContainerVending extends Container implements INBTInventory {
     public final int TE_VEND_FIRST_SLOT_INDEX = TE_MONEY_FIRST_SLOT_INDEX + 1;
     public int TE_BUFFER_FIRST_SLOT_INDEX = TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT;
 
-    private Item[] specialSlotItems = new Item[3];
+    private List specialSlotItems;
     private TileVending tile;
     private int[] cachedFields;
 
     public ContainerVending(InventoryPlayer invPlayer, TileVending te) {
-        specialSlotItems[0] = ModItems.itemBanknote;
-        specialSlotItems[1] = ModItems.itemCoin;
-        specialSlotItems[2] = ModItems.itemWallet;
+        specialSlotItems = new ArrayList();
+        specialSlotItems.add(ModItems.itemBanknote);
+        specialSlotItems.add(ModItems.itemCoin);
+        specialSlotItems.add(ModItems.itemWallet);
 
         tile = te;
         setupPlayerInv(invPlayer);
