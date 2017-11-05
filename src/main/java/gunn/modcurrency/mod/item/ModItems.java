@@ -19,6 +19,7 @@ public class ModItems {
     public static ItemCoin itemCoin = new ItemCoin();
     public static ItemWallet itemWallet = new ItemWallet();
     public static ItemGuideBook itemGuide = new ItemGuideBook();
+    public static ItemBundledBag itemBundledBag = new ItemBundledBag();
 
     @SubscribeEvent
     public void registerItems(RegistryEvent.Register<Item> event){
@@ -26,6 +27,7 @@ public class ModItems {
         event.getRegistry().register(itemCoin);
         event.getRegistry().register(itemGuide);
         if(ModConfig.enableWallet) event.getRegistry().register(itemWallet);
+        event.getRegistry().register(itemBundledBag);
     }
 
     @SideOnly(Side.CLIENT)
@@ -35,6 +37,7 @@ public class ModItems {
         itemCoin.initModel();
         itemGuide.initModel();
         if(ModConfig.enableWallet) itemWallet.initModel();
+        itemBundledBag.initModel();
     }
 
 }
