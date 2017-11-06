@@ -4,8 +4,12 @@ import gunn.modcurrency.mod.item.ModItems;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.registries.IForgeRegistryEntry;
+
+import java.util.ArrayList;
 
 /**
  * Distributed with the Currency-Mod for Minecraft
@@ -23,7 +27,7 @@ public class BundledBagRecipe extends IForgeRegistryEntry.Impl<IRecipe> implemen
         for(int i = 0; i < inv.getSizeInventory(); i ++){
             if(inv.getStackInSlot(i).getItem().equals(ModItems.itemBundledBag)){
                 foundBag = true;
-            }else otherItem = true;
+            }else if(!inv.getStackInSlot(i).isEmpty()) otherItem = true;
         }
 
         return foundBag && otherItem;
@@ -31,8 +35,16 @@ public class BundledBagRecipe extends IForgeRegistryEntry.Impl<IRecipe> implemen
 
     @Override
     public ItemStack getCraftingResult(InventoryCrafting inv) {
-        System.out.println(inv.getStackInSlot(0));
-        return ItemStack.EMPTY;
+        ItemStack bag = new ItemStack(ModItems.itemBundledBag);
+        ArrayList items = new ArrayList();
+
+        for(int i = 0; i < inv.getSizeInventory(); i++){
+            if(!inv.getStackInSlot(i).getItem().equals(ModItems.itemBundledBag)){
+                items.add(inv.getStackInSlot(i));
+            }
+        }
+        setInventory(bag, items);
+        return bag;
     }
 
     @Override
@@ -43,5 +55,14 @@ public class BundledBagRecipe extends IForgeRegistryEntry.Impl<IRecipe> implemen
     @Override
     public ItemStack getRecipeOutput() {
         return ItemStack.EMPTY;
+    }
+
+    public void setInventory(ItemStack bag, ArrayList<ItemStack> items){
+        ItemStackHandler itemStackHandler = new ItemStackHandler(items.size());
+        for(int i = 0; i < itemStackHandler.getSlots(); i++) itemStackHandler.setStackInSlot(i, items.get(i));
+
+        NBTTagCompound compound = new NBTTagCompound();
+        compound.setTag("inventory", itemStackHandler.serializeNBT());
+        bag.setTagCompound(compound);
     }
 }
