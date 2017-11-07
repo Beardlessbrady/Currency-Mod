@@ -301,7 +301,6 @@ public class GuiExchanger extends GuiContainer {
             fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.amount"), -84, 102, Integer.parseInt("211d1b", 16));
             fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.amount"), -83, 101, Color.lightGray.getRGB());
             fontRenderer.drawString(I18n.format("$"), -57, 91, Integer.parseInt("0099ff", 16));
-            fontRenderer.drawString(I18n.format("$"), -57, 101, Integer.parseInt("0099ff", 16));
 
             GL11.glPushMatrix();
             GL11.glScaled(0.7, 0.7, 0.7);

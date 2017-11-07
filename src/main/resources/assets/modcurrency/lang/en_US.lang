@@ -13,7 +13,7 @@ item.modcurrency:coin_4.name=One-Dollar Coin
 item.modcurrency:coin_5.name=Two-Dollar Coin
 item.modcurrency:wallet.name=Wallet
 item.modcurrency:guidebook.name=Currency for Blockheads
-item.modcurrency:bundledbag.name=BundledBag
+item.modcurrency:bundledbag.name=Bundled Bag
 
 //Block names
 tile.modcurrency:blockvending.name=Vending Machine
@@ -28,7 +28,7 @@ tile.modcurrency:guivending.profit=Profit
 tile.modcurrency:guivending.funds=Funds
 tile.modcurrency:guivending.slotsettings=Slot Settings
 tile.modcurrency:guivending.cost=Cost:
-tile.modcurrency:guivending.amount=Amnt:
+tile.modcurrency:guivending.amount=Req'd:
 tile.modcurrency:guivending.cash=Cash
 tile.modcurrency:guivending.infinitestock=Infinite Stock
 tile.modcurrency:guivending.locktab=Lock Tab
