@@ -21,6 +21,7 @@ public class ItemUpgrade extends Item {
     public ItemUpgrade() {
         setHasSubtypes(true);
         setRegistryName("upgrade");
+        setMaxStackSize(16);
     }
 
     @SideOnly(Side.CLIENT)

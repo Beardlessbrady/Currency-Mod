@@ -3,6 +3,7 @@ package gunn.modcurrency.mod.block;
 
 import gunn.modcurrency.mod.ModCurrency;
 import gunn.modcurrency.mod.handler.StateHandler;
+import gunn.modcurrency.mod.item.ModItems;
 import gunn.modcurrency.mod.tileentity.TileExchanger;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -76,10 +77,25 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         TileExchanger tile = getTile(worldIn, pos);
         if (tile.getPlayerUsing() == null) {
-            tile.setField(tile.FIELD_CREATIVE, playerIn.isCreative() ? 1 : 0);
-            if (!worldIn.isRemote) {
-                tile.openGui(playerIn, worldIn, pos);
-                return true;
+            if(playerIn.getHeldItemMainhand().isEmpty()) {
+                tile.setField(tile.FIELD_CREATIVE, playerIn.isCreative() ? 1 : 0);
+                if (!worldIn.isRemote) {
+                    tile.openGui(playerIn, worldIn, pos);
+                    return true;
+                }
+            }else if (playerIn.getHeldItemMainhand().getItem().equals(ModItems.itemUpgrade)){
+                if(tile.getOwner().equals(playerIn) || playerIn.isCreative()) {
+                    ItemStack upgrade = playerIn.getHeldItemMainhand();
+
+                    switch (upgrade.getItemDamage()) {
+                        case 1:
+                            if (tile.getField(tile.FIELD_UPGRADEREQ) == 0) {
+                                tile.setField(tile.FIELD_UPGRADEREQ, 1);
+                                if(!playerIn.isCreative()) playerIn.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
+                            }
+                            break;
+                    }
+                }
             }
         }
         return false;
@@ -105,6 +121,7 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
                     String owner = tile.getOwner();
                     boolean locked = tile.getField(tile.FIELD_LOCKED) == 1;
                     boolean infinite = tile.getField(tile.FIELD_INFINITE) == 1;
+                    boolean upgradeReq = tile.getField(tile.FIELD_UPGRADEREQ) == 1;
                     int[] itemCosts = new int[tile.VEND_SLOT_COUNT];
                     for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = tile.getItemCost(i);
                     int[] itemAmounts = new int[tile.VEND_SLOT_COUNT];
@@ -127,6 +144,7 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
                     tile.setOwner(owner);
                     tile.setField(tile.FIELD_LOCKED, locked ? 1 : 0);
                     tile.setField(tile.FIELD_INFINITE, infinite ? 1 : 0);
+                    tile.setField(tile.FIELD_UPGRADEREQ, upgradeReq ? 1 : 0);
                     for (int i = 0; i < itemCosts.length; i++) tile.setItemCost(itemCosts[i], i);
                     for (int i = 0; i < itemAmounts.length; i++) tile.setItemAmount(itemAmounts[i], i);
                 }
@@ -149,6 +167,7 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
                 String owner = tile.getOwner();
                 boolean locked = tile.getField(tile.FIELD_LOCKED) == 1;
                 boolean infinite = tile.getField(tile.FIELD_INFINITE) == 1;
+                boolean upgradeReq = tile.getField(tile.FIELD_UPGRADEREQ) == 1;
                 int[] itemCosts = new int[tile.VEND_SLOT_COUNT];
                 for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = tile.getItemCost(i);
                 int[] itemAmounts = new int[tile.VEND_SLOT_COUNT];
@@ -170,6 +189,7 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
                 tile.setOwner(owner);
                 tile.setField(tile.FIELD_LOCKED, locked ? 1 : 0);
                 tile.setField(tile.FIELD_INFINITE, infinite ? 1 : 0);
+                tile.setField(tile.FIELD_UPGRADEREQ, upgradeReq ? 1 : 0);
                 for (int i = 0; i < itemCosts.length; i++) tile.setItemCost(itemCosts[i], i);
                 for (int i = 0; i < itemAmounts.length; i++) tile.setItemAmount(itemAmounts[i], i);
             }

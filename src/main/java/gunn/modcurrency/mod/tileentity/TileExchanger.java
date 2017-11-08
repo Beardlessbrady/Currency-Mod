@@ -53,6 +53,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     private ItemStackHandler bufferStackHandler = new ItemStackHandler(BUFFER_SLOT_COUNT);
     private ItemHandlerCustom automationInputStackHandler = new ItemHandlerCustom(1);
     private EntityPlayer playerUsing = null;
+    private boolean upgradeReq;
 
     public final byte FIELD_LOCKED = 0;
     public final byte FIELD_MODE = 1;
@@ -62,6 +63,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     public final byte FIELD_TWOBLOCK = 5;
     public final byte FIELD_GEAREXT = 6;
     public final byte FIELD_VOID = 7;
+    public final byte FIELD_UPGRADEREQ = 8;
 
     public final byte LONG_BANK = 0;
     public final byte LONG_CASHREG = 1;
@@ -81,6 +83,8 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         twoBlock = false;
         automationInputStackHandler.setAllowedItem(ModItems.itemBanknote);
         automationInputStackHandler.setAllowedItem(ModItems.itemCoin);
+
+        upgradeReq = false;
 
         for (int i = 0; i < itemCosts.length; i++){
             itemCosts[i] = 0;
@@ -329,6 +333,8 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                 vendStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
             }
         }
+        //Drop upgrades it has when broken
+        if(upgradeReq) world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), new ItemStack(ModItems.itemUpgrade, 1, 1)));
     }
 
     public boolean canInteractWith(EntityPlayer player) {
@@ -520,6 +526,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         compound.setInteger("selectedSlot", selectedSlot);
         compound.setString("selectedName", selectedName);
         compound.setString("owner", owner);
+        compound.setBoolean("upgradeReq", upgradeReq);
 
         NBTTagCompound itemCostsNBT = new NBTTagCompound();
         NBTTagCompound itemAmountNBT = new NBTTagCompound();
@@ -552,6 +559,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         if (compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
         if (compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
         if (compound.hasKey("owner")) owner = compound.getString("owner");
+        if (compound.hasKey("upgradeReq")) upgradeReq = compound.getBoolean("upgradeReq");
 
         if (compound.hasKey("itemCosts")) {
             NBTTagCompound itemCostsNBT = compound.getCompoundTag("itemCosts");
@@ -585,6 +593,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         tag.setInteger("selectedSlot", selectedSlot);
         tag.setString("selectedName", selectedName);
         tag.setString("owner", owner);
+        tag.setBoolean("upgradeReq", upgradeReq);
 
         NBTTagCompound itemCostsNBT = new NBTTagCompound();
         for (int i = 0; i < itemCosts.length; i++) itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
@@ -612,6 +621,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         selectedSlot = pkt.getNbtCompound().getInteger("selectedSlot");
         selectedName = pkt.getNbtCompound().getString("selectedName");
         owner = pkt.getNbtCompound().getString("owner");
+        upgradeReq = pkt.getNbtCompound().getBoolean("upgradeReq");
 
         NBTTagCompound itemCostsNBT = pkt.getNbtCompound().getCompoundTag("itemCosts");
         for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = itemCostsNBT.getInteger("cost" + i);
@@ -643,7 +653,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
 
     //<editor-fold desc="Getter & Setter Methods---------------------------------------------------------------------------------------------">
     public int getFieldCount() {
-        return 8;
+        return 9;
     }
 
     public void setField(int id, int value) {
@@ -674,6 +684,9 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                     voidBlock = (value == 1);
                 }else voidBlock = true;
                 break;
+            case FIELD_UPGRADEREQ:
+                upgradeReq = (value == 1);
+                break;
         }
     }
 
@@ -695,6 +708,8 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                 return (gearExtended) ? 1 : 0;
             case FIELD_VOID:
                 return (voidBlock) ? 1 : 0;
+            case FIELD_UPGRADEREQ:
+                return (upgradeReq) ? 1 : 0;
         }
         return -1;
     }
