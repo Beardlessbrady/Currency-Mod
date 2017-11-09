@@ -7,7 +7,6 @@ import gunn.modcurrency.mod.handler.StateHandler;
 import gunn.modcurrency.mod.item.ItemWallet;
 import gunn.modcurrency.mod.item.ModItems;
 import gunn.modcurrency.mod.network.PacketHandler;
-import gunn.modcurrency.mod.network.PacketSetGhostToClient;
 import gunn.modcurrency.mod.network.PacketSetLongToClient;
 import gunn.modcurrency.mod.utils.UtilMethods;
 import net.minecraft.entity.item.EntityItem;
@@ -55,8 +54,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     private ItemHandlerVendor vendStackHandler = new ItemHandlerVendor(VEND_SLOT_COUNT);
     private ItemStackHandler bufferStackHandler = new ItemStackHandler(BUFFER_SLOT_COUNT);
     private EntityPlayer playerUsing = null;
-    private boolean[] ghostSlots;
-    private int[] slotSizes;
+    private int[] slotSizes= new int[VEND_SLOT_COUNT];
 
     public final byte FIELD_LOCKED = 1;
     public final byte FIELD_MODE = 2;
@@ -80,9 +78,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         outputBill = 0;
         owner = "";
         selectedName = "No Item";
-        ghostSlots = new boolean[vendStackHandler.getSlots()];
-        for(int i = 0; i < ghostSlots.length; i ++){
-            ghostSlots[i] = false;
+        for(int i = 0; i < VEND_SLOT_COUNT; i ++){
             slotSizes[i] = 0;
             itemCosts[i] = 0;
         }
@@ -111,7 +107,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
             pack1.setData(getPos(), LONG_PROFIT, profit);
             PacketHandler.INSTANCE.sendTo(pack1, (EntityPlayerMP) player);
 
-            checkForWrongGhosts();
+          //  checkForWrongGhosts();
         }
     }
 
@@ -585,16 +581,14 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         compound.setString("owner", owner);
 
         NBTTagCompound itemCostsNBT = new NBTTagCompound();
-        for (int i = 0; i < itemCosts.length; i++) itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
-        compound.setTag("itemCosts", itemCostsNBT);
-
-        NBTTagCompound ghostSlotsNBT = new NBTTagCompound();
-        for (int i = 0; i < itemCosts.length; i++) ghostSlotsNBT.setBoolean("ghost" + i, ghostSlots[i]);
-        compound.setTag("ghostSlots", itemCostsNBT);
-
         NBTTagCompound itemSizesNBT = new NBTTagCompound();
-        for (int i = 0; i < itemCosts.length; i++) itemSizesNBT.setInteger("size" + i, slotSizes[i]);
-        compound.setTag("itemSizes", itemCostsNBT);
+
+        for (int i = 0; i < VEND_SLOT_COUNT; i++){
+            itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
+            itemSizesNBT.setInteger("size" + i, slotSizes[i]);
+        }
+        compound.setTag("itemCosts", itemCostsNBT);
+        compound.setTag("itemSizes", itemSizesNBT);
 
         return compound;
     }
@@ -622,12 +616,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
 
         if (compound.hasKey("itemCosts")) {
             NBTTagCompound itemCostsNBT = compound.getCompoundTag("itemCosts");
-            for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = itemCostsNBT.getInteger("cost" + i);
-        }
-
-        if (compound.hasKey("ghostSlots")) {
-            NBTTagCompound ghostSlotNBT = compound.getCompoundTag("ghostSlots");
-            for (int i = 0; i < itemCosts.length; i++) ghostSlots[i] = ghostSlotNBT.getBoolean("ghost" + i);
+            for (int i = 0; i < VEND_SLOT_COUNT; i++)itemCosts[i] = itemCostsNBT.getInteger("cost" + i);
         }
 
         if (compound.hasKey("itemSizes")) {
@@ -661,15 +650,12 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         tag.setString("owner", owner);
 
         NBTTagCompound itemCostsNBT = new NBTTagCompound();
-        NBTTagCompound itemGhostsNBT = new NBTTagCompound();
         NBTTagCompound itemSizeNBT = new NBTTagCompound();
-        for (int i = 0; i < itemCosts.length; i++){
+        for (int i = 0; i < VEND_SLOT_COUNT; i++){
             itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
-            itemGhostsNBT.setBoolean("ghost" + i, ghostSlots[i]);
             itemSizeNBT.setInteger("size" + i, slotSizes[i]);
         }
         tag.setTag("itemCosts", itemCostsNBT);
-        tag.setTag("ghostSlots", itemGhostsNBT);
         tag.setTag("itemSizes", itemSizeNBT);
 
         return new SPacketUpdateTileEntity(pos, 1, tag);
@@ -694,11 +680,9 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         owner = pkt.getNbtCompound().getString("owner");
 
         NBTTagCompound itemCostsNBT = pkt.getNbtCompound().getCompoundTag("itemCosts");
-        NBTTagCompound ghostSlotNBT = pkt.getNbtCompound().getCompoundTag("ghostSlots");
         NBTTagCompound itemSizeNBT = pkt.getNbtCompound().getCompoundTag("itemSizes");
-        for (int i = 0; i < itemCosts.length; i++){
+        for (int i = 0; i < VEND_SLOT_COUNT; i++){
             itemCosts[i] = itemCostsNBT.getInteger("cost" + i);
-            ghostSlots[i]= ghostSlotNBT.getBoolean("ghost" + i);
             slotSizes[i] = itemSizeNBT.getInteger("size" + i);
         }
     }
@@ -835,6 +819,22 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         itemCosts[index] = amount;
     }
 
+    public int getItemSize(int index){
+        return slotSizes[index];
+    }
+
+    public void setItemSize(int amount, int index){
+        slotSizes[index] = amount;
+    }
+
+    public void growItemSize(int amount, int index) {
+        slotSizes[index] += amount;
+    }
+
+    public void shrinkItemSize(int amount, int index){
+        slotSizes[index] -= amount;
+    }
+
     public ItemStackHandler getBufferStackHandler(){
         return bufferStackHandler;
     }
@@ -859,10 +859,6 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         vendStackHandler = vend;
     }
 
-    public ItemStack getStack(int index) {
-        return vendStackHandler.getStackInSlot(index);
-    }
-
     @Override
     public void setOwner(String owner) {
         this.owner = owner;
@@ -879,30 +875,6 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
 
     public void voidPlayerUsing(){
         playerUsing = null;
-    }
-
-    public boolean checkGhost(int slot){
-        return ghostSlots[slot];
-    }
-
-    public void setGhost(int slot, boolean bool){
-        ghostSlots[slot] = bool;
-        if(!world.isRemote){
-            PacketSetGhostToClient pack = new PacketSetGhostToClient();
-            pack.setData(getPos(), slot, bool);
-            PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) playerUsing);
-        }
-    }
-
-
-    public void checkForWrongGhosts(){
-        for(int i = 0; i < vendStackHandler.getSlots(); i++){
-            if(vendStackHandler.getStackInSlot(i).getCount() > 1 && ghostSlots[i] == true){
-                vendStackHandler.getStackInSlot(i).shrink(1);
-                setGhost(i, false);
-            }
-        }
-
     }
     //</editor-fold>
 }

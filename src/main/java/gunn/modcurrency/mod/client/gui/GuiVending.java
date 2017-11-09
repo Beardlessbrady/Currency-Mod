@@ -400,12 +400,15 @@ public class GuiVending extends GuiContainer {
                 }else{
                     list.add(TextFormatting.GREEN + "Price: $" + UtilMethods.translateMoney(tile.getItemCost(slot)));
                 }
-                if(tile.checkGhost(slot)) {
-                    list.add(TextFormatting.RED + "OUT OF STOCK");
-                }
+               // if(tile.checkGhost(slot)) {
+               //     list.add(TextFormatting.RED + "OUT OF STOCK");
+               // }
             }else{
                 list.add("Price: $" + UtilMethods.translateMoney(tile.getItemCost(slot)));
             }
+
+            //TEMP
+            list.add(Integer.toString(tile.getItemSize(slot)));
 
             //Color text normally
             for (int k = 0; k < list.size(); ++k)

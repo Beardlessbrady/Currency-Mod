@@ -148,6 +148,7 @@ public class ContainerVending extends Container implements INBTInventory {
         if (slotId == -999) return super.slotClick(slotId, dragType, clickTypeIn, player);
 
         //Ensures Pickup_All works without duplicating blocks
+        //<editor-fold desc="PICKUP_ALL">
         if (clickTypeIn == ClickType.PICKUP_ALL && slotId >= 0 && slotId <= PLAYER_TOTAL_COUNT) {
             Slot slot = this.inventorySlots.get(slotId);
             ItemStack itemstack1 = player.inventory.getItemStack();
@@ -183,48 +184,42 @@ public class ContainerVending extends Container implements INBTInventory {
         } else if (clickTypeIn == ClickType.PICKUP_ALL && slotId > PLAYER_TOTAL_COUNT) {
             return ItemStack.EMPTY;
         }
+        //</editor-fold>
 
-        if (tile.getField(tile.FIELD_MODE) == 1) {               //EDIT MODE
-            if (slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < (TE_VEND_FIRST_SLOT_INDEX+ TE_VEND_MAIN_TOTAL_COUNT) && tile.getField(tile.FIELD_GEAREXT) == 1 && clickTypeIn == ClickType.PICKUP && dragType == 0) {
-                if (getSlot(slotId).getHasStack()) {
-                    tile.setSelectedName(getSlot(slotId).getStack().getDisplayName());
-                } else tile.setSelectedName("No Item");
-                tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
-                if (!(tile.getField(tile.FIELD_SELECTSLOT) == slotId)) {
-                    tile.setField(tile.FIELD_SELECTSLOT, slotId);
-                    return ItemStack.EMPTY;
+        if (tile.getField(tile.FIELD_MODE) == 1) { //EDIT MODE
+            if (slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < (TE_VEND_FIRST_SLOT_INDEX+ TE_VEND_MAIN_TOTAL_COUNT)){
+                if(tile.getField(tile.FIELD_GEAREXT) == 1){ //Gear Tab Open
+
+                }else{ //Gear Tab Closed
+                    if(player.inventory.getItemStack().equals(ItemStack.EMPTY)){ //Player has NO ITEM, Pick up
+
+
+                    }else{ //Player has ITEM, place in slot
+                        ItemStack copy = player.inventory.getItemStack().copy();
+                        copy.setCount(1);
+
+                        if(inventorySlots.get(slotId).getStack().equals(ItemStack.EMPTY)) { //If Slot is Empty
+                            inventorySlots.get(slotId).putStack(copy);
+                            tile.setItemSize(player.inventory.getItemStack().getCount(), slotId - 37);
+                            player.inventory.setItemStack(ItemStack.EMPTY);
+                        }else if(UtilMethods.equalStacks(copy, inventorySlots.get(slotId).getStack())){ //If Slot has exact same item, grow stack size by stack size amount
+                            tile.growItemSize(player.inventory.getItemStack().getCount(), slotId - 37);
+                            player.inventory.setItemStack(ItemStack.EMPTY);
+                        }
+
+
+
+                    }
                 }
-            } else if (slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < (TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT) && tile.getField(tile.FIELD_GEAREXT) == 0) {
-                //If an item is a ghost and clicked on with an item
-                if (tile.checkGhost(slotId - PLAYER_TOTAL_COUNT - 1)) {
-                    this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null).getStackInSlot(slotId - PLAYER_TOTAL_COUNT).shrink(1);
-                    tile.setGhost(slotId - PLAYER_TOTAL_COUNT - 1, false);
-                }
+                return ItemStack.EMPTY;
             }
             return super.slotClick(slotId, dragType, clickTypeIn, player);
 
-        } else {  //Sell Mode
-            if (slotId >= 0 && slotId <= PLAYER_TOTAL_COUNT) {           //Is Players Inv or Input Slot
-                return super.slotClick(slotId, dragType, clickTypeIn, player);
-            } else if (slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < (TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT)) {  //Is TE Inv
-                if (!tile.checkGhost(slotId - PLAYER_TOTAL_COUNT - 1)) {
-                    if (clickTypeIn == ClickType.PICKUP && dragType == 0) {   //Left Click = 1 item
-                        return checkAfford(slotId, 1, player);
-                    } else if (clickTypeIn == ClickType.PICKUP && dragType == 1) {   //Right Click = 10 item
+        } else { //SELL MODE
 
-
-                        return checkAfford(slotId, 10, player);
-                    } else if (clickTypeIn == ClickType.QUICK_MOVE) {
-                        return checkAfford(slotId, 64, player);
-                    } else {
-                        return ItemStack.EMPTY;
-                    }
-                } else {
-                    tile.checkForWrongGhosts();
-                    return ItemStack.EMPTY;
-                }
-            }
         }
+
+
         return ItemStack.EMPTY;
     }
 
@@ -273,7 +268,7 @@ public class ContainerVending extends Container implements INBTInventory {
 
                     if (tile.getField(tile.FIELD_INFINITE) == 0) {
                         if (slotStack.getCount() - amnt == 0) {
-                            tile.setGhost(slotId - PLAYER_TOTAL_COUNT - 1, true);
+                        //    tile.setGhost(slotId - PLAYER_TOTAL_COUNT - 1, true);
                             slotStack.setCount(1);
                         } else slotStack.splitStack(amnt);
                     }
@@ -318,7 +313,7 @@ public class ContainerVending extends Container implements INBTInventory {
                         if (!this.mergeItemStack(copyStack, TE_VEND_FIRST_SLOT_INDEX, TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT, false)) {
                             return ItemStack.EMPTY;
                         }else{ //If successful transfer to vending machine inventory
-                            tile.checkForWrongGhosts();
+                           // tile.checkForWrongGhosts();
                         }
                     } else {
                         return ItemStack.EMPTY;
