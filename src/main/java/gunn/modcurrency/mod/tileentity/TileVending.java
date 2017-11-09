@@ -56,6 +56,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     private ItemStackHandler bufferStackHandler = new ItemStackHandler(BUFFER_SLOT_COUNT);
     private EntityPlayer playerUsing = null;
     private boolean[] ghostSlots;
+    private int[] slotSizes;
 
     public final byte FIELD_LOCKED = 1;
     public final byte FIELD_MODE = 2;
@@ -82,6 +83,8 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         ghostSlots = new boolean[vendStackHandler.getSlots()];
         for(int i = 0; i < ghostSlots.length; i ++){
             ghostSlots[i] = false;
+            slotSizes[i] = 0;
+            itemCosts[i] = 0;
         }
 
         locked = false;
@@ -91,8 +94,6 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         gearExtended = false;
         walletIn = false;
         twoBlock = false;
-
-        for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = 0;
     }
 
     public void openGui(EntityPlayer player, World world, BlockPos pos) {
@@ -587,6 +588,14 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         for (int i = 0; i < itemCosts.length; i++) itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
         compound.setTag("itemCosts", itemCostsNBT);
 
+        NBTTagCompound ghostSlotsNBT = new NBTTagCompound();
+        for (int i = 0; i < itemCosts.length; i++) ghostSlotsNBT.setBoolean("ghost" + i, ghostSlots[i]);
+        compound.setTag("ghostSlots", itemCostsNBT);
+
+        NBTTagCompound itemSizesNBT = new NBTTagCompound();
+        for (int i = 0; i < itemCosts.length; i++) itemSizesNBT.setInteger("size" + i, slotSizes[i]);
+        compound.setTag("itemSizes", itemCostsNBT);
+
         return compound;
     }
 
@@ -615,6 +624,16 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
             NBTTagCompound itemCostsNBT = compound.getCompoundTag("itemCosts");
             for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = itemCostsNBT.getInteger("cost" + i);
         }
+
+        if (compound.hasKey("ghostSlots")) {
+            NBTTagCompound ghostSlotNBT = compound.getCompoundTag("ghostSlots");
+            for (int i = 0; i < itemCosts.length; i++) ghostSlots[i] = ghostSlotNBT.getBoolean("ghost" + i);
+        }
+
+        if (compound.hasKey("itemSizes")) {
+            NBTTagCompound itemSizeNBT = compound.getCompoundTag("itemSizes");
+            for (int i = 0; i < itemCosts.length; i++) slotSizes[i] = itemSizeNBT.getInteger("size" + i);
+        }
     }
 
     @Override
@@ -642,8 +661,16 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         tag.setString("owner", owner);
 
         NBTTagCompound itemCostsNBT = new NBTTagCompound();
-        for (int i = 0; i < itemCosts.length; i++) itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
+        NBTTagCompound itemGhostsNBT = new NBTTagCompound();
+        NBTTagCompound itemSizeNBT = new NBTTagCompound();
+        for (int i = 0; i < itemCosts.length; i++){
+            itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
+            itemGhostsNBT.setBoolean("ghost" + i, ghostSlots[i]);
+            itemSizeNBT.setInteger("size" + i, slotSizes[i]);
+        }
         tag.setTag("itemCosts", itemCostsNBT);
+        tag.setTag("ghostSlots", itemGhostsNBT);
+        tag.setTag("itemSizes", itemSizeNBT);
 
         return new SPacketUpdateTileEntity(pos, 1, tag);
     }
@@ -667,7 +694,13 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         owner = pkt.getNbtCompound().getString("owner");
 
         NBTTagCompound itemCostsNBT = pkt.getNbtCompound().getCompoundTag("itemCosts");
-        for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = itemCostsNBT.getInteger("cost" + i);
+        NBTTagCompound ghostSlotNBT = pkt.getNbtCompound().getCompoundTag("ghostSlots");
+        NBTTagCompound itemSizeNBT = pkt.getNbtCompound().getCompoundTag("itemSizes");
+        for (int i = 0; i < itemCosts.length; i++){
+            itemCosts[i] = itemCostsNBT.getInteger("cost" + i);
+            ghostSlots[i]= ghostSlotNBT.getBoolean("ghost" + i);
+            slotSizes[i] = itemSizeNBT.getInteger("size" + i);
+        }
     }
     //</editor-fold>--------------------------------
 
