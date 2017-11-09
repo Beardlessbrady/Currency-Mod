@@ -189,10 +189,28 @@ public class ContainerVending extends Container implements INBTInventory {
         if (tile.getField(tile.FIELD_MODE) == 1) { //EDIT MODE
             if (slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < (TE_VEND_FIRST_SLOT_INDEX+ TE_VEND_MAIN_TOTAL_COUNT)){
                 if(tile.getField(tile.FIELD_GEAREXT) == 1){ //Gear Tab Open
-
+                    if (getSlot(slotId).getHasStack()) {
+                        tile.setSelectedName(getSlot(slotId).getStack().getDisplayName());
+                    } else tile.setSelectedName("No Item");
+                    tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
+                    if (!(tile.getField(tile.FIELD_SELECTSLOT) == slotId)) {
+                        tile.setField(tile.FIELD_SELECTSLOT, slotId);
+                        return ItemStack.EMPTY;
+                    }
                 }else{ //Gear Tab Closed
-                    if(player.inventory.getItemStack().equals(ItemStack.EMPTY)){ //Player has NO ITEM, Pick up
+                    if(player.inventory.getItemStack().isEmpty()){ //Player has NO ITEM, Pick up
+                        ItemStack toPlayer = inventorySlots.get(slotId).getStack().copy();
 
+                        if(inventorySlots.get(slotId).getStack().getMaxStackSize() < tile.getItemSize(slotId - 37)){ //If slot size is GREATER than the max stack size of the item
+                            toPlayer.setCount(toPlayer.getMaxStackSize());
+                            tile.shrinkItemSize(toPlayer.getCount(), slotId - 37);
+                            player.inventory.setItemStack(toPlayer);
+                        }else { //If slot size is LESS than itemstack max size
+                            toPlayer.setCount(tile.getItemSize(slotId - 37));
+                            inventorySlots.get(slotId).putStack(ItemStack.EMPTY);
+                            player.inventory.setItemStack(toPlayer);
+                            tile.setItemSize(0, slotId - 37);
+                        }
 
                     }else{ //Player has ITEM, place in slot
                         ItemStack copy = player.inventory.getItemStack().copy();
@@ -206,9 +224,6 @@ public class ContainerVending extends Container implements INBTInventory {
                             tile.growItemSize(player.inventory.getItemStack().getCount(), slotId - 37);
                             player.inventory.setItemStack(ItemStack.EMPTY);
                         }
-
-
-
                     }
                 }
                 return ItemStack.EMPTY;
