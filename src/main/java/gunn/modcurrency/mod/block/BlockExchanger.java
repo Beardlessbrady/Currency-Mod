@@ -84,7 +84,7 @@ public class BlockExchanger extends Block implements ITileEntityProvider {
                     return true;
                 }
             }else if (playerIn.getHeldItemMainhand().getItem().equals(ModItems.itemUpgrade)){
-                if(tile.getOwner().equals(playerIn) || playerIn.isCreative()) {
+                if(tile.getOwner().equals(playerIn.getUniqueID().toString()) || playerIn.isCreative()) {
                     ItemStack upgrade = playerIn.getHeldItemMainhand();
 
                     switch (upgrade.getItemDamage()) {

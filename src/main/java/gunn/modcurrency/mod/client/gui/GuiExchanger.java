@@ -79,7 +79,7 @@ public class GuiExchanger extends GuiContainer {
         this.priceField.setEnableBackgroundDrawing(false);
         this.priceField.setMaxStringLength(7);
 
-        this.amountField = new GuiTextField(0, fontRenderer, i - 50, j + 101, 45, 10);        //Setting Amounts
+        this.amountField = new GuiTextField(0, fontRenderer, i - 52, j + 101, 45, 10);        //Setting Amounts
         this.amountField.setTextColor(Integer.parseInt("0099ff", 16));
         this.amountField.setEnableBackgroundDrawing(false);
         this.amountField.setMaxStringLength(7);
@@ -185,7 +185,7 @@ public class GuiExchanger extends GuiContainer {
         this.renderHoveredToolTip(mouseX,mouseY);
         if (tile.getField(tile.FIELD_GEAREXT) == 1 && tile.getField(tile.FIELD_MODE) == 1) {
             priceField.drawTextBox();
-            amountField.drawTextBox();
+            if(tile.getField(tile.FIELD_UPGRADEREQ) == 1)amountField.drawTextBox();
         }
     }
 
@@ -241,7 +241,7 @@ public class GuiExchanger extends GuiContainer {
                     drawTexturedModalRect(-91, 74, 27, 8, 91, 40);
                     drawSelectionOverlay();
                     this.priceField.setEnabled(true);
-                    this.amountField.setEnabled(true);
+                    if(tile.getField(tile.FIELD_UPGRADEREQ) == 1) this.amountField.setEnabled(true);
                     Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
                     this.buttonList.set(CREATIVE_ID, new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton)this.buttonList.get(GEAR_ID)).getButtonY(),0, 44, 20, 21, 0,"", TAB_TEXTURE));
                 }else{
@@ -299,30 +299,19 @@ public class GuiExchanger extends GuiContainer {
             fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.slotsettings"), -80, 70, Integer.parseInt("fff200", 16));
             fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.cost"), -84, 92, Integer.parseInt("211d1b", 16));
             fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.cost"), -83, 91, Color.lightGray.getRGB());
-            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.amount"), -84, 102, Integer.parseInt("211d1b", 16));
-            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.amount"), -83, 101, Color.lightGray.getRGB());
             fontRenderer.drawString(I18n.format("$"), -57, 91, Integer.parseInt("0099ff", 16));
-            priceField.setVisible(false);
-            amountField.setVisible(false);
+
+            if(tile.getField(tile.FIELD_UPGRADEREQ) == 1) {
+                fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.amount"), -84, 102, Integer.parseInt("211d1b", 16));
+                fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.amount"), -83, 101, Color.lightGray.getRGB());
+            }
 
 
+           // priceField.setVisible(false);
+            //amountField.setVisible(false);
             //For Multi Price Upgraded
-            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.amount"), -84, 92, Integer.parseInt("211d1b", 16));
-            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.amount"), -83, 91, Color.lightGray.getRGB());
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+           // fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.amount"), -84, 92, Integer.parseInt("211d1b", 16));
+           // fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.amount"), -83, 91, Color.lightGray.getRGB());
             //
             GL11.glPushMatrix();
             GL11.glScaled(0.7, 0.7, 0.7);
