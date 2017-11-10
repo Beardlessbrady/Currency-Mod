@@ -104,6 +104,9 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
 
         if (!world.isRemote) {
             if (playerUsing != null) {
+
+
+
                 if (automationInputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
 
                     if (automationInputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemBanknote)) {

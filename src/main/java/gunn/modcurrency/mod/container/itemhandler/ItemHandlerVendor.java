@@ -22,7 +22,7 @@ public class ItemHandlerVendor extends ItemStackHandler {
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
         if (UtilMethods.equalStacks(this.getStackInSlot(slot),stack)) {
-            return super.insertItem(slot, stack, simulate);
+            return super.insertItem(slot, stack, simulate)
         } else {
             return stack;
         }

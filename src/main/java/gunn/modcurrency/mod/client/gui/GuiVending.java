@@ -125,7 +125,6 @@ public class GuiVending extends GuiContainer {
     @Override
     public void onGuiClosed() {
         super.onGuiClosed();
-
     }
 
     private void updateTextField() {
@@ -203,6 +202,7 @@ public class GuiVending extends GuiContainer {
         Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
+
 
         if (tile.getOwner().equals(player.getUniqueID().toString()) || player.isCreative()) {  //If owner or creative
             this.buttonList.get(MODE_ID).visible = true;
@@ -380,6 +380,14 @@ public class GuiVending extends GuiContainer {
         }
     }
 
+    private void drawItemStackSize(){
+     //   GL11.glPushMatrix();
+      //  GL11.glScaled(0.7, 0.7, 0.7);
+        fontRenderer.drawString("300", 100, 50, Color.darkGray.getRGB());
+        fontRenderer.drawString("300", guiLeft, guiTop, Color.white.getRGB());
+       // GL11.glPopMatrix();
+    }
+
     @Override
     protected void renderToolTip(ItemStack stack, int x, int y) {
         int i = (x - (this.width - this.xSize) / 2);
@@ -520,9 +528,4 @@ public class GuiVending extends GuiContainer {
         }
     }
     //</editor-fold>
-
-
-
-
-
 }

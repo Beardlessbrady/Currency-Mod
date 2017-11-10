@@ -186,9 +186,9 @@ public class ContainerVending extends Container implements INBTInventory {
         }
         //</editor-fold>
 
-        if (tile.getField(tile.FIELD_MODE) == 1) { //EDIT MODE
-            if (slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < (TE_VEND_FIRST_SLOT_INDEX+ TE_VEND_MAIN_TOTAL_COUNT)){
-                if(tile.getField(tile.FIELD_GEAREXT) == 1){ //Gear Tab Open
+        if (slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < (TE_VEND_FIRST_SLOT_INDEX+ TE_VEND_MAIN_TOTAL_COUNT)) {
+            if (tile.getField(tile.FIELD_MODE) == 1) { //EDIT MODE
+                if (tile.getField(tile.FIELD_GEAREXT) == 1) { //Gear Tab Open
                     if (getSlot(slotId).getHasStack()) {
                         tile.setSelectedName(getSlot(slotId).getStack().getDisplayName());
                     } else tile.setSelectedName("No Item");
@@ -197,45 +197,46 @@ public class ContainerVending extends Container implements INBTInventory {
                         tile.setField(tile.FIELD_SELECTSLOT, slotId);
                         return ItemStack.EMPTY;
                     }
-                }else{ //Gear Tab Closed
-                    if(player.inventory.getItemStack().isEmpty()){ //Player has NO ITEM, Pick up
+                } else { //Gear Tab Closed
+                    if (player.inventory.getItemStack().isEmpty()) { //Player has NO ITEM, Pick up
                         ItemStack toPlayer = inventorySlots.get(slotId).getStack().copy();
 
-                        if(inventorySlots.get(slotId).getStack().getMaxStackSize() < tile.getItemSize(slotId - 37)){ //If slot size is GREATER than the max stack size of the item
+                        if (inventorySlots.get(slotId).getStack().getMaxStackSize() < tile.getItemSize(slotId - 37)) { //If slot size is GREATER than the max stack size of the item
                             toPlayer.setCount(toPlayer.getMaxStackSize());
                             tile.shrinkItemSize(toPlayer.getCount(), slotId - 37);
                             player.inventory.setItemStack(toPlayer);
-                        }else { //If slot size is LESS than itemstack max size
+                        } else { //If slot size is LESS than itemstack max size
                             toPlayer.setCount(tile.getItemSize(slotId - 37));
                             inventorySlots.get(slotId).putStack(ItemStack.EMPTY);
                             player.inventory.setItemStack(toPlayer);
                             tile.setItemSize(0, slotId - 37);
                         }
-
-                    }else{ //Player has ITEM, place in slot
+                    } else { //Player has ITEM, place in slot
                         ItemStack copy = player.inventory.getItemStack().copy();
                         copy.setCount(1);
 
-                        if(inventorySlots.get(slotId).getStack().equals(ItemStack.EMPTY)) { //If Slot is Empty
+                        if (inventorySlots.get(slotId).getStack().equals(ItemStack.EMPTY)) { //If Slot is Empty
                             inventorySlots.get(slotId).putStack(copy);
                             tile.setItemSize(player.inventory.getItemStack().getCount(), slotId - 37);
                             player.inventory.setItemStack(ItemStack.EMPTY);
-                        }else if(UtilMethods.equalStacks(copy, inventorySlots.get(slotId).getStack())){ //If Slot has exact same item, grow stack size by stack size amount
+                        } else if (UtilMethods.equalStacks(copy, inventorySlots.get(slotId).getStack())) { //If Slot has exact same item, grow stack size by stack size amount
                             tile.growItemSize(player.inventory.getItemStack().getCount(), slotId - 37);
                             player.inventory.setItemStack(ItemStack.EMPTY);
                         }
                     }
                 }
-                return ItemStack.EMPTY;
+            }else{ //SELL MODE
+                if (clickTypeIn == ClickType.PICKUP && dragType == 0) {   //Left Click = 1 item
+                    return checkAfford(slotId, 1, player);
+                } else if (clickTypeIn == ClickType.PICKUP && dragType == 1) {   //Right Click = 10 item
+                    return checkAfford(slotId, 10, player);
+                } else if (clickTypeIn == ClickType.QUICK_MOVE) {
+                    return checkAfford(slotId, 64, player);
+                }
             }
-            return super.slotClick(slotId, dragType, clickTypeIn, player);
-
-        } else { //SELL MODE
-
+            return ItemStack.EMPTY;
         }
-
-
-        return ItemStack.EMPTY;
+        return super.slotClick(slotId, dragType, clickTypeIn, player);
     }
 
     private ItemStack checkAfford(int slotId, int amnt, EntityPlayer player) {
@@ -253,16 +254,19 @@ public class ContainerVending extends Container implements INBTInventory {
                 bank = tile.getLong(tile.LONG_WALLETTOTAL);
             }
         }
+
         int cost = tile.getItemCost(slotId - PLAYER_TOTAL_COUNT - 1);
 
         if (slotStack != ItemStack.EMPTY) {
             if (playStack.getItem() != Item.getItemFromBlock(Blocks.AIR)) {
                 if (!UtilMethods.equalStacks(playStack, slotStack)) {
                     return ItemStack.EMPTY; //Checks if player is holding stack, if its different then one being clicked do nothing
+                }else{
+                    if(playStack.getCount() >= playStack.getMaxStackSize()) return ItemStack.EMPTY;
                 }
             }
             if (tile.getField(tile.FIELD_INFINITE) == 0)
-                if (slotStack.getCount() < amnt && slotStack.getCount() != 0) amnt = slotStack.getCount();
+                if (tile.getItemSize(slotId - 37) < amnt && tile.getItemSize(slotId - 37) != 0) amnt = tile.getItemSize(slotId - 37);
 
             //If cant afford amount requested lowers amount till can afford or till amount is 1
             lower:
@@ -272,7 +276,7 @@ public class ContainerVending extends Container implements INBTInventory {
             }
 
             if ((bank >= (cost * amnt))) {   //If has enough money, buy it
-                if (slotStack.getCount() >= amnt || tile.getField(tile.FIELD_INFINITE) == 1) {
+                if (tile.getItemSize(slotId - 37) >= amnt || tile.getField(tile.FIELD_INFINITE) == 1) {
                     playBuyStack = slotStack.copy();
                     playBuyStack.setCount(amnt);
 
@@ -282,10 +286,9 @@ public class ContainerVending extends Container implements INBTInventory {
                     player.inventory.setItemStack(playBuyStack);
 
                     if (tile.getField(tile.FIELD_INFINITE) == 0) {
-                        if (slotStack.getCount() - amnt == 0) {
-                        //    tile.setGhost(slotId - PLAYER_TOTAL_COUNT - 1, true);
-                            slotStack.setCount(1);
-                        } else slotStack.splitStack(amnt);
+                        if (tile.getItemSize(slotId - 37) - amnt == 0) {
+                            tile.setItemSize(0, slotId - 37);
+                        } else tile.shrinkItemSize(amnt, slotId - 37);
                     }
 
                     if (wallet) {
@@ -298,11 +301,10 @@ public class ContainerVending extends Container implements INBTInventory {
             } else {
                 tile.unsucessfulNoise();
             }
-            return slotStack;
+            //kkk
         }
         return ItemStack.EMPTY;
     }
-
 
     @Nullable
     @Override
@@ -323,17 +325,7 @@ public class ContainerVending extends Container implements INBTInventory {
                     } else {
                         return ItemStack.EMPTY;
                     }
-                } else {
-                    if (tile.getField(tile.FIELD_MODE) == 1) {     //Only allow shift clicking from player inv in edit mode
-                        if (!this.mergeItemStack(copyStack, TE_VEND_FIRST_SLOT_INDEX, TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT, false)) {
-                            return ItemStack.EMPTY;
-                        }else{ //If successful transfer to vending machine inventory
-                           // tile.checkForWrongGhosts();
-                        }
-                    } else {
-                        return ItemStack.EMPTY;
-                    }
-                }
+                }else return ItemStack.EMPTY;
             } else if (index == TE_MONEY_FIRST_SLOT_INDEX) {
                 if (tile.getField(tile.FIELD_MODE) == 0) {
                     if (index == 36) {
