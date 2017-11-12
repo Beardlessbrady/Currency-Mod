@@ -51,7 +51,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     private boolean locked, mode, creative, infinite, gearExtended, walletIn, twoBlock;
     private int[] itemCosts = new int[VEND_SLOT_COUNT];
     private ItemStackHandler inputStackHandler = new ItemStackHandler(INPUT_SLOT_COUNT);
-    private ItemHandlerVendor vendStackHandler = new ItemHandlerVendor(VEND_SLOT_COUNT);
+    private ItemHandlerVendor vendStackHandler = new ItemHandlerVendor(VEND_SLOT_COUNT, this);
     private ItemStackHandler bufferStackHandler = new ItemStackHandler(BUFFER_SLOT_COUNT);
     private EntityPlayer playerUsing = null;
     private int[] slotSizes= new int[VEND_SLOT_COUNT];
