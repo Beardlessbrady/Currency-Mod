@@ -8,6 +8,8 @@ import gunn.modcurrency.mod.item.ItemWallet;
 import gunn.modcurrency.mod.item.ModItems;
 import gunn.modcurrency.mod.network.PacketHandler;
 import gunn.modcurrency.mod.network.PacketSetLongToClient;
+import gunn.modcurrency.mod.network.PacketUpdateAllSizesToClient;
+import gunn.modcurrency.mod.network.PacketUpdateSizeToClient;
 import gunn.modcurrency.mod.utils.UtilMethods;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -99,6 +101,10 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         playerUsing = player;
 
         if(!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null){
+            PacketUpdateAllSizesToClient pack0 = new PacketUpdateAllSizesToClient();
+            pack0.setData(getPos(), slotSizes.clone());
+            PacketHandler.INSTANCE.sendTo(pack0, (EntityPlayerMP) getPlayerUsing());
+
             PacketSetLongToClient pack = new PacketSetLongToClient();
             pack.setData(getPos(), LONG_BANK, bank);
             PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) player);
@@ -106,8 +112,6 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
             PacketSetLongToClient pack1 = new PacketSetLongToClient();
             pack1.setData(getPos(), LONG_PROFIT, profit);
             PacketHandler.INSTANCE.sendTo(pack1, (EntityPlayerMP) player);
-
-          //  checkForWrongGhosts();
         }
     }
 

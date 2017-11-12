@@ -37,11 +37,15 @@ public class PacketHandler {
 
     public static void registerClientMessages(int index){
         INSTANCE.registerMessage(PacketSetLongToClient.Handler.class, PacketSetLongToClient.class, index++, Side.CLIENT);
+        INSTANCE.registerMessage(PacketUpdateSizeToClient.Handler.class, PacketUpdateSizeToClient.class, index++, Side.CLIENT);
+        INSTANCE.registerMessage(PacketUpdateAllSizesToClient.Handler.class, PacketUpdateAllSizesToClient.class, index++, Side.CLIENT);
         // INSTANCE.registerMessage(PacketSyncBankDataToClient.Handler.class, PacketSyncBankDataToClient.class, index++, Side.CLIENT);
     }
 
     public static void registerServerMessages(int index){
         INSTANCE.registerMessage(PacketSetLongToClient.DummyServerHandler.class, PacketSetLongToClient.class, index++, Side.CLIENT);
+        INSTANCE.registerMessage(PacketUpdateSizeToClient.DummyServerHandler.class, PacketUpdateSizeToClient.class, index++, Side.CLIENT);
+        INSTANCE.registerMessage(PacketUpdateAllSizesToClient.DummyServerHandler.class, PacketUpdateAllSizesToClient.class, index++, Side.CLIENT);
         // INSTANCE.registerMessage(PacketSyncBankDataToClient.Handler.class, PacketSyncBankDataToClient.class, index++, Side.CLIENT);
     }
 }
