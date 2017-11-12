@@ -3,7 +3,6 @@ package gunn.modcurrency.mod.container;
 import gunn.modcurrency.mod.container.slot.SlotCustomizable;
 import gunn.modcurrency.mod.container.slot.SlotVendor;
 import gunn.modcurrency.mod.container.util.INBTInventory;
-import gunn.modcurrency.mod.item.ItemWallet;
 import gunn.modcurrency.mod.item.ModItems;
 import gunn.modcurrency.mod.tileentity.TileVending;
 import gunn.modcurrency.mod.utils.UtilMethods;
@@ -18,7 +17,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -201,15 +199,27 @@ public class ContainerVending extends Container implements INBTInventory {
                     if (player.inventory.getItemStack().isEmpty()) { //Player has NO ITEM, Pick up
                         ItemStack toPlayer = inventorySlots.get(slotId).getStack().copy();
 
-                        if (inventorySlots.get(slotId).getStack().getMaxStackSize() < tile.getItemSize(slotId - 37)) { //If slot size is GREATER than the max stack size of the item
-                            toPlayer.setCount(toPlayer.getMaxStackSize());
-                            tile.shrinkItemSize(toPlayer.getCount(), slotId - 37);
-                            player.inventory.setItemStack(toPlayer);
-                        } else { //If slot size is LESS than itemstack max size
-                            toPlayer.setCount(tile.getItemSize(slotId - 37));
-                            inventorySlots.get(slotId).putStack(ItemStack.EMPTY);
-                            player.inventory.setItemStack(toPlayer);
-                            tile.setItemSize(0, slotId - 37);
+                        if(dragType == 0) {
+                            if (inventorySlots.get(slotId).getStack().getMaxStackSize() < tile.getItemSize(slotId - 37)) { //If slot size is GREATER than the max stack size of the item
+                                toPlayer.setCount(toPlayer.getMaxStackSize());
+                                tile.shrinkItemSize(toPlayer.getCount(), slotId - 37);
+                                player.inventory.setItemStack(toPlayer);
+                            } else { //If slot size is LESS than itemstack max size
+                                toPlayer.setCount(tile.getItemSize(slotId - 37));
+                                inventorySlots.get(slotId).putStack(ItemStack.EMPTY);
+                                player.inventory.setItemStack(toPlayer);
+                                tile.setItemSize(0, slotId - 37);
+                            }
+                        }else if (dragType == 1){
+                            if (inventorySlots.get(slotId).getStack().getMaxStackSize() < tile.getItemSize(slotId - 37)/2) { //If slot size is GREATER than the max stack size of the item
+                                toPlayer.setCount(toPlayer.getMaxStackSize());
+                                tile.shrinkItemSize(toPlayer.getCount(), slotId - 37);
+                                player.inventory.setItemStack(toPlayer);
+                            } else { //If slot size is LESS than itemstack max size
+                                toPlayer.setCount(tile.getItemSize(slotId - 37)/2);
+                                player.inventory.setItemStack(toPlayer);
+                                tile.shrinkItemSize(toPlayer.getCount(), slotId - 37);
+                            }
                         }
                     } else { //Player has ITEM, place in slot
                         ItemStack copy = player.inventory.getItemStack().copy();
@@ -325,7 +335,18 @@ public class ContainerVending extends Container implements INBTInventory {
                     } else {
                         return ItemStack.EMPTY;
                     }
-                }else return ItemStack.EMPTY;
+                }else{
+                    if (tile.getField(tile.FIELD_MODE) == 1) {
+                        for (int i = 0; i < TE_VEND_MAIN_TOTAL_COUNT - 1; i++) {
+                            if (UtilMethods.equalStacks(inventorySlots.get(index).getStack(), inventorySlots.get(TE_VEND_FIRST_SLOT_INDEX + i).getStack())) {
+                                tile.growItemSize(inventorySlots.get(index).getStack().getCount(), TE_VEND_FIRST_SLOT_INDEX + i - 37);
+                                inventorySlots.get(index).putStack(ItemStack.EMPTY);
+                                return ItemStack.EMPTY;
+                            }
+                        }
+                    }
+                    return ItemStack.EMPTY;
+                }
             } else if (index == TE_MONEY_FIRST_SLOT_INDEX) {
                 if (tile.getField(tile.FIELD_MODE) == 0) {
                     if (index == 36) {
