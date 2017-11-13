@@ -1,7 +1,6 @@
 package gunn.modcurrency.mod.container.itemhandler;
 
 import gunn.modcurrency.mod.network.PacketHandler;
-import gunn.modcurrency.mod.network.PacketSetLongToClient;
 import gunn.modcurrency.mod.network.PacketUpdateSizeToClient;
 import gunn.modcurrency.mod.tileentity.TileVending;
 import gunn.modcurrency.mod.utils.UtilMethods;
@@ -29,7 +28,7 @@ public class ItemHandlerVendor extends ItemStackHandler {
     @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-        if (UtilMethods.equalStacks(this.getStackInSlot(slot),stack)) {
+        if (UtilMethods.equalStacks(this.getStackInSlot(slot), stack)) {
             //if can fit
             if (stack.isEmpty())
                 return ItemStack.EMPTY;
@@ -37,17 +36,7 @@ public class ItemHandlerVendor extends ItemStackHandler {
             validateSlotIndex(slot);
             ItemStack existing = this.stacks.get(slot);
 
-            int limit = getStackLimit(slot, stack);
-
-            if (!existing.isEmpty()) {
-                if (!ItemHandlerHelper.canItemStacksStack(stack, existing))
-                    return stack;
-
-                limit -= existing.getCount();
-            }
-
-            if (limit <= 0)
-                return stack;
+            int limit = 1000;
 
             boolean reachedLimit = stack.getCount() > limit;
 
@@ -56,9 +45,12 @@ public class ItemHandlerVendor extends ItemStackHandler {
                     this.stacks.set(slot, reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, limit) : stack);
                 } else {
                     tile.growItemSize(stack.getCount(), slot);
-                    PacketUpdateSizeToClient pack = new PacketUpdateSizeToClient();
-                    pack.setData(tile.getPos(), slot, tile.getItemSize(slot));
-                    PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) tile.getPlayerUsing());
+
+                    if (tile.getPlayerUsing() != null) {
+                        PacketUpdateSizeToClient pack = new PacketUpdateSizeToClient();
+                        pack.setData(tile.getPos(), slot, tile.getItemSize(slot));
+                        PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) tile.getPlayerUsing());
+                    }
                 }
                 onContentsChanged(slot);
             }

@@ -26,6 +26,8 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -400,35 +402,42 @@ public class GuiVending extends GuiContainer {
             int column = ((j - startY) / 18);
             int slot = row + (column * 5);
             if(tile.getField(tile.FIELD_TWOBLOCK) != 1)slot = slot -5;
-            List<String> list = stack.getTooltip(this.mc.player, ITooltipFlag.TooltipFlags.ADVANCED);
+            List<String> list = new ArrayList<>();
+            List<String> ogTooltip = stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
+            int tooltipStart = 1;
 
-            if(tile.getField(tile.FIELD_MODE) == 0){
-                if(!tile.canAfford(slot)){
-                    list.add(TextFormatting.RED + "Price: $" + UtilMethods.translateMoney(tile.getItemCost(slot)));
-                }else{
-                    list.add(TextFormatting.GREEN + "Price: $" + UtilMethods.translateMoney(tile.getItemCost(slot)));
-                }
-               // if(tile.checkGhost(slot)) {
-               //     list.add(TextFormatting.RED + "OUT OF STOCK");
-               // }
-            }else{
-                list.add("Price: $" + UtilMethods.translateMoney(tile.getItemCost(slot)));
+
+            //Adding name and subname of item before price and such
+            if(ogTooltip.size()>0){
+                list.add(ogTooltip.get(0));
+                list.set(0, stack.getRarity().rarityColor + (String)list.get(0));
+            }
+            if(ogTooltip.size()>1) if(ogTooltip.get(1) != ""){
+                list.add(TextFormatting.GRAY + ogTooltip.get(1));
+                tooltipStart = 2;
             }
 
-            //TEMP
-            list.add(Integer.toString(tile.getItemSize(slot)));
+            //Adding Vending Strings
+            TextFormatting color = TextFormatting.YELLOW;
+            if(tile.getField(tile.FIELD_MODE) == 0) {
+                if (!tile.canAfford(slot)) {
+                    color = TextFormatting.RED;
+                } else {
+                    color = TextFormatting.GREEN;
+                }
+            }
 
-            //Color text normally
-            for (int k = 0; k < list.size(); ++k)
-            {
-                if (k == 0)
-                {
-                    list.set(k, stack.getRarity().rarityColor + (String)list.get(k));
-                }
-                else
-                {
-                    list.set(k, TextFormatting.GRAY + (String)list.get(k));
-                }
+            list.add(color + "Price: $" + UtilMethods.translateMoney(tile.getItemCost(slot)));
+            if(tile.getItemSize(slot) > 0){
+                list.add(TextFormatting.BLUE + "Stock: " + Integer.toString(tile.getItemSize(slot)));
+            }else{
+                list.add(TextFormatting.RED + "OUT OF STOCK");
+            }
+
+
+            //adding original extra stuff AFTER price and such
+            for(; tooltipStart < stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL).size(); tooltipStart++) {
+                list.add(TextFormatting.GRAY + stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL).get(tooltipStart));
             }
 
             FontRenderer font = stack.getItem().getFontRenderer(stack);
