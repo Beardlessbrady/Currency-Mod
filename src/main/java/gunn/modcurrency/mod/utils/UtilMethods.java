@@ -11,7 +11,7 @@ import net.minecraft.item.ItemStack;
 public final class UtilMethods {
    public static boolean equalStacks(ItemStack one, ItemStack two){
         boolean basic = one.getItem().equals(two.getItem()) && (one.getItemDamage() == two.getItemDamage());
-        boolean ench = true;
+        boolean ench = false;
         if(one.hasTagCompound() && two.hasTagCompound()) {
             ench = (one.getTagCompound().equals(two.getTagCompound()));
         }

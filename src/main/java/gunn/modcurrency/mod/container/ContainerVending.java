@@ -337,7 +337,7 @@ public class ContainerVending extends Container implements INBTInventory {
                     }
                 }else{
                     if (tile.getField(tile.FIELD_MODE) == 1) {
-                        for (int i = 0; i < TE_VEND_MAIN_TOTAL_COUNT - 1; i++) {
+                        for (int i = 0; i < TE_VEND_MAIN_TOTAL_COUNT; i++) {
                             if (UtilMethods.equalStacks(inventorySlots.get(index).getStack(), inventorySlots.get(TE_VEND_FIRST_SLOT_INDEX + i).getStack())) {
                                 tile.growItemSize(inventorySlots.get(index).getStack().getCount(), TE_VEND_FIRST_SLOT_INDEX + i - 37);
                                 inventorySlots.get(index).putStack(ItemStack.EMPTY);
