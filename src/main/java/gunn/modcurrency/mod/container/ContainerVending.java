@@ -230,25 +230,46 @@ public class ContainerVending extends Container implements INBTInventory {
                         if (inventorySlots.get(slotId).getStack().equals(ItemStack.EMPTY)) { //If Slot is Empty
                             inventorySlots.get(slotId).putStack(copy);
 
-                            if(player.inventory.getItemStack().getCount() > tile.getField(tile.FIELD_LIMIT)){ //placed itemstack size is larger than vending limit
-                                tile.setItemSize(tile.getField(tile.FIELD_LIMIT), slotId - 37);
-                                player.inventory.getItemStack().shrink(tile.getField(tile.FIELD_LIMIT));
-                            }else {
-                                tile.setItemSize(player.inventory.getItemStack().getCount(), slotId - 37); //Lower than or equal to limit, put in whole stack
-                                player.inventory.setItemStack(ItemStack.EMPTY);
+                            if(dragType == 1 && clickTypeIn == ClickType.PICKUP) { //If Player RIGHT CLICKS, place 1
+                                tile.setItemSize(1, slotId - 37);
+                                if(player.inventory.getItemStack().getCount() < 2){
+                                    player.inventory.setItemStack(ItemStack.EMPTY);
+                                }else player.inventory.getItemStack().shrink(1);
+
+
+
+                            } else { //If Player LEFT CLICKS, place as much as possible
+                                if (player.inventory.getItemStack().getCount() > tile.getField(tile.FIELD_LIMIT)) { //placed itemstack size is larger than vending limit
+                                    tile.setItemSize(tile.getField(tile.FIELD_LIMIT), slotId - 37);
+                                    player.inventory.getItemStack().shrink(tile.getField(tile.FIELD_LIMIT));
+                                } else {
+                                    tile.setItemSize(player.inventory.getItemStack().getCount(), slotId - 37); //Lower than or equal to limit, put in whole stack
+                                    player.inventory.setItemStack(ItemStack.EMPTY);
+                                }
                             }
                         } else if (UtilMethods.equalStacks(copy, inventorySlots.get(slotId).getStack())) { //If Slot has exact same item, grow stack size by stack size amount
-                            if(tile.getItemSize(slotId - 37) + player.inventory.getItemStack().getCount() > tile.getField(tile.FIELD_LIMIT)) { //placed itemstack size is larger than vending limit
-                                player.inventory.getItemStack().setCount(tile.getItemSize(slotId - 37) - ( tile.getField(tile.FIELD_LIMIT) - player.inventory.getItemStack().getCount() ));
-                                tile.setItemSize(tile.getField(tile.FIELD_LIMIT), slotId - 37);
-                            }else { //Lower than or equal to limit
-                                tile.growItemSize(player.inventory.getItemStack().getCount(), slotId - 37);
-                                player.inventory.setItemStack(ItemStack.EMPTY);
+                            if(dragType == 1 && clickTypeIn == ClickType.PICKUP) { //If Player RIGHT CLICKS, place 1
+                                if(!(tile.getItemSize(slotId - 37) >= tile.getItemSize(tile.FIELD_LIMIT))){
+                                    tile.growItemSize(1, slotId - 37);
+                                    if(player.inventory.getItemStack().getCount() <= 1){
+                                        player.inventory.setItemStack(ItemStack.EMPTY);
+                                    }else{
+                                        player.inventory.getItemStack().shrink(1);
+                                    }
+                                }
+                            } else {
+                                if (tile.getItemSize(slotId - 37) + player.inventory.getItemStack().getCount() > tile.getField(tile.FIELD_LIMIT)) { //placed itemstack size is larger than vending limit
+                                    player.inventory.getItemStack().setCount(tile.getItemSize(slotId - 37) - (tile.getField(tile.FIELD_LIMIT) - player.inventory.getItemStack().getCount()));
+                                    tile.setItemSize(tile.getField(tile.FIELD_LIMIT), slotId - 37);
+                                } else { //Lower than or equal to limit
+                                    tile.growItemSize(player.inventory.getItemStack().getCount(), slotId - 37);
+                                    player.inventory.setItemStack(ItemStack.EMPTY);
+                                }
                             }
                         }
                     }
                 }
-            }else{ //SELL MODE
+            } else { //SELL MODE
                 if (clickTypeIn == ClickType.PICKUP && dragType == 0) {   //Left Click = 1 item
                     return checkAfford(slotId, 1, player);
                 } else if (clickTypeIn == ClickType.PICKUP && dragType == 1) {   //Right Click = 10 item
