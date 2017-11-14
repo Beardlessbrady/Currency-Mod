@@ -19,7 +19,7 @@ public class ModItems {
     public static ItemCoin itemCoin = new ItemCoin();
     public static ItemWallet itemWallet = new ItemWallet();
     public static ItemGuideBook itemGuide = new ItemGuideBook();
-    public static ItemBundledBag itemBundledBag = new ItemBundledBag();
+   // public static ItemBundledBag itemBundledBag = new ItemBundledBag();
     public static ItemUpgrade itemUpgrade = new ItemUpgrade();
 
     @SubscribeEvent
@@ -28,7 +28,7 @@ public class ModItems {
         event.getRegistry().register(itemCoin);
         event.getRegistry().register(itemGuide);
         if(ModConfig.enableWallet) event.getRegistry().register(itemWallet);
-        event.getRegistry().register(itemBundledBag);
+      //  event.getRegistry().register(itemBundledBag);
         event.getRegistry().register(itemUpgrade);
     }
 
@@ -39,7 +39,7 @@ public class ModItems {
         itemCoin.initModel();
         itemGuide.initModel();
         if(ModConfig.enableWallet) itemWallet.initModel();
-        itemBundledBag.initModel();
+        //itemBundledBag.initModel();
         itemUpgrade.initModel();
 
     }
