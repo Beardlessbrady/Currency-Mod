@@ -491,25 +491,25 @@ public class GuiVending extends GuiContainer {
                 break;
             case INFINITEBUTTON_ID: //Infinite? Button
                 PacketSetFieldToServer pack1 = new PacketSetFieldToServer();
-                pack1.setData((tile.getField(tile.FIELD_INFINITE) == 1) ? 0 : 1, 6, tile.getPos());
+                pack1.setData((tile.getField(tile.FIELD_INFINITE) == 1) ? 0 : 1, tile.FIELD_INFINITE, tile.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack1);
                 break;
             case MODE_ID: //Mode Button
                 PacketSetFieldToServer pack2 = new PacketSetFieldToServer();
-                pack2.setData((tile.getField(tile.FIELD_MODE) == 1) ? 0 : 1, 2, tile.getPos());
+                pack2.setData((tile.getField(tile.FIELD_MODE) == 1) ? 0 : 1, tile.FIELD_MODE, tile.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack2);
 
                 creativeExtended = false;
 
                 tile.setField(tile.FIELD_GEAREXT, 0);
                 PacketSetFieldToServer pack2b = new PacketSetFieldToServer();
-                pack2b.setData(0, 8, tile.getPos());
+                pack2b.setData(0, tile.FIELD_GEAREXT, tile.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack2b);
                 tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
                 break;
             case LOCK_ID: //Lock Button
                 PacketSetFieldToServer pack3 = new PacketSetFieldToServer();
-                pack3.setData((tile.getField(tile.FIELD_LOCKED) == 1) ? 0 : 1, 1, tile.getPos());
+                pack3.setData((tile.getField(tile.FIELD_LOCKED) == 1) ? 0 : 1, tile.FIELD_LOCKED, tile.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack3);
                 tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
                 break;
@@ -517,7 +517,7 @@ public class GuiVending extends GuiContainer {
                 int newGear = tile.getField(tile.FIELD_GEAREXT) == 1 ? 0 : 1;
                 tile.setField(tile.FIELD_GEAREXT, newGear);
                 PacketSetFieldToServer pack4 = new PacketSetFieldToServer();
-                pack4.setData(newGear, 8, tile.getPos());
+                pack4.setData(newGear, tile.FIELD_GEAREXT, tile.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack4);
                 break;
             case CREATIVE_ID: //Creative Button
@@ -531,7 +531,7 @@ public class GuiVending extends GuiContainer {
 
                 tile.setField(tile.FIELD_OUTPUTBILL, out);
                 PacketSetFieldToServer packOut = new PacketSetFieldToServer();
-                packOut.setData(out, 11, tile.getPos());
+                packOut.setData(out, tile.FIELD_OUTPUTBILL, tile.getPos());
                 PacketHandler.INSTANCE.sendToServer(packOut);
                 break;
         }

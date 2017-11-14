@@ -58,16 +58,16 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     private EntityPlayer playerUsing = null;
     private int[] slotSizes= new int[VEND_SLOT_COUNT];
 
-    public final byte FIELD_LOCKED = 1;
-    public final byte FIELD_MODE = 2;
-    public final byte FIELD_SELECTSLOT = 3;
-    public final byte FIELD_CREATIVE = 5;
-    public final byte FIELD_INFINITE = 6;
-    public final byte FIELD_TWOBLOCK = 7;
-    public final byte FIELD_GEAREXT = 8;
-    public final byte FIELD_WALLETIN = 9;
-    public final byte FIELD_OUTPUTBILL = 11;
-    public final byte FIELD_LIMIT = 12;
+    public final byte FIELD_LOCKED = 0;
+    public final byte FIELD_MODE = 1;
+    public final byte FIELD_SELECTSLOT = 2;
+    public final byte FIELD_CREATIVE = 3;
+    public final byte FIELD_INFINITE = 4;
+    public final byte FIELD_TWOBLOCK = 5;
+    public final byte FIELD_GEAREXT = 6;
+    public final byte FIELD_WALLETIN = 7;
+    public final byte FIELD_OUTPUTBILL = 8;
+    public final byte FIELD_LIMIT = 9;
 
     public final byte LONG_BANK = 0;
     public final byte LONG_PROFIT = 1;
@@ -290,6 +290,11 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                 vendStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
             }
         }
+        //Drop upgrades it has when broken
+        if(stackLimit > 16) world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), new ItemStack(ModItems.itemUpgrade, 1, 2)));
+        if(stackLimit > 32) world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), new ItemStack(ModItems.itemUpgrade, 1, 3)));
+        if(stackLimit > 64) world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), new ItemStack(ModItems.itemUpgrade, 1, 4)));
+        if(stackLimit > 128) world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), new ItemStack(ModItems.itemUpgrade, 1, 5)));
     }
 
     //Drop Items

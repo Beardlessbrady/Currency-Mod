@@ -384,7 +384,7 @@ public class ContainerVending extends Container implements INBTInventory {
                                 }
                             }
                         }
-                        return sourceStack;
+                        return ItemStack.EMPTY;
                     }
                 }
             } else if (index == TE_MONEY_FIRST_SLOT_INDEX) {

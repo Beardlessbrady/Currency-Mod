@@ -3,6 +3,7 @@ package gunn.modcurrency.mod.block;
 import gunn.modcurrency.mod.ModCurrency;
 import gunn.modcurrency.mod.container.itemhandler.ItemHandlerVendor;
 import gunn.modcurrency.mod.handler.StateHandler;
+import gunn.modcurrency.mod.item.ModItems;
 import gunn.modcurrency.mod.tileentity.TileVending;
 import net.minecraft.block.Block;
 import net.minecraft.block.ITileEntityProvider;
@@ -80,11 +81,45 @@ public class BlockVending extends Block implements ITileEntityProvider {
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         TileVending tile = getTile(worldIn,pos);
         if (tile.getPlayerUsing() == null) {
-            tile.setField(tile.FIELD_CREATIVE, playerIn.isCreative() ? 1 : 0);
-            if (!worldIn.isRemote) {
-                tile.openGui(playerIn, worldIn, pos);
+            if(playerIn.getHeldItemMainhand().isEmpty()) {
+                tile.setField(tile.FIELD_CREATIVE, playerIn.isCreative() ? 1 : 0);
+                if (!worldIn.isRemote) {
+                    tile.openGui(playerIn, worldIn, pos);
+                    return true;
+                }
+            }else if(tile.getOwner().equals(playerIn.getUniqueID().toString()) || playerIn.isCreative()) {
+                if (playerIn.getHeldItemMainhand().getItem().equals(ModItems.itemUpgrade)) {
+                    ItemStack upgrade = playerIn.getHeldItemMainhand();
+
+                    switch (upgrade.getItemDamage()) {
+                        case 2: //Upgrade stack size limit to 32
+                            if(tile.getField(tile.FIELD_LIMIT) == 16){
+                                tile.setField(tile.FIELD_LIMIT, 32);
+                                if (!playerIn.isCreative()) playerIn.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
+                            }
+                            break;
+                        case 3: //Upgrade stack size limit to 64
+                            if(tile.getField(tile.FIELD_LIMIT) == 32){
+                                tile.setField(tile.FIELD_LIMIT, 64);
+                                if (!playerIn.isCreative()) playerIn.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
+                            }
+                            break;
+                        case 4: //Upgrade stack size limit to 128
+                            if(tile.getField(tile.FIELD_LIMIT) == 64){
+                                tile.setField(tile.FIELD_LIMIT, 128);
+                                if (!playerIn.isCreative()) playerIn.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
+                            }
+                            break;
+                        case 5: //Upgrade stack size limit to 256
+                            if(tile.getField(tile.FIELD_LIMIT) == 128){
+                                tile.setField(tile.FIELD_LIMIT, 256);
+                                if (!playerIn.isCreative()) playerIn.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
+                            }
+                            break;
+                    }
+                }
                 return true;
-            }
+            }else return true;
         }
         return false;
     }
@@ -108,10 +143,14 @@ public class BlockVending extends Block implements ITileEntityProvider {
                     long bank = tile.getLong(tile.LONG_BANK);
                     long profit = tile.getLong(tile.LONG_PROFIT);
                     String owner = tile.getOwner();
-                    boolean locked = tile.getField(tile.FIELD_LOCKED) == 1;
-                    boolean infinite = tile.getField(tile.FIELD_INFINITE) == 1;
                     int[] itemCosts = new int[tile.VEND_SLOT_COUNT];
-                    for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = tile.getItemCost(i);
+                    int[] itemSizes = new int[tile.VEND_SLOT_COUNT];
+                    for (int i = 0; i < tile.VEND_SLOT_COUNT; i++){
+                        itemCosts[i] = tile.getItemCost(i);
+                        itemSizes[i] = tile.getItemSize(i);
+                    }
+                    int[] fields = new int[tile.getFieldCount()];
+                    for(int i = 0; i < tile.getFieldCount(); i ++) fields[i] = tile.getField(i);
 
                     worldIn.setBlockState(pos, state.withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.TWOTOP)
                             .withProperty(StateHandler.FACING, placer.getHorizontalFacing().getOpposite()));
@@ -121,16 +160,19 @@ public class BlockVending extends Block implements ITileEntityProvider {
 
                     //Re adding important variables to below tile
                     tile = (TileVending) worldIn.getTileEntity(pos.down());
-                    tile.setField(tile.FIELD_TWOBLOCK, 1);
                     tile.setInputStackHandler(inputStack);
                     tile.setVendStackHandler(vendStack);
                     tile.setBufferStackHandler(buffStack);
                     tile.setLong(tile.LONG_BANK, bank);
                     tile.setLong(tile.LONG_PROFIT, profit);
                     tile.setOwner(owner);
-                    tile.setField(tile.FIELD_LOCKED, locked ? 1 : 0);
-                    tile.setField(tile.FIELD_INFINITE, infinite ? 1 : 0);
-                    for (int i = 0; i < itemCosts.length; i++) tile.setItemCost(itemCosts[i], i);
+                    for (int i = 0; i < tile.VEND_SLOT_COUNT; i++){
+                        tile.setItemCost(itemCosts[i], i);
+                        tile.setItemSize(itemSizes[i], i);
+                    }
+
+                    for(int i = 0; i < tile.getFieldCount(); i++) tile.setField(i, fields[i]);
+                    tile.setField(tile.FIELD_TWOBLOCK, 1);
                 }
             }
         }
@@ -149,26 +191,36 @@ public class BlockVending extends Block implements ITileEntityProvider {
                 long bank = tile.getLong(tile.LONG_BANK);
                 long profit = tile.getLong(tile.LONG_PROFIT);
                 String owner = tile.getOwner();
-                boolean locked = tile.getField(tile.FIELD_LOCKED) == 1;
-                boolean infinite = tile.getField(tile.FIELD_INFINITE) == 1;
                 int[] itemCosts = new int[tile.VEND_SLOT_COUNT];
-                for (int i = 0; i < itemCosts.length; i++) itemCosts[i] = tile.getItemCost(i);
+                int[] itemSizes = new int[tile.VEND_SLOT_COUNT];
+                for (int i = 0; i < tile.VEND_SLOT_COUNT; i++){
+                    itemCosts[i] = tile.getItemCost(i);
+                    itemSizes[i] = tile.getItemSize(i);
+                }
+
+                int[] fields = new int[tile.getFieldCount()];
+                for(int i = 0; i < tile.getFieldCount(); i ++){
+                    fields[i] = tile.getField(i);
+                }
 
                 worldIn.setBlockState(pos.down(), worldIn.getBlockState(pos.down()).withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.ONE));
                 ((TileVending) worldIn.getTileEntity(pos.down())).setField(tile.FIELD_TWOBLOCK, 0);
 
                 //Re adding important variables to below tile
                 tile = (TileVending) worldIn.getTileEntity(pos.down());
-                tile.setField(tile.FIELD_TWOBLOCK, 0);
                 tile.setInputStackHandler(inputStack);
                 tile.setVendStackHandler(vendStack);
                 tile.setBufferStackHandler(buffStack);
                 tile.setLong(tile.LONG_BANK, bank);
                 tile.setLong(tile.LONG_PROFIT, profit);
                 tile.setOwner(owner);
-                tile.setField(tile.FIELD_LOCKED, locked ? 1 : 0);
-                tile.setField(tile.FIELD_INFINITE, infinite ? 1 : 0);
-                for (int i = 0; i < itemCosts.length; i++) tile.setItemCost(itemCosts[i], i);
+                for (int i = 0; i < tile.VEND_SLOT_COUNT; i++){
+                    tile.setItemCost(itemCosts[i], i);
+                    tile.setItemSize(itemSizes[i], i);
+                }
+
+                for(int i = 0; i < tile.getFieldCount(); i++) tile.setField(i, fields[i]);
+                tile.setField(tile.FIELD_TWOBLOCK, 0);
 
                 tile.dropTopItems();
             }
