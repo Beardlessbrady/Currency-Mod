@@ -48,7 +48,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     public static final int BUFFER_SLOT_COUNT = 4;
 
     private long bank, profit, walletTotal;
-    private int selectedSlot, outputBill;
+    private int selectedSlot, outputBill, stackLimit;
     private String owner, selectedName;
     private boolean locked, mode, creative, infinite, gearExtended, walletIn, twoBlock;
     private int[] itemCosts = new int[VEND_SLOT_COUNT];
@@ -67,6 +67,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     public final byte FIELD_GEAREXT = 8;
     public final byte FIELD_WALLETIN = 9;
     public final byte FIELD_OUTPUTBILL = 11;
+    public final byte FIELD_LIMIT = 12;
 
     public final byte LONG_BANK = 0;
     public final byte LONG_PROFIT = 1;
@@ -75,6 +76,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     public TileVending() {
         bank = 0;
         profit = 0;
+        stackLimit = 16;
         selectedSlot = 37;
         walletTotal = 0;
         outputBill = 0;
@@ -569,6 +571,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         compound.setTag("buffer", bufferStackHandler.serializeNBT());
         compound.setTag("input", inputStackHandler.serializeNBT());
         compound.setLong("bank", bank);
+        compound.setInteger("stackLimit", stackLimit);
         compound.setLong("profit", profit);
         compound.setLong("walletTotal", walletTotal);
         compound.setInteger("output", outputBill);
@@ -603,6 +606,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         if (compound.hasKey("buffer")) bufferStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("buffer"));
         if (compound.hasKey("input")) inputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("input"));
         if (compound.hasKey("bank")) bank = compound.getLong("bank");
+        if (compound.hasKey("stackLimit")) stackLimit = compound.getInteger("stackLimit");
         if (compound.hasKey("profit")) profit = compound.getLong("profit");
         if (compound.hasKey("walletTotal")) walletTotal = compound.getLong("walletTotal");
         if (compound.hasKey("output")) outputBill = compound.getInteger("output");
@@ -638,6 +642,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound tag = new NBTTagCompound();
         tag.setLong("bank", bank);
+        tag.setInteger("stackLimit", stackLimit);
         tag.setLong("profit", profit);
         tag.setLong("walletTotal", walletTotal);
         tag.setInteger("output", outputBill);
@@ -668,6 +673,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         super.onDataPacket(net, pkt);
         bank = pkt.getNbtCompound().getLong("bank");
+        stackLimit = pkt.getNbtCompound().getInteger("stackLimit");
         profit = pkt.getNbtCompound().getLong("profit");
         outputBill = pkt.getNbtCompound().getInteger("output");
         walletTotal = pkt.getNbtCompound().getLong("walletTotal");
@@ -713,7 +719,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
 
     //<editor-fold desc="Getter & Setter Methods---------------------------------------------------------------------------------------------">
     public int getFieldCount() {
-        return 9;
+        return 10;
     }
 
     public void setField(int id, int value) {
@@ -744,6 +750,9 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                 break;
             case FIELD_OUTPUTBILL:
                 outputBill = value;
+                break;
+            case FIELD_LIMIT:
+                stackLimit = value;
         }
     }
 
@@ -767,6 +776,8 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                 return (walletIn) ? 1 : 0;
             case FIELD_OUTPUTBILL:
                 return outputBill;
+            case FIELD_LIMIT:
+                return stackLimit;
         }
         return -1;
     }

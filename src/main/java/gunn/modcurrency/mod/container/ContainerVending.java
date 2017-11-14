@@ -142,6 +142,7 @@ public class ContainerVending extends Container implements INBTInventory {
     @Nullable
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
+        ItemStack itemStack = ItemStack.EMPTY;
         //Allows drag clicking
         if (slotId == -999) return super.slotClick(slotId, dragType, clickTypeIn, player);
 
@@ -223,15 +224,27 @@ public class ContainerVending extends Container implements INBTInventory {
                         }
                     } else { //Player has ITEM, place in slot
                         ItemStack copy = player.inventory.getItemStack().copy();
+                        itemStack = copy.copy();
                         copy.setCount(1);
 
                         if (inventorySlots.get(slotId).getStack().equals(ItemStack.EMPTY)) { //If Slot is Empty
                             inventorySlots.get(slotId).putStack(copy);
-                            tile.setItemSize(player.inventory.getItemStack().getCount(), slotId - 37);
-                            player.inventory.setItemStack(ItemStack.EMPTY);
+
+                            if(player.inventory.getItemStack().getCount() > tile.getField(tile.FIELD_LIMIT)){ //placed itemstack size is larger than vending limit
+                                tile.setItemSize(tile.getField(tile.FIELD_LIMIT), slotId - 37);
+                                player.inventory.getItemStack().shrink(tile.getField(tile.FIELD_LIMIT));
+                            }else {
+                                tile.setItemSize(player.inventory.getItemStack().getCount(), slotId - 37); //Lower than or equal to limit, put in whole stack
+                                player.inventory.setItemStack(ItemStack.EMPTY);
+                            }
                         } else if (UtilMethods.equalStacks(copy, inventorySlots.get(slotId).getStack())) { //If Slot has exact same item, grow stack size by stack size amount
-                            tile.growItemSize(player.inventory.getItemStack().getCount(), slotId - 37);
-                            player.inventory.setItemStack(ItemStack.EMPTY);
+                            if(tile.getItemSize(slotId - 37) + player.inventory.getItemStack().getCount() > tile.getField(tile.FIELD_LIMIT)) { //placed itemstack size is larger than vending limit
+                                player.inventory.getItemStack().setCount(tile.getItemSize(slotId - 37) - ( tile.getField(tile.FIELD_LIMIT) - player.inventory.getItemStack().getCount() ));
+                                tile.setItemSize(tile.getField(tile.FIELD_LIMIT), slotId - 37);
+                            }else { //Lower than or equal to limit
+                                tile.growItemSize(player.inventory.getItemStack().getCount(), slotId - 37);
+                                player.inventory.setItemStack(ItemStack.EMPTY);
+                            }
                         }
                     }
                 }
@@ -244,7 +257,7 @@ public class ContainerVending extends Container implements INBTInventory {
                     return checkAfford(slotId, 64, player);
                 }
             }
-            return ItemStack.EMPTY;
+            return itemStack;
         }
         return super.slotClick(slotId, dragType, clickTypeIn, player);
     }
@@ -339,13 +352,19 @@ public class ContainerVending extends Container implements INBTInventory {
                     if (tile.getField(tile.FIELD_MODE) == 1) {
                         for (int i = 0; i < TE_VEND_MAIN_TOTAL_COUNT; i++) {
                             if (UtilMethods.equalStacks(inventorySlots.get(index).getStack(), inventorySlots.get(TE_VEND_FIRST_SLOT_INDEX + i).getStack())) {
-                                tile.growItemSize(inventorySlots.get(index).getStack().getCount(), TE_VEND_FIRST_SLOT_INDEX + i - 37);
-                                inventorySlots.get(index).putStack(ItemStack.EMPTY);
-                                return ItemStack.EMPTY;
+                                if(inventorySlots.get(index).getStack().getCount() + tile.getItemSize(i) <= tile.getField(tile.FIELD_LIMIT)) { //If combined total is LESS OR EQUAL to stack limit
+                                    tile.growItemSize(inventorySlots.get(index).getStack().getCount(), TE_VEND_FIRST_SLOT_INDEX + i - 37);
+                                    inventorySlots.get(index).putStack(ItemStack.EMPTY);
+                                    return ItemStack.EMPTY;
+                                } else { //Total combined is MORE than stack size
+                                    inventorySlots.get(index).getStack().setCount(tile.getItemSize(i) - (tile.getField(tile.FIELD_LIMIT) - inventorySlots.get(index).getStack().getCount()));
+                                    tile.setItemSize(tile.getField(tile.FIELD_LIMIT), i);
+                                    return ItemStack.EMPTY;
+                                }
                             }
                         }
+                        return sourceStack;
                     }
-                    return ItemStack.EMPTY;
                 }
             } else if (index == TE_MONEY_FIRST_SLOT_INDEX) {
                 if (tile.getField(tile.FIELD_MODE) == 0) {
@@ -371,6 +390,7 @@ public class ContainerVending extends Container implements INBTInventory {
         }
         return sourceStack;
     }
+
 
     @Override
     public void detectAndSendChanges() {
