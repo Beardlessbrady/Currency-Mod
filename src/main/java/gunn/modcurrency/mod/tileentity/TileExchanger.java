@@ -45,7 +45,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     private long bank, cashRegister;
     private int selectedSlot;
     private String owner, selectedName;
-    private boolean locked, mode, creative, infinite, gearExtended, twoBlock, voidBlock;
+    private boolean locked, mode, creative, infinite, gearExtended, twoBlock, voidBlock, upgradeReq;
     private int[] itemCosts = new int[VEND_SLOT_COUNT];
     private int[] itemAmounts = new int[VEND_SLOT_COUNT];
     private ItemStackHandler inputStackHandler = new ItemStackHandler(INPUT_SLOT_COUNT);
@@ -53,7 +53,6 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     private ItemStackHandler bufferStackHandler = new ItemStackHandler(BUFFER_SLOT_COUNT);
     private ItemHandlerCustom automationInputStackHandler = new ItemHandlerCustom(1);
     private EntityPlayer playerUsing = null;
-    private boolean upgradeReq;
 
     public final byte FIELD_LOCKED = 0;
     public final byte FIELD_MODE = 1;
@@ -104,9 +103,6 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
 
         if (!world.isRemote) {
             if (playerUsing != null) {
-
-
-
                 if (automationInputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
 
                     if (automationInputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemBanknote)) {

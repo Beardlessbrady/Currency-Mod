@@ -19,7 +19,7 @@ public class ModItems {
     public static ItemCoin itemCoin = new ItemCoin();
     public static ItemWallet itemWallet = new ItemWallet();
     public static ItemGuideBook itemGuide = new ItemGuideBook();
-   // public static ItemBundledBag itemBundledBag = new ItemBundledBag();
+    public static ItemBundledBag itemBundledBag = new ItemBundledBag();
     public static ItemUpgrade itemUpgrade = new ItemUpgrade();
 
     @SubscribeEvent

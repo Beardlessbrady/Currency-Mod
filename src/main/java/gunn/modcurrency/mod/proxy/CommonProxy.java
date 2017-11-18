@@ -34,7 +34,7 @@ public class CommonProxy {
         ModConfig.readConfig();
         MinecraftForge.EVENT_BUS.register(new ModBlocks());
         MinecraftForge.EVENT_BUS.register(new ModItems());
-        MinecraftForge.EVENT_BUS.register(new ModRecipes());
+       // MinecraftForge.EVENT_BUS.register(new ModRecipes());
 
         NetworkRegistry.INSTANCE.registerGuiHandler(ModCurrency.instance, new GuiHandler());
     }

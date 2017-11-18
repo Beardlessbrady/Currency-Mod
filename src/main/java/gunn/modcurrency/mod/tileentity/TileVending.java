@@ -50,7 +50,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     private long bank, profit, walletTotal;
     private int selectedSlot, outputBill, stackLimit;
     private String owner, selectedName;
-    private boolean locked, mode, creative, infinite, gearExtended, walletIn, twoBlock;
+    private boolean locked, mode, creative, infinite, gearExtended, walletIn, twoBlock, upgradeMultiPrices;
     private int[] itemCosts = new int[VEND_SLOT_COUNT];
     private ItemStackHandler inputStackHandler = new ItemStackHandler(INPUT_SLOT_COUNT);
     private ItemHandlerVendor vendStackHandler = new ItemHandlerVendor(VEND_SLOT_COUNT, this);
@@ -68,6 +68,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     public final byte FIELD_WALLETIN = 7;
     public final byte FIELD_OUTPUTBILL = 8;
     public final byte FIELD_LIMIT = 9;
+    public final byte FIELD_UPGRADEMULTI = 10;
 
     public final byte LONG_BANK = 0;
     public final byte LONG_PROFIT = 1;
@@ -94,6 +95,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         gearExtended = false;
         walletIn = false;
         twoBlock = false;
+        upgradeMultiPrices = false;
     }
 
     public void openGui(EntityPlayer player, World world, BlockPos pos) {
@@ -587,6 +589,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         compound.setBoolean("gearExtended", gearExtended);
         compound.setBoolean("walletIn", walletIn);
         compound.setBoolean("twoBlock", twoBlock);
+        compound.setBoolean("upgradeMulti", upgradeMultiPrices);
         compound.setInteger("selectedSlot", selectedSlot);
         compound.setString("selectedName", selectedName);
         compound.setString("owner", owner);
@@ -622,6 +625,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         if (compound.hasKey("gearExtended")) gearExtended = compound.getBoolean("gearExtended");
         if (compound.hasKey("walletIn")) walletIn = compound.getBoolean("walletIn");
         if (compound.hasKey("twoBlock")) twoBlock = compound.getBoolean("twoBlock");
+        if (compound.hasKey("upgradeMulti")) upgradeMultiPrices = compound.getBoolean("upgradeMulti");
         if (compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
         if (compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
         if (compound.hasKey("owner")) owner = compound.getString("owner");
@@ -658,6 +662,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         tag.setBoolean("gearExtended", gearExtended);
         tag.setBoolean("walletIn", walletIn);
         tag.setBoolean("twoBlock", twoBlock);
+        tag.setBoolean("upgradeMulti", upgradeMultiPrices);
         tag.setInteger("selectedSlot", selectedSlot);
         tag.setString("selectedName", selectedName);
         tag.setString("owner", owner);
@@ -689,6 +694,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         gearExtended = pkt.getNbtCompound().getBoolean("gearExtended");
         walletIn = pkt.getNbtCompound().getBoolean("walletIn");
         twoBlock = pkt.getNbtCompound().getBoolean("twoBlock");
+        upgradeMultiPrices = pkt.getNbtCompound().getBoolean("upgradeMulti");
         selectedSlot = pkt.getNbtCompound().getInteger("selectedSlot");
         selectedName = pkt.getNbtCompound().getString("selectedName");
         owner = pkt.getNbtCompound().getString("owner");
@@ -724,7 +730,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
 
     //<editor-fold desc="Getter & Setter Methods---------------------------------------------------------------------------------------------">
     public int getFieldCount() {
-        return 10;
+        return 11;
     }
 
     public void setField(int id, int value) {
@@ -758,6 +764,10 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                 break;
             case FIELD_LIMIT:
                 stackLimit = value;
+                break;
+            case FIELD_UPGRADEMULTI:
+                upgradeMultiPrices = (value == 1);
+                break;
         }
     }
 
@@ -783,6 +793,8 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                 return outputBill;
             case FIELD_LIMIT:
                 return stackLimit;
+            case FIELD_UPGRADEMULTI:
+                return (upgradeMultiPrices) ? 1 : 0;
         }
         return -1;
     }
