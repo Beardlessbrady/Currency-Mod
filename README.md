@@ -22,3 +22,6 @@ I've created this mod because I've always wanted some sort of base economy for m
 [![](https://img.shields.io/badge/Discord-Beardlessbrady%232909-7289DA.svg)](https://discordapp.com/)
 [![](https://img.shields.io/badge/Twitter-__Beardlessbrady-1DA1F2.svg)](https://twitter.com/_BeardlessBrady)
 [![](https://img.shields.io/badge/-Patreon-orange.svg)](https://www.patreon.com/BeardlessBrady)
+
+
+©All Rights Reserved
