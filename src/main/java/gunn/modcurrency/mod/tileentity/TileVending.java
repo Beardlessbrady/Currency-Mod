@@ -33,6 +33,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+import scala.Int;
 
 import javax.annotation.Nullable;
 import java.util.ListIterator;
@@ -103,7 +104,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         gearExtended = false;
         walletIn = false;
         twoBlock = false;
-        upgradeMultiPrices = true;
+        upgradeMultiPrices = false;
     }
 
     public void openGui(EntityPlayer player, World world, BlockPos pos) {
@@ -610,8 +611,8 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
             itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
             itemSizesNBT.setInteger("size" + i, slotSizes[i]);
 
-            for(int j = 0; j < multiPrices[j].length; j++){
-                itemMultiCostsNBT.setInteger("i" + "j", multiPrices[i][j]);
+            for(int j = 0; j < 6; j++){
+                itemMultiCostsNBT.setInteger(Integer.toString(i) + Integer.toString(j), multiPrices[i][j]);
             }
         }
         compound.setTag("itemCosts", itemCostsNBT);
@@ -658,7 +659,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
             NBTTagCompound itemMultiCostsNBT = compound.getCompoundTag("itemMultiCosts");
             for (int i = 0; i < VEND_SLOT_COUNT; i++){
                 for(int j = 0; j < 6; j++){
-                   multiPrices[i][j] = itemMultiCostsNBT.getInteger("i" + "j");
+                    multiPrices[i][j] = itemMultiCostsNBT.getInteger(Integer.toString(i) + Integer.toString(j));
                 }
             }
         }
@@ -693,14 +694,16 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         NBTTagCompound itemCostsNBT = new NBTTagCompound();
         NBTTagCompound itemSizeNBT = new NBTTagCompound();
         NBTTagCompound itemMultiCostsNBT = new NBTTagCompound();
+
         for (int i = 0; i < VEND_SLOT_COUNT; i++){
             itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
             itemSizeNBT.setInteger("size" + i, slotSizes[i]);
 
-            for(int j = 0; j < multiPrices[j].length; j++){
-                itemMultiCostsNBT.setInteger("i" + "j", multiPrices[i][j]);
+            for(int j = 0; j < 6; j++){
+                itemMultiCostsNBT.setInteger(Integer.toString(i) + Integer.toString(j), multiPrices[i][j]);
             }
         }
+
         tag.setTag("itemCosts", itemCostsNBT);
         tag.setTag("itemSizes", itemSizeNBT);
         tag.setTag("itemMultiCosts", itemMultiCostsNBT);
@@ -736,7 +739,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
             slotSizes[i] = itemSizeNBT.getInteger("size" + i);
 
             for(int j = 0; j < 6; j++){
-                multiPrices[i][j] = itemMultiCostsNBT.getInteger("i" + "j");
+                multiPrices[i][j] = itemMultiCostsNBT.getInteger(Integer.toString(i) + Integer.toString(j));
             }
         }
     }
@@ -886,6 +889,10 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
 
     public int[] getMultiPrices(int index){
         return multiPrices[index].clone();
+    }
+
+    public void setMultiPrices(int[] array){
+        multiPrices[selectedSlot - 37] = array.clone();
     }
 
     public void setMultiPrices(int index, int[] array){

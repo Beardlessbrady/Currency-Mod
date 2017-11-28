@@ -22,23 +22,25 @@ public class PacketSetItemMultiPricesToServer implements IMessage {
     //Vendor: Uses player input anf sets cost of item, sends to server
     private BlockPos blockPos;
     private int[] data;
-    private int index;
 
     public PacketSetItemMultiPricesToServer(){}
 
-    public void setData(int[] data, int index, BlockPos pos) {
+    public void setData(int[] data, BlockPos pos) {
         this.blockPos = pos;
         this.data = data.clone();
-        this.index = index;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         blockPos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
+
+        data = new int[6];
         data[0] = buf.readInt();
         data[1] = buf.readInt();
         data[2] = buf.readInt();
-        index = buf.readInt();
+        data[3] = buf.readInt();
+        data[4] = buf.readInt();
+        data[5] = buf.readInt();
     }
 
     @Override
@@ -46,10 +48,13 @@ public class PacketSetItemMultiPricesToServer implements IMessage {
         buf.writeInt(blockPos.getX());
         buf.writeInt(blockPos.getY());
         buf.writeInt(blockPos.getZ());
+
         buf.writeInt(data[0]);
         buf.writeInt(data[1]);
         buf.writeInt(data[2]);
-        buf.writeInt(index);
+        buf.writeInt(data[3]);
+        buf.writeInt(data[4]);
+        buf.writeInt(data[5]);
     }
 
     public static class Handler implements IMessageHandler<PacketSetItemMultiPricesToServer, IMessage> {
@@ -65,7 +70,7 @@ public class PacketSetItemMultiPricesToServer implements IMessage {
             World world = playerEntity.world;
             TileEntity tile = world.getTileEntity(message.blockPos);
 
-            if(tile instanceof TileVending) ((TileVending) tile).setMultiPrices(message.index, message.data);
+            if(tile instanceof TileVending) ((TileVending) tile).setMultiPrices(message.data);
         }
     }
 }

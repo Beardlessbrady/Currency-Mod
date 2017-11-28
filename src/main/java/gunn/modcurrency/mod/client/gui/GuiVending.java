@@ -24,7 +24,6 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -185,8 +184,13 @@ public class GuiVending extends GuiContainer {
 
                 int[] prices = tile.getMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37).clone();
                 prices[4] = newCost;
+
+                tile.setMultiPrices(prices.clone());
                 PacketSetItemMultiPricesToServer pack = new PacketSetItemMultiPricesToServer();
-                pack.setData(prices.clone(), tile.getField(tile.FIELD_SELECTSLOT) - 37, tile.getPos());
+                pack.setData(prices.clone(), tile.getPos());
+                PacketHandler.INSTANCE.sendToServer(pack);
+
+                tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
             }
         }
     }
@@ -221,6 +225,7 @@ public class GuiVending extends GuiContainer {
             }
         }else {
             String multiPriceb = String.valueOf(tile.getMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37)[4]);
+
             switch (multiPriceb.length()) {
                 case 1:
                     if (multiPriceb.equals("0")) {
@@ -638,12 +643,22 @@ public class GuiVending extends GuiContainer {
         if(tile.getField(tile.FIELD_MODE) == 1) {
             super.mouseClicked(mouseX, mouseY, mouseButton);
             priceField.mouseClicked(mouseX, mouseY, mouseButton);
-            multiPriceField1a.mouseClicked(mouseX, mouseY, mouseButton);
-            multiPriceField1b.mouseClicked(mouseX, mouseY, mouseButton);
-            multiPriceField2a.mouseClicked(mouseX, mouseY, mouseButton);
-            multiPriceField2b.mouseClicked(mouseX, mouseY, mouseButton);
-            multiPriceField2a.mouseClicked(mouseX, mouseY, mouseButton);
-            multiPriceField2b.mouseClicked(mouseX, mouseY, mouseButton);
+
+
+            if(tile.getField(tile.FIELD_UPGRADEMULTI) == 1) {
+                int[] prices = tile.getMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37);
+
+                multiPriceField1a.mouseClicked(mouseX, mouseY, mouseButton);
+                multiPriceField1b.mouseClicked(mouseX, mouseY, mouseButton);
+                if(prices[1] != -1) {
+                    multiPriceField2a.mouseClicked(mouseX, mouseY, mouseButton);
+                    multiPriceField2b.mouseClicked(mouseX, mouseY, mouseButton);
+                }
+                if(prices[2] != -1) {
+                    multiPriceField2a.mouseClicked(mouseX, mouseY, mouseButton);
+                    multiPriceField2b.mouseClicked(mouseX, mouseY, mouseButton);
+                }
+            }
 
             if (tile.getField(tile.FIELD_GEAREXT) == 1 && mouseButton == 0) updateTextField();
         }else {
@@ -672,7 +687,6 @@ public class GuiVending extends GuiContainer {
              if (multiPriceField1b.getText().length() > 0) if (multiPriceField1b.getText().substring(multiPriceField1b.getText().length() - 1).equals(".")) multiPriceField1b.setMaxStringLength(multiPriceField1b.getText().length() + 2);
              if (!multiPriceField1b.getText().contains(".")) multiPriceField1b.setMaxStringLength(7);
          }
-
         } else {
             super.keyTyped(typedChar, keyCode);
         }
@@ -744,7 +758,7 @@ public class GuiVending extends GuiContainer {
                 tile.setMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37, prices.clone());
 
                 PacketSetItemMultiPricesToServer pack = new PacketSetItemMultiPricesToServer();
-                pack.setData(prices, tile.getField(tile.FIELD_SELECTSLOT), this.tile.getPos());
+                pack.setData(prices, this.tile.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack);
 
                 tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
@@ -761,7 +775,7 @@ public class GuiVending extends GuiContainer {
                 tile.setMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37, prices1.clone());
 
                 PacketSetItemMultiPricesToServer pack5 = new PacketSetItemMultiPricesToServer();
-                pack5.setData(prices1, tile.getField(tile.FIELD_SELECTSLOT), this.tile.getPos());
+                pack5.setData(prices1, this.tile.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack5);
 
                 tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
