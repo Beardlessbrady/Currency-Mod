@@ -93,39 +93,42 @@ public class GuiVending extends GuiContainer {
         this.buttonList.get(INFINITEBUTTON_ID).visible = false;
         this.buttonList.get(OUTPUTBUTTON_ID).visible = false;
 
+        this.buttonList.get(ADD1_ID).visible = false;
+        this.buttonList.get(ADD2_ID).visible = false;
+
 
         if(tile.getField(tile.FIELD_UPGRADEMULTI) == 1){
-            multiPriceField1a = new GuiTextField(0, fontRenderer, i - 78, j + 101, 45 + 40, 10);
+            multiPriceField1a = new GuiTextField(0, fontRenderer, i - 78, j + 101, 26, 10);
             multiPriceField1a.setMaxStringLength(3);
             multiPriceField1a.setTextColor(Integer.parseInt("0099ff", 16));
             multiPriceField1a.setEnableBackgroundDrawing(false);
             multiPriceField1a.setEnabled(false);
 
-            multiPriceField1b = new GuiTextField(0, fontRenderer, i - 48, j + 101, 45 + 40, 10);
+            multiPriceField1b = new GuiTextField(0, fontRenderer, i - 48, j + 101, 50, 10);
             multiPriceField1b.setMaxStringLength(7);
             multiPriceField1b.setTextColor(Integer.parseInt("0099ff", 16));
             multiPriceField1b.setEnableBackgroundDrawing(false);
             multiPriceField1b.setEnabled(false);
 
-            multiPriceField2a = new GuiTextField(0, fontRenderer, i - 78, j + 111, 45 + 40, 10);
+            multiPriceField2a = new GuiTextField(0, fontRenderer, i - 78, j + 111, 26, 10);
             multiPriceField2a.setMaxStringLength(3);
             multiPriceField2a.setTextColor(Integer.parseInt("0099ff", 16));
             multiPriceField2a.setEnableBackgroundDrawing(false);
             multiPriceField2a.setEnabled(false);
 
-            multiPriceField2b = new GuiTextField(0, fontRenderer, i - 48, j + 111, 45 + 40, 10);
+            multiPriceField2b = new GuiTextField(0, fontRenderer, i - 48, j + 111, 50, 10);
             multiPriceField2b.setMaxStringLength(7);
             multiPriceField2b.setTextColor(Integer.parseInt("0099ff", 16));
             multiPriceField2b.setEnableBackgroundDrawing(false);
             multiPriceField2b.setEnabled(false);
 
-            multiPriceField3a = new GuiTextField(0, fontRenderer, i - 78, j + 121, 45 + 40, 10);
+            multiPriceField3a = new GuiTextField(0, fontRenderer, i - 78, j + 121, 26, 10);
             multiPriceField3a.setMaxStringLength(3);
             multiPriceField3a.setTextColor(Integer.parseInt("0099ff", 16));
             multiPriceField3a.setEnableBackgroundDrawing(false);
             multiPriceField3a.setEnabled(false);
 
-            multiPriceField3b = new GuiTextField(0, fontRenderer, i - 48, j + 121, 45 + 40, 10);
+            multiPriceField3b = new GuiTextField(0, fontRenderer, i - 48, j + 121, 50, 10);
             multiPriceField3b.setMaxStringLength(7);
             multiPriceField3b.setTextColor(Integer.parseInt("0099ff", 16));
             multiPriceField3b.setEnableBackgroundDrawing(false);
@@ -192,6 +195,23 @@ public class GuiVending extends GuiContainer {
 
                 tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
             }
+        }
+    }
+
+    private void setAmnt(){
+        if(multiPriceField1a.getText().length() > 0) {
+            int newAmnt = Integer.valueOf(this.multiPriceField1a.getText());
+            if (newAmnt > tile.getField(tile.FIELD_LIMIT)) newAmnt = tile.getField(tile.FIELD_LIMIT);
+
+            int[] prices = tile.getMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37).clone();
+            prices[0] = newAmnt;
+
+            tile.setMultiPrices(prices.clone());
+            PacketSetItemMultiPricesToServer pack = new PacketSetItemMultiPricesToServer();
+            pack.setData(prices.clone(), tile.getPos());
+            PacketHandler.INSTANCE.sendToServer(pack);
+
+            tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
         }
     }
 
@@ -344,6 +364,29 @@ public class GuiVending extends GuiContainer {
                     if(tile.getField(tile.FIELD_UPGRADEMULTI) == 1){
                         drawTexturedModalRect(-91, 64, 27, 0, 91, 43);
                         drawTexturedModalRect(-91, 92, 27, 5, 91, 43);
+
+                        int[] prices1 = tile.getMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37);
+
+                        if(prices1[1] == -1){
+                            this.buttonList.get(ADD1_ID).visible = true;
+                            this.buttonList.get(ADD1_ID).displayString = "+";
+
+                            this.buttonList.get(ADD2_ID).visible = false;
+                        }else{
+                            if(prices1[2] == -1){
+                                this.buttonList.get(ADD2_ID).visible = true;
+                                this.buttonList.get(ADD2_ID).displayString = "+";
+
+                                this.buttonList.get(ADD1_ID).visible = true;
+                                this.buttonList.get(ADD1_ID).displayString = "-";
+                            }else{
+                                this.buttonList.get(ADD2_ID).visible = true;
+                                this.buttonList.get(ADD2_ID).displayString = "-";
+
+                                this.buttonList.get(ADD1_ID).visible = false;
+                            }
+                        }
+
                     }else {
                         drawTexturedModalRect(-91, 64, 27, 0, 91, 47);
                     }
@@ -386,6 +429,8 @@ public class GuiVending extends GuiContainer {
                     Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
                     this.buttonList.set(CREATIVE_ID, new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton)this.buttonList.get(GEAR_ID)).getButtonY(),0, 44, 20, 21, 0,"", TAB_TEXTURE));
                 }else{  //If Gear Tab Closed
+                    this.buttonList.get(ADD1_ID).visible = false;
+                    this.buttonList.get(ADD2_ID).visible = false;
                     if(tile.getField(tile.FIELD_UPGRADEMULTI) == 0) {
                         this.priceField.setEnabled(false);
                     }
@@ -683,6 +728,8 @@ public class GuiVending extends GuiContainer {
              if ((keyCode == 52 && !multiPriceField1b.getText().contains(".")) || keyCode != 52) {
                  if (this.multiPriceField1b.textboxKeyTyped(typedChar, keyCode)) setCost();
              }
+
+             if (this.multiPriceField1a.textboxKeyTyped(typedChar, keyCode)) setAmnt();
 
              if (multiPriceField1b.getText().length() > 0) if (multiPriceField1b.getText().substring(multiPriceField1b.getText().length() - 1).equals(".")) multiPriceField1b.setMaxStringLength(multiPriceField1b.getText().length() + 2);
              if (!multiPriceField1b.getText().contains(".")) multiPriceField1b.setMaxStringLength(7);

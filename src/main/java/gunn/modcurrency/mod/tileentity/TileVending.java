@@ -104,7 +104,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         gearExtended = false;
         walletIn = false;
         twoBlock = false;
-        upgradeMultiPrices = false;
+        upgradeMultiPrices = true;
     }
 
     public void openGui(EntityPlayer player, World world, BlockPos pos) {
