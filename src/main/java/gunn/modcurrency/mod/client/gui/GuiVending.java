@@ -186,7 +186,7 @@ public class GuiVending extends GuiContainer {
 
 
                 int[] prices = tile.getMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37).clone();
-                prices[4] = newCost;
+                prices[3] = newCost;
 
                 tile.setMultiPrices(prices.clone());
                 PacketSetItemMultiPricesToServer pack = new PacketSetItemMultiPricesToServer();
@@ -244,24 +244,31 @@ public class GuiVending extends GuiContainer {
                     break;
             }
         }else {
-            String multiPriceb = String.valueOf(tile.getMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37)[4]);
+            String multiPrice1a = String.valueOf(tile.getMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37)[0]);
+            if(multiPrice1a.length() > 0){
+                this.multiPriceField1a.setText(multiPrice1a);
+            }
 
-            switch (multiPriceb.length()) {
+
+
+            String multiPrice1b = String.valueOf(tile.getMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37)[3]);
+
+            switch (multiPrice1b.length()) {
                 case 1:
-                    if (multiPriceb.equals("0")) {
-                        this.multiPriceField1b.setText(multiPriceb);
+                    if (multiPrice1b.equals("0")) {
+                        this.multiPriceField1b.setText(multiPrice1b);
                     } else {
-                        this.multiPriceField1b.setText("." + multiPriceb);
+                        this.multiPriceField1b.setText("." + multiPrice1b);
                     }
                     break;
                 case 2:
-                    this.multiPriceField1b.setText("." + multiPriceb);
+                    this.multiPriceField1b.setText("." + multiPrice1b);
                     break;
                 default:
-                    if (multiPriceb.substring(multiPriceb.length() - 2, multiPriceb.length()).equals("00")) {
-                        this.multiPriceField1b.setText(multiPriceb.substring(0, multiPriceb.length() - 2));
+                    if (multiPrice1b.substring(multiPrice1b.length() - 2, multiPrice1b.length()).equals("00")) {
+                        this.multiPriceField1b.setText(multiPrice1b.substring(0, multiPrice1b.length() - 2));
                     } else {
-                        this.multiPriceField1b.setText(multiPriceb.substring(0, multiPriceb.length() - 2) + "." + (multiPriceb.substring(multiPriceb.length() - 2, multiPriceb.length())));
+                        this.multiPriceField1b.setText(multiPrice1b.substring(0, multiPrice1b.length() - 2) + "." + (multiPrice1b.substring(multiPrice1b.length() - 2, multiPrice1b.length())));
                     }
                     break;
             }
