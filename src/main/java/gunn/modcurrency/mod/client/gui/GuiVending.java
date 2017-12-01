@@ -21,6 +21,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.opengl.GL11;
 
+import javax.xml.soap.Text;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -710,6 +711,7 @@ public class GuiVending extends GuiContainer {
        // GL11.glPopMatrix();
     }
 
+
     @Override
     protected void renderToolTip(ItemStack stack, int x, int y) {
         int i = (x - (this.width - this.xSize) / 2);
@@ -747,7 +749,20 @@ public class GuiVending extends GuiContainer {
                 }
             }
 
-            list.add(color + "Price: $" + UtilMethods.translateMoney(tile.getItemCost(slot)));
+            if(tile.getField(tile.FIELD_UPGRADEMULTI) == 0) {
+                list.add(color + "Price: $" + UtilMethods.translateMoney(tile.getItemCost(slot)));
+            }else {
+                int[] prices = tile.getMultiPrices(slot);
+
+                list.add(TextFormatting.GRAY + "Prices:");
+                list.add(color + "x" + prices[0] + " for " + "$" + UtilMethods.translateMoney(prices[3]));
+                if(prices[1] > 0) list.add(color + "x" + prices[1] + " for " + "$" + UtilMethods.translateMoney(prices[4]));
+                if(prices[2] > 0) list.add(color + "x" + prices[2] + " for " + "$" + UtilMethods.translateMoney(prices[5]));
+            }
+
+
+
+
             if(tile.getItemSize(slot) > 0){
                 list.add(TextFormatting.BLUE + "Stock: " + Integer.toString(tile.getItemSize(slot)));
             }else{
