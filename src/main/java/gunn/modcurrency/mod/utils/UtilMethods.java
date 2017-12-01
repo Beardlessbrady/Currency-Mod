@@ -23,9 +23,11 @@ public final class UtilMethods {
        String finalTranslation;
 
 
-        if(amnt.length() >2){   //At least one dollar
+        if(amnt.length() == 1) {
+            finalTranslation = "0.0" + amnt;
+        }else if(amnt.length() >2){   //At least one dollar
             finalTranslation = amnt.substring(0, amnt.length()-2) + "." + amnt.substring(amnt.length()-2, amnt.length());
-        }else if(amnt.equals("0")) {
+        }else if(amnt.equals(0)) {
             finalTranslation = amnt;
         }else{
             finalTranslation = "0." + amnt;

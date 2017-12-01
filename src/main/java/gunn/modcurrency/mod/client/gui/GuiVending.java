@@ -198,8 +198,6 @@ public class GuiVending extends GuiContainer {
                 } else {
                     newCost = Integer.valueOf(textField.getText()) * 100;
                 }
-
-
                 int[] prices = tile.getMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37).clone();
                 prices[slot] = newCost;
 
@@ -251,27 +249,7 @@ public class GuiVending extends GuiContainer {
 
     private void updateTextField() {
         if (tile.getField(tile.FIELD_UPGRADEMULTI) == 0) {
-            String price = String.valueOf(tile.getItemCost(tile.getField(tile.FIELD_SELECTSLOT) - 37));
-
-            switch (price.length()) {
-                case 1:
-                    if (price.equals("0")) {
-                        this.priceField.setText(price);
-                    } else {
-                        this.priceField.setText("." + price);
-                    }
-                    break;
-                case 2:
-                    this.priceField.setText("." + price);
-                    break;
-                default:
-                    if (price.substring(price.length() - 2, price.length()).equals("00")) {
-                        this.priceField.setText(price.substring(0, price.length() - 2));
-                    } else {
-                        this.priceField.setText(price.substring(0, price.length() - 2) + "." + (price.substring(price.length() - 2, price.length())));
-                    }
-                    break;
-            }
+            priceField.setText(UtilMethods.translateMoney(tile.getItemCost(tile.getField(tile.FIELD_SELECTSLOT) - 37)));
         } else {
             String multiPrice1a = String.valueOf(tile.getMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37)[0]);
             if (multiPrice1a.length() > 0) {
@@ -279,27 +257,7 @@ public class GuiVending extends GuiContainer {
             }
 
             int[] multiPriceIndex = tile.getMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37).clone();
-
-            String multiPrice1b = String.valueOf(multiPriceIndex[3]);
-            switch (multiPrice1b.length()) {
-                case 1:
-                    if (multiPrice1b.equals("0")) {
-                        this.multiPriceField1b.setText(multiPrice1b);
-                    } else {
-                        this.multiPriceField1b.setText("." + multiPrice1b);
-                    }
-                    break;
-                case 2:
-                    this.multiPriceField1b.setText("." + multiPrice1b);
-                    break;
-                default:
-                    if (multiPrice1b.substring(multiPrice1b.length() - 2, multiPrice1b.length()).equals("00")) {
-                        this.multiPriceField1b.setText(multiPrice1b.substring(0, multiPrice1b.length() - 2));
-                    } else {
-                        this.multiPriceField1b.setText(multiPrice1b.substring(0, multiPrice1b.length() - 2) + "." + (multiPrice1b.substring(multiPrice1b.length() - 2, multiPrice1b.length())));
-                    }
-                    break;
-            }
+            multiPriceField1b.setText(UtilMethods.translateMoney(multiPriceIndex[3]));
 
             if(multiPriceIndex[1] != -1){
                 String multiPrice2a = String.valueOf(tile.getMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37)[1]);
@@ -307,26 +265,7 @@ public class GuiVending extends GuiContainer {
                     this.multiPriceField2a.setText(multiPrice2a);
                 }
 
-                String multiPrice2b = String.valueOf(multiPriceIndex[4]);
-                switch (multiPrice2b.length()) {
-                    case 1:
-                        if (multiPrice2b.equals("0")) {
-                            this.multiPriceField2b.setText(multiPrice2b);
-                        } else {
-                            this.multiPriceField2b.setText("." + multiPrice2b);
-                        }
-                        break;
-                    case 2:
-                        this.multiPriceField2b.setText("." + multiPrice2b);
-                        break;
-                    default:
-                        if (multiPrice2b.substring(multiPrice2b.length() - 2, multiPrice2b.length()).equals("00")) {
-                            this.multiPriceField2b.setText(multiPrice2b.substring(0, multiPrice2b.length() - 2));
-                        } else {
-                            this.multiPriceField2b.setText(multiPrice2b.substring(0, multiPrice2b.length() - 2) + "." + (multiPrice2b.substring(multiPrice2b.length() - 2, multiPrice2b.length())));
-                        }
-                        break;
-                }
+                multiPriceField2b.setText(UtilMethods.translateMoney(multiPriceIndex[4]));
             }
 
             if(multiPriceIndex[2] != -1){
@@ -335,26 +274,7 @@ public class GuiVending extends GuiContainer {
                     this.multiPriceField3a.setText(multiPrice3a);
                 }
 
-                String multiPrice3b = String.valueOf(multiPriceIndex[5]);
-                switch (multiPrice3b.length()) {
-                    case 1:
-                        if (multiPrice3b.equals("0")) {
-                            this.multiPriceField3b.setText(multiPrice3b);
-                        } else {
-                            this.multiPriceField3b.setText("." + multiPrice3b);
-                        }
-                        break;
-                    case 2:
-                        this.multiPriceField3b.setText("." + multiPrice3b);
-                        break;
-                    default:
-                        if (multiPrice3b.substring(multiPrice3b.length() - 2, multiPrice3b.length()).equals("00")) {
-                            this.multiPriceField3b.setText(multiPrice3b.substring(0, multiPrice3b.length() - 2));
-                        } else {
-                            this.multiPriceField3b.setText(multiPrice3b.substring(0, multiPrice3b.length() - 2) + "." + (multiPrice3b.substring(multiPrice3b.length() - 2, multiPrice3b.length())));
-                        }
-                        break;
-                }
+                multiPriceField3b.setText(UtilMethods.translateMoney(multiPriceIndex[5]));
             }
         }
     }
