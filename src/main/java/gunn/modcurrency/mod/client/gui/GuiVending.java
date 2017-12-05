@@ -12,6 +12,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -293,6 +294,7 @@ public class GuiVending extends GuiContainer {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
+
         this.renderHoveredToolTip(mouseX,mouseY);
         if (tile.getField(tile.FIELD_GEAREXT) == 1 && tile.getField(tile.FIELD_MODE) == 1){
             if(tile.getField(tile.FIELD_UPGRADEMULTI) == 0) {
@@ -487,6 +489,7 @@ public class GuiVending extends GuiContainer {
         }
         warnings();
         drawText();
+        //drawItemStackSize(); zLevels are the devil
     }
 
     private void drawText(){
@@ -624,11 +627,13 @@ public class GuiVending extends GuiContainer {
     }
 
     private void drawItemStackSize(){
-     //   GL11.glPushMatrix();
-      //  GL11.glScaled(0.7, 0.7, 0.7);
-        fontRenderer.drawString("300", 100, 50, Color.darkGray.getRGB());
-        fontRenderer.drawString("300", guiLeft, guiTop, Color.white.getRGB());
-       // GL11.glPopMatrix();
+        GlStateManager.enableDepth();
+        this.zLevel = 300.0F;
+
+        this.fontRenderer.drawStringWithShadow("Test", 50, 50, -1);
+        this.zLevel=0.0F;
+        GlStateManager.disableDepth();
+
     }
 
 

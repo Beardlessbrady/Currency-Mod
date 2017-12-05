@@ -131,6 +131,13 @@ public class ContainerVending extends Container implements INBTInventory {
         tile.setField(tile.FIELD_CREATIVE, 0);
         tile.setField(tile.FIELD_MODE, 0);
         tile.outInputSlot();
+
+        int[] clonedCount = tile.getMultiCount();
+        for(int i = 0; i < TileVending.VEND_SLOT_COUNT; i++){
+            clonedCount[i] = 0;
+        }
+        tile.setMultiCount(clonedCount.clone());
+
         super.onContainerClosed(playerIn);
     }
 
@@ -341,6 +348,12 @@ public class ContainerVending extends Container implements INBTInventory {
                         tile.setLong(tile.LONG_BANK, bank - (cost * amnt));
                     }
                     tile.setLong(tile.LONG_PROFIT, tile.getLong(tile.LONG_PROFIT) + cost * amnt);
+
+                    int[] multiCount = tile.getMultiCount();
+                    multiCount[slotId - 37]++;
+                    tile.setMultiCount(multiCount);
+
+                    //TODO check if count = one of the other prices, if so do your thang
                 }
             } else {
                 tile.unsucessfulNoise();
@@ -411,7 +424,6 @@ public class ContainerVending extends Container implements INBTInventory {
         }
         return sourceStack;
     }
-
 
     @Override
     public void detectAndSendChanges() {
