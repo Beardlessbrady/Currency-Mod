@@ -132,11 +132,13 @@ public class ContainerVending extends Container implements INBTInventory {
         tile.setField(tile.FIELD_MODE, 0);
         tile.outInputSlot();
 
-        int[] clonedCount = tile.getMultiCount();
-        for(int i = 0; i < TileVending.VEND_SLOT_COUNT; i++){
-            clonedCount[i] = 0;
+        if(tile.getField(tile.FIELD_UPGRADEMULTI) == 1) {
+            int[] clonedCount = tile.getMultiCount();
+            for (int i = 0; i < TileVending.VEND_SLOT_COUNT; i++) {
+                clonedCount[i] = 0;
+            }
+            tile.setMultiCount(clonedCount.clone());
         }
-        tile.setMultiCount(clonedCount.clone());
 
         super.onContainerClosed(playerIn);
     }
@@ -349,16 +351,25 @@ public class ContainerVending extends Container implements INBTInventory {
                     }
                     tile.setLong(tile.LONG_PROFIT, tile.getLong(tile.LONG_PROFIT) + cost * amnt);
 
-                    int[] multiCount = tile.getMultiCount();
-                    multiCount[slotId - 37]++;
-                    tile.setMultiCount(multiCount);
+                    if(tile.getField(tile.FIELD_UPGRADEMULTI) == 1){
+                        int[] multiCount = tile.getMultiCount();
+                        multiCount[slotId - 37]++;
+                        tile.setMultiCount(multiCount);
+                    }
+
 
                     //TODO check if count = one of the other prices, if so do your thang
+                    /*
+                    -Must have 1 price that is x1, x10, xStack Max or ERROR
+                    -Price of bundles can't be more per item then lesser or ERROR
+                    -If above is good, once the player buys the right amount or more, they will get a cash back
+                    -If ERROR: That slot is Out of Order and can't be bought from until fixed
+                       -Reason for error displayed for owner in edit mode
+                     */
                 }
             } else {
                 tile.unsucessfulNoise();
             }
-            //kkk
         }
         return ItemStack.EMPTY;
     }
