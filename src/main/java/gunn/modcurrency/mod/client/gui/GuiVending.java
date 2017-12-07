@@ -12,7 +12,6 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,7 +21,6 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.opengl.GL11;
 
-import javax.xml.soap.Text;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -49,8 +47,6 @@ public class GuiVending extends GuiContainer {
     private static final int LOCK_ID = 4;
     private static final int GEAR_ID = 5;
     private static final int CREATIVE_ID = 6;
-    private static final int ADD1_ID = 7;
-    private static final int ADD2_ID = 8;
 
     private final int yShift = 8;
 
@@ -79,8 +75,6 @@ public class GuiVending extends GuiContainer {
         this.buttonList.add(new TabButton("Lock", LOCK_ID, i - 20, 22 + ((TabButton) this.buttonList.get(MODE_ID)).getButtonY(), 0, 22, 20, 21, 0,"", TAB_TEXTURE));
         this.buttonList.add(new TabButton("Gear", GEAR_ID, i - 20, 22 + ((TabButton) this.buttonList.get(LOCK_ID)).getButtonY(), 0, 0, 20, 21, 0,"", TAB_TEXTURE));
         this.buttonList.add(new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton) this.buttonList.get(GEAR_ID)).getButtonY(), 0, 44, 20, 21, 0,"", TAB_TEXTURE));
-        this.buttonList.add(new GuiButton(ADD1_ID, i - 100, j + 110, 10, 10, "+"));
-        this.buttonList.add(new GuiButton(ADD2_ID, i - 100, j + 120, 10, 10, "+"));
 
         priceField = new GuiTextField(0, fontRenderer, i - 48, j + 91, 45 + 40, 10);        //Setting Costs
         priceField.setTextColor(Integer.parseInt("0099ff", 16));
@@ -95,148 +89,31 @@ public class GuiVending extends GuiContainer {
         this.buttonList.get(INFINITEBUTTON_ID).visible = false;
         this.buttonList.get(OUTPUTBUTTON_ID).visible = false;
 
-        this.buttonList.get(ADD1_ID).visible = false;
-        this.buttonList.get(ADD2_ID).visible = false;
-
-
-        if(tile.getField(tile.FIELD_UPGRADEMULTI) == 1){
-            multiPriceField1a = new GuiTextField(0, fontRenderer, i - 78, j + 101, 26, 10);
-            multiPriceField1a.setMaxStringLength(3);
-            multiPriceField1a.setTextColor(Integer.parseInt("0099ff", 16));
-            multiPriceField1a.setEnableBackgroundDrawing(false);
-            multiPriceField1a.setEnabled(false);
-
-            multiPriceField1b = new GuiTextField(0, fontRenderer, i - 48, j + 101, 50, 10);
-            multiPriceField1b.setMaxStringLength(7);
-            multiPriceField1b.setTextColor(Integer.parseInt("0099ff", 16));
-            multiPriceField1b.setEnableBackgroundDrawing(false);
-            multiPriceField1b.setEnabled(false);
-
-            multiPriceField2a = new GuiTextField(0, fontRenderer, i - 78, j + 111, 26, 10);
-            multiPriceField2a.setMaxStringLength(3);
-            multiPriceField2a.setTextColor(Integer.parseInt("0099ff", 16));
-            multiPriceField2a.setEnableBackgroundDrawing(false);
-            multiPriceField2a.setEnabled(false);
-
-            multiPriceField2b = new GuiTextField(0, fontRenderer, i - 48, j + 111, 50, 10);
-            multiPriceField2b.setMaxStringLength(7);
-            multiPriceField2b.setTextColor(Integer.parseInt("0099ff", 16));
-            multiPriceField2b.setEnableBackgroundDrawing(false);
-            multiPriceField2b.setEnabled(false);
-
-            multiPriceField3a = new GuiTextField(0, fontRenderer, i - 78, j + 121, 26, 10);
-            multiPriceField3a.setMaxStringLength(3);
-            multiPriceField3a.setTextColor(Integer.parseInt("0099ff", 16));
-            multiPriceField3a.setEnableBackgroundDrawing(false);
-            multiPriceField3a.setEnabled(false);
-
-            multiPriceField3b = new GuiTextField(0, fontRenderer, i - 48, j + 121, 50, 10);
-            multiPriceField3b.setMaxStringLength(7);
-            multiPriceField3b.setTextColor(Integer.parseInt("0099ff", 16));
-            multiPriceField3b.setEnableBackgroundDrawing(false);
-            multiPriceField3b.setEnabled(false);
-        }
     }
 
     private void setCost(int number) {
-        if(tile.getField(tile.FIELD_UPGRADEMULTI) == 0) { //If normal prices
-            if (this.priceField.getText().length() > 0) {
-                int newCost = 0;
+        if (this.priceField.getText().length() > 0) {
+            int newCost = 0;
 
-                if (priceField.getText().contains(".")) {
-                    if (priceField.getText().lastIndexOf(".") + 1 != priceField.getText().length()) {
-                        if (priceField.getText().lastIndexOf(".") + 2 == priceField.getText().length()) {
-                            newCost = Integer.valueOf(this.priceField.getText().substring(priceField.getText().lastIndexOf(".") + 1) + "0");
-                        } else {
-                            newCost = Integer.valueOf(this.priceField.getText().substring(priceField.getText().lastIndexOf(".") + 1));
-                        }
+            if (priceField.getText().contains(".")) {
+                if (priceField.getText().lastIndexOf(".") + 1 != priceField.getText().length()) {
+                    if (priceField.getText().lastIndexOf(".") + 2 == priceField.getText().length()) {
+                        newCost = Integer.valueOf(this.priceField.getText().substring(priceField.getText().lastIndexOf(".") + 1) + "0");
+                    } else {
+                        newCost = Integer.valueOf(this.priceField.getText().substring(priceField.getText().lastIndexOf(".") + 1));
                     }
-
-                    if (priceField.getText().lastIndexOf(".") != 0)
-                        newCost += Integer.valueOf(this.priceField.getText().substring(0, priceField.getText().lastIndexOf("."))) * 100;
-
-                } else {
-                    newCost = Integer.valueOf(this.priceField.getText()) * 100;
                 }
 
-                tile.setItemCost(newCost);
-                PacketSetItemCostToServer pack = new PacketSetItemCostToServer();
-                pack.setData(newCost, tile.getPos());
-                PacketHandler.INSTANCE.sendToServer(pack);
+                if (priceField.getText().lastIndexOf(".") != 0)
+                    newCost += Integer.valueOf(this.priceField.getText().substring(0, priceField.getText().lastIndexOf("."))) * 100;
 
-                tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
-            }
-        }else{ //If MULTI PRICES enabled
-            GuiTextField textField = multiPriceField1b;
-            int slot = 3;
-
-            switch(number){
-                case 2:
-                    textField = multiPriceField2b;
-                    slot = 4;
-                    break;
-                case 3:
-                    textField = multiPriceField3b;
-                    slot = 5;
-                    break;
+            } else {
+                newCost = Integer.valueOf(this.priceField.getText()) * 100;
             }
 
-            if (textField.getText().length() > 0) {
-                int newCost = 0;
-
-                if (textField.getText().contains(".")) {
-                    if (textField.getText().lastIndexOf(".") + 1 != textField.getText().length()) {
-                        if (textField.getText().lastIndexOf(".") + 2 == textField.getText().length()) {
-                            newCost = Integer.valueOf(textField.getText().substring(textField.getText().lastIndexOf(".") + 1) + "0");
-                        } else {
-                            newCost = Integer.valueOf(textField.getText().substring(textField.getText().lastIndexOf(".") + 1));
-                        }
-                    }
-
-                    if (textField.getText().lastIndexOf(".") != 0)
-                        newCost += Integer.valueOf(textField.getText().substring(0, textField.getText().lastIndexOf("."))) * 100;
-
-                } else {
-                    newCost = Integer.valueOf(textField.getText()) * 100;
-                }
-                int[] prices = tile.getMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37).clone();
-                prices[slot] = newCost;
-
-                tile.setMultiPrices(prices.clone());
-                PacketSetItemMultiPricesToServer pack = new PacketSetItemMultiPricesToServer();
-                pack.setData(prices.clone(), tile.getPos());
-                PacketHandler.INSTANCE.sendToServer(pack);
-
-                tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
-            }
-        }
-    }
-
-    private void setAmnt(int number){
-        GuiTextField textField = multiPriceField1a;
-        int slot = 0;
-
-        switch(number) {
-            case 2:
-                slot = 1;
-                textField = multiPriceField2a;
-                break;
-            case 3:
-                 slot = 2;
-                textField = multiPriceField3a;
-                break;
-        }
-
-        if (textField.getText().length() > 0) {
-            int newAmnt = Integer.valueOf(textField.getText());
-            if (newAmnt > tile.getField(tile.FIELD_LIMIT)) newAmnt = tile.getField(tile.FIELD_LIMIT);
-
-            int[] prices = tile.getMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37).clone();
-            prices[slot] = newAmnt;
-
-            tile.setMultiPrices(prices.clone());
-            PacketSetItemMultiPricesToServer pack = new PacketSetItemMultiPricesToServer();
-            pack.setData(prices.clone(), tile.getPos());
+            tile.setItemCost(newCost);
+            PacketSetItemCostToServer pack = new PacketSetItemCostToServer();
+            pack.setData(newCost, tile.getPos());
             PacketHandler.INSTANCE.sendToServer(pack);
 
             tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
@@ -249,35 +126,7 @@ public class GuiVending extends GuiContainer {
     }
 
     private void updateTextField() {
-        if (tile.getField(tile.FIELD_UPGRADEMULTI) == 0) {
-            priceField.setText(UtilMethods.translateMoney(tile.getItemCost(tile.getField(tile.FIELD_SELECTSLOT) - 37)));
-        } else {
-            String multiPrice1a = String.valueOf(tile.getMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37)[0]);
-            if (multiPrice1a.length() > 0) {
-                this.multiPriceField1a.setText(multiPrice1a);
-            }
-
-            int[] multiPriceIndex = tile.getMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37).clone();
-            multiPriceField1b.setText(UtilMethods.translateMoney(multiPriceIndex[3]));
-
-            if(multiPriceIndex[1] != -1){
-                String multiPrice2a = String.valueOf(tile.getMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37)[1]);
-                if (multiPrice2a.length() > 0) {
-                    this.multiPriceField2a.setText(multiPrice2a);
-                }
-
-                multiPriceField2b.setText(UtilMethods.translateMoney(multiPriceIndex[4]));
-            }
-
-            if(multiPriceIndex[2] != -1){
-                String multiPrice3a = String.valueOf(tile.getMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37)[2]);
-                if (multiPrice3a.length() > 0) {
-                    this.multiPriceField3a.setText(multiPrice3a);
-                }
-
-                multiPriceField3b.setText(UtilMethods.translateMoney(multiPriceIndex[5]));
-            }
-        }
+        priceField.setText(UtilMethods.translateMoney(tile.getItemCost(tile.getField(tile.FIELD_SELECTSLOT) - 37)));
     }
 
     @Override
@@ -297,24 +146,7 @@ public class GuiVending extends GuiContainer {
 
         this.renderHoveredToolTip(mouseX,mouseY);
         if (tile.getField(tile.FIELD_GEAREXT) == 1 && tile.getField(tile.FIELD_MODE) == 1){
-            if(tile.getField(tile.FIELD_UPGRADEMULTI) == 0) {
-                priceField.drawTextBox();
-            }else{
-                multiPriceField1a.drawTextBox();
-                multiPriceField1b.drawTextBox();
-
-                int[] prices = tile.getMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37);
-
-
-                if(prices[1] != -1) {
-                    multiPriceField2a.drawTextBox();
-                    multiPriceField2b.drawTextBox();
-                }
-                if(prices[2] != -1) {
-                    multiPriceField3a.drawTextBox();
-                    multiPriceField3b.drawTextBox();
-                }
-            }
+            priceField.drawTextBox();
         }
     }
 
@@ -366,87 +198,20 @@ public class GuiVending extends GuiContainer {
                 for (int k = 0; k < ((ContainerVending) this.inventorySlots).TE_BUFFER_COUNT; k++){
                     this.inventorySlots.getSlot(((ContainerVending)this.inventorySlots).TE_BUFFER_FIRST_SLOT_INDEX+ k).xPos= 13;
                 }
-
-                if(tile.getField(tile.FIELD_UPGRADEMULTI) == 1){
-                    ((TabButton) buttonList.get(GEAR_ID)).setOpenState(tile.getField(tile.FIELD_GEAREXT) == 1, 49);   //Set Gear Tab Open state
-                }else {
-                    ((TabButton) buttonList.get(GEAR_ID)).setOpenState(tile.getField(tile.FIELD_GEAREXT) == 1, 26);   //Set Gear Tab Open state
-                }
+                ((TabButton) buttonList.get(GEAR_ID)).setOpenState(tile.getField(tile.FIELD_GEAREXT) == 1, 26);   //Set Gear Tab Open state
 
                 if(((TabButton)buttonList.get(GEAR_ID)).openState()){   //If Gear Tab Opened
-                    if(tile.getField(tile.FIELD_UPGRADEMULTI) == 1){
-                        drawTexturedModalRect(-91, 64, 27, 0, 91, 43);
-                        drawTexturedModalRect(-91, 92, 27, 5, 91, 43);
-
-                        int[] prices1 = tile.getMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37);
-
-                        if(prices1[1] == -1){
-                            this.buttonList.get(ADD1_ID).visible = true;
-                            this.buttonList.get(ADD1_ID).displayString = "+";
-
-                            this.buttonList.get(ADD2_ID).visible = false;
-                        }else{
-                            if(prices1[2] == -1){
-                                this.buttonList.get(ADD2_ID).visible = true;
-                                this.buttonList.get(ADD2_ID).displayString = "+";
-
-                                this.buttonList.get(ADD1_ID).visible = true;
-                                this.buttonList.get(ADD1_ID).displayString = "-";
-                            }else{
-                                this.buttonList.get(ADD2_ID).visible = true;
-                                this.buttonList.get(ADD2_ID).displayString = "-";
-
-                                this.buttonList.get(ADD1_ID).visible = false;
-                            }
-                        }
-
-                    }else {
-                        drawTexturedModalRect(-91, 64, 27, 0, 91, 47);
-                    }
-
-
-
+                    drawTexturedModalRect(-91, 64, 27, 0, 91, 47);
                     drawSelectionOverlay();
 
-                    if(tile.getField(tile.FIELD_UPGRADEMULTI) == 0) {
-                        this.priceField.setEnabled(true);
-                    }else{
-                        int[] prices = tile.getMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37);
-
-                        multiPriceField1a.setVisible(true);
-                        multiPriceField1a.setEnabled(true);
-                        multiPriceField1b.setEnabled(true);
-                        multiPriceField1b.setVisible(true);
-
-                        if(prices[1] != -1) {
-                            multiPriceField2a.setEnabled(true);
-                            multiPriceField2a.setVisible(true);
-                            multiPriceField2b.setEnabled(true);
-                            multiPriceField2b.setVisible(true);
-
-                            this.buttonList.get(ADD2_ID).visible = true;
-                        }else{
-                            this.buttonList.get(ADD2_ID).visible = false;
-                        }
-
-                        if(prices[2] != -1) {
-                            multiPriceField3a.setEnabled(true);
-                            multiPriceField3a.setVisible(true);
-                            multiPriceField3b.setEnabled(true);
-                            multiPriceField3b.setVisible(true);
-                        }
-                    }
-
-
+                    this.priceField.setEnabled(true);
 
                     Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
                     this.buttonList.set(CREATIVE_ID, new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton)this.buttonList.get(GEAR_ID)).getButtonY(),0, 44, 20, 21, 0,"", TAB_TEXTURE));
                 }else{  //If Gear Tab Closed
-                    this.buttonList.get(ADD1_ID).visible = false;
-                    this.buttonList.get(ADD2_ID).visible = false;
-                    if(tile.getField(tile.FIELD_UPGRADEMULTI) == 0) {
-                        this.priceField.setEnabled(false);
-                    }
+
+                    this.priceField.setEnabled(false);
+
                     this.buttonList.set(CREATIVE_ID, new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton)this.buttonList.get(GEAR_ID)).getButtonY(),0, 44, 20, 21, 0,"", TAB_TEXTURE));
                 }
 
@@ -505,28 +270,9 @@ public class GuiVending extends GuiContainer {
             fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.slotsettings"), -81, 71, Integer.parseInt("42401c", 16));
             fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.slotsettings"), -80, 70, Integer.parseInt("fff200", 16));
 
-            if(tile.getField(tile.FIELD_UPGRADEMULTI) == 0) {
-                fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.cost"), -84, 92, Integer.parseInt("211d1b", 16));
-                fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.cost"), -83, 91, Color.lightGray.getRGB());
-                fontRenderer.drawString(I18n.format("$"), -55, 91, Integer.parseInt("0099ff", 16));
-            }else{
-                fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.costs"), -84, 92, Integer.parseInt("211d1b", 16));
-                fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.costs"), -83, 91, Color.lightGray.getRGB());
-
-                fontRenderer.drawString(I18n.format("$"), -54, 101, Integer.parseInt("0099ff", 16));
-                fontRenderer.drawString(I18n.format("x"), -84, 101, Integer.parseInt("0099ff", 16));
-
-                int[] prices = tile.getMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37);
-
-                if(prices[1] != -1){
-                    fontRenderer.drawString(I18n.format("$"), -54, 111, Integer.parseInt("0099ff", 16));
-                    fontRenderer.drawString(I18n.format("x"), -84, 111, Integer.parseInt("0099ff", 16));
-                }
-                if(prices[2] != -1){
-                    fontRenderer.drawString(I18n.format("$"), -54, 121, Integer.parseInt("0099ff", 16));
-                    fontRenderer.drawString(I18n.format("x"), -84, 121, Integer.parseInt("0099ff", 16));
-                }
-            }
+            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.cost"), -84, 92, Integer.parseInt("211d1b", 16));
+            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.cost"), -83, 91, Color.lightGray.getRGB());
+            fontRenderer.drawString(I18n.format("$"), -55, 91, Integer.parseInt("0099ff", 16));
 
             GL11.glPushMatrix();
             GL11.glScaled(0.7, 0.7, 0.7);
@@ -555,11 +301,7 @@ public class GuiVending extends GuiContainer {
             int tabLoc = 22 * (k + 1);
             int offSet2 = 0;
             if (tile.getField(tile.FIELD_GEAREXT) == 1){
-                if(tile.getField(tile.FIELD_UPGRADEMULTI) == 0){
-                    offSet2 = 26;
-                }else{
-                    offSet2 = 49;
-                }
+                offSet2 = 26;
             }
 
             switch (k) {
@@ -674,19 +416,7 @@ public class GuiVending extends GuiContainer {
                 }
             }
 
-            if(tile.getField(tile.FIELD_UPGRADEMULTI) == 0) {
-                list.add(color + "Price: $" + UtilMethods.translateMoney(tile.getItemCost(slot)));
-            }else {
-                int[] prices = tile.getMultiPrices(slot);
-
-                list.add(TextFormatting.GRAY + "Prices:");
-                list.add(color + "x" + prices[0] + " for " + "$" + UtilMethods.translateMoney(prices[3]));
-                if(prices[1] > 0) list.add(color + "x" + prices[1] + " for " + "$" + UtilMethods.translateMoney(prices[4]));
-                if(prices[2] > 0) list.add(color + "x" + prices[2] + " for " + "$" + UtilMethods.translateMoney(prices[5]));
-            }
-
-
-
+            list.add(color + "Price: $" + UtilMethods.translateMoney(tile.getItemCost(slot)));
 
             if(tile.getItemSize(slot) > 0){
                 list.add(TextFormatting.BLUE + "Stock: " + Integer.toString(tile.getItemSize(slot)));
@@ -719,22 +449,6 @@ public class GuiVending extends GuiContainer {
             super.mouseClicked(mouseX, mouseY, mouseButton);
             priceField.mouseClicked(mouseX, mouseY, mouseButton);
 
-
-            if(tile.getField(tile.FIELD_UPGRADEMULTI) == 1) {
-                int[] prices = tile.getMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37);
-
-                multiPriceField1a.mouseClicked(mouseX, mouseY, mouseButton);
-                multiPriceField1b.mouseClicked(mouseX, mouseY, mouseButton);
-                if(prices[1] != -1) {
-                    multiPriceField2a.mouseClicked(mouseX, mouseY, mouseButton);
-                    multiPriceField2b.mouseClicked(mouseX, mouseY, mouseButton);
-                }
-                if(prices[2] != -1) {
-                    multiPriceField3a.mouseClicked(mouseX, mouseY, mouseButton);
-                    multiPriceField3b.mouseClicked(mouseX, mouseY, mouseButton);
-                }
-            }
-
             if (tile.getField(tile.FIELD_GEAREXT) == 1 && mouseButton == 0) updateTextField();
         }else {
             super.mouseClicked(mouseX, mouseY, mouseButton);
@@ -745,47 +459,17 @@ public class GuiVending extends GuiContainer {
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         int numChar = Character.getNumericValue(typedChar);
         if ((tile.getField(tile.FIELD_MODE) == 1) && ((numChar >= 0 && numChar <= 9) || (keyCode == 14) || keyCode == 211 || (keyCode == 203) || (keyCode == 205) || (keyCode == 52))) { //Ensures keys input are only numbers or backspace type keys
-         if(tile.getField(tile.FIELD_UPGRADEMULTI) == 0) {
 
-             if ((keyCode == 52 && !priceField.getText().contains(".")) || keyCode != 52) {
-                 if (this.priceField.textboxKeyTyped(typedChar, keyCode)) setCost(0);
-             }
 
-             if (priceField.getText().length() > 0) if (priceField.getText().substring(priceField.getText().length() - 1).equals(".")) priceField.setMaxStringLength(priceField.getText().length() + 2);
-             if (!priceField.getText().contains(".")) priceField.setMaxStringLength(7);
-         }else {
+            if ((keyCode == 52 && !priceField.getText().contains(".")) || keyCode != 52) {
+                if (this.priceField.textboxKeyTyped(typedChar, keyCode)) setCost(0);
+            }
 
-             if ((keyCode == 52 && !multiPriceField1b.getText().contains(".")) || keyCode != 52) {
-                 if (this.multiPriceField1b.textboxKeyTyped(typedChar, keyCode)) setCost(1);
-             }
+            if (priceField.getText().length() > 0)
+                if (priceField.getText().substring(priceField.getText().length() - 1).equals("."))
+                    priceField.setMaxStringLength(priceField.getText().length() + 2);
+            if (!priceField.getText().contains(".")) priceField.setMaxStringLength(7);
 
-             if (this.multiPriceField1a.textboxKeyTyped(typedChar, keyCode)) setAmnt(1);
-
-             if (multiPriceField1b.getText().length() > 0) if (multiPriceField1b.getText().substring(multiPriceField1b.getText().length() - 1).equals(".")) multiPriceField1b.setMaxStringLength(multiPriceField1b.getText().length() + 2);
-             if (!multiPriceField1b.getText().contains(".")) multiPriceField1b.setMaxStringLength(7);
-
-             if(tile.getMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37)[1] != -1){ //If MultPrices price 2 is active
-                 if ((keyCode == 52 && !multiPriceField2b.getText().contains(".")) || keyCode != 52) {
-                    if (this.multiPriceField2b.textboxKeyTyped(typedChar, keyCode)) setCost(2);
-                 }
-
-                 if (this.multiPriceField2a.textboxKeyTyped(typedChar, keyCode)) setAmnt(2);
-
-                 if (multiPriceField2b.getText().length() > 0) if (multiPriceField2b.getText().substring(multiPriceField2b.getText().length() - 1).equals(".")) multiPriceField2b.setMaxStringLength(multiPriceField2b.getText().length() + 2);
-                 if (!multiPriceField2b.getText().contains(".")) multiPriceField2b.setMaxStringLength(7);
-             }
-
-             if(tile.getMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37)[2] != -1){ //If MultiPrices price 3 is active
-                 if ((keyCode == 52 && !multiPriceField3b.getText().contains(".")) || keyCode != 52) {
-                     if (this.multiPriceField3b.textboxKeyTyped(typedChar, keyCode)) setCost(3);
-                 }
-
-                   if (this.multiPriceField3a.textboxKeyTyped(typedChar, keyCode)) setAmnt(3);
-
-                 if (multiPriceField3b.getText().length() > 0) if (multiPriceField3b.getText().substring(multiPriceField3b.getText().length() - 1).equals(".")) multiPriceField3b.setMaxStringLength(multiPriceField3b.getText().length() + 2);
-                 if (!multiPriceField3b.getText().contains(".")) multiPriceField3b.setMaxStringLength(7);
-             }
-         }
         } else {
             super.keyTyped(typedChar, keyCode);
         }
@@ -844,42 +528,6 @@ public class GuiVending extends GuiContainer {
                 PacketSetFieldToServer packOut = new PacketSetFieldToServer();
                 packOut.setData(out, tile.FIELD_OUTPUTBILL, tile.getPos());
                 PacketHandler.INSTANCE.sendToServer(packOut);
-                break;
-            case ADD1_ID: //Add Button for Multi Prices 2
-                int[] prices = tile.getMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37);
-                if(this.buttonList.get(ADD1_ID).displayString.equals("+")) {
-                    prices[1] = 0;
-                    this.buttonList.get(ADD1_ID).displayString = "-";
-                }else{
-                    prices[1] = -1;
-                    prices[4] = 0;
-                    this.buttonList.get(ADD1_ID).displayString = "+";
-                }
-                tile.setMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37, prices.clone());
-
-                PacketSetItemMultiPricesToServer pack = new PacketSetItemMultiPricesToServer();
-                pack.setData(prices, this.tile.getPos());
-                PacketHandler.INSTANCE.sendToServer(pack);
-
-                tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
-                break;
-            case ADD2_ID: //Add Button for Multi Prices 3
-                int[] prices1 = tile.getMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37);
-                if(this.buttonList.get(ADD2_ID).displayString.equals("+")) {
-                    prices1[2] = 0;
-                    this.buttonList.get(ADD2_ID).displayString = "-";
-                }else{
-                    prices1[2] = -1;
-                    prices1[5] = 0;
-                    this.buttonList.get(ADD2_ID).displayString = "+";
-                }
-                tile.setMultiPrices(tile.getField(tile.FIELD_SELECTSLOT) - 37, prices1.clone());
-
-                PacketSetItemMultiPricesToServer pack5 = new PacketSetItemMultiPricesToServer();
-                pack5.setData(prices1, this.tile.getPos());
-                PacketHandler.INSTANCE.sendToServer(pack5);
-
-                tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
                 break;
         }
     }

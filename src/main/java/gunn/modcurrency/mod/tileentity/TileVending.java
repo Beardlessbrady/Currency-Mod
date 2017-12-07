@@ -59,8 +59,6 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     private ItemStackHandler bufferStackHandler = new ItemStackHandler(BUFFER_SLOT_COUNT);
     private EntityPlayer playerUsing = null;
     private int[] slotSizes= new int[VEND_SLOT_COUNT];
-    private int[][] multiPrices = new int[VEND_SLOT_COUNT][6];  //0,1,2 == Amnt, 3,4,5 == Costs
-    private int[] multiCount = new int[VEND_SLOT_COUNT];
 
     public final byte FIELD_LOCKED = 0;
     public final byte FIELD_MODE = 1;
@@ -72,7 +70,6 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     public final byte FIELD_WALLETIN = 7;
     public final byte FIELD_OUTPUTBILL = 8;
     public final byte FIELD_LIMIT = 9;
-    public final byte FIELD_UPGRADEMULTI = 10;
 
     public final byte LONG_BANK = 0;
     public final byte LONG_PROFIT = 1;
@@ -90,12 +87,6 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         for(int i = 0; i < VEND_SLOT_COUNT; i ++){
             slotSizes[i] = 0;
             itemCosts[i] = 0;
-            multiPrices[i][0] = 0;
-            multiPrices[i][1] = -1;
-            multiPrices[i][2] = -1;
-            multiPrices[i][3] = 0;
-            multiPrices[i][4] = 0;
-            multiPrices[i][5] = 0;
         }
 
         locked = false;
@@ -606,23 +597,13 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
 
         NBTTagCompound itemCostsNBT = new NBTTagCompound();
         NBTTagCompound itemSizesNBT = new NBTTagCompound();
-        NBTTagCompound itemMultiCostsNBT = new NBTTagCompound();
-        NBTTagCompound itemMultiCountNBT = new NBTTagCompound();
 
         for (int i = 0; i < VEND_SLOT_COUNT; i++){
             itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
             itemSizesNBT.setInteger("size" + i, slotSizes[i]);
-
-            for(int j = 0; j < 6; j++){
-                itemMultiCostsNBT.setInteger(Integer.toString(i) + Integer.toString(j), multiPrices[i][j]);
-            }
-
-            itemMultiCountNBT.setInteger(Integer.toString(i), multiCount[i]);
         }
         compound.setTag("itemCosts", itemCostsNBT);
         compound.setTag("itemSizes", itemSizesNBT);
-        compound.setTag("itemMultiCosts", itemMultiCostsNBT);
-        compound.setTag("itemMultiCount", itemMultiCountNBT);
 
         return compound;
     }
@@ -659,22 +640,6 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
             NBTTagCompound itemSizeNBT = compound.getCompoundTag("itemSizes");
             for (int i = 0; i < itemCosts.length; i++) slotSizes[i] = itemSizeNBT.getInteger("size" + i);
         }
-
-        if (compound.hasKey("itemMultiCosts")) {
-            NBTTagCompound itemMultiCostsNBT = compound.getCompoundTag("itemMultiCosts");
-            for (int i = 0; i < VEND_SLOT_COUNT; i++){
-                for(int j = 0; j < 6; j++){
-                    multiPrices[i][j] = itemMultiCostsNBT.getInteger(Integer.toString(i) + Integer.toString(j));
-                }
-            }
-        }
-
-        if (compound.hasKey("itemMultiCount")) {
-            NBTTagCompound itemMultiCountNBT = compound.getCompoundTag("itemMultiCount");
-            for(int i = 0; i < VEND_SLOT_COUNT; i++){
-                multiCount[i] = itemMultiCountNBT.getInteger(Integer.toString(i));
-            }
-        }
     }
 
     @Override
@@ -705,24 +670,14 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
 
         NBTTagCompound itemCostsNBT = new NBTTagCompound();
         NBTTagCompound itemSizeNBT = new NBTTagCompound();
-        NBTTagCompound itemMultiCostsNBT = new NBTTagCompound();
-        NBTTagCompound itemMultiCountNBT = new NBTTagCompound();
 
         for (int i = 0; i < VEND_SLOT_COUNT; i++){
             itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
             itemSizeNBT.setInteger("size" + i, slotSizes[i]);
-
-            for(int j = 0; j < 6; j++){
-                itemMultiCostsNBT.setInteger(Integer.toString(i) + Integer.toString(j), multiPrices[i][j]);
-            }
-
-            itemMultiCountNBT.setInteger(Integer.toString(i), multiCount[i]);
         }
 
         tag.setTag("itemCosts", itemCostsNBT);
         tag.setTag("itemSizes", itemSizeNBT);
-        tag.setTag("itemMultiCosts", itemMultiCostsNBT);
-        tag.setTag("itemMultiCount", itemMultiCountNBT);
 
         return new SPacketUpdateTileEntity(pos, 1, tag);
     }
@@ -749,17 +704,9 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
 
         NBTTagCompound itemCostsNBT = pkt.getNbtCompound().getCompoundTag("itemCosts");
         NBTTagCompound itemSizeNBT = pkt.getNbtCompound().getCompoundTag("itemSizes");
-        NBTTagCompound itemMultiCostsNBT = pkt.getNbtCompound().getCompoundTag("itemMultiCosts");
-        NBTTagCompound itemMultiCountNBT = pkt.getNbtCompound().getCompoundTag("itemMultiCount");
         for (int i = 0; i < VEND_SLOT_COUNT; i++){
             itemCosts[i] = itemCostsNBT.getInteger("cost" + i);
             slotSizes[i] = itemSizeNBT.getInteger("size" + i);
-
-            for(int j = 0; j < 6; j++){
-                multiPrices[i][j] = itemMultiCostsNBT.getInteger(Integer.toString(i) + Integer.toString(j));
-            }
-
-            multiCount[i] = itemMultiCountNBT.getInteger(Integer.toString(i));
         }
     }
     //</editor-fold>--------------------------------
@@ -786,7 +733,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
 
     //<editor-fold desc="Getter & Setter Methods---------------------------------------------------------------------------------------------">
     public int getFieldCount() {
-        return 11;
+        return 10;
     }
 
     public void setField(int id, int value) {
@@ -821,9 +768,6 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
             case FIELD_LIMIT:
                 stackLimit = value;
                 break;
-            case FIELD_UPGRADEMULTI:
-                upgradeMultiPrices = (value == 1);
-                break;
         }
     }
 
@@ -849,8 +793,6 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                 return outputBill;
             case FIELD_LIMIT:
                 return stackLimit;
-            case FIELD_UPGRADEMULTI:
-                return (upgradeMultiPrices) ? 1 : 0;
         }
         return -1;
     }
@@ -904,26 +846,6 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
 
     public void setItemCost(int amount, int index) {
         itemCosts[index] = amount;
-    }
-
-    public int[] getMultiPrices(int index){
-        return multiPrices[index].clone();
-    }
-
-    public void setMultiPrices(int[] array){
-        multiPrices[selectedSlot - 37] = array.clone();
-    }
-
-    public void setMultiPrices(int index, int[] array){
-        multiPrices[index] = array.clone();
-    }
-
-    public int[] getMultiCount(){
-        return multiCount.clone();
-    }
-
-    public void setMultiCount(int[] array){
-        multiCount = array.clone();
     }
 
     public int getItemSize(int index){
