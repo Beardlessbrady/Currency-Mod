@@ -35,6 +35,7 @@ tile.modcurrency:guivending.funds=Funds
 tile.modcurrency:guivending.slotsettings=Slot Settings
 tile.modcurrency:guivending.cost=Price:
 tile.modcurrency:guivending.costs=Prices
+tile.modcurrency:guivending.bundle=Amnt:
 tile.modcurrency:guivending.amount=Req'd:
 tile.modcurrency:guivending.cash=Cash
 tile.modcurrency:guivending.infinitestock=Infinite Stock

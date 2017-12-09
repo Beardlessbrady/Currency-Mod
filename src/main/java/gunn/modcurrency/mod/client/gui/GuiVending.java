@@ -38,7 +38,7 @@ public class GuiVending extends GuiContainer {
     private TileVending tile;
     private boolean creativeExtended;
     private EntityPlayer player;
-    private GuiTextField priceField,multiPriceField1a, multiPriceField1b, multiPriceField2a, multiPriceField2b, multiPriceField3a, multiPriceField3b;
+    private GuiTextField priceField, amountField;
 
     private static final int CHANGEBUTTON_ID = 0;
     private static final int INFINITEBUTTON_ID = 1;
@@ -76,11 +76,18 @@ public class GuiVending extends GuiContainer {
         this.buttonList.add(new TabButton("Gear", GEAR_ID, i - 20, 22 + ((TabButton) this.buttonList.get(LOCK_ID)).getButtonY(), 0, 0, 20, 21, 0,"", TAB_TEXTURE));
         this.buttonList.add(new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton) this.buttonList.get(GEAR_ID)).getButtonY(), 0, 44, 20, 21, 0,"", TAB_TEXTURE));
 
-        priceField = new GuiTextField(0, fontRenderer, i - 48, j + 91, 45 + 40, 10);        //Setting Costs
+        priceField = new GuiTextField(0, fontRenderer, i - 48, j + 91, 50, 8);        //Setting Costs
         priceField.setTextColor(Integer.parseInt("0099ff", 16));
         priceField.setEnableBackgroundDrawing(false);
         priceField.setMaxStringLength(7);
         priceField.setEnabled(false);
+
+        amountField = new GuiTextField(1, fontRenderer, i - 58, j + 100, 50, 8); //Setting Amount to sell
+        amountField.setTextColor(Integer.parseInt("0099ff", 16));
+        amountField.setEnableBackgroundDrawing(false);
+        amountField.setMaxStringLength(3);
+        amountField.setEnabled(false);
+
 
         this.buttonList.get(MODE_ID).visible = false;
         this.buttonList.get(LOCK_ID).visible = false;
@@ -91,7 +98,7 @@ public class GuiVending extends GuiContainer {
 
     }
 
-    private void setCost(int number) {
+    private void setCost() {
         if (this.priceField.getText().length() > 0) {
             int newCost = 0;
 
@@ -120,6 +127,21 @@ public class GuiVending extends GuiContainer {
         }
     }
 
+    private void setAmnt(){
+        if (this.amountField.getText().length() > 0){
+            int newAmnt = Integer.valueOf(amountField.getText());
+            if (newAmnt == 0) newAmnt = 1;
+            if (newAmnt > tile.getField(tile.FIELD_LIMIT)) newAmnt = tile.getField(tile.FIELD_LIMIT);
+
+            tile.setItemAmnt(newAmnt);
+            PacketSetItemBundleToServer pack = new PacketSetItemBundleToServer();
+            pack.setData(newAmnt, tile.getPos());
+            PacketHandler.INSTANCE.sendToServer(pack);
+
+            tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
+        }
+    }
+
     @Override
     public void onGuiClosed() {
         super.onGuiClosed();
@@ -127,6 +149,7 @@ public class GuiVending extends GuiContainer {
 
     private void updateTextField() {
         priceField.setText(UtilMethods.translateMoney(tile.getItemCost(tile.getField(tile.FIELD_SELECTSLOT) - 37)));
+        amountField.setText(Integer.toString(tile.getItemAmnt(tile.getField(tile.FIELD_SELECTSLOT) - 37)));
     }
 
     @Override
@@ -147,6 +170,7 @@ public class GuiVending extends GuiContainer {
         this.renderHoveredToolTip(mouseX,mouseY);
         if (tile.getField(tile.FIELD_GEAREXT) == 1 && tile.getField(tile.FIELD_MODE) == 1){
             priceField.drawTextBox();
+            amountField.drawTextBox();
         }
     }
 
@@ -205,12 +229,14 @@ public class GuiVending extends GuiContainer {
                     drawSelectionOverlay();
 
                     this.priceField.setEnabled(true);
+                    this.amountField.setEnabled(true);
 
                     Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
                     this.buttonList.set(CREATIVE_ID, new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton)this.buttonList.get(GEAR_ID)).getButtonY(),0, 44, 20, 21, 0,"", TAB_TEXTURE));
                 }else{  //If Gear Tab Closed
 
                     this.priceField.setEnabled(false);
+                    this.amountField.setEnabled(false);
 
                     this.buttonList.set(CREATIVE_ID, new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton)this.buttonList.get(GEAR_ID)).getButtonY(),0, 44, 20, 21, 0,"", TAB_TEXTURE));
                 }
@@ -267,12 +293,11 @@ public class GuiVending extends GuiContainer {
         }
 
         if (tile.getField(tile.FIELD_GEAREXT) == 1) {
-            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.slotsettings"), -81, 71, Integer.parseInt("42401c", 16));
-            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.slotsettings"), -80, 70, Integer.parseInt("fff200", 16));
+            fontRenderer.drawStringWithShadow(I18n.format("tile.modcurrency:guivending.slotsettings"), -81, 70, Integer.parseInt("fff200", 16));
 
-            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.cost"), -84, 92, Integer.parseInt("211d1b", 16));
-            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.cost"), -83, 91, Color.lightGray.getRGB());
+            fontRenderer.drawStringWithShadow(I18n.format("tile.modcurrency:guivending.cost"), -84, 91, Color.lightGray.getRGB());
             fontRenderer.drawString(I18n.format("$"), -55, 91, Integer.parseInt("0099ff", 16));
+            fontRenderer.drawStringWithShadow(I18n.format("tile.modcurrency:guivending.bundle"), -84, 100, Color.lightGray.getRGB());
 
             GL11.glPushMatrix();
             GL11.glScaled(0.7, 0.7, 0.7);
@@ -281,8 +306,7 @@ public class GuiVending extends GuiContainer {
             GL11.glPopMatrix();
         }
         if (creativeExtended) {
-            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.infinitestock"), -86, 93 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY(), Integer.parseInt("42401c", 16));
-            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.infinitestock"), -85, 92 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY(), Integer.parseInt("fff200", 16));
+            fontRenderer.drawStringWithShadow(I18n.format("tile.modcurrency:guivending.infinitestock"), -85, 92 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY(), Integer.parseInt("fff200", 16));
         }
 
         if (tile.getField(tile.FIELD_WALLETIN) == 1) fontRenderer.drawString(I18n.format("Wallet") + ": $" + UtilMethods.translateMoney(tile.getLong(tile.LONG_WALLETTOTAL)), 5, 23, Integer.parseInt("3abd0c", 16));
@@ -448,6 +472,7 @@ public class GuiVending extends GuiContainer {
         if(tile.getField(tile.FIELD_MODE) == 1) {
             super.mouseClicked(mouseX, mouseY, mouseButton);
             priceField.mouseClicked(mouseX, mouseY, mouseButton);
+            amountField.mouseClicked(mouseX, mouseY, mouseButton);
 
             if (tile.getField(tile.FIELD_GEAREXT) == 1 && mouseButton == 0) updateTextField();
         }else {
@@ -460,9 +485,12 @@ public class GuiVending extends GuiContainer {
         int numChar = Character.getNumericValue(typedChar);
         if ((tile.getField(tile.FIELD_MODE) == 1) && ((numChar >= 0 && numChar <= 9) || (keyCode == 14) || keyCode == 211 || (keyCode == 203) || (keyCode == 205) || (keyCode == 52))) { //Ensures keys input are only numbers or backspace type keys
 
-
             if ((keyCode == 52 && !priceField.getText().contains(".")) || keyCode != 52) {
-                if (this.priceField.textboxKeyTyped(typedChar, keyCode)) setCost(0);
+                if (this.priceField.textboxKeyTyped(typedChar, keyCode)) setCost();
+            }
+
+            if ((keyCode != 52)){
+                if (this.amountField.textboxKeyTyped(typedChar, keyCode)) setAmnt();
             }
 
             if (priceField.getText().length() > 0)

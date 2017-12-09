@@ -18,24 +18,22 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  *
  * File Created on 2017-03-12
  */
-public class PacketSetItemAmountToServer implements IMessage {
+public class PacketSetItemBundleToServer implements IMessage {
     //Seller: Uses player input and sets amount of item, sends to server
     private BlockPos blockPos;
-    private int data, index;
+    private int data;
 
-    public PacketSetItemAmountToServer(){}
+    public PacketSetItemBundleToServer(){}
 
-    public void setData(int data, BlockPos pos, int index) {
+    public void setData(int data, BlockPos pos) {
         this.blockPos = pos;
         this.data = data;
-        this.index = index;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         blockPos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
         data = buf.readInt();
-        index = buf.readInt();
     }
 
     @Override
@@ -44,23 +42,22 @@ public class PacketSetItemAmountToServer implements IMessage {
         buf.writeInt(blockPos.getY());
         buf.writeInt(blockPos.getZ());
         buf.writeInt(data);
-        buf.writeInt(index);
     }
 
-    public static class Handler implements IMessageHandler<PacketSetItemAmountToServer, IMessage> {
+    public static class Handler implements IMessageHandler<PacketSetItemBundleToServer, IMessage> {
 
         @Override
-        public IMessage onMessage(final PacketSetItemAmountToServer message, MessageContext ctx) {
+        public IMessage onMessage(final PacketSetItemBundleToServer message, MessageContext ctx) {
             FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message,ctx));
             return null;
         }
 
-        private void handle(PacketSetItemAmountToServer message, MessageContext ctx){
+        private void handle(PacketSetItemBundleToServer message, MessageContext ctx){
             EntityPlayerMP playerEntity = ctx.getServerHandler().player;
             World world = playerEntity.world;
             TileEntity tile = world.getTileEntity(message.blockPos);
 
-            if(tile instanceof TileExchanger) ((TileExchanger) tile).setItemAmount(message.data, message.index);
+            if(tile instanceof TileVending) ((TileVending) tile).setItemAmnt(message.data);
         }
     }
 }

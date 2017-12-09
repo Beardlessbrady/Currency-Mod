@@ -32,6 +32,7 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketBankDepositToServer.Handler.class, PacketBankDepositToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketBankWithdrawToServer.Handler.class, PacketBankWithdrawToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketSetFieldToServer.Handler.class, PacketSetFieldToServer.class, index++, Side.SERVER);
+        INSTANCE.registerMessage(PacketSetItemBundleToServer.Handler.class, PacketSetItemBundleToServer.class, index++, Side.SERVER);
         return index;
     }
 

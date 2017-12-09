@@ -59,6 +59,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     private ItemStackHandler bufferStackHandler = new ItemStackHandler(BUFFER_SLOT_COUNT);
     private EntityPlayer playerUsing = null;
     private int[] slotSizes= new int[VEND_SLOT_COUNT];
+    private int[] slotAmount= new int[VEND_SLOT_COUNT];
 
     public final byte FIELD_LOCKED = 0;
     public final byte FIELD_MODE = 1;
@@ -87,6 +88,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
         for(int i = 0; i < VEND_SLOT_COUNT; i ++){
             slotSizes[i] = 0;
             itemCosts[i] = 0;
+            slotAmount[i] = 1;
         }
 
         locked = false;
@@ -597,13 +599,16 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
 
         NBTTagCompound itemCostsNBT = new NBTTagCompound();
         NBTTagCompound itemSizesNBT = new NBTTagCompound();
+        NBTTagCompound itemAmntNBT = new NBTTagCompound();
 
         for (int i = 0; i < VEND_SLOT_COUNT; i++){
             itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
             itemSizesNBT.setInteger("size" + i, slotSizes[i]);
+            itemAmntNBT.setInteger("amnt" + i, slotAmount[i]);
         }
         compound.setTag("itemCosts", itemCostsNBT);
         compound.setTag("itemSizes", itemSizesNBT);
+        compound.setTag("itemAmnts", itemAmntNBT);
 
         return compound;
     }
@@ -638,7 +643,12 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
 
         if (compound.hasKey("itemSizes")) {
             NBTTagCompound itemSizeNBT = compound.getCompoundTag("itemSizes");
-            for (int i = 0; i < itemCosts.length; i++) slotSizes[i] = itemSizeNBT.getInteger("size" + i);
+            for (int i = 0; i < VEND_SLOT_COUNT; i++) slotSizes[i] = itemSizeNBT.getInteger("size" + i);
+        }
+
+        if (compound.hasKey("itemAmnts")) {
+            NBTTagCompound itemSizeNBT = compound.getCompoundTag("itemAmnts");
+            for (int i = 0; i < VEND_SLOT_COUNT; i++) slotAmount[i] = itemSizeNBT.getInteger("amnt" + i);
         }
     }
 
@@ -670,14 +680,17 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
 
         NBTTagCompound itemCostsNBT = new NBTTagCompound();
         NBTTagCompound itemSizeNBT = new NBTTagCompound();
+        NBTTagCompound itemAmntNBT = new NBTTagCompound();
 
         for (int i = 0; i < VEND_SLOT_COUNT; i++){
             itemCostsNBT.setInteger("cost" + i, itemCosts[i]);
             itemSizeNBT.setInteger("size" + i, slotSizes[i]);
+            itemAmntNBT.setInteger("amnt" + i, slotAmount[i]);
         }
 
         tag.setTag("itemCosts", itemCostsNBT);
         tag.setTag("itemSizes", itemSizeNBT);
+        tag.setTag("itemAmnts", itemAmntNBT);
 
         return new SPacketUpdateTileEntity(pos, 1, tag);
     }
@@ -704,9 +717,11 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
 
         NBTTagCompound itemCostsNBT = pkt.getNbtCompound().getCompoundTag("itemCosts");
         NBTTagCompound itemSizeNBT = pkt.getNbtCompound().getCompoundTag("itemSizes");
+        NBTTagCompound itemAmntNBT = pkt.getNbtCompound().getCompoundTag("itemAmnts");
         for (int i = 0; i < VEND_SLOT_COUNT; i++){
             itemCosts[i] = itemCostsNBT.getInteger("cost" + i);
             slotSizes[i] = itemSizeNBT.getInteger("size" + i);
+            slotAmount[i] = itemAmntNBT.getInteger("amnt" + i);
         }
     }
     //</editor-fold>--------------------------------
@@ -842,6 +857,14 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
 
     public void setItemCost(int amount) {
         itemCosts[selectedSlot - 37] = amount;
+    }
+
+    public int getItemAmnt(int index) {
+        return slotAmount[index];
+    }
+
+    public void setItemAmnt(int amount) {
+        slotAmount[selectedSlot - 37] = amount;
     }
 
     public void setItemCost(int amount, int index) {
