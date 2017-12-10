@@ -273,11 +273,11 @@ public class ContainerVending extends Container implements INBTInventory {
             } else { //SELL MODE
                 if (clickTypeIn == ClickType.PICKUP && dragType == 0) {   //Left Click = 1 item
                     return checkAfford(slotId, 1, player);
-                } else if (clickTypeIn == ClickType.PICKUP && dragType == 1) {   //Right Click = 10 item
-                    return checkAfford(slotId, 10, player);
-                } else if (clickTypeIn == ClickType.QUICK_MOVE) {
-                    return checkAfford(slotId, 64, player);
-                }
+                } //else if (clickTypeIn == ClickType.PICKUP && dragType == 1) {   //Right Click = 10 item
+              //      return checkAfford(slotId, 10, player);
+               // } else if (clickTypeIn == ClickType.QUICK_MOVE) {
+               //     return checkAfford(slotId, 64, player);
+               // }
             }
             return itemStack;
         }
@@ -285,6 +285,9 @@ public class ContainerVending extends Container implements INBTInventory {
     }
 
     private ItemStack checkAfford(int slotId, int amnt, EntityPlayer player) {
+        int multiple = tile.getItemAmnt(tile.getField(tile.FIELD_SELECTSLOT) - 37);
+
+
         IItemHandler itemHandler = this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
         ItemStack playStack = player.inventory.getItemStack();
         ItemStack slotStack = itemHandler.getStackInSlot(slotId - PLAYER_TOTAL_COUNT);
@@ -310,38 +313,50 @@ public class ContainerVending extends Container implements INBTInventory {
                     if(playStack.getCount() >= playStack.getMaxStackSize()) return ItemStack.EMPTY;
                 }
             }
-            if (tile.getField(tile.FIELD_INFINITE) == 0)
-                if (tile.getItemSize(slotId - 37) < amnt && tile.getItemSize(slotId - 37) != 0) amnt = tile.getItemSize(slotId - 37);
 
-            //If cant afford amount requested lowers amount till can afford or till amount is 1
-            lower:
-            while ((cost * amnt) > bank) {
-                if (amnt == 1) break lower;
-                amnt--;
+            //If inventory is not infinite, will first check to see if buying item has enough slots for 1 multiple,
+            //if it does it will check to see if it has enough for what the player is trying to buy, if not will lower till it does
+            if (tile.getField(tile.FIELD_INFINITE) == 0) {
+                if (tile.getItemSize(slotId - 37) < multiple) return ItemStack.EMPTY;
+                while (tile.getItemSize(slotId - 37) < (amnt * multiple)) amnt --;
             }
 
-            if ((bank >= (cost * amnt))) {   //If has enough money, buy it
+            if(playStack.getCount() + (multiple * amnt) > playStack.getMaxStackSize())
+                while (playStack.getCount() + (multiple * amnt) > playStack.getMaxStackSize()) amnt --;
+
+            //If player can't afford there current multiple, will lower until they can,
+            //if goes down to 0 amnt, play unsuccessful noise
+            if(cost * (amnt * multiple) > bank){
+                while (cost * (amnt * multiple) > bank) amnt--;
+            }
+
+            if (amnt == 0){
+                tile.unsucessfulNoise();
+                return ItemStack.EMPTY;
+            }
+
+            if ((bank >= (cost * (amnt * multiple)))) {   //If has enough money, buy it
                 if (tile.getItemSize(slotId - 37) >= amnt || tile.getField(tile.FIELD_INFINITE) == 1) {
                     playBuyStack = slotStack.copy();
-                    playBuyStack.setCount(amnt);
+                    playBuyStack.setCount(amnt * multiple);
 
                     if (!player.inventory.getItemStack().isEmpty()) {       //Holding Item
-                        playBuyStack.setCount(amnt + playStack.getCount());
+                        playBuyStack.setCount((amnt * multiple) + playStack.getCount());
                     }
                     player.inventory.setItemStack(playBuyStack);
 
                     if (tile.getField(tile.FIELD_INFINITE) == 0) {
-                        if (tile.getItemSize(slotId - 37) - amnt == 0) {
+                        if (tile.getItemSize(slotId - 37) - (amnt * multiple) == 0) {
                             tile.setItemSize(0, slotId - 37);
-                        } else tile.shrinkItemSize(amnt, slotId - 37);
+                        } else tile.shrinkItemSize(amnt * multiple, slotId - 37);
                     }
 
                     if (wallet) {
-                        sellToWallet(itemHandler.getStackInSlot(0), cost * amnt);
+                        sellToWallet(itemHandler.getStackInSlot(0), cost * (amnt * multiple));
                     } else {
-                        tile.setLong(tile.LONG_BANK, bank - (cost * amnt));
+                        tile.setLong(tile.LONG_BANK, bank - (cost * (multiple * amnt)));
                     }
-                    tile.setLong(tile.LONG_PROFIT, tile.getLong(tile.LONG_PROFIT) + cost * amnt);
+                    tile.setLong(tile.LONG_PROFIT, tile.getLong(tile.LONG_PROFIT) + cost * (multiple * amnt));
                 }
             } else {
                 tile.unsucessfulNoise();
