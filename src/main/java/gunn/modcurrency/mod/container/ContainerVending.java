@@ -285,7 +285,7 @@ public class ContainerVending extends Container implements INBTInventory {
     }
 
     private ItemStack checkAfford(int slotId, int amnt, EntityPlayer player) {
-        int multiple = tile.getItemAmnt(tile.getField(tile.FIELD_SELECTSLOT) - 37);
+        int multiple = tile.getItemAmnt(slotId - 37);
 
 
         IItemHandler itemHandler = this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
@@ -326,8 +326,8 @@ public class ContainerVending extends Container implements INBTInventory {
 
             //If player can't afford there current multiple, will lower until they can,
             //if goes down to 0 amnt, play unsuccessful noise
-            if(cost * (amnt * multiple) > bank){
-                while (cost * (amnt * multiple) > bank) amnt--;
+            if(cost * amnt > bank){
+                while (cost * amnt > bank) amnt--;
             }
 
             if (amnt == 0){
@@ -335,8 +335,8 @@ public class ContainerVending extends Container implements INBTInventory {
                 return ItemStack.EMPTY;
             }
 
-            if ((bank >= (cost * (amnt * multiple)))) {   //If has enough money, buy it
-                if (tile.getItemSize(slotId - 37) >= amnt || tile.getField(tile.FIELD_INFINITE) == 1) {
+            if ((bank >= (cost * amnt))) {   //If has enough money, buy it
+                if (tile.getItemSize(slotId - 37) >= amnt*multiple || tile.getField(tile.FIELD_INFINITE) == 1) {
                     playBuyStack = slotStack.copy();
                     playBuyStack.setCount(amnt * multiple);
 
@@ -352,11 +352,11 @@ public class ContainerVending extends Container implements INBTInventory {
                     }
 
                     if (wallet) {
-                        sellToWallet(itemHandler.getStackInSlot(0), cost * (amnt * multiple));
+                        sellToWallet(itemHandler.getStackInSlot(0), cost * amnt );
                     } else {
-                        tile.setLong(tile.LONG_BANK, bank - (cost * (multiple * amnt)));
+                        tile.setLong(tile.LONG_BANK, bank - (cost * amnt));
                     }
-                    tile.setLong(tile.LONG_PROFIT, tile.getLong(tile.LONG_PROFIT) + cost * (multiple * amnt));
+                    tile.setLong(tile.LONG_PROFIT, tile.getLong(tile.LONG_PROFIT) + cost * amnt);
                 }
             } else {
                 tile.unsucessfulNoise();
@@ -387,7 +387,8 @@ public class ContainerVending extends Container implements INBTInventory {
                 }else{
                     if (tile.getField(tile.FIELD_MODE) == 1) {
                         for (int i = 0; i < TE_VEND_MAIN_TOTAL_COUNT; i++) {
-                            if (UtilMethods.equalStacks(inventorySlots.get(index).getStack(), inventorySlots.get(TE_VEND_FIRST_SLOT_INDEX + i).getStack())) {
+                            if (UtilMethods.equalStacks(inventorySlots.get(index).getStack(), inventorySlots.get(TE_VEND_FIRST_SLOT_INDEX + i).getStack()) &&
+                                    tile.getItemSize(i) < tile.getField(tile.FIELD_LIMIT)) {
                                 if(inventorySlots.get(index).getStack().getCount() + tile.getItemSize(i) <= tile.getField(tile.FIELD_LIMIT)) { //If combined total is LESS OR EQUAL to stack limit
                                     tile.growItemSize(inventorySlots.get(index).getStack().getCount(), TE_VEND_FIRST_SLOT_INDEX + i - 37);
                                     inventorySlots.get(index).putStack(ItemStack.EMPTY);

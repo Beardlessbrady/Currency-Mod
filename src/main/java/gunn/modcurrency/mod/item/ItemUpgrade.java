@@ -26,7 +26,7 @@ public class ItemUpgrade extends Item {
 
     @SideOnly(Side.CLIENT)
     public void initModel() {
-        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(getRegistryName() + "_" + "multiprices", "inventory"));
+     //   ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(getRegistryName() + "_" + "multiprices", "inventory"));
         ModelLoader.setCustomModelResourceLocation(this, 1, new ModelResourceLocation(getRegistryName() + "_" + "requestamnt", "inventory"));
         ModelLoader.setCustomModelResourceLocation(this, 2, new ModelResourceLocation(getRegistryName() + "_" + "stacksize0", "inventory"));
         ModelLoader.setCustomModelResourceLocation(this, 3, new ModelResourceLocation(getRegistryName() + "_" + "stacksize1", "inventory"));
@@ -43,8 +43,10 @@ public class ItemUpgrade extends Item {
     public void getSubItems(CreativeTabs itemIn, NonNullList<ItemStack> tab) {
         if(itemIn == ModCurrency.tabCurrency){
             for (int i = 0; i < upgradeSize; i++) {
-                ItemStack stack = new ItemStack(this, 1, i);
-                tab.add(stack);
+                if(i != 0) {
+                    ItemStack stack = new ItemStack(this, 1, i);
+                    tab.add(stack);
+                }
             }
         }
     }
