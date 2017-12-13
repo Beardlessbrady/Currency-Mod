@@ -3,6 +3,7 @@ package gunn.modcurrency.mod.item;
 import gunn.modcurrency.mod.ModCurrency;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;

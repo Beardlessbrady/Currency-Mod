@@ -40,7 +40,12 @@
       "modcurrency:billexchange/bill100_6",
       "modcurrency:billexchange/bill100_7",
       "modcurrency:billexchange/bill100_8",
-      "modcurrency:billexchange/bill100_9"
+      "modcurrency:billexchange/bill100_9",
+      "modcurrency:upgrades/upgrade_amnt",
+      "modcurrency:upgrades/upgrade_size1",
+      "modcurrency:upgrades/upgrade_size2",
+      "modcurrency:upgrades/upgrade_size3",
+      "modcurrency:upgrades/upgrade_size4"
     ]
   },
   "criteria": {

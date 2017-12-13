@@ -49,6 +49,7 @@ public class BlockATM extends Block implements ITileEntityProvider {
         GameRegistry.registerTileEntity(TileATM.class, ModCurrency.MODID + "_teatm");
     }
 
+    //Old Recipe, implement into new when you bring the block back
     void recipe(){
       /*  GameRegistry.addRecipe(new ItemStack(ModBlocks.blockATM, 1, 0),
                 "ABA",
@@ -74,11 +75,10 @@ public class BlockATM extends Block implements ITileEntityProvider {
         return (TileATM) world.getTileEntity(pos);
     }
 
-
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        if (!world.isRemote) {    //Just Server
-            if (getTile(world, pos).getPlayerUsing() == null) {     //Only one player can use GUI at time
+        if (!world.isRemote) {
+            if (getTile(world, pos).getPlayerUsing() == null) {
                 getTile(world, pos).openGui(player, world, pos);
                 return true;
             }
@@ -99,9 +99,7 @@ public class BlockATM extends Block implements ITileEntityProvider {
                 break;
         }
         worldIn.setBlockState(pos, state.withProperty(StateHandler.FACING, face));
-
         if(placer instanceof EntityPlayer) getTile(worldIn, pos).setOwner((placer).getUniqueID().toString());
-
     }
 
     @Override
