@@ -2,14 +2,19 @@ package gunn.modcurrency.mod.item;
 
 import gunn.modcurrency.mod.ModCurrency;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.NonNullList;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 /**
  * Distributed with the Currency-Mod for Minecraft
@@ -49,6 +54,29 @@ public class ItemUpgrade extends Item {
                     tab.add(stack);
                 }
             }
+        }
+    }
+
+    @Override
+    public void addInformation(ItemStack stack, @Nullable World worldIn, List<String> tooltip, ITooltipFlag flagIn) {
+        super.addInformation(stack, worldIn, tooltip, flagIn);
+
+        switch (stack.getItemDamage()){
+            case 1: tooltip.add("-Exchange Machine-");
+                tooltip.add("Can set machine to only request a # of items");
+                break;
+            case 2: tooltip.add("-Vending Machine-");
+                tooltip.add("Sets items max stack size to 32");
+                break;
+            case 3: tooltip.add("-Vending Machine-");
+                tooltip.add("Sets items max stack size to 64");
+                break;
+            case 4: tooltip.add("-Vending Machine-");
+                tooltip.add("Sets items max stack size to 128");
+                break;
+            case 5: tooltip.add("-Vending Machine-");
+                tooltip.add("Sets items max stack size to 256");
+                break;
         }
     }
 }

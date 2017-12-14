@@ -7,6 +7,7 @@ import gunn.modcurrency.mod.handler.StateHandler;
 import gunn.modcurrency.mod.item.ModItems;
 import gunn.modcurrency.mod.network.PacketHandler;
 import gunn.modcurrency.mod.network.PacketSetLongToClient;
+import gunn.modcurrency.mod.network.PacketUpdateFufilledRequestToClient;
 import gunn.modcurrency.mod.utils.UtilMethods;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -100,7 +101,6 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
 
     @Override
     public void update() {
-
         if (!world.isRemote) {
             if (playerUsing != null) {
                 if (automationInputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
@@ -235,7 +235,12 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                                         }else if (itemAmounts[i] == 1){
                                             vendStackHandler.setStackInSlot(i, ItemStack.EMPTY);
                                             itemAmounts[i] = -1;
+
+                                            PacketUpdateFufilledRequestToClient pack = new PacketUpdateFufilledRequestToClient();
+                                            pack.setData(getPos(), i, -1);
+                                            PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
                                         }
+
                                     }
                                 }
                             }
