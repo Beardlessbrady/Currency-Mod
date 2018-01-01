@@ -20,6 +20,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.opengl.GL11;
+import scala.Int;
 
 import java.awt.*;
 import java.io.IOException;
@@ -310,6 +311,7 @@ public class GuiVending extends GuiContainer {
         }
 
         if (tile.getField(tile.FIELD_WALLETIN) == 1) fontRenderer.drawString(I18n.format("Wallet") + ": $" + UtilMethods.translateMoney(tile.getLong(tile.LONG_WALLETTOTAL)), 5, 23, Integer.parseInt("3abd0c", 16));
+        drawItemStackSize();
     }
 
     private void drawIcons() {
@@ -392,14 +394,31 @@ public class GuiVending extends GuiContainer {
         }
     }
 
-    private void drawItemStackSize(){
-        GlStateManager.enableDepth();
-        this.zLevel = 300.0F;
+    private void drawItemStackSize() {
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GL11.glPushMatrix();
+        GL11.glScalef(0.7F, 0.7F, 0.8F);
 
-        this.fontRenderer.drawStringWithShadow("Test", 50, 50, -1);
-        this.zLevel=0.0F;
-        GlStateManager.disableDepth();
+        String num = " ";
+System.out.println(tile.getItemAmnt(1));
+        for(int j=0; j<3; j++) {
+            for (int i = 0; i < 5; i++) {
+                if(tile.getItemSize(i + (5*j)) != 0) {
+                    num = Integer.toString(tile.getItemSize(i + (5 * j)));
+                }else if (tile.getItemSize(i + (5*j)) < 1 && tile.getItemAmnt(i + (5*j)) < 1) {  //FIX OUT OF STOCK
+                    num = "OUT";
+                }else{
+                    num = " ";
+                }
+                if(num.length() == 1) num = "  " + num;
+                if(num.length() == 2) num = " " + num;
 
+                this.fontRenderer.drawStringWithShadow(num, 68 + (i * 26), 86 + (j * 26), -1);
+            }
+        }
+
+        GL11.glPopMatrix();
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
     }
 
 
@@ -441,13 +460,6 @@ public class GuiVending extends GuiContainer {
             }
 
             list.add(color + "Price: $" + UtilMethods.translateMoney(tile.getItemCost(slot)));
-
-            if(tile.getItemSize(slot) > 0){
-                list.add(TextFormatting.BLUE + "Stock: " + Integer.toString(tile.getItemSize(slot)));
-            }else{
-                list.add(TextFormatting.RED + "OUT OF STOCK");
-            }
-
 
             //adding original extra stuff AFTER price and such
             for(; tooltipStart < stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL).size(); tooltipStart++) {
