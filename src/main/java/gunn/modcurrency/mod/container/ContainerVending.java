@@ -17,6 +17,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -271,13 +272,34 @@ public class ContainerVending extends Container implements INBTInventory {
                     }
                 }
             } else { //SELL MODE
+                ItemStackHandler vendStack = tile.getVendStackHandler();
+                int stackLim;
+
                 if (clickTypeIn == ClickType.PICKUP && dragType == 0) {   //Left Click = 1 item
                     return checkAfford(slotId, 1, player);
-                } //else if (clickTypeIn == ClickType.PICKUP && dragType == 1) {   //Right Click = 10 item
-              //      return checkAfford(slotId, 10, player);
-               // } else if (clickTypeIn == ClickType.QUICK_MOVE) {
-               //     return checkAfford(slotId, 64, player);
-               // }
+                } else if (clickTypeIn == ClickType.PICKUP && dragType == 1) {   //Right Click = Quarter Stack (or close to it)
+                    if (tile.getField(tile.FIELD_LIMIT) > vendStack.getStackInSlot(slotId - 37).getMaxStackSize()) {
+                        stackLim = vendStack.getStackInSlot(slotId - 37).getMaxStackSize() / 5;
+                    } else {
+                        stackLim = tile.getField(tile.FIELD_LIMIT) /5 ;
+                    }
+
+                    while (stackLim % tile.getItemAmnt(slotId - 37) != 0) stackLim--;
+                    System.out.println(stackLim);
+
+                    return checkAfford(slotId, stackLim / tile.getItemAmnt(slotId - 37), player);
+                } else if (clickTypeIn == ClickType.QUICK_MOVE) {
+                    if (tile.getField(tile.FIELD_LIMIT) > vendStack.getStackInSlot(slotId - 37).getMaxStackSize()) {
+                        stackLim = vendStack.getStackInSlot(slotId - 37).getMaxStackSize();
+                    } else {
+                        stackLim = tile.getField(tile.FIELD_LIMIT);
+                    }
+
+                    while (stackLim % tile.getItemAmnt(slotId - 37) != 0) stackLim--;
+                    System.out.println(stackLim);
+
+                    return checkAfford(slotId, stackLim / tile.getItemAmnt(slotId - 37), player);
+                }
             }
             return itemStack;
         }
