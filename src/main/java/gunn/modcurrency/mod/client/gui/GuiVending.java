@@ -19,6 +19,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraftforge.items.ItemStackHandler;
 import org.lwjgl.opengl.GL11;
 import scala.Int;
 
@@ -395,21 +396,22 @@ public class GuiVending extends GuiContainer {
     }
 
     private void drawItemStackSize() {
+        ItemStackHandler vendStack = tile.getVendStackHandler();
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glPushMatrix();
         GL11.glScalef(0.7F, 0.7F, 0.8F);
 
         String num = " ";
-System.out.println(tile.getItemAmnt(1));
         for(int j=0; j<3; j++) {
             for (int i = 0; i < 5; i++) {
-                if(tile.getItemSize(i + (5*j)) != 0) {
+                if (tile.getItemSize(i + (5 * j)) != 0 && tile.getItemSize(i + (5 * j)) > 0) {
                     num = Integer.toString(tile.getItemSize(i + (5 * j)));
-                }else if (tile.getItemSize(i + (5*j)) < 1 && tile.getItemAmnt(i + (5*j)) < 1) {  //FIX OUT OF STOCK
+                } else if (vendStack.getStackInSlot(i + (5*j)) != ItemStack.EMPTY){
                     num = "OUT";
-                }else{
+                } else {
                     num = " ";
                 }
+
                 if(num.length() == 1) num = "  " + num;
                 if(num.length() == 2) num = " " + num;
 
