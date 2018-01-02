@@ -272,12 +272,15 @@ public class ContainerVending extends Container implements INBTInventory {
                     }
                 }
             } else { //SELL MODE
+
+                System.out.println(slotId + " " + dragType + " " + clickTypeIn);
+
                 ItemStackHandler vendStack = tile.getVendStackHandler();
                 int stackLim;
 
-                if (clickTypeIn == ClickType.PICKUP && dragType == 0) {   //Left Click = 1 item
+                if (clickTypeIn == ClickType.PICKUP && dragType == 0 || clickTypeIn == ClickType.QUICK_CRAFT && dragType == 0) {   //Left Click = 1 item
                     return checkAfford(slotId, 1, player);
-                } else if (clickTypeIn == ClickType.PICKUP && dragType == 1) {   //Right Click = Quarter Stack (or close to it)
+                } else if (clickTypeIn == ClickType.PICKUP && dragType == 1 || clickTypeIn == ClickType.QUICK_CRAFT && dragType == 1) {   //Right Click = Quarter Stack (or close to it)
                     if (tile.getField(tile.FIELD_LIMIT) > vendStack.getStackInSlot(slotId - 37).getMaxStackSize()) {
                         stackLim = vendStack.getStackInSlot(slotId - 37).getMaxStackSize() / 5;
                     } else {
@@ -285,7 +288,6 @@ public class ContainerVending extends Container implements INBTInventory {
                     }
 
                     while (stackLim % tile.getItemAmnt(slotId - 37) != 0) stackLim--;
-                    System.out.println(stackLim);
 
                     return checkAfford(slotId, stackLim / tile.getItemAmnt(slotId - 37), player);
                 } else if (clickTypeIn == ClickType.QUICK_MOVE) {
@@ -296,7 +298,6 @@ public class ContainerVending extends Container implements INBTInventory {
                     }
 
                     while (stackLim % tile.getItemAmnt(slotId - 37) != 0) stackLim--;
-                    System.out.println(stackLim);
 
                     return checkAfford(slotId, stackLim / tile.getItemAmnt(slotId - 37), player);
                 }
