@@ -448,7 +448,7 @@ public class ContainerVending extends Container implements INBTInventory {
                 slot.onSlotChanged();
             }
         }
-        return sourceStack;
+        return ItemStack.EMPTY;
     }
 
     @Override
