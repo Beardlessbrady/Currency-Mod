@@ -17,13 +17,12 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.EnumHand;
+import net.minecraft.util.*;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
@@ -96,24 +95,28 @@ public class BlockVending extends Block implements ITileEntityProvider {
                             if(tile.getField(tile.FIELD_LIMIT) == 16){
                                 tile.setField(tile.FIELD_LIMIT, 32);
                                 if (!playerIn.isCreative()) playerIn.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
+                                worldIn.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_IRON_DOOR_OPEN, SoundCategory.BLOCKS, 1.0F, 30.0F, false);
                             }
                             break;
                         case 3: //Upgrade stack size limit to 64
                             if(tile.getField(tile.FIELD_LIMIT) == 32){
                                 tile.setField(tile.FIELD_LIMIT, 64);
                                 if (!playerIn.isCreative()) playerIn.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
+                                worldIn.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_IRON_DOOR_OPEN, SoundCategory.BLOCKS, 1.0F, 30.0F, false);
                             }
                             break;
                         case 4: //Upgrade stack size limit to 128
                             if(tile.getField(tile.FIELD_LIMIT) == 64){
                                 tile.setField(tile.FIELD_LIMIT, 128);
                                 if (!playerIn.isCreative()) playerIn.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
+                                worldIn.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_IRON_DOOR_OPEN, SoundCategory.BLOCKS, 1.0F, 30.0F, false);
                             }
                             break;
                         case 5: //Upgrade stack size limit to 256
                             if(tile.getField(tile.FIELD_LIMIT) == 128){
                                 tile.setField(tile.FIELD_LIMIT, 256);
                                 if (!playerIn.isCreative()) playerIn.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
+                                worldIn.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_IRON_DOOR_OPEN, SoundCategory.BLOCKS, 1.0F, 30.0F, false);
                             }
                             break;
                     }

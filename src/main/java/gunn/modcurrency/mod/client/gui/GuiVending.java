@@ -282,7 +282,6 @@ public class GuiVending extends GuiContainer {
         }
         warnings();
         drawText();
-        //drawItemStackSize(); zLevels are the devil
     }
 
     private void drawText(){
@@ -402,7 +401,16 @@ public class GuiVending extends GuiContainer {
         GL11.glScalef(0.7F, 0.7F, 0.8F);
 
         String num = " ";
-        for(int j=0; j<3; j++) {
+        int startY = 86;
+        int columnCount = 3;
+        if(tile.getField(tile.FIELD_TWOBLOCK) == 1){
+            startY = 60;
+            columnCount = 6;
+        }
+
+
+
+        for(int j=0; j<columnCount; j++) {
             for (int i = 0; i < 5; i++) {
                 if (tile.getItemSize(i + (5 * j)) != 0 && tile.getItemSize(i + (5 * j)) > 0) {
                     num = Integer.toString(tile.getItemSize(i + (5 * j)));
@@ -415,14 +423,13 @@ public class GuiVending extends GuiContainer {
                 if(num.length() == 1) num = "  " + num;
                 if(num.length() == 2) num = " " + num;
 
-                this.fontRenderer.drawStringWithShadow(num, 68 + (i * 26), 86 + (j * 26), -1);
+                this.fontRenderer.drawStringWithShadow(num, 68 + (i * 26), startY + (j * 26), -1);
             }
         }
 
         GL11.glPopMatrix();
         GL11.glDisable(GL11.GL_DEPTH_TEST);
     }
-
 
     @Override
     protected void renderToolTip(ItemStack stack, int x, int y) {
