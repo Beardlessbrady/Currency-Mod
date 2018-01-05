@@ -346,6 +346,11 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     }
 
     //<editor-fold desc="Money Methods-------------------------------------------------------------------------------------------------------">
+
+    public boolean canAfford(int slot){
+        return bank >= itemCosts[slot];
+    }
+
     public void outChange() {
         long amount = bank;
         if (mode) amount = cashRegister;

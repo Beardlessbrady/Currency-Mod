@@ -99,19 +99,19 @@ public class GuiExchanger extends GuiContainer {
         if (this.priceField.getText().length() > 0) {
             int newCost = 0;
 
-            if(priceField.getText().contains(".")){
-                if(priceField.getText().lastIndexOf(".") +1 != priceField.getText().length()) {
+            if (priceField.getText().contains(".")) {
+                if (priceField.getText().lastIndexOf(".") + 1 != priceField.getText().length()) {
                     if (priceField.getText().lastIndexOf(".") + 2 == priceField.getText().length()) {
                         newCost = Integer.valueOf(this.priceField.getText().substring(priceField.getText().lastIndexOf(".") + 1) + "0");
-                    }else{
+                    } else {
                         newCost = Integer.valueOf(this.priceField.getText().substring(priceField.getText().lastIndexOf(".") + 1));
                     }
                 }
 
-                if(priceField.getText().lastIndexOf(".") != 0)
-                    newCost +=  Integer.valueOf(this.priceField.getText().substring(0, priceField.getText().lastIndexOf("."))) * 100;
+                if (priceField.getText().lastIndexOf(".") != 0)
+                    newCost += Integer.valueOf(this.priceField.getText().substring(0, priceField.getText().lastIndexOf("."))) * 100;
 
-            }else{
+            } else {
                 newCost = Integer.valueOf(this.priceField.getText()) * 100;
             }
 
@@ -145,27 +145,7 @@ public class GuiExchanger extends GuiContainer {
     }
 
     private void updateTextField() {
-        String price = String.valueOf(tile.getItemCost(tile.getField(tile.FIELD_SELECTSLOT) - 37));
-
-        switch(price.length()) {
-            case 1:
-                if (price.equals("0")) {
-                    this.priceField.setText(price);
-                } else {
-                    this.priceField.setText("." + price);
-                }
-                break;
-            case 2:
-                this.priceField.setText("." + price);
-                break;
-            default:
-                if (price.substring(price.length() - 2, price.length()).equals("00")) {
-                    this.priceField.setText(price.substring(0, price.length() - 2));
-                } else {
-                    this.priceField.setText(price.substring(0, price.length() - 2) + "." + (price.substring(price.length() - 2, price.length())));
-                }
-                break;
-        }
+        priceField.setText(UtilMethods.translateMoney(tile.getItemCost(tile.getField(tile.FIELD_SELECTSLOT) - 37)));
 
         if(tile.getItemAmount(tile.getField(tile.FIELD_SELECTSLOT) - 37) == -1){
             amountField.setText("0");
@@ -178,7 +158,7 @@ public class GuiExchanger extends GuiContainer {
     public void onResize(Minecraft mcIn, int w, int h) {
         super.onResize(mcIn, w, h);
         PacketSetFieldToServer pack = new PacketSetFieldToServer();
-        pack.setData(0, 8, tile.getPos());
+        pack.setData(0, tile.FIELD_GEAREXT, tile.getPos());
         PacketHandler.INSTANCE.sendToServer(pack);
 
         creativeExtended = false;
@@ -189,7 +169,7 @@ public class GuiExchanger extends GuiContainer {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
         this.renderHoveredToolTip(mouseX,mouseY);
-        if (tile.getField(tile.FIELD_GEAREXT) == 1 && tile.getField(tile.FIELD_MODE) == 1) {
+        if (tile.getField(tile.FIELD_GEAREXT) == 1 && tile.getField(tile.FIELD_MODE) == 1){
             priceField.drawTextBox();
             if(tile.getField(tile.FIELD_UPGRADEREQ) == 1)amountField.drawTextBox();
         }
@@ -306,19 +286,13 @@ public class GuiExchanger extends GuiContainer {
             fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.cost"), -84, 92, Integer.parseInt("211d1b", 16));
             fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.cost"), -83, 91, Color.lightGray.getRGB());
             fontRenderer.drawString(I18n.format("$"), -55, 91, Integer.parseInt("0099ff", 16));
+            if(tile.getField(tile.FIELD_UPGRADEREQ) == 1) fontRenderer.drawString(I18n.format("x"), -54, 101, Integer.parseInt("0099ff", 16));
 
             if(tile.getField(tile.FIELD_UPGRADEREQ) == 1) {
                 fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.amount"), -84, 102, Integer.parseInt("211d1b", 16));
                 fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.amount"), -83, 101, Color.lightGray.getRGB());
             }
 
-
-           // priceField.setVisible(false);
-            //amountField.setVisible(false);
-            //For Multi Price Upgraded
-           // fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.amount"), -84, 92, Integer.parseInt("211d1b", 16));
-           // fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.amount"), -83, 91, Color.lightGray.getRGB());
-            //
             GL11.glPushMatrix();
             GL11.glScaled(0.7, 0.7, 0.7);
             fontRenderer.drawString(I18n.format("[" + tile.getSelectedName() + "]"), -117, 115, Integer.parseInt("001f33", 16));
@@ -414,6 +388,59 @@ public class GuiExchanger extends GuiContainer {
             int column = ((j - startY) / 18);
             int slot = row + (column * 5);
             if(tile.getField(tile.FIELD_TWOBLOCK) != 1)slot = slot -5;
+            List<String> list = new ArrayList<>();
+            List<String> ogTooltip = stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
+            int tooltipStart = 1;
+
+
+            //Adding name and subname of item before price and such
+            if(ogTooltip.size()>0){
+                list.add(ogTooltip.get(0));
+                list.set(0, stack.getRarity().rarityColor + (String)list.get(0));
+            }
+            if(ogTooltip.size()>1) if(ogTooltip.get(1) != ""){
+                list.add(TextFormatting.GRAY + ogTooltip.get(1));
+                tooltipStart = 2;
+            }
+
+            //Adding Vending Strings
+            TextFormatting color = TextFormatting.YELLOW;
+            if(tile.getField(tile.FIELD_MODE) == 0) {
+                if (!tile.canAfford(slot)) {
+                    color = TextFormatting.RED;
+                } else {
+                    color = TextFormatting.GREEN;
+                }
+            }
+
+
+            list.add((color + "$" + UtilMethods.translateMoney((tile.getItemCost(slot)))));
+
+            //adding original extra stuff AFTER price and such
+            for(; tooltipStart < stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL).size(); tooltipStart++) {
+                list.add(TextFormatting.GRAY + stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL).get(tooltipStart));
+            }
+
+            FontRenderer font = stack.getItem().getFontRenderer(stack);
+            net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(stack);
+            this.drawHoveringText(list, x, y, (font == null ? fontRenderer : font));
+            net.minecraftforge.fml.client.config.GuiUtils.postItemToolTip();
+
+            tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
+        }else{
+            super.renderToolTip(stack, x, y);
+        }
+    }/*
+        int i = (x - (this.width - this.xSize) / 2);
+        int j = (y - (this.height - this.ySize) / 2);
+
+        if(j < 140 && j > 30 && i >= 43) {
+            int startX = 43;
+            int startY = 31;
+            int row = ((i - startX) / 18);
+            int column = ((j - startY) / 18);
+            int slot = row + (column * 5);
+            if(tile.getField(tile.FIELD_TWOBLOCK) != 1)slot = slot -5;
             List<String> list = stack.getTooltip(this.mc.player, ITooltipFlag.TooltipFlags.ADVANCED);
 
 
@@ -442,7 +469,7 @@ public class GuiExchanger extends GuiContainer {
         }else{
             super.renderToolTip(stack, x, y);
         }
-    }
+    }*/
     //</editor-fold>
 
     //<editor-fold desc="Keyboard and Mouse Inputs">
@@ -452,6 +479,7 @@ public class GuiExchanger extends GuiContainer {
             super.mouseClicked(mouseX, mouseY, mouseButton);
             priceField.mouseClicked(mouseX, mouseY, mouseButton);
             amountField.mouseClicked(mouseX, mouseY, mouseButton);
+
             if (tile.getField(tile.FIELD_GEAREXT) == 1 && mouseButton == 0) updateTextField();
         }else {
             super.mouseClicked(mouseX, mouseY, mouseButton);
@@ -462,13 +490,18 @@ public class GuiExchanger extends GuiContainer {
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         int numChar = Character.getNumericValue(typedChar);
         if ((tile.getField(tile.FIELD_MODE) == 1) && ((numChar >= 0 && numChar <= 9) || (keyCode == 14) || keyCode == 211 || (keyCode == 203) || (keyCode == 205)|| (keyCode == 52))) { //Ensures keys input are only numbers or backspace type keys
+
             if((keyCode == 52 && !priceField.getText().contains(".")) || keyCode != 52) {
                 if (this.priceField.textboxKeyTyped(typedChar, keyCode)) setCost();
             }
-            if(priceField.getText().length() > 0) if(priceField.getText().substring(priceField.getText().length()-1).equals(".") ) priceField.setMaxStringLength(priceField.getText().length() + 2);
-            if(!priceField.getText().contains(".")) priceField.setMaxStringLength(7);
 
             if(keyCode != 52 && this.amountField.textboxKeyTyped(typedChar, keyCode)) setAmount();
+
+            if(priceField.getText().length() > 0)
+                if(priceField.getText().substring(priceField.getText().length()-1).equals(".") )
+                    priceField.setMaxStringLength(priceField.getText().length() + 2);
+            if(!priceField.getText().contains(".")) priceField.setMaxStringLength(7);
+
 
         } else {
             super.keyTyped(typedChar, keyCode);

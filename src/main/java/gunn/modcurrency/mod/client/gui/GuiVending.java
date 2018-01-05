@@ -158,7 +158,7 @@ public class GuiVending extends GuiContainer {
     public void onResize(Minecraft mcIn, int w, int h) {
         super.onResize(mcIn, w, h);
         PacketSetFieldToServer pack = new PacketSetFieldToServer();
-        pack.setData(0, 8, tile.getPos());
+        pack.setData(0, tile.FIELD_GEAREXT, tile.getPos());
         PacketHandler.INSTANCE.sendToServer(pack);
 
         creativeExtended = false;
@@ -468,7 +468,7 @@ public class GuiVending extends GuiContainer {
                 }
             }
 
-            list.add(color + "Price: $" + UtilMethods.translateMoney(tile.getItemCost(slot)));
+            list.add("x" + tile.getItemAmnt(slot) + " for " + color + "$" + UtilMethods.translateMoney(tile.getItemCost(slot)));
 
             //adding original extra stuff AFTER price and such
             for(; tooltipStart < stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL).size(); tooltipStart++) {
