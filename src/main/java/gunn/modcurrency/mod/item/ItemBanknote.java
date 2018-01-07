@@ -53,7 +53,7 @@ public class ItemBanknote extends Item {
     @Override
     public void getSubItems(CreativeTabs itemIn, NonNullList<ItemStack> tab) {
         if(itemIn == ModCurrency.tabCurrency){
-            for (int i = 0; i < noteLength; i++) {
+            for (int i = 1; i < noteLength; i++) {
                 ItemStack stack = new ItemStack(this, 1, i);
                 tab.add(stack);
             }

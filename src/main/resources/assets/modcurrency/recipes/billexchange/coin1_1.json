@@ -1,0 +1,12 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "group": "modcurrency_coin1",
+    "ingredients": [
+        { "item": "modcurrency:coin", "data": 2}
+    ],
+    "result": {
+        "item": "modcurrency:coin",
+        "data": 1,
+        "count": 2
+    }
+}

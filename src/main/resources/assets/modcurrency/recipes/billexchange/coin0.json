@@ -1,11 +1,11 @@
 {
     "type": "minecraft:crafting_shapeless",
-    "group": "modcurrency_bill1",
+    "group": "modcurrency_coin0",
     "ingredients": [
-        { "item": "modcurrency:banknote", "data": 1}
+        { "item": "modcurrency:coin", "data": 1}
     ],
     "result": {
-        "item": "modcurrency:banknote",
+        "item": "modcurrency:coin",
         "data": 0,
         "count": 5
     }

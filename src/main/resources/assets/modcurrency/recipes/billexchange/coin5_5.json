@@ -1,0 +1,20 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "group": "modcurrency_coin5",
+    "ingredients": [
+      { "item": "modcurrency:coin", "data": 4},
+      { "item": "modcurrency:coin", "data": 3},
+      { "item": "modcurrency:coin", "data": 3},
+      { "item": "modcurrency:coin", "data": 3},
+      { "item": "modcurrency:coin", "data": 1},
+      { "item": "modcurrency:coin", "data": 1},
+      { "item": "modcurrency:coin", "data": 1},
+      { "item": "modcurrency:coin", "data": 1},
+      { "item": "modcurrency:coin", "data": 1}
+    ],
+    "result": {
+        "item": "modcurrency:coin",
+        "data": 5,
+        "count": 1
+    }
+}
