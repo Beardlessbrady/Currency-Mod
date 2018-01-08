@@ -57,7 +57,7 @@ public class PacketSetItemBundleToServer implements IMessage {
             World world = playerEntity.world;
             TileEntity tile = world.getTileEntity(message.blockPos);
 
-            if(tile instanceof TileVending) ((TileVending) tile).setItemAmnt(message.data);
+            if(tile instanceof TileVending) ((TileVending) tile).setBundleAmnt(message.data);
         }
     }
 }

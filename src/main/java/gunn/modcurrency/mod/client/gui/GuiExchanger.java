@@ -38,7 +38,7 @@ public class GuiExchanger extends GuiContainer {
     private TileExchanger tile;
     private boolean creativeExtended;
     private EntityPlayer player;
-    private GuiTextField priceField, amountField;
+    private GuiTextField priceField, requestField, amountField;
 
     private static final int CHANGEBUTTON_ID = 0;
     private static final int INFINITEBUTTON_ID = 1;
@@ -79,10 +79,16 @@ public class GuiExchanger extends GuiContainer {
         this.priceField.setEnableBackgroundDrawing(false);
         this.priceField.setMaxStringLength(7);
 
-        this.amountField = new GuiTextField(0, fontRenderer, i - 48, j + 101, 25, 10);        //Setting Amounts
-        this.amountField.setTextColor(Integer.parseInt("0099ff", 16));
-        this.amountField.setEnableBackgroundDrawing(false);
-        this.amountField.setMaxStringLength(3);
+        this.requestField = new GuiTextField(0, fontRenderer, i - 48, j + 111, 25, 10);        //Setting Amounts
+        this.requestField.setTextColor(Integer.parseInt("0099ff", 16));
+        this.requestField.setEnableBackgroundDrawing(false);
+        this.requestField.setMaxStringLength(3);
+
+        amountField = new GuiTextField(1, fontRenderer, i - 58, j + 100, 50, 8); //Setting Amount to sell
+        amountField.setTextColor(Integer.parseInt("0099ff", 16));
+        amountField.setEnableBackgroundDrawing(false);
+        amountField.setMaxStringLength(3);
+        amountField.setEnabled(false);
 
         this.buttonList.get(MODE_ID).visible = false;
         this.buttonList.get(LOCK_ID).visible = false;
@@ -92,7 +98,7 @@ public class GuiExchanger extends GuiContainer {
         this.buttonList.get(VOIDITEMSBUTTON_ID).visible = false;
 
         this.priceField.setEnabled(false);
-        this.amountField.setEnabled(false);
+        this.requestField.setEnabled(false);
     }
 
     private void setCost() {
@@ -124,10 +130,10 @@ public class GuiExchanger extends GuiContainer {
         }
     }
 
-    private void setAmount() {
-        if (this.amountField.getText().length() > 0) {
-            int newAmount = Integer.valueOf(this.amountField.getText());
-            if (Integer.valueOf(this.amountField.getText()) == 0) newAmount = -1;
+    private void setRequested() {
+        if (this.requestField.getText().length() > 0) {
+            int newAmount = Integer.valueOf(this.requestField.getText());
+            if (Integer.valueOf(this.requestField.getText()) == 0) newAmount = -1;
 
             tile.setItemAmount(newAmount, tile.getField(tile.FIELD_SELECTSLOT) - 37);
             PacketSetItemAmountToServer pack = new PacketSetItemAmountToServer();
@@ -136,6 +142,20 @@ public class GuiExchanger extends GuiContainer {
 
             tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
             updateTextField();
+        }
+    }
+
+    private void setAmnt(){
+        if (this.amountField.getText().length() > 0){
+            int newAmnt = Integer.valueOf(amountField.getText());
+            if (newAmnt == 0) newAmnt = 1;
+
+            tile.setBundleAmnt(newAmnt);
+            PacketSetItemBundleToServer pack = new PacketSetItemBundleToServer();
+            pack.setData(newAmnt, tile.getPos());
+            PacketHandler.INSTANCE.sendToServer(pack);
+
+            tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
         }
     }
 
@@ -148,9 +168,9 @@ public class GuiExchanger extends GuiContainer {
         priceField.setText(UtilMethods.translateMoney(tile.getItemCost(tile.getField(tile.FIELD_SELECTSLOT) - 37)));
 
         if(tile.getItemAmount(tile.getField(tile.FIELD_SELECTSLOT) - 37) == -1){
-            amountField.setText("0");
+            requestField.setText("0");
         }else {
-            amountField.setText(String.valueOf(tile.getItemAmount(tile.getField(tile.FIELD_SELECTSLOT) - 37)));
+            requestField.setText(String.valueOf(tile.getItemAmount(tile.getField(tile.FIELD_SELECTSLOT) - 37)));
         }
     }
 
@@ -171,7 +191,7 @@ public class GuiExchanger extends GuiContainer {
         this.renderHoveredToolTip(mouseX,mouseY);
         if (tile.getField(tile.FIELD_GEAREXT) == 1 && tile.getField(tile.FIELD_MODE) == 1){
             priceField.drawTextBox();
-            if(tile.getField(tile.FIELD_UPGRADEREQ) == 1)amountField.drawTextBox();
+            if(tile.getField(tile.FIELD_UPGRADEREQ) == 1)requestField.drawTextBox();
         }
     }
 
@@ -221,18 +241,18 @@ public class GuiExchanger extends GuiContainer {
                     this.inventorySlots.getSlot(((ContainerExchanger) this.inventorySlots).TE_BUFFER_FIRST_SLOT_INDEX+ k).xPos= 13;
                 }
 
-                ((TabButton)buttonList.get(GEAR_ID)).setOpenState(tile.getField(tile.FIELD_GEAREXT) == 1, 26);
+                ((TabButton)buttonList.get(GEAR_ID)).setOpenState(tile.getField(tile.FIELD_GEAREXT) == 1, 38);
                 if(((TabButton)buttonList.get(GEAR_ID)).openState()){
                     drawTexturedModalRect(-91, 64, 27, 0, 91, 47);
-                    drawTexturedModalRect(-91, 74, 27, 8, 91, 40);
+                    drawTexturedModalRect(-91, 84, 27, 8, 91, 40);
                     drawSelectionOverlay();
                     this.priceField.setEnabled(true);
-                    if(tile.getField(tile.FIELD_UPGRADEREQ) == 1) this.amountField.setEnabled(true);
+                    if(tile.getField(tile.FIELD_UPGRADEREQ) == 1) this.requestField.setEnabled(true);
                     Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
                     this.buttonList.set(CREATIVE_ID, new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton)this.buttonList.get(GEAR_ID)).getButtonY(),0, 44, 20, 21, 0,"", TAB_TEXTURE));
                 }else{
                     this.priceField.setEnabled(false);
-                    this.amountField.setEnabled(false);
+                    this.requestField.setEnabled(false);
                     this.buttonList.set(CREATIVE_ID, new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton)this.buttonList.get(GEAR_ID)).getButtonY(),0, 44, 20, 21, 0,"", TAB_TEXTURE));
                 }
                 if(player.isCreative()){    //If in Creative
@@ -286,11 +306,11 @@ public class GuiExchanger extends GuiContainer {
             fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.cost"), -84, 92, Integer.parseInt("211d1b", 16));
             fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.cost"), -83, 91, Color.lightGray.getRGB());
             fontRenderer.drawString(I18n.format("$"), -55, 91, Integer.parseInt("0099ff", 16));
-            if(tile.getField(tile.FIELD_UPGRADEREQ) == 1) fontRenderer.drawString(I18n.format("x"), -54, 101, Integer.parseInt("0099ff", 16));
 
             if(tile.getField(tile.FIELD_UPGRADEREQ) == 1) {
-                fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.amount"), -84, 102, Integer.parseInt("211d1b", 16));
-                fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.amount"), -83, 101, Color.lightGray.getRGB());
+                fontRenderer.drawString(I18n.format("x"), -54, 111, Integer.parseInt("0099ff", 16));
+                fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.amount"), -84, 112, Integer.parseInt("211d1b", 16));
+                fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.amount"), -83, 111, Color.lightGray.getRGB());
             }
 
             GL11.glPushMatrix();
@@ -323,7 +343,7 @@ public class GuiExchanger extends GuiContainer {
         for (int k = 0; k < size; k++) {
             int tabLoc = 22 * (k + 1);
             int offSet2 = 0;
-            if (tile.getField(tile.FIELD_GEAREXT) == 1) offSet2 = 26;
+            if (tile.getField(tile.FIELD_GEAREXT) == 1) offSet2 = ((TabButton)this.buttonList.get(GEAR_ID)).openExtY();
 
             switch (k) {
                 case 0:
@@ -381,31 +401,31 @@ public class GuiExchanger extends GuiContainer {
         int i = (x - (this.width - this.xSize) / 2);
         int j = (y - (this.height - this.ySize) / 2);
 
-        if(j < 140 && j > 30 && i >= 43) {
+        if (j < 140 && j > 30 && i >= 43) {
             int startX = 43;
             int startY = 31;
             int row = ((i - startX) / 18);
             int column = ((j - startY) / 18);
             int slot = row + (column * 5);
-            if(tile.getField(tile.FIELD_TWOBLOCK) != 1)slot = slot -5;
+            if (tile.getField(tile.FIELD_TWOBLOCK) != 1) slot = slot - 5;
             List<String> list = new ArrayList<>();
             List<String> ogTooltip = stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
             int tooltipStart = 1;
 
 
             //Adding name and subname of item before price and such
-            if(ogTooltip.size()>0){
+            if (ogTooltip.size() > 0) {
                 list.add(ogTooltip.get(0));
-                list.set(0, stack.getRarity().rarityColor + (String)list.get(0));
+                list.set(0, stack.getRarity().rarityColor + (String) list.get(0));
             }
-            if(ogTooltip.size()>1) if(ogTooltip.get(1) != ""){
+            if (ogTooltip.size() > 1) if (ogTooltip.get(1) != "") {
                 list.add(TextFormatting.GRAY + ogTooltip.get(1));
                 tooltipStart = 2;
             }
 
             //Adding Vending Strings
             TextFormatting color = TextFormatting.YELLOW;
-            if(tile.getField(tile.FIELD_MODE) == 0) {
+            if (tile.getField(tile.FIELD_MODE) == 0) {
                 if (!tile.canAfford(slot)) {
                     color = TextFormatting.RED;
                 } else {
@@ -417,7 +437,7 @@ public class GuiExchanger extends GuiContainer {
             list.add((color + "$" + UtilMethods.translateMoney((tile.getItemCost(slot)))));
 
             //adding original extra stuff AFTER price and such
-            for(; tooltipStart < stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL).size(); tooltipStart++) {
+            for (; tooltipStart < stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL).size(); tooltipStart++) {
                 list.add(TextFormatting.GRAY + stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL).get(tooltipStart));
             }
 
@@ -427,49 +447,10 @@ public class GuiExchanger extends GuiContainer {
             net.minecraftforge.fml.client.config.GuiUtils.postItemToolTip();
 
             tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
-        }else{
+        } else {
             super.renderToolTip(stack, x, y);
         }
-    }/*
-        int i = (x - (this.width - this.xSize) / 2);
-        int j = (y - (this.height - this.ySize) / 2);
-
-        if(j < 140 && j > 30 && i >= 43) {
-            int startX = 43;
-            int startY = 31;
-            int row = ((i - startX) / 18);
-            int column = ((j - startY) / 18);
-            int slot = row + (column * 5);
-            if(tile.getField(tile.FIELD_TWOBLOCK) != 1)slot = slot -5;
-            List<String> list = stack.getTooltip(this.mc.player, ITooltipFlag.TooltipFlags.ADVANCED);
-
-
-            list.add((TextFormatting.GREEN + "Price: $" + UtilMethods.translateMoney((tile.getItemCost(slot)))));
-
-
-            //Color text normally
-            for (int k = 0; k < list.size(); ++k)
-            {
-                if (k == 0)
-                {
-                    list.set(k, stack.getRarity().rarityColor + list.get(k));
-                }
-                else
-                {
-                    list.set(k, TextFormatting.GRAY + list.get(k));
-                }
-            }
-
-            FontRenderer font = stack.getItem().getFontRenderer(stack);
-            net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(stack);
-            this.drawHoveringText(list, x, y, (font == null ? fontRenderer : font));
-            net.minecraftforge.fml.client.config.GuiUtils.postItemToolTip();
-
-            tile.getWorld().notifyBlockUpdate(tile.getPos(), tile.getBlockType().getDefaultState(), tile.getBlockType().getDefaultState(), 3);
-        }else{
-            super.renderToolTip(stack, x, y);
-        }
-    }*/
+    }
     //</editor-fold>
 
     //<editor-fold desc="Keyboard and Mouse Inputs">
@@ -478,7 +459,7 @@ public class GuiExchanger extends GuiContainer {
         if(tile.getField(tile.FIELD_MODE) == 1) {
             super.mouseClicked(mouseX, mouseY, mouseButton);
             priceField.mouseClicked(mouseX, mouseY, mouseButton);
-            amountField.mouseClicked(mouseX, mouseY, mouseButton);
+            requestField.mouseClicked(mouseX, mouseY, mouseButton);
 
             if (tile.getField(tile.FIELD_GEAREXT) == 1 && mouseButton == 0) updateTextField();
         }else {
@@ -495,7 +476,7 @@ public class GuiExchanger extends GuiContainer {
                 if (this.priceField.textboxKeyTyped(typedChar, keyCode)) setCost();
             }
 
-            if(keyCode != 52 && this.amountField.textboxKeyTyped(typedChar, keyCode)) setAmount();
+            if(keyCode != 52 && this.requestField.textboxKeyTyped(typedChar, keyCode)) setRequested();
 
             if(priceField.getText().length() > 0)
                 if(priceField.getText().substring(priceField.getText().length()-1).equals(".") )

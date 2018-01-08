@@ -135,7 +135,7 @@ public class GuiVending extends GuiContainer {
             if (newAmnt == 0) newAmnt = 1;
             if (newAmnt > tile.getField(tile.FIELD_LIMIT)) newAmnt = tile.getField(tile.FIELD_LIMIT);
 
-            tile.setItemAmnt(newAmnt);
+            tile.setBundleAmnt(newAmnt);
             PacketSetItemBundleToServer pack = new PacketSetItemBundleToServer();
             pack.setData(newAmnt, tile.getPos());
             PacketHandler.INSTANCE.sendToServer(pack);
@@ -151,7 +151,7 @@ public class GuiVending extends GuiContainer {
 
     private void updateTextField() {
         priceField.setText(UtilMethods.translateMoney(tile.getItemCost(tile.getField(tile.FIELD_SELECTSLOT) - 37)));
-        amountField.setText(Integer.toString(tile.getItemAmnt(tile.getField(tile.FIELD_SELECTSLOT) - 37)));
+        amountField.setText(Integer.toString(tile.getBundleAmnt(tile.getField(tile.FIELD_SELECTSLOT) - 37)));
     }
 
     @Override
@@ -468,7 +468,7 @@ public class GuiVending extends GuiContainer {
                 }
             }
 
-            list.add("x" + tile.getItemAmnt(slot) + " for " + color + "$" + UtilMethods.translateMoney(tile.getItemCost(slot)));
+            list.add("x" + tile.getBundleAmnt(slot) + " for " + color + "$" + UtilMethods.translateMoney(tile.getItemCost(slot)));
 
             //adding original extra stuff AFTER price and such
             for(; tooltipStart < stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL).size(); tooltipStart++) {

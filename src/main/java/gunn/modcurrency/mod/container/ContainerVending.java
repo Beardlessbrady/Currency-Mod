@@ -287,9 +287,9 @@ public class ContainerVending extends Container implements INBTInventory {
                         stackLim = tile.getField(tile.FIELD_LIMIT) /5 ;
                     }
 
-                    while (stackLim % tile.getItemAmnt(slotId - 37) != 0) stackLim--;
+                    while (stackLim % tile.getBundleAmnt(slotId - 37) != 0) stackLim--;
 
-                    return checkAfford(slotId, stackLim / tile.getItemAmnt(slotId - 37), player);
+                    return checkAfford(slotId, stackLim / tile.getBundleAmnt(slotId - 37), player);
                 } else if (clickTypeIn == ClickType.QUICK_MOVE) {
                     if (tile.getField(tile.FIELD_LIMIT) > vendStack.getStackInSlot(slotId - 37).getMaxStackSize()) {
                         stackLim = vendStack.getStackInSlot(slotId - 37).getMaxStackSize();
@@ -297,9 +297,9 @@ public class ContainerVending extends Container implements INBTInventory {
                         stackLim = tile.getField(tile.FIELD_LIMIT);
                     }
 
-                    while (stackLim % tile.getItemAmnt(slotId - 37) != 0) stackLim--;
+                    while (stackLim % tile.getBundleAmnt(slotId - 37) != 0) stackLim--;
 
-                    return checkAfford(slotId, stackLim / tile.getItemAmnt(slotId - 37), player);
+                    return checkAfford(slotId, stackLim / tile.getBundleAmnt(slotId - 37), player);
                 }
             }
             return itemStack;
@@ -308,7 +308,7 @@ public class ContainerVending extends Container implements INBTInventory {
     }
 
     private ItemStack checkAfford(int slotId, int amnt, EntityPlayer player) {
-        int multiple = tile.getItemAmnt(slotId - 37);
+        int multiple = tile.getBundleAmnt(slotId - 37);
 
 
         IItemHandler itemHandler = this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
