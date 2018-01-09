@@ -84,11 +84,11 @@ public class GuiExchanger extends GuiContainer {
         this.requestField.setEnableBackgroundDrawing(false);
         this.requestField.setMaxStringLength(3);
 
-        amountField = new GuiTextField(1, fontRenderer, i - 58, j + 100, 50, 8); //Setting Amount to sell
-        amountField.setTextColor(Integer.parseInt("0099ff", 16));
-        amountField.setEnableBackgroundDrawing(false);
-        amountField.setMaxStringLength(3);
-        amountField.setEnabled(false);
+        this.amountField = new GuiTextField(1, fontRenderer, i - 58, j + 100, 50, 8); //Setting Amount to sell
+        this.amountField.setTextColor(Integer.parseInt("0099ff", 16));
+        this.amountField.setEnableBackgroundDrawing(false);
+        this.amountField.setMaxStringLength(3);
+        this.amountField.setEnabled(false);
 
         this.buttonList.get(MODE_ID).visible = false;
         this.buttonList.get(LOCK_ID).visible = false;
@@ -166,6 +166,7 @@ public class GuiExchanger extends GuiContainer {
 
     private void updateTextField() {
         priceField.setText(UtilMethods.translateMoney(tile.getItemCost(tile.getField(tile.FIELD_SELECTSLOT) - 37)));
+        amountField.setText(Integer.toString(tile.getBundleAmnt(tile.getField(tile.FIELD_SELECTSLOT) - 37)));
 
         if(tile.getItemAmount(tile.getField(tile.FIELD_SELECTSLOT) - 37) == -1){
             requestField.setText("0");
@@ -191,6 +192,7 @@ public class GuiExchanger extends GuiContainer {
         this.renderHoveredToolTip(mouseX,mouseY);
         if (tile.getField(tile.FIELD_GEAREXT) == 1 && tile.getField(tile.FIELD_MODE) == 1){
             priceField.drawTextBox();
+            amountField.drawTextBox();
             if(tile.getField(tile.FIELD_UPGRADEREQ) == 1)requestField.drawTextBox();
         }
     }
@@ -247,11 +249,15 @@ public class GuiExchanger extends GuiContainer {
                     drawTexturedModalRect(-91, 84, 27, 8, 91, 40);
                     drawSelectionOverlay();
                     this.priceField.setEnabled(true);
+                    this.amountField.setEnabled(true);
+
+
                     if(tile.getField(tile.FIELD_UPGRADEREQ) == 1) this.requestField.setEnabled(true);
                     Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
                     this.buttonList.set(CREATIVE_ID, new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton)this.buttonList.get(GEAR_ID)).getButtonY(),0, 44, 20, 21, 0,"", TAB_TEXTURE));
                 }else{
                     this.priceField.setEnabled(false);
+                    this.amountField.setEnabled(false);
                     this.requestField.setEnabled(false);
                     this.buttonList.set(CREATIVE_ID, new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton)this.buttonList.get(GEAR_ID)).getButtonY(),0, 44, 20, 21, 0,"", TAB_TEXTURE));
                 }
@@ -301,16 +307,14 @@ public class GuiExchanger extends GuiContainer {
         }
 
         if (tile.getField(tile.FIELD_GEAREXT) == 1) {
-            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.slotsettings"), -81, 71, Integer.parseInt("42401c", 16));
-            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.slotsettings"), -80, 70, Integer.parseInt("fff200", 16));
-            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.cost"), -84, 92, Integer.parseInt("211d1b", 16));
-            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.cost"), -83, 91, Color.lightGray.getRGB());
+            fontRenderer.drawStringWithShadow(I18n.format("tile.modcurrency:guivending.slotsettings"), -83, 70, Integer.parseInt("fff200", 16));
+            fontRenderer.drawStringWithShadow(I18n.format("tile.modcurrency:guivending.cost"), -84, 91, Color.lightGray.getRGB());
             fontRenderer.drawString(I18n.format("$"), -55, 91, Integer.parseInt("0099ff", 16));
+            fontRenderer.drawStringWithShadow(I18n.format("tile.modcurrency:guivending.bundle"), -84, 100, Color.lightGray.getRGB());
 
             if(tile.getField(tile.FIELD_UPGRADEREQ) == 1) {
                 fontRenderer.drawString(I18n.format("x"), -54, 111, Integer.parseInt("0099ff", 16));
-                fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.amount"), -84, 112, Integer.parseInt("211d1b", 16));
-                fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.amount"), -83, 111, Color.lightGray.getRGB());
+                fontRenderer.drawStringWithShadow(I18n.format("tile.modcurrency:guivending.amount"), -84, 111, Color.lightGray.getRGB());
             }
 
             GL11.glPushMatrix();
@@ -320,8 +324,7 @@ public class GuiExchanger extends GuiContainer {
             GL11.glPopMatrix();
         }
         if (creativeExtended) {
-            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.infinitestock"), -86, 93 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY(), Integer.parseInt("42401c", 16));
-            fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.infinitestock"), -85, 92 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY(), Integer.parseInt("fff200", 16));
+            fontRenderer.drawStringWithShadow(I18n.format("tile.modcurrency:guivending.infinitestock"), -85, 92 + ((TabButton)this.buttonList.get(GEAR_ID)).openExtY(), Integer.parseInt("fff200", 16));
         }
 
     }
@@ -459,6 +462,7 @@ public class GuiExchanger extends GuiContainer {
         if(tile.getField(tile.FIELD_MODE) == 1) {
             super.mouseClicked(mouseX, mouseY, mouseButton);
             priceField.mouseClicked(mouseX, mouseY, mouseButton);
+            amountField.mouseClicked(mouseX, mouseY, mouseButton);
             requestField.mouseClicked(mouseX, mouseY, mouseButton);
 
             if (tile.getField(tile.FIELD_GEAREXT) == 1 && mouseButton == 0) updateTextField();
@@ -474,6 +478,10 @@ public class GuiExchanger extends GuiContainer {
 
             if((keyCode == 52 && !priceField.getText().contains(".")) || keyCode != 52) {
                 if (this.priceField.textboxKeyTyped(typedChar, keyCode)) setCost();
+            }
+
+            if ((keyCode != 52)){
+                if (this.amountField.textboxKeyTyped(typedChar, keyCode)) setAmnt();
             }
 
             if(keyCode != 52 && this.requestField.textboxKeyTyped(typedChar, keyCode)) setRequested();

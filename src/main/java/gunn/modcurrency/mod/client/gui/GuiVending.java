@@ -78,17 +78,17 @@ public class GuiVending extends GuiContainer {
         this.buttonList.add(new TabButton("Gear", GEAR_ID, i - 20, 22 + ((TabButton) this.buttonList.get(LOCK_ID)).getButtonY(), 0, 0, 20, 21, 0,"", TAB_TEXTURE));
         this.buttonList.add(new TabButton("Creative", CREATIVE_ID, i - 20, 22 + ((TabButton) this.buttonList.get(GEAR_ID)).getButtonY(), 0, 44, 20, 21, 0,"", TAB_TEXTURE));
 
-        priceField = new GuiTextField(0, fontRenderer, i - 48, j + 91, 50, 8);        //Setting Costs
-        priceField.setTextColor(Integer.parseInt("0099ff", 16));
-        priceField.setEnableBackgroundDrawing(false);
-        priceField.setMaxStringLength(7);
-        priceField.setEnabled(false);
+        this.priceField = new GuiTextField(0, fontRenderer, i - 48, j + 91, 50, 8);        //Setting Costs
+        this.priceField.setTextColor(Integer.parseInt("0099ff", 16));
+        this.priceField.setEnableBackgroundDrawing(false);
+        this.priceField.setMaxStringLength(7);
+        this.priceField.setEnabled(false);
 
-        amountField = new GuiTextField(1, fontRenderer, i - 58, j + 100, 50, 8); //Setting Amount to sell
-        amountField.setTextColor(Integer.parseInt("0099ff", 16));
-        amountField.setEnableBackgroundDrawing(false);
-        amountField.setMaxStringLength(3);
-        amountField.setEnabled(false);
+        this.amountField = new GuiTextField(1, fontRenderer, i - 58, j + 100, 50, 8); //Setting Amount to sell
+        this.amountField.setTextColor(Integer.parseInt("0099ff", 16));
+        this.amountField.setEnableBackgroundDrawing(false);
+        this.amountField.setMaxStringLength(3);
+        this.amountField.setEnabled(false);
 
 
         this.buttonList.get(MODE_ID).visible = false;
