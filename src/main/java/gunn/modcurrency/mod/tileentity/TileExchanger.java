@@ -185,66 +185,76 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                             if (vendStackHandler.getStackInSlot(i) != ItemStack.EMPTY) {
                                 if (UtilMethods.equalStacks(inputStackHandler.getStackInSlot(0), vendStackHandler.getStackInSlot(i)) &&
                                         inputStackHandler.getStackInSlot(0).getItemDamage() == vendStackHandler.getStackInSlot(i).getItemDamage()) {
+                                    int amount = getBundleAmnt(i);
                                     int cost = getItemCost(i);
                                     boolean isThereRoom = false;
                                     int buffSlot = 0;
 
-                                    //Search buffer to see if it has an empty slot OR a slot has the sae block as what is sold
-                                    bufferLoop:
-                                    for (int j = 0; j < bufferStackHandler.getSlots(); j++) {
-                                        if(!bufferStackHandler.getStackInSlot(j).isEmpty()){
-                                            if (UtilMethods.equalStacks(bufferStackHandler.getStackInSlot(j), inputStackHandler.getStackInSlot(0))
-                                                    && (bufferStackHandler.getStackInSlot(j).getCount() < bufferStackHandler.getStackInSlot(j).getMaxStackSize())) {
+                                    //checks if there are enough items in the input slot to sell as the bundled amount specified
+                                    if(inputStackHandler.getStackInSlot(0).getCount() >= amount) {
+
+                                        //Search buffer to see if it has an empty slot OR a slot has the sae block as what is sold
+                                        bufferLoop:
+                                        for (int j = 0; j < bufferStackHandler.getSlots(); j++) {
+                                            if (!bufferStackHandler.getStackInSlot(j).isEmpty()) {
+                                                if (UtilMethods.equalStacks(bufferStackHandler.getStackInSlot(j), inputStackHandler.getStackInSlot(0))
+                                                        && (bufferStackHandler.getStackInSlot(j).getCount() < bufferStackHandler.getStackInSlot(j).getMaxStackSize() - amount + 1)) {
+                                                    isThereRoom = true;
+                                                    buffSlot = j;
+                                                    break bufferLoop;
+                                                }
+                                            } else {
                                                 isThereRoom = true;
                                                 buffSlot = j;
                                                 break bufferLoop;
                                             }
-                                        } else{
-                                            isThereRoom = true;
-                                            buffSlot = j;
-                                            break bufferLoop;
                                         }
-                                    }
-                                    if ((cashRegister >= cost || infinite) && isThereRoom) {
-                                        ItemStack inputItem = inputStackHandler.getStackInSlot(0);
-                                        bank = bank + cost;
+                                        if ((cashRegister >= cost || infinite) && isThereRoom) {
+                                            ItemStack inputItem = inputStackHandler.getStackInSlot(0);
+                                            bank = bank + cost;
 
-                                        if(!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null){
-                                            PacketSetLongToClient pack = new PacketSetLongToClient();
-                                            pack.setData(getPos(), LONG_BANK, bank);
-                                            PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
-                                        }
-                                        if (!(infinite && !voidBlock)) {
-                                            cashRegister = cashRegister - cost;
-
-                                            if(!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null){
+                                            if (!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null) {
                                                 PacketSetLongToClient pack = new PacketSetLongToClient();
-                                                pack.setData(getPos(), LONG_CASHREG, cashRegister);
+                                                pack.setData(getPos(), LONG_BANK, bank);
                                                 PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
                                             }
-                                            if (bufferStackHandler.getStackInSlot(buffSlot) != ItemStack.EMPTY)
-                                                bufferStackHandler.getStackInSlot(buffSlot).grow(1);
-                                            if (bufferStackHandler.getStackInSlot(buffSlot) == ItemStack.EMPTY) {
-                                                ItemStack newStack = inputItem.copy();
-                                                newStack.setCount(1);
-                                                bufferStackHandler.setStackInSlot(buffSlot, newStack);
+
+                                            if (!infinite) {
+                                                cashRegister = cashRegister - cost;
+
+                                                if (!getWorld().isRemote && getPlayerUsing() != null && PacketHandler.INSTANCE != null) {
+                                                    PacketSetLongToClient pack = new PacketSetLongToClient();
+                                                    pack.setData(getPos(), LONG_CASHREG, cashRegister);
+                                                    PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
+                                                }
                                             }
-                                        }
-                                        inputItem.shrink(1);
-                                        if (itemAmounts[i] > 1) {
-                                            vendStackHandler.getStackInSlot(i).shrink(1);
-                                            itemAmounts[i]--;
-                                        }else if (itemAmounts[i] == 1){
-                                            vendStackHandler.setStackInSlot(i, ItemStack.EMPTY);
-                                            itemAmounts[i] = -1;
 
-                                            PacketUpdateFufilledRequestToClient pack = new PacketUpdateFufilledRequestToClient();
-                                            pack.setData(getPos(), i, -1);
-                                            PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
-                                        }
+                                            if (voidBlock) {
+                                                if (bufferStackHandler.getStackInSlot(buffSlot) != ItemStack.EMPTY)
+                                                    bufferStackHandler.getStackInSlot(buffSlot).grow(amount);
+                                                if (bufferStackHandler.getStackInSlot(buffSlot) == ItemStack.EMPTY) {
+                                                    ItemStack newStack = inputItem.copy();
+                                                    newStack.setCount(amount);
+                                                    bufferStackHandler.setStackInSlot(buffSlot, newStack);
+                                                }
+                                            }
+                                            inputItem.shrink(amount);
+                                            if (itemAmounts[i] > amount) {
+                                                vendStackHandler.getStackInSlot(i).shrink(amount);
+                                                itemAmounts[i] -= amount;
+                                            } else if (itemAmounts[i] == amount) {
+                                                vendStackHandler.setStackInSlot(i, ItemStack.EMPTY);
+                                                itemAmounts[i] = -1;
 
+                                                PacketUpdateFufilledRequestToClient pack = new PacketUpdateFufilledRequestToClient();
+                                                pack.setData(getPos(), i, -1);
+                                                PacketHandler.INSTANCE.sendTo(pack, (EntityPlayerMP) getPlayerUsing());
+                                            }
+
+                                        }
                                     }
                                 }
+
                             }
                             if (inputStackHandler.getStackInSlot(0).getCount() == 0) {
                                 inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
