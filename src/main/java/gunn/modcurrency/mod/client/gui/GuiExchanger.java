@@ -436,8 +436,7 @@ public class GuiExchanger extends GuiContainer {
                 }
             }
 
-
-            list.add((color + "$" + UtilMethods.translateMoney((tile.getItemCost(slot)))));
+            list.add(("x" + tile.getBundleAmnt(slot) + " for " + color + "$" + UtilMethods.translateMoney((tile.getItemCost(slot)))));
 
             //adding original extra stuff AFTER price and such
             for (; tooltipStart < stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL).size(); tooltipStart++) {
