@@ -252,6 +252,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                                             }
 
                                         }
+                                        break searchLoop;
                                     }
                                 }
 
