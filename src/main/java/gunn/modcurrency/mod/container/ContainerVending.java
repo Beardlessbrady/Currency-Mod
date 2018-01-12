@@ -3,6 +3,7 @@ package gunn.modcurrency.mod.container;
 import gunn.modcurrency.mod.container.slot.SlotCustomizable;
 import gunn.modcurrency.mod.container.slot.SlotVendor;
 import gunn.modcurrency.mod.container.util.INBTInventory;
+import gunn.modcurrency.mod.item.ItemWallet;
 import gunn.modcurrency.mod.item.ModItems;
 import gunn.modcurrency.mod.tileentity.TileVending;
 import gunn.modcurrency.mod.utils.UtilMethods;
@@ -272,9 +273,6 @@ public class ContainerVending extends Container implements INBTInventory {
                     }
                 }
             } else { //SELL MODE
-
-                System.out.println(slotId + " " + dragType + " " + clickTypeIn);
-
                 ItemStackHandler vendStack = tile.getVendStackHandler();
                 int stackLim;
 
@@ -479,7 +477,259 @@ public class ContainerVending extends Container implements INBTInventory {
         tile.setField(id, data);
     }
 
-    private void sellToWallet(ItemStack wallet, int amountRemovable) {
-        //Todo
+    private int getTotalOfBill(ItemStack stack, int billDamage) {
+        ItemStackHandler itemStackHandler = readInventoryTag(stack, ItemWallet.WALLET_TOTAL_COUNT);
+
+        int totalOfBill = 0;
+        for (int i = 0; i < itemStackHandler.getSlots(); i++) {
+            if (itemStackHandler.getStackInSlot(i) != ItemStack.EMPTY) {
+                if(itemStackHandler.getStackInSlot(i).getItem() == ModItems.itemBanknote) {
+                    if (itemStackHandler.getStackInSlot(i).getItemDamage() == billDamage) {
+                        totalOfBill = totalOfBill + itemStackHandler.getStackInSlot(i).getCount();
+                    }
+                }
+            }
         }
+        return totalOfBill;
+    }
+
+    private int getTotalOfCoin(ItemStack stack, int coinDamage){
+        ItemStackHandler itemStackHandler = readInventoryTag(stack, ItemWallet.WALLET_TOTAL_COUNT);
+
+        int totalOfCoin = 0;
+        for (int i = 0; i < itemStackHandler.getSlots(); i++) {
+            if (itemStackHandler.getStackInSlot(i) != ItemStack.EMPTY) {
+                if(itemStackHandler.getStackInSlot(i).getItem() == ModItems.itemCoin) {
+                    if (itemStackHandler.getStackInSlot(i).getItemDamage() == coinDamage) {
+                        totalOfCoin = totalOfCoin + itemStackHandler.getStackInSlot(i).getCount();
+                    }
+                }
+            }
+        }
+        return totalOfCoin;
+    }
+
+    private int getBillWorth(int itemDamage, int stackSize) {
+        int cash = 0;
+        switch (itemDamage) {
+            case 0:
+                cash = 100;
+                break;
+            case 1:
+                cash = 500;
+                break;
+            case 2:
+                cash = 1000;
+                break;
+            case 3:
+                cash = 2000;
+                break;
+            case 4:
+                cash = 5000;
+                break;
+            case 5:
+                cash = 10000;
+                break;
+        }
+
+        return cash * stackSize;
+    }
+
+    private int getCoinWorth(int itemDamage, int stackSize) {
+        int cash = 0;
+        switch (itemDamage) {
+            case 0:
+                cash = 1;
+                break;
+            case 1:
+                cash = 5;
+                break;
+            case 2:
+                cash = 10;
+                break;
+            case 3:
+                cash = 25;
+                break;
+            case 4:
+                cash = 100;
+                break;
+            case 5:
+                cash = 200;
+                break;
+        }
+
+        return cash * stackSize;
+    }
+
+    private void sellToWallet(ItemStack wallet, int amountRemovable) {
+        int amount = amountRemovable;
+
+        int five = getTotalOfBill(wallet, 1);
+        int ten = getTotalOfBill(wallet, 2);
+        int twenty = getTotalOfBill(wallet, 3);
+        int fifty = getTotalOfBill(wallet, 4);
+        int hundo = getTotalOfBill(wallet, 5);
+
+        int[] out = new int[6];
+
+        out[5] = Math.round(amount / 10000);
+        while (out[5] > hundo) out[5]--;
+        amount = amount - (out[5] * 10000);
+
+        out[4] = Math.round(amount / 5000);
+        while (out[4] > fifty) out[4]--;
+        amount = amount - (out[4] * 5000);
+
+        out[3] = Math.round(amount / 2000);
+        while (out[3] > twenty) out[3]--;
+        amount = amount - (out[3] * 2000);
+
+        out[2] = Math.round(amount / 1000);
+        while (out[2] > ten) out[2]--;
+        amount = amount - (out[2] * 1000);
+
+        out[1] = Math.round(amount / 500);
+        while (out[1] > five) out[1]--;
+        amount = amount - (out[1] * 500);
+
+        int oneCent = getTotalOfCoin(wallet, 0);
+        int fiveCent = getTotalOfCoin(wallet, 1);
+        int tenCent = getTotalOfCoin(wallet, 2);
+        int twentyFiveCent = getTotalOfCoin(wallet, 3);
+        int oneDollar = getTotalOfCoin(wallet, 4);
+        int twoDollar = getTotalOfCoin(wallet, 5);
+
+        int[] outCoin = new int[6];
+
+        outCoin[5] = Math.round(amount / 200);
+        while (outCoin[5] > twoDollar) outCoin[5]--;
+        amount = amount - (outCoin[5] * 200);
+
+        outCoin[4] = Math.round(amount / 100);
+        while (outCoin[4] > oneDollar) outCoin[4]--;
+        amount = amount - (outCoin[4] * 100);
+
+        outCoin[3] = Math.round(amount / 25);
+        while (outCoin[3] > twentyFiveCent) outCoin[3]--;
+        amount = amount - (outCoin[3] * 25);
+
+        outCoin[2] = Math.round(amount / 10);
+        while (outCoin[2] > tenCent) outCoin[2]--;
+        amount = amount - (outCoin[2] * 10);
+
+        outCoin[1] = Math.round(amount / 5);
+        while (outCoin[1] > fiveCent) outCoin[1]--;
+        amount = amount - (outCoin[1] * 5);
+
+        outCoin[0] = Math.round(amount / 1);
+        while (outCoin[0] > oneCent) outCoin[0]--;
+        amount = amount - (outCoin[0] * 1);
+
+        ItemStackHandler itemHandler = readInventoryTag(wallet, ItemWallet.WALLET_TOTAL_COUNT);
+
+        for (int i = 0; i < 6; i++) {
+            searchLoop:
+            for (int j = 0; j < itemHandler.getSlots(); j++) {
+                ItemStack stack = itemHandler.getStackInSlot(j);
+
+                if (stack != ItemStack.EMPTY) {
+                    if (stack.getItemDamage() == i) {
+                        if (stack.getCount() >= out[i]) {  //If Stack size can handle all amount of bill
+                            itemHandler.getStackInSlot(j).shrink(out[i]);
+                            out[0] = 0;
+
+                            break searchLoop;
+                        } else {  //If Stack size is smaller then amount of bills
+                            out[i] = out[i] - stack.getCount();
+                            itemHandler.setStackInSlot(j, ItemStack.EMPTY);
+                        }
+                    }
+
+                    if (stack.getCount() == 0) itemHandler.setStackInSlot(j, ItemStack.EMPTY);  //Removes stack is 0
+                }
+            }
+        }
+        /*If there is still an amount that needs to be paid for,
+        will pick the closed highest bill in the wallet, remove it
+        and send the 'change' to the bank variable of the vendor then output it with outChange
+         */
+        if (amount != 0) {
+            int itemDamage = 0;
+            searchLoop:
+            //Searches wallet for the first highest bill/coin that can handle rest of amount
+            for (int i = 0; i < itemHandler.getSlots(); i++) {
+                if (itemHandler.getStackInSlot(i) != ItemStack.EMPTY) {
+                    if (itemHandler.getStackInSlot(i).getItem() == ModItems.itemBanknote) {
+                        int billWorth = getBillWorth(itemHandler.getStackInSlot(i).getItemDamage(), itemHandler.getStackInSlot(i).getCount());
+                        if (billWorth > amount) {
+                            itemDamage = itemHandler.getStackInSlot(i).getItemDamage() + 6;
+                            if (itemHandler.getStackInSlot(i).getCount() == 1) {
+                                itemHandler.setStackInSlot(i, ItemStack.EMPTY);
+                            } else {
+                                itemHandler.getStackInSlot(i).shrink(1);
+                            }
+                            break searchLoop;
+                        }
+                    }else if (itemHandler.getStackInSlot(i).getItem() == ModItems.itemCoin) {
+                        int coinWorth = getCoinWorth(itemHandler.getStackInSlot(i).getItemDamage(), itemHandler.getStackInSlot(i).getCount());
+                        if (coinWorth > amount) {
+                            itemDamage = itemHandler.getStackInSlot(i).getItemDamage();
+                            if (itemHandler.getStackInSlot(i).getCount() == 1) {
+                                itemHandler.setStackInSlot(i, ItemStack.EMPTY);
+                            } else {
+                                itemHandler.getStackInSlot(i).shrink(1);
+                            }
+                            break searchLoop;
+                        }
+                    }
+                }
+            }
+
+            //Calculates change by deducting the bills/coins worth with the amount deductible that was left
+            int change = 0;
+            switch (itemDamage) {
+                case 0:
+                    change = 0;
+                    break;
+                case 1:
+                    change = 5 - amount;
+                    break;
+                case 2:
+                    change = 10 - amount;
+                    break;
+                case 3:
+                    change = 25 - amount;
+                    break;
+                case 4:
+                    change = 100 - amount;
+                    break;
+                case 5:
+                    change = 200 - amount;
+                    break;
+                case 6:
+                    change = 100 - amount;
+                    break;
+                case 7:
+                    change = 500 - amount;
+                    break;
+                case 8:
+                    change = 1000 - amount;
+                    break;
+                case 9:
+                    change = 2000 - amount;
+                    break;
+                case 10:
+                    change = 5000 - amount;
+                    break;
+                case 11:
+                    change = 10000 - amount;
+                    break;
+            }
+
+            //Adds change to the bank variable in vendor
+            tile.setLong(tile.LONG_BANK, tile.getLong(tile.LONG_BANK) + change);
+        }
+
+        writeInventoryTag(wallet, itemHandler);
+    }
 }
