@@ -479,32 +479,61 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
                     if (playerUsing != null) playerInGui = true;
 
                     if (playerInGui) {
-                        InventoryPlayer inventoryPlayer = playerUsing.inventory;
-                        boolean placed = false;
+                        if(!walletIn) {
+                            InventoryPlayer inventoryPlayer = playerUsing.inventory;
+                            boolean placed = false;
 
-                        //Looks for item in inventory before putting in a empty slot
-                        searchLoop:
-                        for (int j = 0; j < 36; j++) {
-                            if (UtilMethods.equalStacks(item, inventoryPlayer.getStackInSlot(j))) {
-                                if (inventoryPlayer.getStackInSlot(j).getCount() + item.getCount() <= inventoryPlayer.getStackInSlot(j).getMaxStackSize()) {
-                                    inventoryPlayer.getStackInSlot(j).setCount(inventoryPlayer.getStackInSlot(j).getCount() + item.getCount());
-                                    placed = true;
-                                    break searchLoop;
+                            //Looks for item in inventory before putting in a empty slot
+                            searchLoop:
+                            for (int j = 0; j < 36; j++) {
+                                if (UtilMethods.equalStacks(item, inventoryPlayer.getStackInSlot(j))) {
+                                    if (inventoryPlayer.getStackInSlot(j).getCount() + item.getCount() <= inventoryPlayer.getStackInSlot(j).getMaxStackSize()) {
+                                        inventoryPlayer.getStackInSlot(j).setCount(inventoryPlayer.getStackInSlot(j).getCount() + item.getCount());
+                                        placed = true;
+                                        break searchLoop;
+                                    }
                                 }
                             }
-                        }
 
-                        if (!placed) {
-                            if (inventoryPlayer.getFirstEmptyStack() != -1) {     //If Players Inventory has room
-                                //Todo include a warning symbol that tells user they have no room in their inventory
-                                //Todo if player has wallet try to place in WALLET first before inventory
-                                inventoryPlayer.setInventorySlotContents(inventoryPlayer.getFirstEmptyStack(), item);
-                            } else {
-                                playerInGui = false;
+                            if (!placed) {
+                                if (inventoryPlayer.getFirstEmptyStack() != -1) {     //If Players Inventory has room
+                                    inventoryPlayer.setInventorySlotContents(inventoryPlayer.getFirstEmptyStack(), item);
+                                } else {
+                                    playerInGui = false;
+                                }
                             }
+                        }else{
+                            ItemStackHandler itemHandler = readInventoryTag(inputStackHandler.getStackInSlot(0), ItemWallet.WALLET_TOTAL_COUNT);
+                            boolean placed = false;
+
+                            //Looks for item in inventory before putting in a empty slot
+                            searchLoop:
+                            for (int j = 0; j < itemHandler.getSlots(); j++) {
+                                if (UtilMethods.equalStacks(item, itemHandler.getStackInSlot(j))) {
+                                    if (itemHandler.getStackInSlot(j).getCount() + item.getCount() <= itemHandler.getStackInSlot(j).getMaxStackSize()) {
+                                        itemHandler.getStackInSlot(j).setCount(itemHandler.getStackInSlot(j).getCount() + item.getCount());
+                                        placed = true;
+                                        break searchLoop;
+                                    }
+                                }
+                            }
+
+                            if (!placed) {
+                                searchLoop2:
+                                for (int j = 0; j < itemHandler.getSlots(); j++) {
+                                    if (itemHandler.getStackInSlot(j).equals(ItemStack.EMPTY)) {
+                                        itemHandler.setStackInSlot(j, item);
+                                        playerInGui = true;
+                                        break searchLoop2;
+                                    } else {
+                                        playerInGui = false;
+                                    }
+                                }
+                            }
+
+                            writeInventoryTag(inputStackHandler.getStackInSlot(0), itemHandler);
                         }
                     }
-
                     if (!playerInGui) {       //If no room, spawn
                         int x = getPos().getX();
                         int z = getPos().getZ();

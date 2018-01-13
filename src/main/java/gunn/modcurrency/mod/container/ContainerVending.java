@@ -670,7 +670,7 @@ public class ContainerVending extends Container implements INBTInventory {
                             }
                             break searchLoop;
                         }
-                    }else if (itemHandler.getStackInSlot(i).getItem() == ModItems.itemCoin) {
+                    } else if (itemHandler.getStackInSlot(i).getItem() == ModItems.itemCoin) {
                         int coinWorth = getCoinWorth(itemHandler.getStackInSlot(i).getItemDamage(), itemHandler.getStackInSlot(i).getCount());
                         if (coinWorth > amount) {
                             itemDamage = itemHandler.getStackInSlot(i).getItemDamage();
@@ -725,11 +725,10 @@ public class ContainerVending extends Container implements INBTInventory {
                     change = 10000 - amount;
                     break;
             }
-
             //Adds change to the bank variable in vendor
             tile.setLong(tile.LONG_BANK, tile.getLong(tile.LONG_BANK) + change);
         }
-
         writeInventoryTag(wallet, itemHandler);
+        //   tile.outChange();
     }
 }
