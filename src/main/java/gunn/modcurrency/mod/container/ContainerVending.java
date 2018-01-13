@@ -633,27 +633,48 @@ public class ContainerVending extends Container implements INBTInventory {
                 ItemStack stack = itemHandler.getStackInSlot(j);
 
                 if (stack != ItemStack.EMPTY) {
-                    if (stack.getItemDamage() == i) {
-                        if (stack.getCount() >= out[i]) {  //If Stack size can handle all amount of bill
-                            itemHandler.getStackInSlot(j).shrink(out[i]);
-                            out[0] = 0;
+                    if(stack.getItem() == ModItems.itemBanknote){
+                        if (stack.getItemDamage() == i) {
+                            if (stack.getCount() >= out[i]) {  //If Stack size can handle all amount of bill
+                                itemHandler.getStackInSlot(j).shrink(out[i]);
+                                out[0] = 0;
 
-                            break searchLoop;
-                        } else {  //If Stack size is smaller then amount of bills
-                            out[i] = out[i] - stack.getCount();
-                            itemHandler.setStackInSlot(j, ItemStack.EMPTY);
+                                break searchLoop;
+                            } else {  //If Stack size is smaller then amount of bills
+                                out[i] = out[i] - stack.getCount();
+                                itemHandler.setStackInSlot(j, ItemStack.EMPTY);
+                            }
                         }
                     }
+
+                    if(stack.getItem() == ModItems.itemCoin){
+                        if (stack.getItemDamage() == i) {
+                            if (stack.getCount() >= outCoin[i]) {  //If Stack size can handle all amount of bill
+                                itemHandler.getStackInSlot(j).shrink(outCoin[i]);
+                                outCoin[0] = 0;
+
+                                break searchLoop;
+                            } else {  //If Stack size is smaller then amount of bills
+                                outCoin[i] = outCoin[i] - stack.getCount();
+                                itemHandler.setStackInSlot(j, ItemStack.EMPTY);
+                            }
+                        }
+                    }
+
+
+
+
 
                     if (stack.getCount() == 0) itemHandler.setStackInSlot(j, ItemStack.EMPTY);  //Removes stack is 0
                 }
             }
         }
         /*If there is still an amount that needs to be paid for,
-        will pick the closed highest bill in the wallet, remove it
+        will pick the closest highest bill in the wallet, remove it
         and send the 'change' to the bank variable of the vendor then output it with outChange
          */
         if (amount != 0) {
+            System.out.println("DESS");
             int itemDamage = 0;
             searchLoop:
             //Searches wallet for the first highest bill/coin that can handle rest of amount
@@ -672,6 +693,7 @@ public class ContainerVending extends Container implements INBTInventory {
                         }
                     } else if (itemHandler.getStackInSlot(i).getItem() == ModItems.itemCoin) {
                         int coinWorth = getCoinWorth(itemHandler.getStackInSlot(i).getItemDamage(), itemHandler.getStackInSlot(i).getCount());
+                        System.out.println(coinWorth);
                         if (coinWorth > amount) {
                             itemDamage = itemHandler.getStackInSlot(i).getItemDamage();
                             if (itemHandler.getStackInSlot(i).getCount() == 1) {
