@@ -729,6 +729,6 @@ public class ContainerVending extends Container implements INBTInventory {
             tile.setLong(tile.LONG_BANK, tile.getLong(tile.LONG_BANK) + change);
         }
         writeInventoryTag(wallet, itemHandler);
-        //   tile.outChange();
+        tile.outChange();
     }
 }
