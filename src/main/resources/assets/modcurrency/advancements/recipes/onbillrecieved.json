@@ -35,6 +35,12 @@
       "modcurrency:upgrades/upgrade_size2",
       "modcurrency:upgrades/upgrade_size3",
       "modcurrency:upgrades/upgrade_size4",
+      "modcurrency:billexchange/coin0",
+      "modcurrency:billexchange/coin0_1",
+      "modcurrency:billexchange/coin0_2",
+      "modcurrency:billexchange/coin1",
+      "modcurrency:billexchange/coin1_1",
+      "modcurrency:billexchange/coin1_2"
     ]
   },
   "criteria": {
@@ -42,17 +48,7 @@
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
-          {"item": "modcurrency:banknote", "data": 1},
-          {"item": "modcurrency:banknote", "data": 2},
-          {"item": "modcurrency:banknote", "data": 3},
-          {"item": "modcurrency:banknote", "data": 4},
-          {"item": "modcurrency:banknote", "data": 5},
-          {"item": "modcurrency:coin", "data": 0},
-          {"item": "modcurrency:coin", "data": 1},
-          {"item": "modcurrency:coin", "data": 2},
-          {"item": "modcurrency:coin", "data": 3},
-          {"item": "modcurrency:coin", "data": 4},
-          {"item": "modcurrency:coin", "data": 5}
+          {"item": "modcurrency:guidebook"}
         ]
       }
     }
