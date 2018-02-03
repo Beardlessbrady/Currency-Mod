@@ -44,11 +44,13 @@
     ]
   },
   "criteria": {
-    "has_bill":{
+    "has_bill": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
-          {"item": "modcurrency:guidebook"}
+          {
+            "item": "modcurrency:guidebook"
+          }
         ]
       }
     }
