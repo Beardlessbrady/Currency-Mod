@@ -52,9 +52,17 @@ public class PacketSyncBankDataToClient implements IMessage {
         }
 
         private void handle(PacketSyncBankDataToClient message, MessageContext ctx){
-            World world = Minecraft.getMinecraft().world;
-            BankAccountSavedData data = BankAccountSavedData.getData(world);
+            final WorldClient worldClient = Minecraft.getMinecraft().world;
+
+            BankAccountSavedData data = BankAccountSavedData.getData(worldClient);
             data.setBankAccount(new BankAccount(message.name, message.balance));
+        }
+    }
+
+    public static class DummyServerHandler implements IMessageHandler<PacketSyncBankDataToClient, IMessage> {
+        @Override
+        public IMessage onMessage(PacketSyncBankDataToClient message, MessageContext ctx) {
+            return null;
         }
     }
 }

@@ -41,7 +41,7 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketUpdateSizeToClient.Handler.class, PacketUpdateSizeToClient.class, index++, Side.CLIENT);
         INSTANCE.registerMessage(PacketUpdateAllSizesToClient.Handler.class, PacketUpdateAllSizesToClient.class, index++, Side.CLIENT);
         INSTANCE.registerMessage(PacketUpdateFufilledRequestToClient.Handler.class, PacketUpdateFufilledRequestToClient.class, index++, Side.CLIENT);
-        // INSTANCE.registerMessage(PacketSyncBankDataToClient.Handler.class, PacketSyncBankDataToClient.class, index++, Side.CLIENT);
+        INSTANCE.registerMessage(PacketSyncBankDataToClient.Handler.class, PacketSyncBankDataToClient.class, index++, Side.CLIENT);
     }
 
     public static void registerServerMessages(int index){
@@ -49,6 +49,6 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketUpdateSizeToClient.DummyServerHandler.class, PacketUpdateSizeToClient.class, index++, Side.CLIENT);
         INSTANCE.registerMessage(PacketUpdateAllSizesToClient.DummyServerHandler.class, PacketUpdateAllSizesToClient.class, index++, Side.CLIENT);
         INSTANCE.registerMessage(PacketUpdateFufilledRequestToClient.DummyServerHandler.class, PacketUpdateFufilledRequestToClient.class, index++, Side.CLIENT);
-        // INSTANCE.registerMessage(PacketSyncBankDataToClient.Handler.class, PacketSyncBankDataToClient.class, index++, Side.CLIENT);
+        INSTANCE.registerMessage(PacketSyncBankDataToClient.DummyServerHandler.class, PacketSyncBankDataToClient.class, index++, Side.CLIENT);
     }
 }
