@@ -18,6 +18,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import org.lwjgl.opengl.GL11;
 
+import javax.xml.soap.Text;
 import java.awt.*;
 import java.io.IOException;
 
@@ -40,7 +41,7 @@ public class GuiGuide extends GuiScreen{
     private ItemStack item;
     private String page;
     private final int buttonStart=3;
-    private final int buttonTotal=7;
+    private final int buttonTotal=8;
 
     public GuiGuide(ItemStack item){
         this.item = item;
@@ -90,9 +91,12 @@ public class GuiGuide extends GuiScreen{
                 text = "Starting or trying to get involved in an economy? This is your guide to the items and blocks that will help you survive and thrive in this economical era.";
                 fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 32, 112, Color.BLACK.getRGB());
 
-                for (int k = buttonStart; k < buttonTotal; k++) {
+                for (int k = buttonStart; k < 7; k++) {
                     this.buttonList.set(k, new TabButton(Integer.toString(k), k, guiLeft + 26 + (25 * (k - 3)), guiTop + 90, 0, 250, 16, 16, 0,"", BACKGROUND_TEXTURE));
                 }
+
+                //Temp Button for ATM in Root
+                this.buttonList.set(7, new TabButton(Integer.toString(7), 7, guiLeft + 26, guiTop + 110, 0, 250, 16, 16, 0,"", BACKGROUND_TEXTURE));
 
                 if ((i >= 26 && i <= 26 + 16) && (j >= 90 && j <= 90 + 16)) {
                     GL11.glPushMatrix();
@@ -129,7 +133,16 @@ public class GuiGuide extends GuiScreen{
                     GL11.glPopMatrix();
                 } else
                     this.itemRender.renderItemIntoGUI(new ItemStack(ModBlocks.blockExchanger), guiLeft + 101, guiTop + 90);
-                //this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemWallet), guiLeft + 35, guiTop + 110);
+
+                if ((i >= 26 && i <= 26 + 16) && (j >= 110 && j <= 110 + 16)) {
+                    GL11.glPushMatrix();
+                    GL11.glTranslatef(guiLeft + 1.5F, guiTop + 1.5F, 0.8F);
+                    GL11.glScalef(1.5F, 1.5F, 1.5F);
+                    this.itemRender.renderItemIntoGUI(new ItemStack(ModBlocks.blockATM), 14, 70);
+                    GL11.glPopMatrix();
+                } else
+                this.itemRender.renderItemIntoGUI(new ItemStack(ModBlocks.blockATM), guiLeft + 26, guiTop + 110);
+
                 //</editor-fold>
                 break;
             case "bill":
@@ -162,6 +175,40 @@ public class GuiGuide extends GuiScreen{
 
 
                 this.buttonList.get(0).visible = true;
+                this.buttonList.get(2).visible = true;
+                //</editor-fold>
+                break;
+            case "bill2":
+                //<editor-fold desc="Dollar Bill Page">
+                //Item Icon
+                GL11.glPushMatrix();
+                GL11.glTranslatef(guiLeft + 1.5F, guiTop + 1.5F, 0.8F);
+                GL11.glScalef(1.5F, 1.5F, 1.5F);
+                this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemCoin), 16, 8);
+                GL11.glPopMatrix();
+
+                //Chapter Title
+                text = TextFormatting.BOLD + "Coinage";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 52, guiTop + 21, 148, Color.BLACK.getRGB());
+
+
+                text = "If you want to break your money into smaller, metallic (yet worth less than paper) coins you can do that!";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 32, 112, Color.BLACK.getRGB());
+
+                text = "They can of course be " + TextFormatting.BOLD + "converted "
+                        + TextFormatting.RESET + "between each other and into bills as well";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 90, 112, Color.BLACK.getRGB());
+
+                this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemCoin, 1, 0), guiLeft + 35, guiTop + 65);
+                this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemCoin, 1, 1), guiLeft + 55, guiTop + 65);
+                this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemCoin, 1, 2), guiLeft + 75, guiTop + 65);
+                this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemCoin, 1, 3), guiLeft + 96, guiTop + 65);
+                this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemCoin, 1, 4), guiLeft + 45, guiTop + 75);
+                this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemCoin, 1, 5), guiLeft + 85, guiTop + 75);
+
+
+                this.buttonList.get(0).visible = true;
+                this.buttonList.get(1).visible = true;
                 //</editor-fold>
                 break;
             case "wallet":
@@ -344,7 +391,7 @@ public class GuiGuide extends GuiScreen{
                         " will cause any bills in the buffer slots to be siphoned out.";
                 fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 22, 112, Color.BLACK.getRGB());
 
-                text = " You can also pump money into the machine by hooking up a hopper to the " + TextFormatting.BOLD + "side " + TextFormatting.RESET +
+                text = " You can also pump blocks into the machine by hooking up a hopper to the " + TextFormatting.BOLD + "side " + TextFormatting.RESET +
                         "of it.";
                 fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 70, 112, Color.BLACK.getRGB());
 
@@ -534,6 +581,115 @@ public class GuiGuide extends GuiScreen{
                 this.buttonList.get(1).visible = true;
                 //</editor-fold>
                 break;
+            case "atm":
+                //<editor-fold desc="ATM Page">
+                //Item Icon
+                GL11.glPushMatrix();
+                GL11.glTranslatef(guiLeft + 1.2F, guiTop + 1.2F, 0.8F);
+                GL11.glScalef(1.2F, 1.2F, 1.2F);
+                this.itemRender.renderItemIntoGUI(new ItemStack(ModBlocks.blockATM, 1, 0), 23, 11);
+                GL11.glPopMatrix();
+
+                this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemBanknote, 1, 0), guiLeft + 107, guiTop + 107);
+
+
+                //Chapter Title
+                text = TextFormatting.BOLD + " A.T.M.";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 47, guiTop + 21, 148, Color.BLACK.getRGB());
+
+                text = " Have so much money and running out of chests to keep it all? Know others who have this problem and you want to make a quick buck off them? Then the Automated Teller Machine" +
+                        "is your tried and true solution!";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 32, 112, Color.BLACK.getRGB());
+
+                text = TextFormatting.BOLD + "(ATMs only accepts    )" + TextFormatting.RESET + " Once your ATM is placed it will instantly recognize you as its owner.";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 110, 112, Color.BLACK.getRGB());
+
+                this.buttonList.get(0).visible = true;
+                this.buttonList.get(2).visible = true;
+                //</editor-fold>
+                break;
+            case "atm2":
+            //<editor-fold desc="ATM 2 Page">
+            //Item Icon
+            GL11.glPushMatrix();
+            GL11.glTranslatef(guiLeft + 1.2F, guiTop + 1.2F, 0.8F);
+            GL11.glScalef(1.2F, 1.2F, 1.2F);
+            this.itemRender.renderItemIntoGUI(new ItemStack(ModBlocks.blockATM, 1, 0), 23, 11);
+            GL11.glPopMatrix();
+
+            GL11.glPushMatrix();
+            GL11.glTranslatef(guiLeft + 0.8F, guiTop + 0.8F, 0.8F);
+            GL11.glScalef(0.7F, 0.7F, 0.7F);
+            Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
+            drawTexturedModalRect(98, 44, 236, 19, 19,17);
+            GL11.glPopMatrix();
+
+            //Chapter Title
+            text = TextFormatting.BOLD + " A.T.M.";
+            fontRenderer.drawSplitString(I18n.format(text), guiLeft + 47, guiTop + 21, 148, Color.BLACK.getRGB());
+
+            text = "Clicking the [    ] icon in the gui will allow you to change... the " + TextFormatting.BOLD + "'Fee'" + TextFormatting.RESET  + " other players have to pay when using your ATM.";
+            fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 33, 112, Color.BLACK.getRGB());
+
+                text = TextFormatting.BOLD + "Withdrawing Money: " + TextFormatting.RESET + "To withdraw from the bank you first type in the amount you'd like " +
+                        "then click the 'Withdraw' button. (Just make sure you have enough in your bank including the specified fee)";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 80, 112, Color.BLACK.getRGB());
+
+            this.buttonList.get(0).visible = true;
+            this.buttonList.get(1).visible = true;
+            this.buttonList.get(2).visible = true;
+            //</editor-fold>
+            break;
+            case "atm3":
+                //<editor-fold desc="ATM 3 Page">
+                //Item Icon
+                GL11.glPushMatrix();
+                GL11.glTranslatef(guiLeft + 1.2F, guiTop + 1.2F, 0.8F);
+                GL11.glScalef(1.2F, 1.2F, 1.2F);
+                this.itemRender.renderItemIntoGUI(new ItemStack(ModBlocks.blockATM, 1, 0), 23, 11);
+                GL11.glPopMatrix();
+
+                //Chapter Title
+                text = TextFormatting.BOLD + " A.T.M.";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 47, guiTop + 21, 148, Color.BLACK.getRGB());
+
+                text = TextFormatting.BOLD + "Depositing Money: " + TextFormatting.RESET + "To deposit simply place the stack of bills you want to put in the bank and click the 'Deposit' button. " +
+                    "(Again keep in mind the fee specified)";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 33, 112, Color.BLACK.getRGB());
+
+                text = " Once the ATM is placed and broken it will " + TextFormatting.BOLD + "NOT DROP ITSELF " + TextFormatting.RESET + "like the enderchest.";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 90, 112, Color.BLACK.getRGB());
+
+                this.buttonList.get(0).visible = true;
+                this.buttonList.get(1).visible = true;
+                this.buttonList.get(2).visible = true;
+                //</editor-fold>
+                break;
+            case "atm4":
+                //<editor-fold desc="ATM 4 Page">
+                Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
+                drawTexturedModalRect(guiLeft + 44, guiTop + 34, 167, 0, 58,58);
+                ItemStack[] ingredientsf = recipe(new ItemStack(ModBlocks.blockATM));
+
+                this.itemRender.renderItemIntoGUI(ingredientsf[0], guiLeft + 46, guiTop + 36);
+                this.itemRender.renderItemIntoGUI(ingredientsf[1], guiLeft + 65, guiTop + 36);
+                this.itemRender.renderItemIntoGUI(ingredientsf[2], guiLeft + 84, guiTop + 36);
+
+                this.itemRender.renderItemIntoGUI(ingredientsf[3], guiLeft + 46, guiTop + 55);
+                this.itemRender.renderItemIntoGUI(ingredientsf[4], guiLeft + 65, guiTop + 55);
+                this.itemRender.renderItemIntoGUI(ingredientsf[5], guiLeft + 84, guiTop + 55);
+
+                this.itemRender.renderItemIntoGUI(ingredientsf[6], guiLeft + 46, guiTop + 74);
+                this.itemRender.renderItemIntoGUI(ingredientsf[7], guiLeft + 65, guiTop + 74);
+                this.itemRender.renderItemIntoGUI(ingredientsf[8], guiLeft + 84, guiTop + 74);
+
+                text = "A.T.M. Recipe";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 30, guiTop + 25, 112, Color.BLACK.getRGB());
+
+                this.buttonList.get(0).visible = true;
+                this.buttonList.get(1).visible = true;
+                //</editor-fold>
+                break;
         }
         Minecraft.getMinecraft().fontRenderer.setUnicodeFlag(false);
         super.drawScreen(mouseX, mouseY, partialTicks);
@@ -608,6 +764,8 @@ public class GuiGuide extends GuiScreen{
                 break;
             case 1: //Prev
                 switch (page){
+                    case "bill2": page = "bill";
+                        break;
                     case "wallet1": page = "wallet";
                         break;
                     case "vending1": page = "vending";
@@ -631,10 +789,19 @@ public class GuiGuide extends GuiScreen{
                     case "exchange4": page = "exchange3";
                         break;
                     case "exchange5": page = "exchange4";
+                        break;
+                    case "atm2": page = "atm";
+                        break;
+                    case "atm3": page = "atm2";
+                        break;
+                    case "atm4": page = "atm3";
+
                 }
                 break;
             case 2: //Next
                 switch (page){
+                    case "bill": page = "bill2";
+                        break;
                     case "wallet": page = "wallet1";
                         break;
                     case "vending": page = "vending1";
@@ -659,6 +826,11 @@ public class GuiGuide extends GuiScreen{
                         break;
                     case "exchange4": page = "exchange5";
                         break;
+                    case "atm": page = "atm2";
+                        break;
+                    case "atm2": page = "atm3";
+                        break;
+                    case "atm3": page = "atm4";
             }
                 break;
             case 3: //Bill Button
@@ -672,6 +844,9 @@ public class GuiGuide extends GuiScreen{
                 break;
             case 6: //Exchange Button
                 this.page ="exchange";
+                break;
+            case 7: //ATM Button
+                this.page ="atm";
         }
         clean();
     }

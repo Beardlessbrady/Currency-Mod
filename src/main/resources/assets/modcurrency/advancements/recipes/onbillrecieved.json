@@ -6,6 +6,7 @@
       "modcurrency:exchanger",
       "modcurrency:vending",
       "modcurrency:wallet",
+      "modcurrency:atm",
       "modcurrency:billexchange/bill5_1",
       "modcurrency:billexchange/bill5_2",
       "modcurrency:billexchange/bill5_3",

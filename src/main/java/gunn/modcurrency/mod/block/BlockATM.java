@@ -49,18 +49,6 @@ public class BlockATM extends Block implements ITileEntityProvider {
         GameRegistry.registerTileEntity(TileATM.class, ModCurrency.MODID + "_teatm");
     }
 
-    //Old Recipe, implement into new when you bring the block back
-    void recipe(){
-      /*  GameRegistry.addRecipe(new ItemStack(ModBlocks.blockATM, 1, 0),
-                "ABA",
-                "ACA",
-                "ADA",
-                'A', Blocks.IRON_BLOCK,
-                'B', Blocks.REDSTONE_LAMP,
-                'C', Blocks.ENDER_CHEST,
-                'D', new ItemStack (ModItems.itemBanknote, 1, 0));*/
-    }
-
     void initModel() {
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
     }
