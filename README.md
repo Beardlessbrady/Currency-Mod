@@ -1,7 +1,9 @@
 # Good Ol' Currency Mod [![](http://cf.way2muchnoise.eu/full_254346_downloads.svg)](https://minecraft.curseforge.com/projects/good-ol-currency) [![](http://cf.way2muchnoise.eu/versions/MC%20Versions_254346_all.svg)](https://minecraft.curseforge.com/projects/good-ol-currency)
 [![](https://img.shields.io/badge/1.12.0/1/2-release-green.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
-[![](https://img.shields.io/badge/Latest%20Version-1.2.5-blue.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
-[![](https://img.shields.io/badge/Supported-Fully-brightgreen.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
+[![](https://img.shields.io/badge/Latest%20Version-1.3.0-blue.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
+[![](https://img.shields.io/badge/Supported-Bugfixes-yellow.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
+
+//Will be updated to 1.3.0 then will support bugfixes\\
 
 [![](https://img.shields.io/badge/1.11.2-release-green.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
 [![](https://img.shields.io/badge/Latest%20Version-1.2.2-blue.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
