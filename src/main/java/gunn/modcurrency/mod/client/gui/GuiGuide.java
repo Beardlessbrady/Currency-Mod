@@ -415,7 +415,7 @@ public class GuiGuide extends GuiScreen{
                 //</editor-fold>
                 break;
             case "vending5":
-                //<editor-fold desc="Vending Machine Page 06">
+                //<editor-fold desc="Vending Machine Page 05">
                 GL11.glPushMatrix();
                 GL11.glTranslatef(guiLeft + 0.8F, guiTop + 0.8F, 0.8F);
                 GL11.glScalef(0.7F, 0.7F, 0.7F);
@@ -710,6 +710,13 @@ public class GuiGuide extends GuiScreen{
                 this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemUpgrade, 1, 1), 23, 11);
                 GL11.glPopMatrix();
 
+                GL11.glPushMatrix();
+                GL11.glTranslatef(guiLeft + 0.8F, guiTop + 0.8F, 0.8F);
+                GL11.glScalef(0.7F, 0.7F, 0.7F);
+                Minecraft.getMinecraft().getTextureManager().bindTexture(TAB_TEXTURE);
+                drawTexturedModalRect(29, 194, 236, 19, 19,17);
+                GL11.glPopMatrix();
+
                 this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemUpgrade, 1, 1), guiLeft + 15, guiTop + 40);
 
 
@@ -718,11 +725,67 @@ public class GuiGuide extends GuiScreen{
                 fontRenderer.drawSplitString(I18n.format(text), guiLeft + 47, guiTop + 21, 148, Color.BLACK.getRGB());
 
                 text = TextFormatting.BOLD + "   Request Upgrade - " + TextFormatting.RESET + "This upgrade is for the " + TextFormatting.UNDERLINE + "Exchange Machine" +
-                        TextFormatting.RESET + ". You can right click it onto the machine to ";
+                        TextFormatting.RESET + ". You can right click the upgrade onto a machine to add its new functionality. The upgrade allows the machine to only" +
+                        " accept a certain amount of the specified item determined in the " + TextFormatting.BOLD + "Req'd" + TextFormatting.RESET + " textfield in the " +
+                        "[    ] tab.";
                 fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 48, 112, Color.BLACK.getRGB());
 
                 this.buttonList.get(0).visible = true;
                 this.buttonList.get(2).visible = true;
+                //</editor-fold>
+                break;
+            case "upgrade2":
+                //<editor-fold desc="Upgrade 2 Page">
+                //Item Icon
+                GL11.glPushMatrix();
+                GL11.glTranslatef(guiLeft + 1.2F, guiTop + 1.2F, 0.8F);
+                GL11.glScalef(1.2F, 1.2F, 1.2F);
+                this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemUpgrade, 1, 1), 23, 11);
+                GL11.glPopMatrix();
+
+                this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemUpgrade, 1, 4), guiLeft + 15, guiTop + 40);
+                this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemUpgrade, 1, 2), guiLeft + 30, guiTop + 85);
+                this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemUpgrade, 1, 3), guiLeft + 50, guiTop + 85);
+                this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemUpgrade, 1, 4), guiLeft + 70, guiTop + 85);
+                this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemUpgrade, 1, 5), guiLeft + 90, guiTop + 85);
+
+
+                //Chapter Title
+                text = TextFormatting.BOLD + " Upgrade System";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 47, guiTop + 21, 148, Color.BLACK.getRGB());
+
+                text = TextFormatting.BOLD + "   Size Upgrade - " + TextFormatting.RESET + "This upgrade is for the " + TextFormatting.UNDERLINE + "Vending Machine" +
+                        TextFormatting.RESET + ". There are " + TextFormatting.BOLD + "4 Tiers" + TextFormatting.RESET + " to this upgrade:";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 48, 112, Color.BLACK.getRGB());
+
+                text = "You must upgrade the machine with the previous tiers before being able to use a higher one.";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 105, 112, Color.BLACK.getRGB());
+
+                this.buttonList.get(0).visible = true;
+                this.buttonList.get(1).visible = true;
+                this.buttonList.get(2).visible = true;
+                //</editor-fold>
+                break;
+            case "upgrade3":
+                //<editor-fold desc="Upgrade 3 Page">
+                //Item Icon
+                GL11.glPushMatrix();
+                GL11.glTranslatef(guiLeft + 1.2F, guiTop + 1.2F, 0.8F);
+                GL11.glScalef(1.2F, 1.2F, 1.2F);
+                this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemUpgrade, 1, 1), 23, 11);
+                GL11.glPopMatrix();
+
+                //Chapter Title
+                text = TextFormatting.BOLD + " Upgrade System";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 47, guiTop + 21, 148, Color.BLACK.getRGB());
+
+                text = "You can right click the upgrade onto a machine to add its new functionality. Each upgrade raises the total stack size of item and blocks " +
+                        "in the machine (In vanilla the most common max stack size is 64). " + TextFormatting.BOLD + "The machines max stack size is 16" +
+                TextFormatting.RESET + " before being upgraded. Each upgrade specifies what it raises that size to.";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 43, 112, Color.BLACK.getRGB());
+
+                this.buttonList.get(0).visible = true;
+                this.buttonList.get(1).visible = true;
                 //</editor-fold>
                 break;
         }
@@ -830,6 +893,13 @@ public class GuiGuide extends GuiScreen{
                     case "atm3": page = "atm2";
                         break;
                     case "atm4": page = "atm3";
+                        break;
+                    case "upgrade2": page = "upgrade";
+                        break;
+                    case "upgrade3": page = "upgrade2";
+                        break;
+                    case "upgrade4": page = "upgrade3";
+
 
                 }
                 break;
@@ -866,6 +936,12 @@ public class GuiGuide extends GuiScreen{
                     case "atm2": page = "atm3";
                         break;
                     case "atm3": page = "atm4";
+                        break;
+                    case "upgrade": page = "upgrade2";
+                        break;
+                    case "upgrade2": page = "upgrade3";
+                        break;
+                    case "upgrade3": page = "upgrade4";
             }
                 break;
             case 3: //Bill Button
