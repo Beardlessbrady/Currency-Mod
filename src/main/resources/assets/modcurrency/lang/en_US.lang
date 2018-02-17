@@ -14,7 +14,6 @@ item.modcurrency:coin_5.name=Two-Dollar Coin
 item.modcurrency:wallet.name=Wallet
 item.modcurrency:guidebook.name=Currency for Blockheads
 item.modcurrency:bundledbag.name=Bundled Bag
-item.modcurrency:upgrade_0.name= Price Upgrade
 item.modcurrency:upgrade_1.name= Request Upgrade
 item.modcurrency:upgrade_2.name= Size Upgrade I
 item.modcurrency:upgrade_3.name= Size Upgrade II

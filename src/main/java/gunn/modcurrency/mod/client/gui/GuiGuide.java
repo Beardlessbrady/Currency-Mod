@@ -41,7 +41,7 @@ public class GuiGuide extends GuiScreen{
     private ItemStack item;
     private String page;
     private final int buttonStart=3;
-    private final int buttonTotal=8;
+    private final int buttonTotal=9;
 
     public GuiGuide(ItemStack item){
         this.item = item;
@@ -97,6 +97,8 @@ public class GuiGuide extends GuiScreen{
 
                 //Temp Button for ATM in Root
                 this.buttonList.set(7, new TabButton(Integer.toString(7), 7, guiLeft + 26, guiTop + 110, 0, 250, 16, 16, 0,"", BACKGROUND_TEXTURE));
+                this.buttonList.set(8, new TabButton(Integer.toString(8), 8, guiLeft + 26 + 25, guiTop + 110, 0, 250, 16, 16, 0,"", BACKGROUND_TEXTURE));
+
 
                 if ((i >= 26 && i <= 26 + 16) && (j >= 90 && j <= 90 + 16)) {
                     GL11.glPushMatrix();
@@ -142,6 +144,15 @@ public class GuiGuide extends GuiScreen{
                     GL11.glPopMatrix();
                 } else
                 this.itemRender.renderItemIntoGUI(new ItemStack(ModBlocks.blockATM), guiLeft + 26, guiTop + 110);
+
+                if ((i >= 51 && i <= 51 + 16) && (j >= 110 && j <= 110 + 16)) {
+                    GL11.glPushMatrix();
+                    GL11.glTranslatef(guiLeft + 1.5F, guiTop + 1.5F, 0.8F);
+                    GL11.glScalef(1.5F, 1.5F, 1.5F);
+                    this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemUpgrade, 1, 1), 30, 70);
+                    GL11.glPopMatrix();
+                } else
+                    this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemUpgrade, 1, 1), guiLeft + 51, guiTop + 110);
 
                 //</editor-fold>
                 break;
@@ -609,7 +620,7 @@ public class GuiGuide extends GuiScreen{
                 //</editor-fold>
                 break;
             case "atm2":
-            //<editor-fold desc="ATM 2 Page">
+                //<editor-fold desc="ATM 2 Page">
             //Item Icon
             GL11.glPushMatrix();
             GL11.glTranslatef(guiLeft + 1.2F, guiTop + 1.2F, 0.8F);
@@ -688,6 +699,30 @@ public class GuiGuide extends GuiScreen{
 
                 this.buttonList.get(0).visible = true;
                 this.buttonList.get(1).visible = true;
+                //</editor-fold>
+                break;
+            case "upgrade":
+                //<editor-fold desc="Upgrade Page">
+                //Item Icon
+                GL11.glPushMatrix();
+                GL11.glTranslatef(guiLeft + 1.2F, guiTop + 1.2F, 0.8F);
+                GL11.glScalef(1.2F, 1.2F, 1.2F);
+                this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemUpgrade, 1, 1), 23, 11);
+                GL11.glPopMatrix();
+
+                this.itemRender.renderItemIntoGUI(new ItemStack(ModItems.itemUpgrade, 1, 1), guiLeft + 15, guiTop + 40);
+
+
+                //Chapter Title
+                text = TextFormatting.BOLD + " Upgrade System";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 47, guiTop + 21, 148, Color.BLACK.getRGB());
+
+                text = TextFormatting.BOLD + "   Request Upgrade - " + TextFormatting.RESET + "This upgrade is for the " + TextFormatting.UNDERLINE + "Exchange Machine" +
+                        TextFormatting.RESET + ". You can right click it onto the machine to ";
+                fontRenderer.drawSplitString(I18n.format(text), guiLeft + 18, guiTop + 48, 112, Color.BLACK.getRGB());
+
+                this.buttonList.get(0).visible = true;
+                this.buttonList.get(2).visible = true;
                 //</editor-fold>
                 break;
         }
@@ -847,6 +882,9 @@ public class GuiGuide extends GuiScreen{
                 break;
             case 7: //ATM Button
                 this.page ="atm";
+                break;
+            case 8: //Upgrade Button
+                this.page ="upgrade";
         }
         clean();
     }
