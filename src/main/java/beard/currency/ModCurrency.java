@@ -23,7 +23,6 @@ public class ModCurrency {
     public static final String VERSION = "1.12-1.3.0";
 
 
-
     @SidedProxy(clientSide = "beard.currency.proxy.ClientProxy", serverSide = "beard.currency.proxy.ServerProxy")
     public static CommonProxy proxy;
 
