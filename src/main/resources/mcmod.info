@@ -1,0 +1,16 @@
+[
+{
+  "modid": "Currency Mod",
+  "name": "Good Ol' Currency Mod",
+  "description": "Allows players to create currency and an economy",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["BeardlessBrady"],
+  "credits": "The Forge and FML guys",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
