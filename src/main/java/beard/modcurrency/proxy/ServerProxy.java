@@ -1,4 +1,4 @@
-package beard.currency.proxy;
+package beard.modcurrency.proxy;
 
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
  * Copyright (C) All Rights Reserved
  * File Created 2018-02-16
  */
-public class ClientProxy extends CommonProxy{
+public class ServerProxy extends CommonProxy{
 
     @Override
     public void preInit(FMLPreInitializationEvent event) {

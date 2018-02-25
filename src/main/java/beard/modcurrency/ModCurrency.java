@@ -1,6 +1,6 @@
-package beard.currency;
+package beard.modcurrency;
 
-import beard.currency.proxy.CommonProxy;
+import beard.modcurrency.proxy.CommonProxy;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -23,7 +23,7 @@ public class ModCurrency {
     public static final String VERSION = "1.12-1.3.0";
 
 
-    @SidedProxy(clientSide = "beard.currency.proxy.ClientProxy", serverSide = "beard.currency.proxy.ServerProxy")
+    @SidedProxy(clientSide = "beard.modcurrency.proxy.ClientProxy", serverSide = "beard.modcurrency.proxy.ServerProxy")
     public static CommonProxy proxy;
 
     @Mod.Instance
