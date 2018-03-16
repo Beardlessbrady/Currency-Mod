@@ -79,7 +79,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
         mode = false;
         creative = false;
         infinite = false;
-        voidBlock = false;
+        voidBlock = true;
         gearExtended = false;
         twoBlock = false;
         automationInputStackHandler.setAllowedItem(ModItems.itemBanknote);
