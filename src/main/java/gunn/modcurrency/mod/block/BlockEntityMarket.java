@@ -63,13 +63,13 @@ public class BlockEntityMarket extends Block implements ITileEntityProvider{
             System.out.println("____NEW______");
             List mobList = worldIn.getEntitiesWithinAABB(EntityLiving.class, new AxisAlignedBB(pos, pos.add(1, 1, 1)).expand(5, 5, 5));
             for (int i = 0; i < mobList.size(); i++) {
-                if (((EntityLiving) mobList.get(i)).getLeashed() && ((EntityLiving) mobList.get(i)).getLeashedToEntity() instanceof EntityPlayer) {
-                    if(playerIn.getUniqueID().toString().equals(((EntityLiving) mobList.get(i)).getLeashedToEntity().getUniqueID().toString())) {
+              //  if (((EntityLiving) mobList.get(i)).getLeashed() && ((EntityLiving) mobList.get(i)).getLeashedToEntity() instanceof EntityPlayer) {
+                 //   if(playerIn.getUniqueID().toString().equals(((EntityLiving) mobList.get(i)).getLeashedToEntity().getUniqueID().toString())) {
                         System.out.println("YES MOM");
                         System.out.println(mobList.get(i));
                         System.out.println("   ");
-                    }
-                }
+                   // }
+                //}
             }
             return true;
         }
