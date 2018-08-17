@@ -16,6 +16,8 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
@@ -409,12 +411,11 @@ public class GuiVending extends GuiContainer {
         }
 
 
-
         for(int j=0; j<columnCount; j++) {
             for (int i = 0; i < 5; i++) {
                 if (tile.getItemSize(i + (5 * j)) != 0 && tile.getItemSize(i + (5 * j)) > 0) {
                     num = Integer.toString(tile.getItemSize(i + (5 * j)));
-                } else if (vendStack.getStackInSlot(i + (5*j)) != ItemStack.EMPTY){
+                } else if (!vendStack.getStackInSlot(i + (5*j)).isEmpty()){
                     num = "OUT";
                 } else {
                     num = " ";

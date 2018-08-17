@@ -230,7 +230,7 @@ public class ContainerVending extends Container implements INBTInventory {
                         itemStack = copy.copy();
                         copy.setCount(1);
 
-                        if (inventorySlots.get(slotId).getStack().equals(ItemStack.EMPTY)) { //If Slot is Empty
+                        if (inventorySlots.get(slotId).getStack().isEmpty()) { //If Slot is Empty
                             inventorySlots.get(slotId).putStack(copy);
 
                             if(dragType == 1 && clickTypeIn == ClickType.PICKUP) { //If Player RIGHT CLICKS, place 1

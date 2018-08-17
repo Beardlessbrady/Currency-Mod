@@ -1,0 +1,8 @@
+Squished:
+-Vending machine says OUT when nothing in it
+
+TODO;
+-Vending machine stack placements glitchy as heeeelll (I THINK I FIXED IT
+
+
+***Seems everything where I check if a stack is empty by ==(ItemStack.Empty) is borked and should be .isEmpty  go through whole mod...ugh
