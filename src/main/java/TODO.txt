@@ -1,8 +1,9 @@
 Squished:
 -Vending machine says OUT when nothing in it
+-Vending Machine stack placement fixed
+-Vending Machine hopper interaction would put more items into machine then the stack limit would allow.
 
 TODO;
--Vending machine stack placements glitchy as heeeelll (I THINK I FIXED IT
 
 
 ***Seems everything where I check if a stack is empty by ==(ItemStack.Empty) is borked and should be .isEmpty  go through whole mod...ugh

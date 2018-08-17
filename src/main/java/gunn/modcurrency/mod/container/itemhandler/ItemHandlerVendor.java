@@ -43,9 +43,8 @@ public class ItemHandlerVendor extends ItemStackHandler {
             if (!simulate) {
                 if (existing.isEmpty()) {
                     this.stacks.set(slot, reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, limit) : stack);
-                } else {
+                } else if (tile.getItemSize(slot) < tile.getStackLimit()){
                     tile.growItemSize(stack.getCount(), slot);
-
                     if (tile.getPlayerUsing() != null) {
                         PacketUpdateSizeToClient pack = new PacketUpdateSizeToClient();
                         pack.setData(tile.getPos(), slot, tile.getItemSize(slot));

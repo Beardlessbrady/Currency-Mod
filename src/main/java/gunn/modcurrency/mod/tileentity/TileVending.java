@@ -957,5 +957,9 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     public void voidPlayerUsing(){
         playerUsing = null;
     }
+
+    public int getStackLimit() {
+        return stackLimit;
+    }
     //</editor-fold>
 }
