@@ -55,8 +55,11 @@ public class ContainerVending extends Container implements INBTInventory {
     private List specialSlotItems;
     private TileVending tile;
     private int[] cachedFields;
+    private EntityPlayer player;
 
-    public ContainerVending(InventoryPlayer invPlayer, TileVending te) {
+    public ContainerVending(EntityPlayer entityPlayer, TileVending te) {
+        player = entityPlayer;
+        InventoryPlayer invPlayer = entityPlayer.inventory;
         specialSlotItems = new ArrayList();
         specialSlotItems.add(ModItems.itemBanknote);
         specialSlotItems.add(ModItems.itemCoin);
@@ -118,11 +121,13 @@ public class ContainerVending extends Container implements INBTInventory {
         }
 
         //Buffer Slots
-        int yshift = 0;
-        if (tile.getField(tile.FIELD_TWOBLOCK) == 1) yshift = 8;
+        if(player.getUniqueID().toString().equals(tile.getOwner()) || player.isCreative()) {
+            int yshift = 0;
+            if (tile.getField(tile.FIELD_TWOBLOCK) == 1) yshift = 8;
 
-        for (int i = 0; i < TE_BUFFER_COUNT; i++) {
-            addSlotToContainer(new SlotCustomizable(itemHandler, TE_BUFFER_START + i, 13, 42 + yshift + i * SLOT_Y_SPACING, ModItems.itemBanknote));
+            for (int i = 0; i < TE_BUFFER_COUNT; i++) {
+                addSlotToContainer(new SlotCustomizable(itemHandler, TE_BUFFER_START + i, 13, 42 + yshift + i * SLOT_Y_SPACING, ModItems.itemBanknote));
+            }
         }
     }
 
@@ -482,7 +487,7 @@ public class ContainerVending extends Container implements INBTInventory {
 
         int totalOfBill = 0;
         for (int i = 0; i < itemStackHandler.getSlots(); i++) {
-            if (itemStackHandler.getStackInSlot(i) != ItemStack.EMPTY) {
+            if (!itemStackHandler.getStackInSlot(i).isEmpty()) {
                 if(itemStackHandler.getStackInSlot(i).getItem() == ModItems.itemBanknote) {
                     if (itemStackHandler.getStackInSlot(i).getItemDamage() == billDamage) {
                         totalOfBill = totalOfBill + itemStackHandler.getStackInSlot(i).getCount();
@@ -498,7 +503,7 @@ public class ContainerVending extends Container implements INBTInventory {
 
         int totalOfCoin = 0;
         for (int i = 0; i < itemStackHandler.getSlots(); i++) {
-            if (itemStackHandler.getStackInSlot(i) != ItemStack.EMPTY) {
+            if (!itemStackHandler.getStackInSlot(i).isEmpty()) {
                 if(itemStackHandler.getStackInSlot(i).getItem() == ModItems.itemCoin) {
                     if (itemStackHandler.getStackInSlot(i).getItemDamage() == coinDamage) {
                         totalOfCoin = totalOfCoin + itemStackHandler.getStackInSlot(i).getCount();
@@ -632,7 +637,7 @@ public class ContainerVending extends Container implements INBTInventory {
             for (int j = 0; j < itemHandler.getSlots(); j++) {
                 ItemStack stack = itemHandler.getStackInSlot(j);
 
-                if (stack != ItemStack.EMPTY) {
+                if (!stack.isEmpty()) {
                     if(stack.getItem() == ModItems.itemBanknote){
                         if (stack.getItemDamage() == i) {
                             if (stack.getCount() >= out[i]) {  //If Stack size can handle all amount of bill
@@ -674,12 +679,11 @@ public class ContainerVending extends Container implements INBTInventory {
         and send the 'change' to the bank variable of the vendor then output it with outChange
          */
         if (amount != 0) {
-            System.out.println("DESS");
             int itemDamage = 0;
             searchLoop:
             //Searches wallet for the first highest bill/coin that can handle rest of amount
             for (int i = 0; i < itemHandler.getSlots(); i++) {
-                if (itemHandler.getStackInSlot(i) != ItemStack.EMPTY) {
+                if (!itemHandler.getStackInSlot(i).isEmpty()) {
                     if (itemHandler.getStackInSlot(i).getItem() == ModItems.itemBanknote) {
                         int billWorth = getBillWorth(itemHandler.getStackInSlot(i).getItemDamage(), itemHandler.getStackInSlot(i).getCount());
                         if (billWorth > amount) {

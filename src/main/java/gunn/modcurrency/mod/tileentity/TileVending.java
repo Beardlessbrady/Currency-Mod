@@ -126,7 +126,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     public void update() {
         if (!world.isRemote) {
             if (playerUsing != null) {
-                if (inputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
+                if (!inputStackHandler.getStackInSlot(0).isEmpty()) {
 
                     if (inputStackHandler.getStackInSlot(0).getItem() == ModItems.itemBanknote) {
                         //<editor-fold desc="Banknote Update">
@@ -282,7 +282,7 @@ public class TileVending extends TileEntity implements ICapabilityProvider, ITic
     public void dropItems() {
         for (int i = 0; i < vendStackHandler.getSlots(); i++) {
             ItemStack item = vendStackHandler.getStackInSlot(i);
-            if (item != ItemStack.EMPTY) {
+            if (!item.isEmpty()) {
                 item.setCount(getItemSize(i));
                 world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), item));
                 vendStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case

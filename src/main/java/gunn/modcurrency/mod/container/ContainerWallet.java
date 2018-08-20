@@ -195,7 +195,7 @@ public class ContainerWallet extends Container implements INBTInventory {
 
                 //Spawning item ingame that don't fit
                 for(int i=WALLET_TOTAL_COUNT; i < oldSize; i++){
-                    if(oldInventory[i] != ItemStack.EMPTY) {
+                    if(!oldInventory[i].isEmpty()) {
                         World world = player.getEntityWorld();
                         BlockPos pos = player.getPosition();
                         world.spawnEntity(new EntityItem(world, pos.getX(), pos.getY(), pos.getZ(), oldInventory[i]));
@@ -214,7 +214,7 @@ public class ContainerWallet extends Container implements INBTInventory {
     public void checkMetadataClosed(ItemStack stack){
         int slotsFilled = 0;
         for(int i = 0; i < itemStackHandler.getSlots(); i++){
-            if(itemStackHandler.getStackInSlot(i) != ItemStack.EMPTY) slotsFilled++;
+            if(!itemStackHandler.getStackInSlot(i).isEmpty()) slotsFilled++;
         }
 
         int meta = 0;
@@ -233,7 +233,7 @@ public class ContainerWallet extends Container implements INBTInventory {
     public void checkmetadataOpen(ItemStack stack){
         int slotsFilled = 0;
         for(int i = 0; i < itemStackHandler.getSlots(); i++){
-            if(itemStackHandler.getStackInSlot(i) != ItemStack.EMPTY) slotsFilled++;
+            if(!itemStackHandler.getStackInSlot(i).isEmpty()) slotsFilled++;
         }
 
         int meta = 4;

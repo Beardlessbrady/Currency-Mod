@@ -105,7 +105,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     public void update() {
         if (!world.isRemote) {
             if (playerUsing != null) {
-                if (automationInputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
+                if (!automationInputStackHandler.getStackInSlot(0).isEmpty()) {
 
                     if (automationInputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemBanknote)) {
                         int amount;
@@ -179,10 +179,10 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                 }
 
                 if (!mode) {        //SELL MODE
-                    if (inputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
+                    if (!inputStackHandler.getStackInSlot(0).isEmpty()) {
                         searchLoop:
                         for (int i = 0; i < vendStackHandler.getSlots(); i++) {
-                            if (vendStackHandler.getStackInSlot(i) != ItemStack.EMPTY) {
+                            if (!vendStackHandler.getStackInSlot(i).isEmpty()) {
                                 if (UtilMethods.equalStacks(inputStackHandler.getStackInSlot(0), vendStackHandler.getStackInSlot(i)) &&
                                         inputStackHandler.getStackInSlot(0).getItemDamage() == vendStackHandler.getStackInSlot(i).getItemDamage()) {
                                     int amount = getBundleAmnt(i);
@@ -230,9 +230,9 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                                             }
 
                                             if (voidBlock) {
-                                                if (bufferStackHandler.getStackInSlot(buffSlot) != ItemStack.EMPTY)
+                                                if (!bufferStackHandler.getStackInSlot(buffSlot).isEmpty())
                                                     bufferStackHandler.getStackInSlot(buffSlot).grow(amount);
-                                                if (bufferStackHandler.getStackInSlot(buffSlot) == ItemStack.EMPTY) {
+                                                if (!bufferStackHandler.getStackInSlot(buffSlot).isEmpty()) {
                                                     ItemStack newStack = inputItem.copy();
                                                     newStack.setCount(amount);
                                                     bufferStackHandler.setStackInSlot(buffSlot, newStack);
@@ -264,7 +264,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                         }
                     }
                 } else {        //EDIT MODE
-                    if (inputStackHandler.getStackInSlot(0) != ItemStack.EMPTY) {
+                    if (!inputStackHandler.getStackInSlot(0).isEmpty()) {
                         if (inputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemBanknote)) {
                             int amount;
                             switch (inputStackHandler.getStackInSlot(0).getItemDamage()) {
@@ -345,7 +345,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
     public void dropItems() {
         for (int i = 0; i < bufferStackHandler.getSlots(); i++){
             ItemStack item = bufferStackHandler.getStackInSlot(i);
-            if (item != ItemStack.EMPTY) {
+            if (!item.isEmpty()) {
                 world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), item));
                 vendStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
             }

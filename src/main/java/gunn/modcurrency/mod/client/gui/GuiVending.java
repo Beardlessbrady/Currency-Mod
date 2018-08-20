@@ -55,7 +55,7 @@ public class GuiVending extends GuiContainer {
     private final int yShift = 8;
 
     public GuiVending(EntityPlayer entityPlayer, TileVending te) {
-        super(new ContainerVending(entityPlayer.inventory, te));
+        super(new ContainerVending(entityPlayer, te));
         tile = te;
         xSize = 176;
         ySize = 235;

@@ -179,7 +179,7 @@ public class ContainerExchanger extends Container implements INBTInventory {
             if (slotId >= 0 && slotId <= PLAYER_TOTAL_COUNT) {
                 return super.slotClick(slotId, dragType, clickTypeIn, player);
             } else if ((slotId >= TE_VEND_FIRST_SLOT_INDEX && slotId < TE_VEND_FIRST_SLOT_INDEX + TE_VEND_MAIN_TOTAL_COUNT && tile.getField(tile.FIELD_GEAREXT) == 0)) {    //Vend Slots, normal Edit Mode
-                if (player.inventory.getItemStack() != ItemStack.EMPTY && inventorySlots.get(slotId).getStack() == ItemStack.EMPTY) { //Player hand FULL, Slot EMPTY. Put ghost stack here
+                if ((!player.inventory.isEmpty()) && inventorySlots.get(slotId).getStack().isEmpty()) { //Player hand FULL, Slot EMPTY. Put ghost stack here
                     ItemStack ghostStack = player.inventory.getItemStack().copy();
                     ghostStack.setCount(1);
                     this.inventorySlots.get(slotId).putStack(ghostStack);
