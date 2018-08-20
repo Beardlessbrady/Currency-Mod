@@ -10,7 +10,7 @@ make their economical dreams come true!
 Version 2.0 
 ---
 [![](https://img.shields.io/badge/1.12-Alpha-red.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
-[![](https://img.shields.io/badge/Latest%20Version-2.0.0-blue.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
+[![](https://img.shields.io/badge/Latest%20Version-Not%20Released-blue.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
 [![](https://img.shields.io/badge/Supported-Fully-green.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
 
 Version 1.0
@@ -21,11 +21,11 @@ Version 1.0
 
 [![](https://img.shields.io/badge/1.11.2-release-green.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
 [![](https://img.shields.io/badge/Latest%20Version-1.2.2-blue.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
-[![](https://img.shields.io/badge/Supported-Bugfixes-yellow.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
+[![](https://img.shields.io/badge/Not%20Supported-Sorry-red.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
 
 [![](https://img.shields.io/badge/1.10.2-release-green.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
 [![](https://img.shields.io/badge/Latest%20Version-1.2.2-blue.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
-[![](https://img.shields.io/badge/Supported-Bugfixes-yellow.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
+[![](https://img.shields.io/badge/Not%20Supported-Sorry-red.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
 
 ---
 
