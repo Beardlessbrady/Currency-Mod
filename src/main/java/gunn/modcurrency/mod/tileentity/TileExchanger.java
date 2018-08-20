@@ -232,7 +232,7 @@ public class TileExchanger extends TileEntity implements ICapabilityProvider, IT
                                             if (voidBlock) {
                                                 if (!bufferStackHandler.getStackInSlot(buffSlot).isEmpty())
                                                     bufferStackHandler.getStackInSlot(buffSlot).grow(amount);
-                                                if (!bufferStackHandler.getStackInSlot(buffSlot).isEmpty()) {
+                                                if (bufferStackHandler.getStackInSlot(buffSlot).isEmpty()) {
                                                     ItemStack newStack = inputItem.copy();
                                                     newStack.setCount(amount);
                                                     bufferStackHandler.setStackInSlot(buffSlot, newStack);

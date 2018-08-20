@@ -32,12 +32,12 @@ public class EventHandlerCommon {
                 }
             }
 
-            if (brokeBlock == ModBlocks.blockATM) {
+            /*if (brokeBlock == ModBlocks.blockATM) {
                 IOwnable tile = (IOwnable) e.getWorld().getTileEntity(e.getPos());
                 if ((!e.getEntityPlayer().getUniqueID().toString().equals(tile.getOwner())) && !e.getEntityPlayer().isCreative()) {     //If not Owner (and not in creative) Can't Break
                     e.setCanceled(true);
                 }
-            }
+            }*/
         }
     }
 }

@@ -136,14 +136,14 @@ public class GuiGuide extends GuiScreen{
                 } else
                     this.itemRender.renderItemIntoGUI(new ItemStack(ModBlocks.blockExchanger), guiLeft + 101, guiTop + 90);
 
-                if ((i >= 26 && i <= 26 + 16) && (j >= 110 && j <= 110 + 16)) {
+                /*if ((i >= 26 && i <= 26 + 16) && (j >= 110 && j <= 110 + 16)) {
                     GL11.glPushMatrix();
                     GL11.glTranslatef(guiLeft + 1.5F, guiTop + 1.5F, 0.8F);
                     GL11.glScalef(1.5F, 1.5F, 1.5F);
                     this.itemRender.renderItemIntoGUI(new ItemStack(ModBlocks.blockATM), 14, 70);
                     GL11.glPopMatrix();
                 } else
-                this.itemRender.renderItemIntoGUI(new ItemStack(ModBlocks.blockATM), guiLeft + 26, guiTop + 110);
+                this.itemRender.renderItemIntoGUI(new ItemStack(ModBlocks.blockATM), guiLeft + 26, guiTop + 110);*/
 
                 if ((i >= 51 && i <= 51 + 16) && (j >= 110 && j <= 110 + 16)) {
                     GL11.glPushMatrix();
@@ -592,7 +592,7 @@ public class GuiGuide extends GuiScreen{
                 this.buttonList.get(1).visible = true;
                 //</editor-fold>
                 break;
-            case "atm":
+            /*case "atm":
                 //<editor-fold desc="ATM Page">
                 //Item Icon
                 GL11.glPushMatrix();
@@ -700,7 +700,7 @@ public class GuiGuide extends GuiScreen{
                 this.buttonList.get(0).visible = true;
                 this.buttonList.get(1).visible = true;
                 //</editor-fold>
-                break;
+                break;*/
             case "upgrade":
                 //<editor-fold desc="Upgrade Page">
                 //Item Icon

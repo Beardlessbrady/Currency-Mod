@@ -19,20 +19,20 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ModBlocks {
     public static BlockVending blockVending = new BlockVending();
     public static BlockExchanger blockExchanger = new BlockExchanger();
-    public static BlockATM blockATM = new BlockATM();
+    //public static BlockATM blockATM = new BlockATM();
 
     @SubscribeEvent
     public void registerBlocks(RegistryEvent.Register<Block> event) {
         if(ModConfig.enableSeller) event.getRegistry().register(blockExchanger);
         if(ModConfig.enableVendor) event.getRegistry().register(blockVending);
-        if(ModConfig.enableATM) event.getRegistry().register(blockATM);
+        //if(ModConfig.enableATM) event.getRegistry().register(blockATM);
     }
 
     @SubscribeEvent
     public void registerItems(RegistryEvent.Register<Item> event){
         if(ModConfig.enableSeller) event.getRegistry().register(new ItemBlock(blockExchanger).setRegistryName(blockExchanger.getRegistryName()));
         if(ModConfig.enableVendor) event.getRegistry().register(new ItemBlock(blockVending).setRegistryName(blockVending.getRegistryName()));
-        if(ModConfig.enableATM) event.getRegistry().register(new ItemBlock(blockATM).setRegistryName(blockATM.getRegistryName()));
+       // if(ModConfig.enableATM) event.getRegistry().register(new ItemBlock(blockATM).setRegistryName(blockATM.getRegistryName()));
     }
 
     @SideOnly(Side.CLIENT)
@@ -40,7 +40,7 @@ public class ModBlocks {
     public void registerModels(ModelRegistryEvent event){
         if(ModConfig.enableSeller) blockExchanger.initModel();
         if(ModConfig.enableVendor) blockVending.initModel();
-        if(ModConfig.enableATM) blockATM.initModel();
+        //if(ModConfig.enableATM) blockATM.initModel();
     }
 
 }

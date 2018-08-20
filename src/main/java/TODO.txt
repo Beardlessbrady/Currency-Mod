@@ -2,9 +2,9 @@ Squished:
 -Vending machine says OUT when nothing in it
 -Vending Machine stack placement fixed
 -Vending Machine hopper interaction would put more items into machine then the stack limit would allow.
-
+-other players can access vending machine buffer
+-Removed ATM as it needs work (Will be re added in mod rewrite)
 TODO;
 
 
 -changing size of exchange machine deleted inventory  (Vending too??)
--other players can access vending machine buffer
