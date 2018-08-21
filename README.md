@@ -16,7 +16,7 @@ Version 2.0
 Version 1.0
 ---
 [![](https://img.shields.io/badge/1.12-release-green.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
-[![](https://img.shields.io/badge/Latest%20Version-1.3.0-blue.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
+[![](https://img.shields.io/badge/Latest%20Version-1.3.5-blue.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
 [![](https://img.shields.io/badge/Supported-Bugfixes-yellow.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
 
 [![](https://img.shields.io/badge/1.11.2-release-green.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
