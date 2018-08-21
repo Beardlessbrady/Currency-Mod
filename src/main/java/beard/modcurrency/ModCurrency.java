@@ -20,7 +20,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 public class ModCurrency {
     public static final String MODID = "modcurrency";
     public static final String MODNAME = "Currency Mod";
-    public static final String VERSION = "1.12-1.3.0";
+    public static final String VERSION = "1.12-2.0.0 ALPHA";
 
 
     @SidedProxy(clientSide = "beard.modcurrency.proxy.ClientProxy", serverSide = "beard.modcurrency.proxy.ServerProxy")

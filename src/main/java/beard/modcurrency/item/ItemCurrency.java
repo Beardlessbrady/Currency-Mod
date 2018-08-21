@@ -1,7 +1,15 @@
 package beard.modcurrency.item;
 
+import beard.modcurrency.TestMostPromColorFinder;
+import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.EnumHand;
+import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 
 /**
@@ -15,6 +23,7 @@ import net.minecraftforge.client.model.ModelLoader;
 public class ItemCurrency extends Item{
 
     public ItemCurrency(){
+
         setRegistryName("currency");
         setUnlocalizedName(getRegistryName().toString());
     }
@@ -23,5 +32,9 @@ public class ItemCurrency extends Item{
         ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(getRegistryName(), "inventory"));
     }
 
-
+    @Override
+    public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
+        new TestMostPromColorFinder().getColor(new ItemStack(Items.MELON));
+        return super.onItemRightClick(worldIn, playerIn, handIn);
+    }
 }

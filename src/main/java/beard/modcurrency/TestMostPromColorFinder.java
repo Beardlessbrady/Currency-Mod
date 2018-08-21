@@ -1,8 +1,20 @@
 package beard.modcurrency;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BlockModelShapes;
+import net.minecraft.client.renderer.BlockRendererDispatcher;
+import net.minecraft.client.renderer.color.BlockColors;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+
+import javax.annotation.Nullable;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
+import java.util.Collections;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
@@ -14,14 +26,26 @@ import java.io.IOException;
  */
 public class TestMostPromColorFinder {
 
-    public static void main(String[] args) {
-        BufferedImage poop = null;
-        try {
-            poop = javax.imageio.ImageIO.read(new File("modcurrency:item/iron_ingot"));
-        } catch (IOException e) {
-            e.printStackTrace();
+    public void getColor(ItemStack itemStack){
+        TextureAtlasSprite textureAtlasSprite = Minecraft.getMinecraft().getRenderItem().getItemModelMesher().getItemModel(itemStack).getParticleTexture();
+        BufferedImage bufferedImage = new BufferedImage(textureAtlasSprite.getIconWidth(), textureAtlasSprite.getIconHeight() * textureAtlasSprite.getFrameCount(), BufferedImage.TYPE_4BYTE_ABGR);
+        for (int i = 0; i < textureAtlasSprite.getFrameCount(); i++) {
+            int[][] frameTextureData = textureAtlasSprite.getFrameTextureData(i);
+            int[] largestMipMapTextureData = frameTextureData[0];
+            bufferedImage.setRGB(0, i * textureAtlasSprite.getIconHeight(), textureAtlasSprite.getIconWidth(), textureAtlasSprite.getIconHeight(), largestMipMapTextureData, 0, textureAtlasSprite.getIconWidth());
         }
 
-        System.out.println(poop.getRGB(5,6));
+        for(int i = 0; i < 16; i++) {
+            for(int j = 0; j < 16; j++) {
+                int r = (bufferedImage.getRGB(i, j) & 0x00ff0000) >> 16;
+                int g = (bufferedImage.getRGB(i, j) & 0x0000ff00) >> 8;
+                int b = bufferedImage.getRGB(i, j) & 0x000000ff;
+
+                String hexColor = String.format( "#%02x%02x%02x", r, g, b );
+                System.out.println(hexColor);
+            }
+        }
     }
+
+
 }
