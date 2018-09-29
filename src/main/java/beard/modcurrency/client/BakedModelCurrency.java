@@ -5,9 +5,13 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -22,10 +26,16 @@ import java.util.List;
 public class BakedModelCurrency implements IBakedModel {
     private final IBakedModel modelMain;
     private final BakedModelCurrencyFinalized modelFinal;
+    private final OverridesList overridesList;
 
     public BakedModelCurrency(IBakedModel modelMain, IBakedModel attachmentModels){
         this.modelMain = modelMain;
         this.modelFinal = new BakedModelCurrencyFinalized(this.modelMain, attachmentModels);
+        this.overridesList = new OverridesList(this);
+    }
+
+    public BakedModelCurrencyFinalized getModelFinal(){
+        return modelFinal;
     }
 
     @Override
@@ -55,6 +65,20 @@ public class BakedModelCurrency implements IBakedModel {
 
     @Override
     public ItemOverrideList getOverrides() {
-        return this.modelMain.getOverrides();
+        return this.overridesList;
+    }
+
+    private static class OverridesList extends ItemOverrideList{
+        private BakedModelCurrency modelCurrency;
+
+        public OverridesList(BakedModelCurrency modelCurrency){
+            super(Collections.EMPTY_LIST);
+            this.modelCurrency = modelCurrency;
+        }
+
+        @Override
+        public IBakedModel handleItemState(IBakedModel originalModel, ItemStack stack, @Nullable World world, @Nullable EntityLivingBase entity) {
+            return this.modelCurrency.getModelFinal().setCurrentItemStack(stack);
+        }
     }
 }

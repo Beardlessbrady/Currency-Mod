@@ -1,11 +1,16 @@
 package beard.modcurrency.client;
 
 import beard.modcurrency.item.ItemCurrency;
+import javafx.util.Pair;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.Matrix4f;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 
@@ -44,6 +49,11 @@ public class BakedModelCurrencyFinalized implements IBakedModel {
         list.addAll(list1);
         list.addAll(list2);
         return list;
+    }
+
+    public BakedModelCurrencyFinalized setCurrentItemStack(ItemStack itemStack){
+        this.itemStack = itemStack;
+        return this;
     }
 
     @Override
