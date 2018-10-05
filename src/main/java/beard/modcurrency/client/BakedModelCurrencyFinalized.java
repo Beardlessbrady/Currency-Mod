@@ -44,8 +44,6 @@ public class BakedModelCurrencyFinalized implements IBakedModel {
         List<BakedQuad> list1 = this.model.getQuads(state,side,rand);
         List<BakedQuad> list2 = this.attachmentModels.getQuads(state, side, rand);
 
-        System.out.println("BAGEEK)");
-
         list.addAll(list1);
         list.addAll(list2);
         return list;

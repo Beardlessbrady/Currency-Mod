@@ -12,10 +12,9 @@ import net.minecraft.item.ItemStack;
  * File Created 2018-02-25
  */
 public class ItemColorCurrency implements IItemColor{
+
     @Override
-    public int getColorFromItemstack(ItemStack stack, int tintIndex) {
+    public int colorMultiplier(ItemStack stack, int tintIndex) {
         return 0x848920;
     }
-
-
 }

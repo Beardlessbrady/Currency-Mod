@@ -24,12 +24,11 @@ public class BakedHandler {
     @SubscribeEvent
     public void modelBake(ModelBakeEvent event){
         IBakedModel models;
-        ItemCurrency test = new ItemCurrency();
 
-        models = event.getModelRegistry().getObject(new ModelResourceLocation(test.getRegistryName() + "ext1", "inventory"));
+        models = event.getModelRegistry().getObject(new ModelResourceLocation(ModCurrency.itemCurrency.getRegistryName() + "ext1", "inventory"));
 
 
-        ModelResourceLocation mrl = new ModelResourceLocation(test.getRegistryName(), "inventory");
+        ModelResourceLocation mrl = new ModelResourceLocation(ModCurrency.itemCurrency.getRegistryName(), "inventory");
 
         IBakedModel main = event.getModelRegistry().getObject(mrl);
         event.getModelRegistry().putObject(mrl, new BakedModelCurrency(main, models));
