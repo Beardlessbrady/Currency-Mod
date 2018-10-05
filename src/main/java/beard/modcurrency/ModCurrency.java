@@ -1,11 +1,16 @@
 package beard.modcurrency;
 
+import beard.modcurrency.item.ItemCurrency;
 import beard.modcurrency.proxy.CommonProxy;
+import net.minecraft.item.Item;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.registries.IForgeRegistry;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
@@ -42,5 +47,18 @@ public class ModCurrency {
     @Mod.EventHandler
     public void postInit(FMLPostInitializationEvent event){
         proxy.postInit(event);
+    }
+
+
+    public static final ItemCurrency itemCurrency = new ItemCurrency();
+
+    @Mod.EventBusSubscriber
+    public static class Handler {
+        @SubscribeEvent
+        public static void registerItems(RegistryEvent.Register<Item> event) {
+            IForgeRegistry<Item> registry = event.getRegistry();
+
+            ModCurrency.proxy.registerItems(registry, itemCurrency);
+        }
     }
 }

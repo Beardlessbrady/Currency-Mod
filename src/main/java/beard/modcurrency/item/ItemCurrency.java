@@ -3,6 +3,7 @@ package beard.modcurrency.item;
 import beard.modcurrency.ModCurrency;
 import beard.modcurrency.TestMostPromColorFinder;
 import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
@@ -30,12 +31,6 @@ public class ItemCurrency extends Item{
 
         setRegistryName("currency");
         setUnlocalizedName(getRegistryName().toString());
-
-        ModelBakery.registerItemVariants(this, new ModelResourceLocation(ModCurrency.MODID + ":" + "currencyext1", "inventory"));
-    }
-
-    public void initModel(){
-        ModelLoader.setCustomModelResourceLocation(this, 0, new ModelResourceLocation(getRegistryName(), "inventory"));
     }
 
     @Override
@@ -43,4 +38,6 @@ public class ItemCurrency extends Item{
         new TestMostPromColorFinder().getColor(new ItemStack(Items.MELON));
         return super.onItemRightClick(worldIn, playerIn, handIn);
     }
+
+
 }

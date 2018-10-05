@@ -5,6 +5,7 @@ import beard.modcurrency.item.ItemCurrency;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraftforge.client.event.ModelBakeEvent;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.ArrayList;
@@ -23,12 +24,14 @@ public class BakedHandler {
     @SubscribeEvent
     public void modelBake(ModelBakeEvent event){
         IBakedModel models;
-            models = event.getModelRegistry().getObject(new ModelResourceLocation(ModCurrency.MODID + ":" + "currencyext1", "inventory"));
+        ItemCurrency test = new ItemCurrency();
 
-            ModelResourceLocation mrl = new ModelResourceLocation(ModCurrency.MODID + ":" + "currency", "inventory");
+        models = event.getModelRegistry().getObject(new ModelResourceLocation(test.getRegistryName() + "ext1", "inventory"));
 
-            IBakedModel main = event.getModelRegistry().getObject(mrl);
 
-            event.getModelRegistry().putObject(mrl, new BakedModelCurrency(main, models));
+        ModelResourceLocation mrl = new ModelResourceLocation(test.getRegistryName(), "inventory");
+
+        IBakedModel main = event.getModelRegistry().getObject(mrl);
+        event.getModelRegistry().putObject(mrl, new BakedModelCurrency(main, models));
     }
 }

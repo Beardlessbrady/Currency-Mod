@@ -1,14 +1,20 @@
 package beard.modcurrency.proxy;
 
+import beard.modcurrency.ModCurrency;
 import beard.modcurrency.client.BakedHandler;
 import beard.modcurrency.item.ItemColorCurrency;
-import beard.modcurrency.item.ItemCurrency;
-import beard.modcurrency.item.ModItems;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.color.ItemColors;
+import net.minecraft.client.renderer.block.model.ModelBakery;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.registries.IForgeRegistry;
+
+import java.util.ArrayList;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
@@ -23,13 +29,22 @@ public class ClientProxy extends CommonProxy{
     @Override
     public void preInit(FMLPreInitializationEvent event) {
         super.preInit(event);
-        MinecraftForge.EVENT_BUS.register(new BakedHandler());
+       MinecraftForge.EVENT_BUS.register(new BakedHandler());
     }
 
     @Override
     public void init(FMLInitializationEvent event) {
         super.init(event);
+    }
 
-        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemColorCurrency(), ModItems.itemCurrency);
+    @Override
+    public void registerItems(IForgeRegistry<Item> registry, Item item) {
+        super.registerItems(registry, item);
+
+        ModelResourceLocation main = new ModelResourceLocation(item.getRegistryName(), "inventory");
+        ModelLoader.setCustomModelResourceLocation(item, 0, main);
+
+        System.out.println(item.getRegistryName() + "ext1");
+        ModelBakery.registerItemVariants(item, new ModelResourceLocation(item.getRegistryName() + "ext1", "inventory"));
     }
 }

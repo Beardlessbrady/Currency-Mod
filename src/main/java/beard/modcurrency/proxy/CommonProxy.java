@@ -1,10 +1,11 @@
 package beard.modcurrency.proxy;
 
-import beard.modcurrency.item.ModItems;
+import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.registries.IForgeRegistry;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
@@ -16,7 +17,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
  */
 public class CommonProxy {
     public void preInit(FMLPreInitializationEvent event){
-        MinecraftForge.EVENT_BUS.register(new ModItems());
+
     }
 
     public void init(FMLInitializationEvent event){
@@ -25,5 +26,10 @@ public class CommonProxy {
 
     public void postInit(FMLPostInitializationEvent event){
 
+    }
+
+    public void registerItems(IForgeRegistry<Item> registry, Item item)
+    {
+        registry.register(item);
     }
 }
