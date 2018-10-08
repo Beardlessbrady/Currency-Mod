@@ -3,6 +3,8 @@ package beard.modcurrency.proxy;
 import beard.modcurrency.ModCurrency;
 import beard.modcurrency.item.ItemColorCurrency;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.ModelBakery;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -34,5 +36,9 @@ public class CommonProxy {
     public void registerItems(IForgeRegistry<Item> registry, Item item)
     {
         registry.register(item);
+    }
+
+    public void registerCurrencyVariants(){
+      //stay empty
     }
 }

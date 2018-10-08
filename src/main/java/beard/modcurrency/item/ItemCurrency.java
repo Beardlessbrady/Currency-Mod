@@ -1,12 +1,7 @@
 package beard.modcurrency.item;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumHand;
-import net.minecraft.world.World;
+import net.minecraft.util.IStringSerializable;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
@@ -25,3 +20,4 @@ public class ItemCurrency extends Item{
     }
 
 }
+

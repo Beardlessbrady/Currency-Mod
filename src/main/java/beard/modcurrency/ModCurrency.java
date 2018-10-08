@@ -1,5 +1,6 @@
 package beard.modcurrency;
 
+import beard.modcurrency.item.ItemColorCurrency;
 import beard.modcurrency.item.ItemCurrency;
 import beard.modcurrency.proxy.CommonProxy;
 import net.minecraft.item.Item;
@@ -59,6 +60,7 @@ public class ModCurrency {
             IForgeRegistry<Item> registry = event.getRegistry();
 
             ModCurrency.proxy.registerItems(registry, itemCurrency);
+            ModCurrency.proxy.registerCurrencyVariants();
         }
     }
 }

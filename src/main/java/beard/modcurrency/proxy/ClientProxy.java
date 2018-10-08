@@ -2,10 +2,14 @@ package beard.modcurrency.proxy;
 
 import beard.modcurrency.ModCurrency;
 import beard.modcurrency.client.BakedHandler;
+import beard.modcurrency.item.EnumCurrencyPrime;
+import beard.modcurrency.item.EnumCurrencyShape;
 import beard.modcurrency.item.ItemColorCurrency;
+import beard.modcurrency.item.ItemCurrency;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.ModelBakery;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.model.ModelLoader;
@@ -43,8 +47,20 @@ public class ClientProxy extends CommonProxy{
 
         ModelResourceLocation main = new ModelResourceLocation(item.getRegistryName(), "inventory");
         ModelLoader.setCustomModelResourceLocation(item, 0, main);
+    }
 
-        System.out.println(item.getRegistryName() + "ext1");
-        ModelBakery.registerItemVariants(item, new ModelResourceLocation(item.getRegistryName() + "ext1", "inventory"));
+    @Override
+    public void registerCurrencyVariants(){
+        Item item = ModCurrency.itemCurrency;
+
+        //Register Currency Shapes
+        for(int i = 0; i < EnumCurrencyShape.values().length; i++){
+            ModelBakery.registerItemVariants(item, new ModelResourceLocation(item.getRegistryName() + "shape/" + EnumCurrencyShape.values()[i].getName(), "inventory"));
+        }
+
+        //Register Currency Prime Details
+        for(int i = 0; i < EnumCurrencyShape.values().length; i++){
+            ModelBakery.registerItemVariants(item, new ModelResourceLocation(item.getRegistryName() + "primedetail/" + EnumCurrencyPrime.values()[i].getName(), "inventory"));
+        }
     }
 }

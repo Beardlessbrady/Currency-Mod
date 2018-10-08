@@ -1,9 +1,11 @@
 package beard.modcurrency.client;
 
 import beard.modcurrency.ModCurrency;
+import beard.modcurrency.item.EnumCurrencyShape;
 import beard.modcurrency.item.ItemCurrency;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraftforge.client.event.ModelBakeEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -25,8 +27,7 @@ public class BakedHandler {
     public void modelBake(ModelBakeEvent event){
         IBakedModel models;
 
-        models = event.getModelRegistry().getObject(new ModelResourceLocation(ModCurrency.itemCurrency.getRegistryName() + "ext1", "inventory"));
-
+        models = event.getModelRegistry().getObject(new ModelResourceLocation(ModCurrency.itemCurrency.getRegistryName() + "shape/=" + EnumCurrencyShape.values()[3].getName(), "inventory"));
 
         ModelResourceLocation mrl = new ModelResourceLocation(ModCurrency.itemCurrency.getRegistryName(), "inventory");
 
