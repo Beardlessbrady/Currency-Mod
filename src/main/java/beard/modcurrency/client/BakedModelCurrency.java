@@ -28,9 +28,9 @@ public class BakedModelCurrency implements IBakedModel {
     private final BakedModelCurrencyFinalized modelFinal;
     private final OverridesList overridesList;
 
-    public BakedModelCurrency(IBakedModel modelMain, IBakedModel attachmentModels){
+    public BakedModelCurrency(IBakedModel modelMain, IBakedModel shapeModel[], IBakedModel primeModel[]){
         this.modelMain = modelMain;
-        this.modelFinal = new BakedModelCurrencyFinalized(this.modelMain, attachmentModels);
+        this.modelFinal = new BakedModelCurrencyFinalized(this.modelMain, shapeModel, primeModel);
         this.overridesList = new OverridesList(this);
     }
 

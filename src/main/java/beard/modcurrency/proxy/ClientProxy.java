@@ -59,7 +59,7 @@ public class ClientProxy extends CommonProxy{
         }
 
         //Register Currency Prime Details
-        for(int i = 0; i < EnumCurrencyShape.values().length; i++){
+        for(int i = 0; i < EnumCurrencyPrime.values().length; i++){
             ModelBakery.registerItemVariants(item, new ModelResourceLocation(item.getRegistryName() + "primedetail/" + EnumCurrencyPrime.values()[i].getName(), "inventory"));
         }
     }
