@@ -1,10 +1,15 @@
 package beard.modcurrency.client;
 
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemOverrideList;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
@@ -51,7 +56,7 @@ public class BakedModelCurrencyFinalized implements IBakedModel {
 
             if (nbtTagCompound.hasKey("prime")) {
                 primeList = this.primeModel[nbtTagCompound.getInteger("prime")].getQuads(state, side, rand);
-                list.addAll(primeList);
+                primeList = colorQuads(primeList, 0x445B75);
                 list.addAll(primeList);
             }
 
@@ -89,5 +94,12 @@ public class BakedModelCurrencyFinalized implements IBakedModel {
     @Override
     public ItemOverrideList getOverrides() {
         return this.model.getOverrides();
+    }
+
+    public List<BakedQuad> colorQuads(List<BakedQuad> quads, int color) {
+        for (int i = 0; i < quads.size(); i++) {
+            net.minecraftforge.client.model.pipeline.LightUtil.renderQuadColor(Tessellator.getInstance().getBuffer(), quads.get(i), color);
+        }
+        return quads;
     }
 }

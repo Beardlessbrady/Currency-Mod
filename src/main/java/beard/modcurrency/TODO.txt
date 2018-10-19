@@ -1,4 +1,0 @@
-TODO
--Color based on metals used to craft it
--Can dye with dyes but changes the tint (Like leather armor)
--Various icons for coins + number that goes in corner to signify worth?
