@@ -56,7 +56,7 @@ public class BakedModelCurrencyFinalized implements IBakedModel {
 
             if (nbtTagCompound.hasKey("prime")) {
                 primeList = this.primeModel[nbtTagCompound.getInteger("prime")].getQuads(state, side, rand);
-                primeList = colorQuads(primeList, 0x445B75);
+                primeList = colorQuads(primeList, color(68, 91, 117));
                 list.addAll(primeList);
             }
 
@@ -102,4 +102,28 @@ public class BakedModelCurrencyFinalized implements IBakedModel {
         }
         return quads;
     }
+
+    /**
+	 * @param red   the red value of the color, between 0x00 (decimal 0) and 0xFF (decimal 255)
+	 * @param green the red value of the color, between 0x00 (decimal 0) and 0xFF (decimal 255)
+	 * @param blue  the red value of the color, between 0x00 (decimal 0) and 0xFF (decimal 255)
+	 * @return the color in ARGB format
+	 * @author Cadiboo
+	 */
+	public static int color(int red, int green, int blue) {
+
+		red = MathHelper.clamp(red, 0x00, 0xFF);
+		green = MathHelper.clamp(green, 0x00, 0xFF);
+		blue = MathHelper.clamp(blue, 0x00, 0xFF);
+
+		final int alpha = 0xFF;
+
+		int colorRGBA = 0;
+		colorRGBA |= red << 16;
+		colorRGBA |= green << 8;
+		colorRGBA |= blue << 0;
+		colorRGBA |= alpha << 24;
+
+		return colorRGBA;
+	}
 }
