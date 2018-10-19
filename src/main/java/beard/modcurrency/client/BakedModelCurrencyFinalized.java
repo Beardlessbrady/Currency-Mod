@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.math.MathHelper;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -56,6 +57,7 @@ public class BakedModelCurrencyFinalized implements IBakedModel {
 
             if (nbtTagCompound.hasKey("prime")) {
                 primeList = this.primeModel[nbtTagCompound.getInteger("prime")].getQuads(state, side, rand);
+//                primeList = colorQuads(primeList, 0x445B75);
                 primeList = colorQuads(primeList, color(68, 91, 117));
                 list.addAll(primeList);
             }

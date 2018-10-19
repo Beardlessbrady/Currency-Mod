@@ -1,5 +1,6 @@
 package beard.modcurrency.item;
 
+import beard.modcurrency.client.BakedModelCurrencyFinalized;
 import net.minecraft.client.renderer.color.IItemColor;
 import net.minecraft.item.ItemStack;
 
@@ -15,6 +16,7 @@ public class ItemColorCurrency implements IItemColor{
 
     @Override
     public int colorMultiplier(ItemStack stack, int tintIndex) {
-        return 0x848920;
+//    	return 0x848920;
+        return BakedModelCurrencyFinalized.color(132, 137, 32);
     }
 }
