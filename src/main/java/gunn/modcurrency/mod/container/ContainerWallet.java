@@ -48,7 +48,6 @@ public class ContainerWallet extends Container implements INBTInventory {
     private List itemsAllowed;
 
     private ItemStackHandler itemStackHandler;
-    private int slotId;
 
     public ContainerWallet(EntityPlayer player, ItemStack wallet){
         if(!wallet.hasTagCompound()){
@@ -90,7 +89,6 @@ public class ContainerWallet extends Container implements INBTInventory {
         itemStackHandler = readInventoryTag(wallet, WALLET_TOTAL_COUNT);
 
         final int SLOT_X_SPACING = 18;
-        final int SLOT_Y_SPACING = 18;
 
         for (int y = 0; y < WALLET_ROW_COUNT; y++){
             for (int x = 0; x < WALLET_COLUMN_COUNT; x++){
@@ -100,16 +98,26 @@ public class ContainerWallet extends Container implements INBTInventory {
                 itemsAllowed.add(ModItems.itemBanknote);
                 itemsAllowed.add(ModItems.itemCoin);
 
-                switch(y) {
-                    default:
-                    case 0: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, 35, itemsAllowed));
-                        break;
-                    case 1: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, 54, itemsAllowed));
-                        break;
-                    case 2: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, 18, itemsAllowed));
-                        break;
-                    case 3: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, 72, itemsAllowed));
-                        break;
+                if(WALLET_ROW_COUNT < 3){
+                    switch(y) {
+                        default:
+                        case 0: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, 35, itemsAllowed));
+                            break;
+                        case 1: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, 54, itemsAllowed));
+                            break;
+                    }
+                }else{
+                    switch(y) {
+                        default:
+                        case 0: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, 18, itemsAllowed));
+                            break;
+                        case 1: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, 35, itemsAllowed));
+                            break;
+                        case 2: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, 54, itemsAllowed));
+                            break;
+                        case 3: addSlotToContainer(new SlotCustomizable(itemStackHandler, slotNum, xpos, 72, itemsAllowed));
+                            break;
+                    }
                 }
             }
         }
