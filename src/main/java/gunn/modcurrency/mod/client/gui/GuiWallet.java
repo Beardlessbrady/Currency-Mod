@@ -5,15 +5,20 @@ import gunn.modcurrency.mod.item.ItemWallet;
 import gunn.modcurrency.mod.item.ModItems;
 import gunn.modcurrency.mod.utils.UtilMethods;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.items.ItemStackHandler;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Distributed with the Currency-Mod for Minecraft
@@ -21,7 +26,7 @@ import java.awt.*;
  *
  * File Created on 2017-01-17
  */
-public class GuiWallet extends GuiContainer{
+public class GuiWallet extends GuiContainer {
     private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/guiwallettexture.png");
     private static final ResourceLocation EXTRA_TEXTURE = new ResourceLocation("modcurrency", "textures/gui/guiwalletextratexture.png");
     public static final int GUI_XPOS_OFFPUT = -19;
@@ -40,42 +45,73 @@ public class GuiWallet extends GuiContainer{
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+
         //Background
         Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
-        drawTexturedModalRect(guiLeft + GUI_XPOS_OFFPUT, guiTop,0 ,0 , 213, 201);
+        drawTexturedModalRect(guiLeft + GUI_XPOS_OFFPUT, guiTop, 0, 0, 213, 201);
 
         //Background Extras TODO
         Minecraft.getMinecraft().getTextureManager().bindTexture(EXTRA_TEXTURE);
-        switch(fullness){
-            default: break;
+        switch (fullness) {
+            default:
+                break;
             case 3:
             case 2:
             case 1:
-                drawTexturedModalRect(guiLeft + GUI_XPOS_OFFPUT + 1, guiTop - 5,0 ,0 , 213, 14);
+                drawTexturedModalRect(guiLeft + GUI_XPOS_OFFPUT + 1, guiTop - 5, 0, 0, 213, 14);
         }
 
         Minecraft.getMinecraft().getTextureManager().bindTexture(EXTRA_TEXTURE);
-        switch(ItemWallet.WALLET_ROW_COUNT){
+        switch (ItemWallet.WALLET_ROW_COUNT) {
             default:
             case 4:     //4 Rows
-                drawTexturedModalRect(guiLeft + GUI_XPOS_OFFPUT + 25, guiTop + 70,0 ,152 ,162 , 18);
+                drawTexturedModalRect(guiLeft + GUI_XPOS_OFFPUT + 25, guiTop + 70, 0, 152, 162, 18);
             case 3:     //3 Rows
-                drawTexturedModalRect(guiLeft + GUI_XPOS_OFFPUT + 25, guiTop + 16,0 ,98 ,162 , 18);
+                drawTexturedModalRect(guiLeft + GUI_XPOS_OFFPUT + 25, guiTop + 16, 0, 98, 162, 18);
             case 2:     //2 Rows
-                drawTexturedModalRect(guiLeft + GUI_XPOS_OFFPUT + 25, guiTop + 52,0 ,134 ,162 , 18);
+                drawTexturedModalRect(guiLeft + GUI_XPOS_OFFPUT + 25, guiTop + 52, 0, 134, 162, 18);
             case 0:
             case 1:     //1 Row
-                drawTexturedModalRect(guiLeft + GUI_XPOS_OFFPUT + 25, guiTop + 34,0 ,116 ,162 , 18);
+                drawTexturedModalRect(guiLeft + GUI_XPOS_OFFPUT + 25, guiTop + 34, 0, 116, 162, 18);
         }
 
-       // System.out.println(this.player.getHeldItemMainhand().getTagCompound().hasKey("total"));
-        if(this.player.getHeldItemMainhand().hasTagCompound()){
+        // System.out.println(this.player.getHeldItemMainhand().getTagCompound().hasKey("total"));
+        if (this.player.getHeldItemMainhand().hasTagCompound()) {
             NBTTagCompound nbtTagCompound = this.player.getHeldItemMainhand().getTagCompound();
-            if(nbtTagCompound.hasKey("total")){
+            if (nbtTagCompound.hasKey("total")) {
                 int totalCash = nbtTagCompound.getInteger("total");
 
                 fontRenderer.drawSplitString(I18n.format("Total: $" + UtilMethods.translateMoney(totalCash)), guiLeft + 58 + 1, guiTop + 8 + 1, 112, Color.GRAY.getRGB());
                 fontRenderer.drawSplitString(I18n.format("Total: $" + UtilMethods.translateMoney(totalCash)), guiLeft + 58, guiTop + 8, 112, Color.WHITE.getRGB());
+            }
+        }
+    }
+
+    @Override
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+        super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+        renderItemTooltips(mouseY, mouseX);
+    }
+
+    private void renderItemTooltips(int mouseY, int mouseX){
+        int i = (mouseX - (this.width - this.xSize) / 2);
+        int j = (mouseY - (this.height - this.ySize) / 2);
+
+
+        if(j > 16 && j < 88 && i > 6 && i < 167) {
+            int startX = 6;
+            int startY = 16;
+            int row = ((i - startX) / 18);
+            int column = ((j - startY) / 18);
+            int slot = row + (column * 9);
+
+            if(this.player.getHeldItemMainhand().hasTagCompound()){
+                if(this.player.getHeldItemMainhand().getTagCompound().hasKey("inventory")) {
+                    ItemStackHandler itemStackHandler = new ItemStackHandler();
+                    itemStackHandler.deserializeNBT(this.player.getHeldItemMainhand().getTagCompound().getCompoundTag("inventory"));
+
+                    if(!itemStackHandler.getStackInSlot(slot).isEmpty()) renderToolTip(itemStackHandler.getStackInSlot(slot), i, j);
+                }
             }
         }
     }
