@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
  * File Created on 2016-10-28.
  */
 
+
 @Mod(modid = ModCurrency.MODID, name = ModCurrency.MODNAME, version = ModCurrency.VERSION)
 public class ModCurrency {
     public static CreativeTabs tabCurrency = new TabCurrency(CreativeTabs.getNextID(),"Currency Mod");
