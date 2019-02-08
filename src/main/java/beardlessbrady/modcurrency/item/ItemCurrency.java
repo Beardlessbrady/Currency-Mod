@@ -18,7 +18,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  */
 
 public class ItemCurrency extends Item {
-    public static final int currencyLength = ModConfig.currencyArray.length;
+    public static final int currencyLength = ModConfig.currencyValues.length;
 
     public ItemCurrency(){
         setUnlocalizedName("currency");
@@ -36,5 +36,12 @@ public class ItemCurrency extends Item {
     @Override
     public String getUnlocalizedName(ItemStack stack) {
         return "Item." + this.getRegistryName().toString() + "_" + stack.getItemDamage();
+    }
+
+    @Override
+    public String getItemStackDisplayName(ItemStack stack) {
+        if(stack.getItemDamage() >= ModConfig.currencyNames.length){
+            return "SOMETHING WENT WRONG: ITEM DAMAGE TOO HIGH.";
+        }else return ModConfig.currencyNames[stack.getItemDamage()];
     }
 }
