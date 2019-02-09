@@ -1,6 +1,7 @@
 package beardlessbrady.modcurrency;
 
 import beardlessbrady.modcurrency.proxy.CommonProxy;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -21,6 +22,8 @@ public class ModCurrency {
     public static final String MODID = "modcurrency";
     public static final String MODNAME = "Good Ol' Currency";
     public static final String VERSION = "1.12-2.0.0";
+
+    public static CreativeTabs tabCurrency = new TabCurrency("Good ol' Currency");
 
     @SidedProxy(clientSide = "beardlessbrady.modcurrency.proxy.ClientProxy", serverSide = "beardlessbrady.modcurrency.proxy.ServerProxy")
     public static CommonProxy proxy;

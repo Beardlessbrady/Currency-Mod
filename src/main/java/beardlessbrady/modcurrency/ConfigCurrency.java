@@ -12,8 +12,8 @@ import net.minecraftforge.common.config.Configuration;
  * File Created 2019-02-07
  */
 
-public class ModConfig {
-    private static final String CATEGORY_ITEMS = "Item & Blocks";
+public class ConfigCurrency {
+    private static final String CATEGORY_CURRENCY = "dynamic currency";
 
     public static String[] currencyValues = {"0.01", "0.05", "0.10" , "0.25 " , "1 ", "2 ", "1" , "5" , "10" , "20" , "50" , "100"};
     public static String[] currencyNames = {"One Cent", "Five Cents", "Ten Cents", "Twenty-Five Cents", "One Dollar", "Two Dollars",
@@ -33,9 +33,9 @@ public class ModConfig {
     }
 
     private static void initItemsConfig(Configuration cfg){
-        cfg.addCustomCategoryComment(CATEGORY_ITEMS, "Configure items in the mod");
+        cfg.addCustomCategoryComment(CATEGORY_CURRENCY, "Configure the value and name of the currencies in the mod.\nYou can add more elements then the default but MAKE SURE TO ADD TO BOTH VALUES AND NAMES.");
 
-        cfg.getStringList("Currency Values", CATEGORY_ITEMS, currencyValues , "Set your currency values here!");
-        cfg.getStringList("Currency Names", CATEGORY_ITEMS, currencyNames, "Set your currency names here!");
+        currencyValues = cfg.getStringList("Currency Values", CATEGORY_CURRENCY, currencyValues , "Set currency values");
+        currencyNames = cfg.getStringList("Currency Names", CATEGORY_CURRENCY, currencyNames, "Set currency names");
     }
 }

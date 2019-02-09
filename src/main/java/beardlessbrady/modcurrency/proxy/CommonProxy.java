@@ -1,6 +1,6 @@
 package beardlessbrady.modcurrency.proxy;
 
-import beardlessbrady.modcurrency.ModConfig;
+import beardlessbrady.modcurrency.ConfigCurrency;
 import beardlessbrady.modcurrency.item.ModItems;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -25,7 +25,7 @@ public class CommonProxy {
     public void preInit(FMLPreInitializationEvent e){
         File directory = e.getModConfigurationDirectory();
         config = new Configuration(new File(directory.getPath(), "currency.cfg"));
-        ModConfig.readConfig();
+        ConfigCurrency.readConfig();
 
         MinecraftForge.EVENT_BUS.register(new ModItems());
     }
@@ -35,5 +35,8 @@ public class CommonProxy {
 
 
     public void postInit(FMLPostInitializationEvent e){
+        if (config.hasChanged()) {
+            config.save();
+        }
     }
 }
