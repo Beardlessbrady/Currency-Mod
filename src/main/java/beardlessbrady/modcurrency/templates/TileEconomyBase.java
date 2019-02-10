@@ -1,4 +1,6 @@
-package beardlessbrady.modcurrency.block;
+package beardlessbrady.modcurrency.templates;
+
+import net.minecraft.tileentity.TileEntity;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
@@ -6,8 +8,8 @@ package beardlessbrady.modcurrency.block;
  * https://github.com/BeardlessBrady/Currency-Mod
  * -
  * Copyright (C) All Rights Reserved
- * File Created 2019-02-08
+ * File Created 2019-02-10
  */
 
-public class EconomyBlockBase {
+public class TileEconomyBase extends TileEntity {
 }
