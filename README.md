@@ -21,3 +21,4 @@ I've created this mod because I've always wanted some sort of base economy for m
 [![](https://img.shields.io/badge/Project-Trello-green.svg)](https://trello.com/b/TIjaFASH/currency)
 
 ©All Rights Reserved
+
