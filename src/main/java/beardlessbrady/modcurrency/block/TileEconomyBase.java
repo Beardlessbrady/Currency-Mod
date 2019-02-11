@@ -1,4 +1,4 @@
-package beardlessbrady.modcurrency.templates;
+package beardlessbrady.modcurrency.block;
 
 import net.minecraft.tileentity.TileEntity;
 

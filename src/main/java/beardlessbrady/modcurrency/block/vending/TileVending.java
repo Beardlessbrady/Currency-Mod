@@ -1,11 +1,15 @@
 package beardlessbrady.modcurrency.block.vending;
 
-import beardlessbrady.modcurrency.templates.TileEconomyBase;
+import beardlessbrady.modcurrency.ModCurrency;
+import beardlessbrady.modcurrency.block.TileEconomyBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 
@@ -28,6 +32,10 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     @Override
     public void update() {
 
+    }
+
+    public void openGui(EntityPlayer player, World world, BlockPos pos){
+        player.openGui(ModCurrency.instance, 30, world, pos.getX(), pos.down().getY(), pos.getZ());
     }
 
     //<editor-fold desc="NBT Stuff">

@@ -18,20 +18,37 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
  */
 
 public class ModBlocks {
-    public static BlockVending blockVending = new BlockVending();
+    EconomyBlockBase[] blocks = {new BlockVending()};
 
     @SubscribeEvent
     public void registerBlocks(RegistryEvent.Register<Block> event){
-        event.getRegistry().register(blockVending);
+        for(int i = 0; i < blocks.length; i++)
+            registerBlock(event, blocks[i]);
     }
 
     @SubscribeEvent
     public void registerBlockItems(RegistryEvent.Register<Item> event){
-        event.getRegistry().register(new ItemBlock(blockVending).setRegistryName(blockVending.getRegistryName()));
+        for(int i = 0; i < blocks.length; i++)
+            registerItems(event, blocks[i]);
     }
 
     @SubscribeEvent
     public void registerModels(ModelRegistryEvent event){
+        for(int i = 0; i < blocks.length; i++)
+            registerModel(blocks[i]);
+    }
 
+
+    public void registerBlock(RegistryEvent.Register<Block> event, EconomyBlockBase block){
+        event.getRegistry().register(block);
+        block.registerTileEntity();
+    }
+
+    public void registerItems(RegistryEvent.Register<Item> event, EconomyBlockBase block){
+        event.getRegistry().register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
+    }
+
+    public void registerModel(EconomyBlockBase block){
+        block.registerModel();
     }
 }
