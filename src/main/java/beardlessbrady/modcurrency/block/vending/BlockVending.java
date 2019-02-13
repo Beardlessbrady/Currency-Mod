@@ -29,7 +29,10 @@ public class BlockVending extends EconomyBlockBase {
 
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        //((TileVending)getTile(worldIn, pos)).openGui(playerIn, worldIn, pos);
+       if(!worldIn.isRemote) {
+           ((TileVending) getTile(worldIn, pos)).openGui(playerIn, worldIn, pos);
+           return true;
+       }
         return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
     }
 

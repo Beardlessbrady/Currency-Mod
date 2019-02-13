@@ -14,12 +14,12 @@ import net.minecraft.inventory.Container;
 
 public class ContainerVending extends Container {
 
-    public ContainerVending(TileVending tile){
+    public ContainerVending(EntityPlayer player, TileVending tile){
 
     }
 
     @Override
     public boolean canInteractWith(EntityPlayer playerIn) {
-        return false;
+        return true;
     }
 }

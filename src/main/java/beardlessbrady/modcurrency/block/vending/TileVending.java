@@ -35,7 +35,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     }
 
     public void openGui(EntityPlayer player, World world, BlockPos pos){
-        player.openGui(ModCurrency.instance, 30, world, pos.getX(), pos.down().getY(), pos.getZ());
+        player.openGui(ModCurrency.instance, 30, world, pos.getX(), pos.getY(), pos.getZ());
     }
 
     //<editor-fold desc="NBT Stuff">

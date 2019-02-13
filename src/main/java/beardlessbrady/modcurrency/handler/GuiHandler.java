@@ -29,7 +29,7 @@ public class GuiHandler implements IGuiHandler {
 
         if(tileEntity instanceof TileVending && ID == 30){
             TileVending tilevendor = (TileVending) tileEntity;
-            return new ContainerVending(tilevendor);
+            return new ContainerVending(player, tilevendor);
         }
 
         return null;
@@ -43,7 +43,7 @@ public class GuiHandler implements IGuiHandler {
 
         if(tileEntity instanceof TileVending && ID == 30){
             TileVending tilevendor = (TileVending) tileEntity;
-            return new GuiVending(tilevendor);
+            return new GuiVending(player, tilevendor);
         }
 
         return null;

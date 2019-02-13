@@ -1,13 +1,16 @@
 package beardlessbrady.modcurrency.proxy;
 
 import beardlessbrady.modcurrency.ConfigCurrency;
+import beardlessbrady.modcurrency.ModCurrency;
 import beardlessbrady.modcurrency.block.ModBlocks;
+import beardlessbrady.modcurrency.handler.GuiHandler;
 import beardlessbrady.modcurrency.item.ModItems;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import java.io.File;
 
@@ -30,6 +33,9 @@ public class CommonProxy {
 
         MinecraftForge.EVENT_BUS.register(new ModItems());
         MinecraftForge.EVENT_BUS.register(new ModBlocks());
+
+        NetworkRegistry.INSTANCE.registerGuiHandler(ModCurrency.instance, new GuiHandler());
+
     }
 
     public void Init(FMLInitializationEvent e){
