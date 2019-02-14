@@ -29,7 +29,7 @@ public class EconomyBlockBase extends Block {
     public EconomyBlockBase(String name, Class<? extends TileEconomyBase> tileClass) {
         super(Material.ROCK);
         setRegistryName(name);
-        setUnlocalizedName(name);
+        setUnlocalizedName(this.getRegistryName().toString());
         setHardness(3.0F);
         setCreativeTab(ModCurrency.tabCurrency);
         setSoundType(SoundType.METAL);
