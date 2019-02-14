@@ -3,6 +3,9 @@ package beardlessbrady.modcurrency.block.vending;
 import beardlessbrady.modcurrency.ModCurrency;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -12,6 +15,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
 import javax.annotation.Nullable;
 
@@ -25,6 +31,13 @@ import javax.annotation.Nullable;
  */
 
 public class TileVending extends TileEconomyBase implements ICapabilityProvider, ITickable {
+    public final int TE_INPUT_SLOT_COUNT = 1;
+    public final int TE_INVENTORY_SLOT_COUNT = 25;
+    public final int TE_OUTPUT_SLOT_COUNT = 5;
+
+    private ItemStackHandler inputStackHandler = new ItemStackHandler(TE_INPUT_SLOT_COUNT);
+    private ItemStackHandler inventoryStackHandler = new ItemStackHandler(TE_INVENTORY_SLOT_COUNT);
+    private ItemStackHandler outputStackHandler = new ItemStackHandler(TE_OUTPUT_SLOT_COUNT);
 
     public TileVending(){
     }
@@ -41,39 +54,58 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     //<editor-fold desc="NBT Stuff">
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        return super.writeToNBT(compound);
+        super.writeToNBT(compound);
+        compound.setTag("inventory", inventoryStackHandler.serializeNBT());
+        compound.setTag("inputinv", inputStackHandler.serializeNBT());
+        compound.setTag("outputinv", outputStackHandler.serializeNBT());
+
+        return compound;
     }
 
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
+        if (compound.hasKey("inventory")) inventoryStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("inventory"));
+        if (compound.hasKey("inputinv")) inputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("inputinv"));
+        if (compound.hasKey("outputinv")) outputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("outputinv"));
     }
 
     @Override
     public NBTTagCompound getUpdateTag() {
-        return super.getUpdateTag();
+        return writeToNBT(new NBTTagCompound());
     }
 
     @Nullable
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
-        return super.getUpdatePacket();
+        NBTTagCompound compound = new NBTTagCompound();
+
+        return new SPacketUpdateTileEntity(pos, 1, compound);
     }
 
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         super.onDataPacket(net, pkt);
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Capabilities">
     @Override
     public boolean hasCapability(Capability<?> capability, @Nullable EnumFacing facing) {
+        if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY)
+            return facing == null;
         return super.hasCapability(capability, facing);
     }
 
     @Nullable
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
+        if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
+            if (facing == null) return (T) new CombinedInvWrapper(inputStackHandler, inventoryStackHandler, outputStackHandler);
+        }
         return super.getCapability(capability, facing);
     }
     //</editor-fold>
+
+
 }

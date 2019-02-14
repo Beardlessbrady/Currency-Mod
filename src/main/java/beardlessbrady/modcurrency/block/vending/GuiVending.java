@@ -24,6 +24,7 @@ public class GuiVending extends GuiContainer {
 
     //Button ID's
     private static final int BUTTONCHANGE = 0;
+    private static final int BUTTONADMIN = 1;
 
     public GuiVending(EntityPlayer entityPlayer, TileVending te){
         super(new ContainerVending(entityPlayer, te));
@@ -36,6 +37,7 @@ public class GuiVending extends GuiContainer {
         int j = (this.height - this.ySize) / 2;
 
         this.buttonList.add(new GuiButton(BUTTONCHANGE,  i + 143 , j + 27, 20, 20, "$"));
+        this.buttonList.add(new GuiButton(BUTTONADMIN,  i + 137 , j - 42, 32, 20, "Admin"));
     }
 
     @Override
