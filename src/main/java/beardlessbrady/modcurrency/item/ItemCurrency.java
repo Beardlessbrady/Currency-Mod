@@ -34,7 +34,7 @@ public class ItemCurrency extends Item {
     }
 
     public int getCurrencyValue(ItemStack stack){
-        return Integer.parseInt(ConfigCurrency.currencyValues[stack.getItemDamage()]);
+       return (int)(Float.parseFloat(ConfigCurrency.currencyValues[stack.getMetadata()]) * 100);
     }
 
     @SideOnly(Side.CLIENT)

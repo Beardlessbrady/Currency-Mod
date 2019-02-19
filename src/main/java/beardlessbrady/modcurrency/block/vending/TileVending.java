@@ -2,6 +2,7 @@ package beardlessbrady.modcurrency.block.vending;
 
 import beardlessbrady.modcurrency.ModCurrency;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
+import beardlessbrady.modcurrency.handler.StateHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -48,7 +49,11 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     }
 
     public void openGui(EntityPlayer player, World world, BlockPos pos){
-        player.openGui(ModCurrency.instance, 30, world, pos.getX(), pos.getY(), pos.getZ());
+        if(world.getBlockState(pos).getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP) {
+            player.openGui(ModCurrency.instance, 30, world, pos.getX(), pos.down().getY(), pos.getZ());
+        }else {
+            player.openGui(ModCurrency.instance, 30, world, pos.getX(), pos.getY(), pos.getZ());
+        }
     }
 
     //<editor-fold desc="NBT Stuff">
@@ -68,24 +73,6 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         if (compound.hasKey("inventory")) inventoryStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("inventory"));
         if (compound.hasKey("inputinv")) inputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("inputinv"));
         if (compound.hasKey("outputinv")) outputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("outputinv"));
-    }
-
-    @Override
-    public NBTTagCompound getUpdateTag() {
-        return writeToNBT(new NBTTagCompound());
-    }
-
-    @Nullable
-    @Override
-    public SPacketUpdateTileEntity getUpdatePacket() {
-        NBTTagCompound compound = new NBTTagCompound();
-
-        return new SPacketUpdateTileEntity(pos, 1, compound);
-    }
-
-    @Override
-    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
-        super.onDataPacket(net, pkt);
     }
     //</editor-fold>
 
