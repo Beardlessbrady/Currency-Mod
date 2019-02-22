@@ -2,13 +2,20 @@ package beardlessbrady.modcurrency.block.vending;
 
 import beardlessbrady.modcurrency.handler.StateHandler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.block.model.IBakedModel;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
+import net.minecraftforge.client.ForgeHooksClient;
+import net.minecraftforge.client.model.animation.FastTESR;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
@@ -20,55 +27,55 @@ import net.minecraft.item.ItemStack;
  */
 
 public class VendingRenderer extends TileEntitySpecialRenderer<TileVending> {
-
-    @Override
+     @Override
     public void render(TileVending te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
         if(!te.hasWorld())
             return;
 
-
         int rotation = 0;
-        switch(this.getWorld().getBlockState(te.getPos()).getValue(StateHandler.FACING)){
-            case EAST:
-                rotation = -90;
-                break;
-            case WEST:
-                rotation = 90;
-                break;
-            case NORTH:
-                rotation = 0;
-                break;
-            case SOUTH:
-                rotation = 180;
-                break;
-        }
 
         RenderItem itemRenderer = Minecraft.getMinecraft().getRenderItem();
         ItemStack itemStack = new ItemStack(Items.APPLE);
 
         GlStateManager.pushMatrix();
-        GlStateManager.translate(x + 0.913, y + 1.77, z + 0.2);
         GlStateManager.pushAttrib();
         RenderHelper.enableStandardItemLighting();
+
+         switch(this.getWorld().getBlockState(te.getPos()).getValue(StateHandler.FACING)) {
+             default:
+                 GlStateManager.translate(x + 0.913, y + 1.77, z + 0.2);
+                 break;
+             case EAST:
+                 GlStateManager.translate(x + 0.813, y + 1.77, z + 0.913);
+                 rotation = -90;
+                 break;
+             case WEST:
+                 GlStateManager.translate(x + 0.15, y + 1.77, z + 0.085);
+                 rotation = 90;
+                 break;
+             case SOUTH:
+                 GlStateManager.translate(x + 0.087, y + 1.77, z + 0.813);
+                 rotation = 180;
+                 break;
+         }
+
         GlStateManager.rotate(rotation, 0f, 1f, 0f);
         GlStateManager.scale(0.13f, 0.13f, 0.13f);
+
+
 
         for(int i = 0; i < 5; i++){
            for(int j = 0; j < 5; j++){
                GlStateManager.translate(-0.9, 0, 0);
                itemRenderer.renderItem(itemStack, ItemCameraTransforms.TransformType.FIXED);
-
-               for(int k = 0; k < 5; k++){
-                   GlStateManager.translate(0, 0, +0.5);
-                   itemRenderer.renderItem(itemStack, ItemCameraTransforms.TransformType.FIXED);
-               }
-               GlStateManager.translate(0, 0, -2.5);
             }
-            GlStateManager.translate(4.5, -2, 0);
+            GlStateManager.translate(4.5, -1.95, 0);
         }
         RenderHelper.disableStandardItemLighting();
         GlStateManager.popAttrib();
         GlStateManager.popMatrix();
-    }
+
+        }
+
 
 }

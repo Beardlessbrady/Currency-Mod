@@ -167,7 +167,8 @@
 			"faces": {
 				"down": { "uv": [ 0.75, 7.25, 2, 7.503969 ], "texture": "#texture" },
 				"up": { "uv": [ 0.75, 7.25, 2, 7.503969 ], "texture": "#texture" },
-				"north": { "uv": [ 0.5, 5.25, 3, 6 ], "texture": "#texture", "cullface": "north" }
+				"north": { "uv": [ 0.5, 5.25, 3, 6 ], "texture": "#texture", "cullface": "north" },
+				"south": { "uv": [ 2, 10, 3.25, 10.375 ], "texture": "#texture" }
 			}
 		},
 		{
@@ -178,6 +179,14 @@
 				"down": { "uv": [ 0.75, 7.25, 3.25, 7.5 ], "texture": "#texture" },
 				"up": { "uv": [ 0.75, 7.25, 3.25, 7.5 ], "texture": "#texture" },
 				"north": { "uv": [ 0.75, 7, 3.25, 7.507937 ], "texture": "#texture", "cullface": "north" }
+			}
+		},
+		{
+			"__comment": "Box45",
+			"from": [ 4.25, 11, 3.75 ],
+			"to": [ 13.75, 16, 4.75 ],
+			"faces": {
+				"north": { "uv": [ 0.5, 0.5, 3, 5 ], "texture": "#texture" }
 			}
 		}
 	]
