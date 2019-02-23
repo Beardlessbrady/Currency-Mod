@@ -1,6 +1,8 @@
 package beardlessbrady.modcurrency.block.vending;
 
 import beardlessbrady.modcurrency.ModCurrency;
+import beardlessbrady.modcurrency.network.PacketHandler;
+import beardlessbrady.modcurrency.network.PacketSetFieldToServer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -9,6 +11,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
+import java.io.IOException;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
@@ -22,12 +25,16 @@ import java.awt.*;
 public class GuiVending extends GuiContainer {
     private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(ModCurrency.MODID, "textures/gui/vendingmachinegui.png");
 
+    TileVending te;
+
+
     //Button ID's
     private static final int BUTTONCHANGE = 0;
     private static final int BUTTONADMIN = 1;
 
     public GuiVending(EntityPlayer entityPlayer, TileVending te){
         super(new ContainerVending(entityPlayer, te));
+        this.te = te;
     }
 
     @Override
@@ -66,5 +73,16 @@ public class GuiVending extends GuiContainer {
         super.onGuiClosed();
     }
 
+    @Override
+    protected void actionPerformed(GuiButton button) throws IOException {
+        switch(button.id){
+            case BUTTONADMIN:
+                PacketSetFieldToServer pack = new PacketSetFieldToServer();
+                pack.setData((te.getIntField(te.FIELD_MODE) == 1) ? 0 : 1, te.FIELD_MODE, te.getPos());
+                PacketHandler.INSTANCE.sendToServer(pack);
 
+                te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
+                break;
+        }
+    }
 }

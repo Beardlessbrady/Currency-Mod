@@ -4,12 +4,7 @@ import beardlessbrady.modcurrency.ModCurrency;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.handler.StateHandler;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
@@ -93,6 +88,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         return super.getCapability(capability, facing);
     }
     //</editor-fold>
+
 
 
 }

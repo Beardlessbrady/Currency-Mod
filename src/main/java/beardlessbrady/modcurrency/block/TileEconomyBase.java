@@ -18,9 +18,11 @@ import javax.annotation.Nullable;
 
 public class TileEconomyBase extends TileEntity {
     int cashReserve;
+    boolean mode;
 
     public TileEconomyBase(){
         cashReserve = 0;
+        mode = false; //true == admin
     }
 
     //<editor-fold desc="NBT Stuff">
@@ -28,6 +30,7 @@ public class TileEconomyBase extends TileEntity {
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
         compound.setInteger("cashReserve", cashReserve);
+        compound.setBoolean("mode", mode);
 
         return compound;
     }
@@ -36,6 +39,7 @@ public class TileEconomyBase extends TileEntity {
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         if (compound.hasKey("cashReserve")) cashReserve = compound.getInteger("cashReserve");
+        if (compound.hasKey("mode")) mode = compound.getBoolean("mode");
     }
 
     @Override
@@ -47,6 +51,7 @@ public class TileEconomyBase extends TileEntity {
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound compound = new NBTTagCompound();
+        compound.setBoolean("mode", mode);
 
         return new SPacketUpdateTileEntity(pos, 1, compound);
     }
@@ -54,25 +59,35 @@ public class TileEconomyBase extends TileEntity {
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         super.onDataPacket(net, pkt);
+        NBTTagCompound compound = pkt.getNbtCompound();
+
+        mode = compound.getBoolean("mode");
     }
     //</editor-fold>
 
 
     //Field Id's
     public static final int FIELD_LONG_CASHRESERVE = 0;
+
+    public static final int FIELD_MODE = 0;
+
+
     public int getIntFieldCount(){
         return 1;
     }
 
     public void setIntField(int id, int value){
         switch(id){
-
+            case FIELD_MODE:
+                mode = (value == 1);
+                break;
         }
     }
 
-    public int getIntFIeld(int id){
+    public int getIntField(int id){
         switch(id){
-
+            case FIELD_MODE:
+                return (mode)? 1 : 0;
         }
         return 0;
     }
@@ -89,7 +104,7 @@ public class TileEconomyBase extends TileEntity {
         }
     }
 
-    public int getLongFIeld(int id){
+    public long getLongField(int id){
         switch(id){
             case FIELD_LONG_CASHRESERVE:
                 return cashReserve;

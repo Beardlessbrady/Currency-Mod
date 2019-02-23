@@ -1,7 +1,6 @@
 package beardlessbrady.modcurrency.block.vending;
 
 import beardlessbrady.modcurrency.block.EconomyBlockBase;
-import beardlessbrady.modcurrency.block.ModBlocks;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.handler.StateHandler;
 import net.minecraft.block.state.BlockStateContainer;
@@ -13,11 +12,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
@@ -41,7 +36,7 @@ public class BlockVending extends EconomyBlockBase {
 
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-       if(!worldIn.isRemote) {
+        if(!worldIn.isRemote) {
            ((TileVending) getTile(worldIn, pos)).openGui(playerIn, worldIn, pos);
            return true;
        }
