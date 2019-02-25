@@ -9,6 +9,8 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.items.ItemStackHandler;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.IOException;
@@ -66,6 +68,8 @@ public class GuiVending extends GuiContainer {
         this.fontRenderer.drawString(I18n.format("container.inventory"), 8, 114,  Color.darkGray.getRGB());
         this.fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.in"), 149, -8, Color.lightGray.getRGB());
         this.fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.out"), 80, 68, Color.lightGray.getRGB());
+
+        drawItemStackSize();
     }
 
     @Override
@@ -84,5 +88,36 @@ public class GuiVending extends GuiContainer {
                 te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
                 break;
         }
+    }
+
+    private void drawItemStackSize() {
+        ItemStackHandler vendStack = te.getInventoryStackHandler();
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GL11.glPushMatrix();
+        GL11.glScalef(0.7F, 0.7F, 0.8F);
+
+        String num = " ";
+        int startY = -29;
+        int columnCount = 5;
+
+        for(int j=0; j<columnCount; j++) {
+            for (int i = 0; i < 5; i++) {
+                if (te.getItemSize(i + (5 * j)) != 0 && te.getItemSize(i + (5 * j)) > 0) {
+                    num = Integer.toString(te.getItemSize(i + (5 * j)));
+                } else if (!vendStack.getStackInSlot(i + (5*j)).isEmpty()){
+                    num = "Out";
+                } else {
+                    num = " ";
+                }
+
+                if(num.length() == 1) num = "  " + num;
+                if(num.length() == 2) num = " " + num;
+
+                this.fontRenderer.drawStringWithShadow(num, 66 + (i * 26), startY + (j * 26), -1);
+            }
+        }
+
+        GL11.glPopMatrix();
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
     }
 }

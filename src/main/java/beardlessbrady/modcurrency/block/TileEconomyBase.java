@@ -17,8 +17,8 @@ import javax.annotation.Nullable;
  */
 
 public class TileEconomyBase extends TileEntity {
-    int cashReserve;
-    boolean mode;
+    protected int cashReserve;
+    protected boolean mode;
 
     public TileEconomyBase(){
         cashReserve = 0;

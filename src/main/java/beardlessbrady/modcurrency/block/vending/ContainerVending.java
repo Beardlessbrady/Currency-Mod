@@ -1,5 +1,6 @@
 package beardlessbrady.modcurrency.block.vending;
 
+import beardlessbrady.modcurrency.UtilMethods;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
@@ -155,7 +156,7 @@ public class ContainerVending extends Container {
             return super.slotClick(slotId, dragType, clickTypeIn, player);
 
 
-        //PLAYER MODE
+            //PLAYER MODE
         }else{
             if(slotId < GUI_INPUT_INDEX || slotId >= GUI_OUTPUT_FIRST_INDEX){
                 return super.slotClick(slotId, dragType, clickTypeIn, player);

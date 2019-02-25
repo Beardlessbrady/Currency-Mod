@@ -5,6 +5,8 @@ import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.handler.StateHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.math.BlockPos;
@@ -35,7 +37,14 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     private ItemStackHandler inventoryStackHandler = new ItemStackHandler(TE_INVENTORY_SLOT_COUNT);
     private ItemStackHandler outputStackHandler = new ItemStackHandler(TE_OUTPUT_SLOT_COUNT);
 
+    private int inventoryLimit;
+    private int[] inventorySize = new int[TE_INVENTORY_SLOT_COUNT];
+
     public TileVending(){
+        for(int i = 0; i < inventorySize.length; i++){
+            inventorySize[i] = 0;
+        }
+        inventoryLimit = 32;
     }
 
     @Override
@@ -58,6 +67,13 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         compound.setTag("inventory", inventoryStackHandler.serializeNBT());
         compound.setTag("inputinv", inputStackHandler.serializeNBT());
         compound.setTag("outputinv", outputStackHandler.serializeNBT());
+        compound.setInteger("inventoryLimit", inventoryLimit);
+
+        NBTTagCompound inventorySizeNBT = new NBTTagCompound();
+        for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++){
+            inventorySizeNBT.setInteger("inventory" + i, inventorySize[i]);
+        }
+        compound.setTag("inventorySize", inventorySizeNBT);
 
         return compound;
     }
@@ -68,7 +84,42 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         if (compound.hasKey("inventory")) inventoryStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("inventory"));
         if (compound.hasKey("inputinv")) inputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("inputinv"));
         if (compound.hasKey("outputinv")) outputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("outputinv"));
+        if (compound.hasKey("inventoryLimit")) inventoryLimit = compound.getInteger("inventoryLimit");
+
+        if(compound.hasKey("inventorySize")){
+            NBTTagCompound inventoryLimitNBT = compound.getCompoundTag("inventorySize");
+            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) inventorySize[i] = inventoryLimitNBT.getInteger("inventory" + i);
+        }
     }
+
+    @Nullable
+    @Override
+    public SPacketUpdateTileEntity getUpdatePacket() {
+        NBTTagCompound compound = new NBTTagCompound();
+
+        compound.setBoolean("mode", mode);
+        compound.setInteger("inventoryLimit", inventoryLimit);
+
+        NBTTagCompound inventorySizeNBT = new NBTTagCompound();
+        for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++){
+            inventorySizeNBT.setInteger("inventory" + i, inventorySize[i]);
+        }
+        compound.setTag("inventorySize", inventorySizeNBT);
+
+        return new SPacketUpdateTileEntity(pos, 1, compound);
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
+        super.onDataPacket(net, pkt);
+        NBTTagCompound compound = pkt.getNbtCompound();
+
+        inventoryLimit = compound.getInteger("inventoryLimit");
+
+        NBTTagCompound inventoryLimitNBT = compound.getCompoundTag("inventorySize");
+        for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) inventorySize[i] = inventoryLimitNBT.getInteger("inventory" + i);
+    }
+
     //</editor-fold>
 
     //<editor-fold desc="Capabilities">
@@ -89,6 +140,54 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     }
     //</editor-fold>
 
+    public static final int FIELD_INVLIMIT = 1;
 
+    @Override
+    public int getIntFieldCount(){
+        return 2;
+    }
+
+    @Override
+    public void setIntField(int id, int value){
+        switch(id){
+            case FIELD_MODE:
+                mode = (value == 1);
+                break;
+            case FIELD_INVLIMIT:
+                inventoryLimit = value;
+                break;
+        }
+    }
+
+    @Override
+    public int getIntField(int id){
+        switch(id){
+            case FIELD_MODE:
+                return (mode)? 1 : 0;
+            case FIELD_INVLIMIT:
+                return inventoryLimit;
+        }
+        return 0;
+    }
+
+    ItemStackHandler getInventoryStackHandler(){
+        return inventoryStackHandler;
+    }
+
+    public int getItemSize(int index){
+        return inventorySize[index];
+    }
+
+    public void setItemSize(int amount, int index){
+        inventorySize[index] = amount;
+    }
+
+    public void growItemSize(int amount, int index) {
+        inventorySize[index] += amount;
+    }
+
+    public void shrinkItemSize(int amount, int index){
+        inventorySize[index] -= amount;
+    }
 
 }
