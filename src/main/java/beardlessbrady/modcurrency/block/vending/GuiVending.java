@@ -85,13 +85,15 @@ public class GuiVending extends GuiContainer {
                 pack.setData((te.getIntField(te.FIELD_MODE) == 1) ? 0 : 1, te.FIELD_MODE, te.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack);
 
+                String mode = (te.getIntField(te.FIELD_MODE) == 1)? "Admin" : "Player";
+                buttonList.get(BUTTONADMIN).displayString = mode;
+
                 te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
                 break;
         }
     }
 
     private void drawItemStackSize() {
-        ItemStackHandler vendStack = te.getInventoryStackHandler();
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glPushMatrix();
         GL11.glScalef(0.7F, 0.7F, 0.8F);
@@ -104,7 +106,7 @@ public class GuiVending extends GuiContainer {
             for (int i = 0; i < 5; i++) {
                 if (te.getItemSize(i + (5 * j)) != 0 && te.getItemSize(i + (5 * j)) > 0) {
                     num = Integer.toString(te.getItemSize(i + (5 * j)));
-                } else if (!vendStack.getStackInSlot(i + (5*j)).isEmpty()){
+                } else if (!te.getItemStack(i + (5*j)).isEmpty()){
                     num = "Out";
                 } else {
                     num = " ";

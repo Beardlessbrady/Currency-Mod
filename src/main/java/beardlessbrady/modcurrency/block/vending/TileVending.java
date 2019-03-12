@@ -1,9 +1,13 @@
 package beardlessbrady.modcurrency.block.vending;
 
 import beardlessbrady.modcurrency.ModCurrency;
+import beardlessbrady.modcurrency.UtilMethods;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.handler.StateHandler;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -170,24 +174,63 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         return 0;
     }
 
-    ItemStackHandler getInventoryStackHandler(){
-        return inventoryStackHandler;
+    public boolean isSlotEmpty(int index){
+        return inventoryStackHandler.getStackInSlot(index).isEmpty();
     }
 
     public int getItemSize(int index){
         return inventorySize[index];
     }
 
-    public void setItemSize(int amount, int index){
-        inventorySize[index] = amount;
+    public ItemStack getItemStack(int index){
+        return inventoryStackHandler.getStackInSlot(index);
     }
 
-    public void growItemSize(int amount, int index) {
-        inventorySize[index] += amount;
+    public ItemStack setItem(ItemStack stack, int index, int addonSize){
+        ItemStack copyStack = stack.copy();
+        int output;
+
+        stack.setCount(1);
+        inventoryStackHandler.setStackInSlot(index, stack);
+
+        if(addonSize == 0) {
+            output = copyStack.getCount() - inventoryLimit;
+        }else{
+            output = (inventorySize[index] + addonSize) - inventoryLimit;
+        }
+
+        if(output > 0){
+            copyStack.setCount(output);
+            inventorySize[index] = inventoryLimit;
+        }else{
+            copyStack= ItemStack.EMPTY;
+            inventorySize[index] = inventoryLimit + output;
+        }
+
+        return copyStack;
     }
 
-    public void shrinkItemSize(int amount, int index){
-        inventorySize[index] -= amount;
+    public ItemStack growItemSize(ItemStack stack, int index) {
+        if(UtilMethods.equalStacks(stack, inventoryStackHandler.getStackInSlot(index))){
+            return setItem(stack, index, stack.getCount());
+        }
+        return stack;
+    }
+
+    public ItemStack shrinkItemSize(int num, int index){
+        ItemStack outputStack = inventoryStackHandler.getStackInSlot(index);
+        int output = inventorySize[index] - num;
+
+        if(output > 0){
+            inventorySize[index] =- num;
+            outputStack.setCount(num);
+        }else{
+            inventorySize[index] = 0;
+            inventoryStackHandler.setStackInSlot(index, ItemStack.EMPTY);
+            outputStack.setCount(num + output);
+        }
+
+        return outputStack;
     }
 
 }

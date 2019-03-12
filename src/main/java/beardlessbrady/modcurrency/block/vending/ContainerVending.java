@@ -10,6 +10,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 /**
@@ -110,11 +111,10 @@ public class ContainerVending extends Container {
 
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-        //Allows drag clicking
-        if (slotId == -999) return super.slotClick(slotId, dragType, clickTypeIn, player);
+      //TODO fix the sticky thing which was in issue in previous build (-999 trash)
 
         //Ensures Pickup_All works without duplicating blocks
-        //<editor-fold desc="PICKUP_ALL">
+        //<editor-fold desc="PICKUP ALL">
         if (clickTypeIn == ClickType.PICKUP_ALL && slotId >= 0 && slotId < GUI_INPUT_INDEX) {
             Slot slot = this.inventorySlots.get(slotId);
             ItemStack itemstack1 = player.inventory.getItemStack();
@@ -150,15 +150,35 @@ public class ContainerVending extends Container {
         } else if (clickTypeIn == ClickType.PICKUP_ALL && slotId > PLAYER_TOTAL_COUNT) {
             return ItemStack.EMPTY;
         }
+        //</editor-fold>
+
+        int index = slotId - 37;
+        ItemStack playerStack = player.inventory.getItemStack();
+        ItemStack copyStack = playerStack.copy();
 
         //ADMIN MODE
         if(tile.getIntField(TileVending.FIELD_MODE) == 1) {
+           if(slotId >= 37 && slotId <= 61) {  //Tile Inventory
+               if(dragType == 0) { //Left Click
+                   if (playerStack.isEmpty()) {
+                       player.inventory.setItemStack(tile.shrinkItemSize(64, index));
+                   } else {
+                       if(tile.getItemStack(index).isEmpty()){
+                           player.inventory.setItemStack(tile.setItem(copyStack, index, 0));
+                       }else{
+                           player.inventory.setItemStack(tile.growItemSize(copyStack, index));
+                       }
+                   }
+               }else if (dragType == 1){ //Right Click
+                   //Todo
+               }
+               return ItemStack.EMPTY;
+           }
             return super.slotClick(slotId, dragType, clickTypeIn, player);
-
 
             //PLAYER MODE
         }else{
-            if(slotId < GUI_INPUT_INDEX || slotId >= GUI_OUTPUT_FIRST_INDEX){
+            if(slotId <= GUI_INPUT_INDEX || slotId >= GUI_OUTPUT_FIRST_INDEX){
                 return super.slotClick(slotId, dragType, clickTypeIn, player);
             }
             return ItemStack.EMPTY;
