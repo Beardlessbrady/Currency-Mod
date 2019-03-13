@@ -1,6 +1,6 @@
 package beardlessbrady.modcurrency.block.vending;
 
-import beardlessbrady.modcurrency.UtilMethods;
+import beardlessbrady.modcurrency.block.TileEconomyBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
@@ -10,7 +10,6 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
-import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 /**
@@ -47,12 +46,12 @@ public class ContainerVending extends Container {
     final int TE_INV_ROW_COUNT = 5;
 
     private EntityPlayer player;
-    private TileVending tile;
+    private TileVending te;
     private int[] cachedFields;
 
     public ContainerVending(EntityPlayer entityPlayer, TileVending te){
         player = entityPlayer;
-        tile = te;
+        this.te = te;
         InventoryPlayer invPlayer = player.inventory;
 
         setupPlayerInv(invPlayer);
@@ -83,7 +82,7 @@ public class ContainerVending extends Container {
     }
 
     private void setupTeInv(){
-        IItemHandler iItemHandler = this.tile.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        IItemHandler iItemHandler = this.te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 
         //Input Slot
         addSlotToContainer(new SlotItemHandler(iItemHandler, TE_INPUT_SLOT_INDEX, 145, 3));
@@ -111,11 +110,17 @@ public class ContainerVending extends Container {
 
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-      //TODO fix the sticky thing which was in issue in previous build (-999 trash)
+        int index = slotId - 37;
+        ItemStack playerStack = player.inventory.getItemStack();
+        ItemStack copyStack = playerStack.copy();
+
+        System.out.println(clickTypeIn + "  " + dragType);
+        //Allows drag clicking
+        if (slotId == -999) return super.slotClick(slotId, dragType, clickTypeIn, player);
 
         //Ensures Pickup_All works without duplicating blocks
         //<editor-fold desc="PICKUP ALL">
-        if (clickTypeIn == ClickType.PICKUP_ALL && slotId >= 0 && slotId < GUI_INPUT_INDEX) {
+        if (clickTypeIn == ClickType.PICKUP_ALL && slotId >= 0 && slotId <= PLAYER_TOTAL_COUNT) {
             Slot slot = this.inventorySlots.get(slotId);
             ItemStack itemstack1 = player.inventory.getItemStack();
 
@@ -152,37 +157,27 @@ public class ContainerVending extends Container {
         }
         //</editor-fold>
 
-        int index = slotId - 37;
-        ItemStack playerStack = player.inventory.getItemStack();
-        ItemStack copyStack = playerStack.copy();
-
-        //ADMIN MODE
-        if(tile.getIntField(TileVending.FIELD_MODE) == 1) {
-           if(slotId >= 37 && slotId <= 61) {  //Tile Inventory
-               if(dragType == 0) { //Left Click
-                   if (playerStack.isEmpty()) {
-                       player.inventory.setItemStack(tile.shrinkItemSize(64, index));
-                   } else {
-                       if(tile.getItemStack(index).isEmpty()){
-                           player.inventory.setItemStack(tile.setItem(copyStack, index, 0));
-                       }else{
-                           player.inventory.setItemStack(tile.growItemSize(copyStack, index));
-                       }
-                   }
-               }else if (dragType == 1){ //Right Click
-                   //Todo
-               }
-               return ItemStack.EMPTY;
-           }
-            return super.slotClick(slotId, dragType, clickTypeIn, player);
-
-            //PLAYER MODE
-        }else{
-            if(slotId <= GUI_INPUT_INDEX || slotId >= GUI_OUTPUT_FIRST_INDEX){
-                return super.slotClick(slotId, dragType, clickTypeIn, player);
+        if (slotId >= 37 && slotId <= 61) {  //te Inventory
+            if (te.getIntField(TileVending.FIELD_MODE) == 1) {            //ADMIN MODE
+                if (dragType == 0) { //Left Click
+                    if (playerStack.isEmpty()) {
+                        player.inventory.setItemStack(te.shrinkItemSize(64, index));
+                    } else {
+                        if (te.getItemStack(index).isEmpty()) {
+                            player.inventory.setItemStack(te.setItem(copyStack, index, 0));
+                        } else {
+                            player.inventory.setItemStack(te.growItemSize(copyStack, index));
+                        }
+                    }
+                } else if (dragType == 1) { //Right Click
+                    //Todo
+                }
+                return ItemStack.EMPTY;
+            } else {
+                return ItemStack.EMPTY;
             }
-            return ItemStack.EMPTY;
         }
+        return super.slotClick(slotId, dragType, clickTypeIn, player);
     }
 
     @Override
@@ -199,19 +194,19 @@ public class ContainerVending extends Container {
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        boolean fieldChanged[] = new boolean[tile.getIntFieldCount()];
+        boolean fieldChanged[] = new boolean[te.getIntFieldCount()];
 
-        if (cachedFields == null) cachedFields = new int[tile.getIntFieldCount()];
+        if (cachedFields == null) cachedFields = new int[te.getIntFieldCount()];
 
         for (int i = 0; i < cachedFields.length; i++) {
-            if (cachedFields[i] != tile.getIntField(i)) {
-                cachedFields[i] = tile.getIntField(i);
+            if (cachedFields[i] != te.getIntField(i)) {
+                cachedFields[i] = te.getIntField(i);
                 fieldChanged[i] = true;
             }
         }
 
         for (IContainerListener listener : this.listeners) {
-            for (int field = 0; field < tile.getIntFieldCount(); ++field) {
+            for (int field = 0; field < te.getIntFieldCount(); ++field) {
                 if (fieldChanged[field]) {
                     listener.sendWindowProperty(this, field, cachedFields[field]);
                 }
@@ -221,7 +216,15 @@ public class ContainerVending extends Container {
 
     @Override
     public void updateProgressBar(int id, int data) {
-        tile.setIntField(id, data);
+        te.setIntField(id, data);
     }
     //</editor-fold>
+
+
+    @Override
+    public void onContainerClosed(EntityPlayer playerIn) {
+        super.onContainerClosed(playerIn);
+        te.voidPlayerUsing();
+        te.setIntField(TileEconomyBase.FIELD_MODE, 0);
+    }
 }

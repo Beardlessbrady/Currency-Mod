@@ -17,6 +17,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 import javax.annotation.Nullable;
+import java.util.UUID;
 
 
 /**
@@ -37,8 +38,10 @@ public class BlockVending extends EconomyBlockBase {
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         if(!worldIn.isRemote) {
-           ((TileVending) getTile(worldIn, pos)).openGui(playerIn, worldIn, pos);
-           return true;
+            if(TileEconomyBase.EMPTYID.equals(getTile(worldIn,pos).getPlayerUsing())) {
+                ((TileVending) getTile(worldIn, pos)).openGui(playerIn, worldIn, pos);
+                return true;
+            }
        }
         return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
     }
@@ -52,6 +55,8 @@ public class BlockVending extends EconomyBlockBase {
 
         worldIn.setBlockState(pos.up(), state.withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.TWOTOP)
                 .withProperty(StateHandler.FACING, placer.getHorizontalFacing().getOpposite()));
+
+        getTile(worldIn, pos).setOwner(placer.getUniqueID());
     }
 
     @Override

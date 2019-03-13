@@ -6,6 +6,7 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 
 import javax.annotation.Nullable;
+import java.util.UUID;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
@@ -19,10 +20,16 @@ import javax.annotation.Nullable;
 public class TileEconomyBase extends TileEntity {
     protected int cashReserve;
     protected boolean mode;
+    protected UUID owner, playerUsing;
+
+    public static UUID EMPTYID = new UUID(0L, 0L);
 
     public TileEconomyBase(){
         cashReserve = 0;
         mode = false; //true == admin
+
+        owner = new UUID(0L, 0L);
+        playerUsing = new UUID(0L, 0L);
     }
 
     //<editor-fold desc="NBT Stuff">
@@ -31,6 +38,8 @@ public class TileEconomyBase extends TileEntity {
         super.writeToNBT(compound);
         compound.setInteger("cashReserve", cashReserve);
         compound.setBoolean("mode", mode);
+        compound.setUniqueId("playerUsing", playerUsing);
+        compound.setUniqueId("owner", owner);
 
         return compound;
     }
@@ -40,6 +49,8 @@ public class TileEconomyBase extends TileEntity {
         super.readFromNBT(compound);
         if (compound.hasKey("cashReserve")) cashReserve = compound.getInteger("cashReserve");
         if (compound.hasKey("mode")) mode = compound.getBoolean("mode");
+        if (compound.hasKey("playerUsing")) playerUsing = compound.getUniqueId("playerUsing");
+        if (compound.hasKey("owner")) owner = compound.getUniqueId("owner");
     }
 
     @Override
@@ -51,7 +62,10 @@ public class TileEconomyBase extends TileEntity {
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound compound = new NBTTagCompound();
+        compound.setInteger("cashReserve", cashReserve);
         compound.setBoolean("mode", mode);
+        compound.setUniqueId("playerUsing", playerUsing);
+        compound.setUniqueId("owner", owner);
 
         return new SPacketUpdateTileEntity(pos, 1, compound);
     }
@@ -62,6 +76,9 @@ public class TileEconomyBase extends TileEntity {
         NBTTagCompound compound = pkt.getNbtCompound();
 
         mode = compound.getBoolean("mode");
+        cashReserve = compound.getInteger("cashReserve");
+        playerUsing = compound.getUniqueId("playerUsing");
+        owner = compound.getUniqueId("owner");
     }
     //</editor-fold>
 
@@ -110,6 +127,27 @@ public class TileEconomyBase extends TileEntity {
                 return cashReserve;
         }
         return -1;
+    }
+
+
+    public UUID getOwner(){
+        return owner;
+    }
+
+    public void setOwner(UUID uuid){
+        owner = uuid;
+    }
+
+    public UUID getPlayerUsing(){
+        return playerUsing;
+    }
+
+    public void setPlayerUsing(UUID uuid){
+        playerUsing = uuid;
+    }
+
+    public void voidPlayerUsing(){
+        playerUsing = EMPTYID;
     }
 
 

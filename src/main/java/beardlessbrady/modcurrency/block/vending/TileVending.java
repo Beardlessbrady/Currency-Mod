@@ -22,6 +22,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
 import javax.annotation.Nullable;
+import java.util.UUID;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
@@ -57,6 +58,8 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     }
 
     public void openGui(EntityPlayer player, World world, BlockPos pos){
+        //TODO Sync with client playerunsing/owner?
+        playerUsing= player.getUniqueID();
         if(world.getBlockState(pos).getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP) {
             player.openGui(ModCurrency.instance, 30, world, pos.getX(), pos.down().getY(), pos.getZ());
         }else {

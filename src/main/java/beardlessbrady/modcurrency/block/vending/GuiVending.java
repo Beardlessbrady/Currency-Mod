@@ -46,7 +46,9 @@ public class GuiVending extends GuiContainer {
         int j = (this.height - this.ySize) / 2;
 
         this.buttonList.add(new GuiButton(BUTTONCHANGE,  i + 143 , j + 27, 20, 20, "$"));
-        this.buttonList.add(new GuiButton(BUTTONADMIN,  i + 137 , j - 42, 32, 20, "Admin"));
+
+        String mode = (te.getIntField(te.FIELD_MODE) == 1)? "STOCK" : "SELL";
+        this.buttonList.add(new GuiButton(BUTTONADMIN,  i + 137 , j - 42, 32, 20, mode));
     }
 
     @Override
@@ -57,12 +59,22 @@ public class GuiVending extends GuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
-        drawTexturedModalRect(guiLeft, guiTop - 47, 0, 0, 176, 254);
+        if(te.getIntField(te.FIELD_MODE) == 1){
+            drawTexturedModalRect(guiLeft, guiTop - 47, 0, 0, 250, 254);
+        }else{
+            drawTexturedModalRect(guiLeft, guiTop - 47, 0, 0, 176, 254);
+        }
     }
 
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+
+        if(te.getPlayerUsing().equals(te.getOwner())){
+            buttonList.get(BUTTONADMIN).visible = true;
+        }else{
+            buttonList.get(BUTTONADMIN).visible = false;
+        }
 
         fontRenderer.drawString(I18n.format("tile.modcurrency:blockvending.name"), 8, -42,  Color.darkGray.getRGB());
         this.fontRenderer.drawString(I18n.format("container.inventory"), 8, 114,  Color.darkGray.getRGB());
@@ -73,11 +85,6 @@ public class GuiVending extends GuiContainer {
     }
 
     @Override
-    public void onGuiClosed() {
-        super.onGuiClosed();
-    }
-
-    @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         switch(button.id){
             case BUTTONADMIN:
@@ -85,7 +92,7 @@ public class GuiVending extends GuiContainer {
                 pack.setData((te.getIntField(te.FIELD_MODE) == 1) ? 0 : 1, te.FIELD_MODE, te.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack);
 
-                String mode = (te.getIntField(te.FIELD_MODE) == 1)? "Admin" : "Player";
+                String mode = (te.getIntField(te.FIELD_MODE) == 0)? "STOCK" : "SELL";
                 buttonList.get(BUTTONADMIN).displayString = mode;
 
                 te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);

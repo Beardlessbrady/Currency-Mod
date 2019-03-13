@@ -72,4 +72,6 @@ public class EconomyBlockBase extends Block {
     public void registerModel(){
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
     }
+
+
 }
