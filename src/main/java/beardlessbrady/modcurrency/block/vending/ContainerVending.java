@@ -110,13 +110,12 @@ public class ContainerVending extends Container {
 
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
+        //System.out.println(dragType + "  " + clickTypeIn + slotId);
+
+
         int index = slotId - 37;
         ItemStack playerStack = player.inventory.getItemStack();
         ItemStack copyStack = playerStack.copy();
-
-        System.out.println(clickTypeIn + "  " + dragType);
-        //Allows drag clicking
-        if (slotId == -999) return super.slotClick(slotId, dragType, clickTypeIn, player);
 
         //Ensures Pickup_All works without duplicating blocks
         //<editor-fold desc="PICKUP ALL">
@@ -152,8 +151,6 @@ public class ContainerVending extends Container {
             }
             this.detectAndSendChanges();
             return ItemStack.EMPTY;
-        } else if (clickTypeIn == ClickType.PICKUP_ALL && slotId > PLAYER_TOTAL_COUNT) {
-            return ItemStack.EMPTY;
         }
         //</editor-fold>
 
@@ -170,7 +167,29 @@ public class ContainerVending extends Container {
                         }
                     }
                 } else if (dragType == 1) { //Right Click
-                    //Todo
+                    if(clickTypeIn == ClickType.QUICK_CRAFT) { //Mimics Left Click
+                        if (playerStack.isEmpty()) {
+                            player.inventory.setItemStack(te.shrinkItemSize(64, index));
+                        } else {
+                            if (te.getItemStack(index).isEmpty()) {
+                                player.inventory.setItemStack(te.setItem(copyStack, index, 0));
+                            } else {
+                                player.inventory.setItemStack(te.growItemSize(copyStack, index));
+                            }
+                        }
+                    }else {
+                        if (playerStack.isEmpty()) { //Pickup Half
+                            int half = te.getItemSize(index) / 2;
+                            if (half >= 64) half = 64;
+                            player.inventory.setItemStack(te.shrinkItemSize(half, index));
+                        } else {
+                            if (te.getItemStack(index).isEmpty()) { //Place 1
+                                player.inventory.setItemStack(te.setItemAndSize(copyStack, index, 1));
+                            } else {
+                                player.inventory.setItemStack(te.setItemAndSize(copyStack, index, 1));
+                            }
+                        }
+                    }
                 }
                 return ItemStack.EMPTY;
             } else {
