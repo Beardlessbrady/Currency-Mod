@@ -5,8 +5,6 @@ import beardlessbrady.modcurrency.UtilMethods;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.handler.StateHandler;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -20,9 +18,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
-
 import javax.annotation.Nullable;
-import java.util.UUID;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
@@ -42,14 +38,14 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     private ItemStackHandler inventoryStackHandler = new ItemStackHandler(TE_INVENTORY_SLOT_COUNT);
     private ItemStackHandler outputStackHandler = new ItemStackHandler(TE_OUTPUT_SLOT_COUNT);
 
-    private int inventoryLimit;
+    private int inventoryLimit, selectedSlot;
     private int[] inventorySize = new int[TE_INVENTORY_SLOT_COUNT];
 
     public TileVending(){
         for(int i = 0; i < inventorySize.length; i++){
             inventorySize[i] = 0;
         }
-        inventoryLimit = 32;
+        inventoryLimit = 320;
     }
 
     @Override
@@ -126,7 +122,6 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         NBTTagCompound inventoryLimitNBT = compound.getCompoundTag("inventorySize");
         for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) inventorySize[i] = inventoryLimitNBT.getInteger("inventory" + i);
     }
-
     //</editor-fold>
 
     //<editor-fold desc="Capabilities">
@@ -148,6 +143,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     //</editor-fold>
 
     public static final int FIELD_INVLIMIT = 1;
+    public static final int FIELD_SELECTED = 2;
 
     @Override
     public int getIntFieldCount(){
@@ -163,6 +159,9 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             case FIELD_INVLIMIT:
                 inventoryLimit = value;
                 break;
+            case FIELD_SELECTED:
+                selectedSlot = value;
+                break;
         }
     }
 
@@ -173,6 +172,8 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
                 return (mode)? 1 : 0;
             case FIELD_INVLIMIT:
                 return inventoryLimit;
+            case FIELD_SELECTED:
+                return selectedSlot;
         }
         return 0;
     }
@@ -213,19 +214,39 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         return copyStack;
     }
 
+    public ItemStack setItemAndSize(ItemStack stack, int index, int amount){
+        ItemStack userCopy = stack.copy();
+        ItemStack machineCopy2 = stack.copy();
+
+        if(!isSlotEmpty(index)) {
+            if(UtilMethods.equalStacks(stack, inventoryStackHandler.getStackInSlot(index))) {
+                machineCopy2.setCount(amount + getItemSize(index));
+            }else
+                return stack;
+        }else
+            machineCopy2.setCount(amount);
+
+        userCopy.shrink(amount);
+
+        int leftovers = setItem(machineCopy2, index, 0).getCount();
+        if (leftovers > 0) userCopy.grow(leftovers);
+
+        return userCopy;
+    }
+
     public ItemStack growItemSize(ItemStack stack, int index) {
-        if(UtilMethods.equalStacks(stack, inventoryStackHandler.getStackInSlot(index))){
-            return setItem(stack, index, stack.getCount());
-        }
-        return stack;
+            if (UtilMethods.equalStacks(stack, inventoryStackHandler.getStackInSlot(index))) {
+                return setItemAndSize(stack, index, stack.getCount());
+            }
+            return stack;
     }
 
     public ItemStack shrinkItemSize(int num, int index){
-        ItemStack outputStack = inventoryStackHandler.getStackInSlot(index);
+        ItemStack outputStack = inventoryStackHandler.getStackInSlot(index).copy();
         int output = inventorySize[index] - num;
 
         if(output > 0){
-            inventorySize[index] =- num;
+            inventorySize[index] = inventorySize[index] - num;
             outputStack.setCount(num);
         }else{
             inventorySize[index] = 0;

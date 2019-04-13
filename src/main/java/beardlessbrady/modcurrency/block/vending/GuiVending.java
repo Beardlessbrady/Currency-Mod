@@ -9,7 +9,6 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.items.ItemStackHandler;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -26,6 +25,7 @@ import java.io.IOException;
 
 public class GuiVending extends GuiContainer {
     private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(ModCurrency.MODID, "textures/gui/vendingmachinegui.png");
+    private static final ResourceLocation ASSET_TEXTURE = new ResourceLocation(ModCurrency.MODID, "textures/gui/guiassets.png");
 
     TileVending te;
 
@@ -59,11 +59,7 @@ public class GuiVending extends GuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
-        if(te.getIntField(te.FIELD_MODE) == 1){
-            drawTexturedModalRect(guiLeft, guiTop - 47, 0, 0, 250, 254);
-        }else{
-            drawTexturedModalRect(guiLeft, guiTop - 47, 0, 0, 176, 254);
-        }
+        drawTexturedModalRect(guiLeft, guiTop - 47, 0, 0, 176, 254);
     }
 
     @Override
@@ -77,11 +73,15 @@ public class GuiVending extends GuiContainer {
         }
 
         fontRenderer.drawString(I18n.format("tile.modcurrency:blockvending.name"), 8, -42,  Color.darkGray.getRGB());
-        this.fontRenderer.drawString(I18n.format("container.inventory"), 8, 114,  Color.darkGray.getRGB());
-        this.fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.in"), 149, -8, Color.lightGray.getRGB());
-        this.fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.out"), 80, 68, Color.lightGray.getRGB());
+        fontRenderer.drawString(I18n.format("container.inventory"), 8, 114,  Color.darkGray.getRGB());
+        fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.in"), 149, -8, Color.lightGray.getRGB());
+        fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.out"), 80, 68, Color.lightGray.getRGB());
 
         drawItemStackSize();
+
+        Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
+        drawAdminPanel();
+        drawSelectionOverlay();
     }
 
     @Override
@@ -128,5 +128,36 @@ public class GuiVending extends GuiContainer {
 
         GL11.glPopMatrix();
         GL11.glDisable(GL11.GL_DEPTH_TEST);
+    }
+
+    private void drawAdminPanel(){
+        if(te.getIntField(TileVending.FIELD_MODE) == 1){
+            drawTexturedModalRect(176, 0, 0, 205, 89, 51);
+        }
+    }
+
+    private void drawSelectionOverlay() {
+        int slotId = te.getIntField(TileVending.FIELD_SELECTED);
+        int slotColumn = 0, slotRow = 0;
+        System.out.println(slotId);
+
+        if (slotId >= 37 && slotId <= 41) {
+            slotColumn = 0;
+            slotRow = slotId - 37;
+        } else if (slotId >= 42 && slotId <= 46) {
+            slotColumn = 1;
+            slotRow = (slotId - 37) - 5;
+        } else if (slotId >= 47 && slotId <= 51) {
+            slotColumn = 2;
+            slotRow = (slotId - 37) - 10;
+        } else if (slotId >= 52 && slotId <= 56) {
+            slotColumn = 3;
+            slotRow = (slotId - 37) - 15;
+        } else if (slotId >= 57 && slotId <= 61) {
+            slotColumn = 4;
+            slotRow = (slotId - 37) - 20;
+        }
+
+        drawTexturedModalRect(42 + (18 * slotRow) , -32 + (18 * slotColumn), 0, 175, 29, 29);
     }
 }
