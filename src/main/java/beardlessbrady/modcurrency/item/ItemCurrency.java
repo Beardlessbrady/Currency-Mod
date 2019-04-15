@@ -42,7 +42,7 @@ public class ItemCurrency extends Item {
 
     @Override
     public String getUnlocalizedName(ItemStack stack) {
-        return "Item." + this.getRegistryName().toString() + "_" + stack.getItemDamage();
+        return "item." + this.getRegistryName().toString() + "_" + stack.getItemDamage();
     }
 
     @Override
