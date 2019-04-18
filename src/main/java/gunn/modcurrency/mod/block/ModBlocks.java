@@ -19,7 +19,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ModBlocks {
     public static BlockVending blockVending = new BlockVending();
     public static BlockExchanger blockExchanger = new BlockExchanger();
-    //public static BlockATM blockATM = new BlockATM();
+    public static BlockATM blockATM = new BlockATM();
 
     @SubscribeEvent
     public void registerBlocks(RegistryEvent.Register<Block> event) {

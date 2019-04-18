@@ -135,7 +135,19 @@ public class ContainerWallet extends Container implements INBTInventory {
             if (inventorySlots.get(slotId).getStack().getItem().equals(ModItems.itemWallet)) return ItemStack.EMPTY;
         }
 
+        //One dollar bills are screwing up, since I "removed" them anyways Ill just not allow them in the wallet
+        if (slotId >= 36) {
+            if (player.inventory.getItemStack().getItem().equals(ModItems.itemBanknote)) {
+                if (player.inventory.getItemStack().getItemDamage() == 0) {
+                    return ItemStack.EMPTY;
+                }
+            }
+        }
+
+
         ItemStack stack = super.slotClick(slotId, dragType, clickTypeIn, player);
+
+
         writeInventoryTag(player.getHeldItemMainhand(), itemStackHandler);
         checkmetadataOpen(player.getHeldItemMainhand());
         return stack;
@@ -153,6 +165,13 @@ public class ContainerWallet extends Container implements INBTInventory {
                 sourceStack = copyStack.copy();
 
                 if (index < PLAYER_TOTAL_COUNT) {     //Player Inventory Slots
+                    if (copyStack.getItem().equals(ModItems.itemBanknote)) {
+                            if (copyStack.getItemDamage() == 0) {
+                                return ItemStack.EMPTY;
+                            }
+                        }
+
+                    //One dollar bills are screwing up, since I "removed" them anyways Ill just not allow them in the wallet
                     if (itemsAllowed.contains(slot.getStack().getItem())) {
                         if (!this.mergeItemStack(copyStack, WALLET_FIRST_SLOT_INDEX, WALLET_FIRST_SLOT_INDEX + WALLET_TOTAL_COUNT, false)) {
                             return ItemStack.EMPTY;
