@@ -75,14 +75,14 @@ public class GuiVending extends GuiContainer {
 
         fontRenderer.drawString(I18n.format("tile.modcurrency:blockvending.name"), 8, -42,  Color.darkGray.getRGB());
         fontRenderer.drawString(I18n.format("container.inventory"), 8, 114,  Color.darkGray.getRGB());
-        fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.in"), 149, -8, Color.lightGray.getRGB());
-        fontRenderer.drawString(I18n.format("tile.modcurrency:guivending.out"), 80, 68, Color.lightGray.getRGB());
+        fontRenderer.drawString(I18n.format("guivending.in"), 149, -8, Color.lightGray.getRGB());
+        fontRenderer.drawString(I18n.format("guivending.out"), 80, 68, Color.lightGray.getRGB());
 
         drawItemStackSize();
 
         Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
-        drawAdminPanel();
         drawSelectionOverlay();
+        drawAdminPanel();
     }
 
     @Override
@@ -133,7 +133,9 @@ public class GuiVending extends GuiContainer {
 
     private void drawAdminPanel(){
         if(te.getIntField(TileVending.FIELD_MODE) == 1){
-            drawTexturedModalRect(176, 0, 0, 205, 89, 51);
+            drawTexturedModalRect(177, 0, 0, 215, 82, 41);
+
+            fontRenderer.drawStringWithShadow(I18n.format("guivending.slotsettings"), 206, 4, Integer.parseInt("ffffff", 16));
         }
     }
 
@@ -159,7 +161,7 @@ public class GuiVending extends GuiContainer {
                 slotRow = (slotId - 37) - 20;
             }
 
-            drawTexturedModalRect(42 + (18 * slotRow), -32 + (18 * slotColumn), 0, 175, 29, 29);
+            drawTexturedModalRect(42 + (18 * slotRow), -32 + (18 * slotColumn), 0, 185, 29, 29);
         }
     }
 

@@ -1,4 +1,6 @@
 //Vending Machine
 tile.modcurrency:blockvending.name=Vending Machine
-tile.modcurrency:guivending.in=IN
-tile.modcurrency:guivending.out=OUT
+
+guivending.in=IN
+guivending.out=OUT
+guivending.slotsettings=Price
