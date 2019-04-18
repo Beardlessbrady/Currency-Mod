@@ -9,6 +9,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -137,26 +138,47 @@ public class GuiVending extends GuiContainer {
     }
 
     private void drawSelectionOverlay() {
-        int slotId = te.getIntField(TileVending.FIELD_SELECTED);
-        int slotColumn = 0, slotRow = 0;
+        if(te.getIntField(TileVending.FIELD_MODE) == 1) {
+            int slotId = te.getIntField(TileVending.FIELD_SELECTED);
+            int slotColumn = 0, slotRow = 0;
 
-        if (slotId >= 37 && slotId <= 41) {
-            slotColumn = 0;
-            slotRow = slotId - 37;
-        } else if (slotId >= 42 && slotId <= 46) {
-            slotColumn = 1;
-            slotRow = (slotId - 37) - 5;
-        } else if (slotId >= 47 && slotId <= 51) {
-            slotColumn = 2;
-            slotRow = (slotId - 37) - 10;
-        } else if (slotId >= 52 && slotId <= 56) {
-            slotColumn = 3;
-            slotRow = (slotId - 37) - 15;
-        } else if (slotId >= 57 && slotId <= 61) {
-            slotColumn = 4;
-            slotRow = (slotId - 37) - 20;
+            if (slotId >= 37 && slotId <= 41) {
+                slotColumn = 0;
+                slotRow = slotId - 37;
+            } else if (slotId >= 42 && slotId <= 46) {
+                slotColumn = 1;
+                slotRow = (slotId - 37) - 5;
+            } else if (slotId >= 47 && slotId <= 51) {
+                slotColumn = 2;
+                slotRow = (slotId - 37) - 10;
+            } else if (slotId >= 52 && slotId <= 56) {
+                slotColumn = 3;
+                slotRow = (slotId - 37) - 15;
+            } else if (slotId >= 57 && slotId <= 61) {
+                slotColumn = 4;
+                slotRow = (slotId - 37) - 20;
+            }
+
+            drawTexturedModalRect(42 + (18 * slotRow), -32 + (18 * slotColumn), 0, 175, 29, 29);
         }
+    }
 
-        drawTexturedModalRect(42 + (18 * slotRow) , -32 + (18 * slotColumn), 0, 175, 29, 29);
+    @Override
+    public void handleMouseInput() throws IOException {
+        int i = Integer.signum(Mouse.getEventDWheel());
+        if(i==1){
+            if(te.getIntField(TileVending.FIELD_SELECTED) == 61){
+                te.setIntField(TileVending.FIELD_SELECTED, 37);
+            }else {
+                te.setIntField(TileVending.FIELD_SELECTED, te.getIntField(TileVending.FIELD_SELECTED) + 1);
+            }
+        }else if(i==-1) {
+            if (te.getIntField(TileVending.FIELD_SELECTED) == 37) {
+                te.setIntField(TileVending.FIELD_SELECTED, 61);
+            } else {
+                te.setIntField(TileVending.FIELD_SELECTED, te.getIntField(TileVending.FIELD_SELECTED) - 1);
+            }
+        }
+        super.handleMouseInput();
     }
 }

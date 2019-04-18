@@ -153,8 +153,10 @@ public class ContainerVending extends Container {
         //</editor-fold>
 
         if (slotId >= 37 && slotId <= 61) {  //te Inventory
-            if (!(te.getIntField(TileVending.FIELD_SELECTED) == slotId)) {
-                te.setIntField(te.FIELD_SELECTED, slotId);
+            if(clickTypeIn == ClickType.CLONE) {
+                if (!(te.getIntField(TileVending.FIELD_SELECTED) == slotId)) {
+                    te.setIntField(te.FIELD_SELECTED, slotId);
+                }
             }
 
             if (te.getIntField(TileVending.FIELD_MODE) == 1) {            //ADMIN MODE
