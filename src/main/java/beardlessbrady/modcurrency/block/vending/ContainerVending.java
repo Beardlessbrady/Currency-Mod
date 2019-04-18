@@ -110,8 +110,6 @@ public class ContainerVending extends Container {
 
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-        //System.out.println(dragType + "  " + clickTypeIn + slotId);
-
 
         int index = slotId - 37;
         ItemStack playerStack = player.inventory.getItemStack();

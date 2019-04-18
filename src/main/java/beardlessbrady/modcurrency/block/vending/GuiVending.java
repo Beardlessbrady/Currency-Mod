@@ -139,7 +139,6 @@ public class GuiVending extends GuiContainer {
     private void drawSelectionOverlay() {
         int slotId = te.getIntField(TileVending.FIELD_SELECTED);
         int slotColumn = 0, slotRow = 0;
-        System.out.println(slotId);
 
         if (slotId >= 37 && slotId <= 41) {
             slotColumn = 0;

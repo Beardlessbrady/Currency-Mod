@@ -3,11 +3,7 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
       <module name="beardlessbrady.modcurrency.Currency-Mod.api" target="1.8" />
-      <module name="beardlessbrady.modcurrency.Currency-Mod.main" target="1.8" />
       <module name="beardlessbrady.modcurrency.Currency-Mod.test" target="1.8" />
-      <module name="gunn.modcurrency.Currency-Mod.api" target="1.8" />
-      <module name="gunn.modcurrency.Currency-Mod.main" target="1.8" />
-      <module name="gunn.modcurrency.Currency-Mod.test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
