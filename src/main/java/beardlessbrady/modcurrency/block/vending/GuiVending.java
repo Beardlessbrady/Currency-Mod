@@ -133,9 +133,14 @@ public class GuiVending extends GuiContainer {
 
     private void drawAdminPanel(){
         if(te.getIntField(TileVending.FIELD_MODE) == 1){
-            drawTexturedModalRect(177, 0, 0, 215, 82, 41);
+            drawTexturedModalRect(177, 0, 0, 215, 106, 41);
 
             fontRenderer.drawStringWithShadow(I18n.format("guivending.slotsettings"), 206, 4, Integer.parseInt("ffffff", 16));
+
+            GL11.glPushMatrix();
+            GL11.glScaled(0.7, 0.7, 0.7);
+            fontRenderer.drawStringWithShadow(I18n.format("[" + te.getSelectedName() + "]"), 279, 20, Integer.parseInt("ffffff", 16));
+            GL11.glPopMatrix();
         }
     }
 
@@ -171,16 +176,22 @@ public class GuiVending extends GuiContainer {
         if(i==1){
             if(te.getIntField(TileVending.FIELD_SELECTED) == 61){
                 te.setIntField(TileVending.FIELD_SELECTED, 37);
+                te.setSelectedName(te.getItemStack(0).getDisplayName());
+
             }else {
                 te.setIntField(TileVending.FIELD_SELECTED, te.getIntField(TileVending.FIELD_SELECTED) + 1);
+                te.setSelectedName(te.getItemStack(te.getIntField(TileVending.FIELD_SELECTED) -37).getDisplayName());
             }
         }else if(i==-1) {
             if (te.getIntField(TileVending.FIELD_SELECTED) == 37) {
                 te.setIntField(TileVending.FIELD_SELECTED, 61);
+                te.setSelectedName(te.getItemStack(24).getDisplayName());
             } else {
                 te.setIntField(TileVending.FIELD_SELECTED, te.getIntField(TileVending.FIELD_SELECTED) - 1);
+                te.setSelectedName(te.getItemStack(te.getIntField(TileVending.FIELD_SELECTED) -37).getDisplayName());
             }
         }
+
         super.handleMouseInput();
     }
 }

@@ -38,6 +38,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     private ItemStackHandler inventoryStackHandler = new ItemStackHandler(TE_INVENTORY_SLOT_COUNT);
     private ItemStackHandler outputStackHandler = new ItemStackHandler(TE_OUTPUT_SLOT_COUNT);
 
+    private String selectedName;
     private int inventoryLimit, selectedSlot;
     private int[] inventorySize = new int[TE_INVENTORY_SLOT_COUNT];
 
@@ -46,6 +47,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             inventorySize[i] = 0;
         }
         inventoryLimit = 320;
+        selectedName = "No Item Selected";
     }
 
     @Override
@@ -71,6 +73,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         compound.setTag("inputinv", inputStackHandler.serializeNBT());
         compound.setTag("outputinv", outputStackHandler.serializeNBT());
         compound.setInteger("inventoryLimit", inventoryLimit);
+        compound.setString("selectedName", selectedName);
 
         NBTTagCompound inventorySizeNBT = new NBTTagCompound();
         for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++){
@@ -88,6 +91,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         if (compound.hasKey("inputinv")) inputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("inputinv"));
         if (compound.hasKey("outputinv")) outputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("outputinv"));
         if (compound.hasKey("inventoryLimit")) inventoryLimit = compound.getInteger("inventoryLimit");
+        if (compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
 
         if(compound.hasKey("inventorySize")){
             NBTTagCompound inventoryLimitNBT = compound.getCompoundTag("inventorySize");
@@ -102,6 +106,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
         compound.setBoolean("mode", mode);
         compound.setInteger("inventoryLimit", inventoryLimit);
+        compound.setString("selectedName", selectedName);
 
         NBTTagCompound inventorySizeNBT = new NBTTagCompound();
         for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++){
@@ -118,6 +123,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         NBTTagCompound compound = pkt.getNbtCompound();
 
         inventoryLimit = compound.getInteger("inventoryLimit");
+        selectedName = compound.getString("selectedName");
 
         NBTTagCompound inventoryLimitNBT = compound.getCompoundTag("inventorySize");
         for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) inventorySize[i] = inventoryLimitNBT.getInteger("inventory" + i);
@@ -257,4 +263,12 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         return outputStack;
     }
 
+    public String getSelectedName(){
+        if(selectedName.equals("Air")) return "No Item";
+        return selectedName;
+    }
+
+    public void setSelectedName(String name){
+        selectedName = name;
+    }
 }

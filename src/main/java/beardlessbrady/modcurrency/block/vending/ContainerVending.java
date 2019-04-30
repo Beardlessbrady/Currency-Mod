@@ -156,6 +156,7 @@ public class ContainerVending extends Container {
             if(clickTypeIn == ClickType.CLONE) {
                 if (!(te.getIntField(TileVending.FIELD_SELECTED) == slotId)) {
                     te.setIntField(te.FIELD_SELECTED, slotId);
+                    te.setSelectedName(te.getItemStack(index).getDisplayName());
                 }
             }
 
