@@ -133,14 +133,23 @@ public class GuiVending extends GuiContainer {
 
     private void drawAdminPanel(){
         if(te.getIntField(TileVending.FIELD_MODE) == 1){
-            drawTexturedModalRect(177, 0, 0, 215, 106, 41);
+            drawTexturedModalRect(177, 0, 0, 202, 106, 54);
 
-            fontRenderer.drawStringWithShadow(I18n.format("guivending.slotsettings"), 206, 4, Integer.parseInt("ffffff", 16));
+            fontRenderer.drawStringWithShadow(I18n.format("guivending.slotsettings"), 216, 10, Integer.parseInt("ffffff", 16));
 
+            String itemName = "[" + te.getSelectedName() + "]";
             GL11.glPushMatrix();
             GL11.glScaled(0.7, 0.7, 0.7);
-            fontRenderer.drawStringWithShadow(I18n.format("[" + te.getSelectedName() + "]"), 279, 20, Integer.parseInt("ffffff", 16));
+            fontRenderer.drawString(I18n.format(itemName), 322 - (itemName.length() *2 ), 28,  Integer.parseInt("7B232D", 16));
             GL11.glPopMatrix();
+
+            fontRenderer.drawStringWithShadow(I18n.format("$"), 206, 30, Color.lightGray.getRGB());
+
+
+
+
+
+
         }
     }
 
@@ -166,7 +175,7 @@ public class GuiVending extends GuiContainer {
                 slotRow = (slotId) - 20;
             }
 
-            drawTexturedModalRect(42 + (18 * slotRow), -32 + (18 * slotColumn), 0, 185, 29, 29);
+            drawTexturedModalRect(42 + (18 * slotRow), -32 + (18 * slotColumn), 0, 172, 29, 29);
         }
     }
 
@@ -193,7 +202,6 @@ public class GuiVending extends GuiContainer {
                 }
             }
         }
-
         super.handleMouseInput();
     }
 }
