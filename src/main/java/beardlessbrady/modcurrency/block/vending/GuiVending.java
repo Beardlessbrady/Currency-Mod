@@ -149,21 +149,21 @@ public class GuiVending extends GuiContainer {
             int slotId = te.getIntField(TileVending.FIELD_SELECTED);
             int slotColumn = 0, slotRow = 0;
 
-            if (slotId >= 37 && slotId <= 41) {
+            if (slotId >= 0 && slotId <= 4) {
                 slotColumn = 0;
-                slotRow = slotId - 37;
-            } else if (slotId >= 42 && slotId <= 46) {
+                slotRow = slotId;
+            } else if (slotId >= 5 && slotId <= 9) {
                 slotColumn = 1;
-                slotRow = (slotId - 37) - 5;
-            } else if (slotId >= 47 && slotId <= 51) {
+                slotRow = (slotId) - 5;
+            } else if (slotId >= 10 && slotId <= 14) {
                 slotColumn = 2;
-                slotRow = (slotId - 37) - 10;
-            } else if (slotId >= 52 && slotId <= 56) {
+                slotRow = (slotId) - 10;
+            } else if (slotId >= 15 && slotId <= 19) {
                 slotColumn = 3;
-                slotRow = (slotId - 37) - 15;
-            } else if (slotId >= 57 && slotId <= 61) {
+                slotRow = (slotId) - 15;
+            } else if (slotId >= 20 && slotId <= 24) {
                 slotColumn = 4;
-                slotRow = (slotId - 37) - 20;
+                slotRow = (slotId) - 20;
             }
 
             drawTexturedModalRect(42 + (18 * slotRow), -32 + (18 * slotColumn), 0, 185, 29, 29);
@@ -172,23 +172,25 @@ public class GuiVending extends GuiContainer {
 
     @Override
     public void handleMouseInput() throws IOException {
-        int i = Integer.signum(Mouse.getEventDWheel());
-        if(i==1){
-            if(te.getIntField(TileVending.FIELD_SELECTED) == 61){
-                te.setIntField(TileVending.FIELD_SELECTED, 37);
-                te.setSelectedName(te.getItemStack(0).getDisplayName());
+        if(te.getIntField(TileVending.FIELD_MODE) == 1) {
+            int i = Integer.signum(Mouse.getEventDWheel());
+            if (i == 1) {
+                if (te.getIntField(TileVending.FIELD_SELECTED) == 24) {
+                    te.setIntField(TileVending.FIELD_SELECTED, 0);
+                    te.setSelectedName(te.getItemStack(0).getDisplayName());
 
-            }else {
-                te.setIntField(TileVending.FIELD_SELECTED, te.getIntField(TileVending.FIELD_SELECTED) + 1);
-                te.setSelectedName(te.getItemStack(te.getIntField(TileVending.FIELD_SELECTED) -37).getDisplayName());
-            }
-        }else if(i==-1) {
-            if (te.getIntField(TileVending.FIELD_SELECTED) == 37) {
-                te.setIntField(TileVending.FIELD_SELECTED, 61);
-                te.setSelectedName(te.getItemStack(24).getDisplayName());
-            } else {
-                te.setIntField(TileVending.FIELD_SELECTED, te.getIntField(TileVending.FIELD_SELECTED) - 1);
-                te.setSelectedName(te.getItemStack(te.getIntField(TileVending.FIELD_SELECTED) -37).getDisplayName());
+                } else {
+                    te.setIntField(TileVending.FIELD_SELECTED, te.getIntField(TileVending.FIELD_SELECTED) + 1);
+                    te.setSelectedName(te.getItemStack(te.getIntField(TileVending.FIELD_SELECTED)).getDisplayName());
+                }
+            } else if (i == -1) {
+                if (te.getIntField(TileVending.FIELD_SELECTED) == 0) {
+                    te.setIntField(TileVending.FIELD_SELECTED, 24);
+                    te.setSelectedName(te.getItemStack(24).getDisplayName());
+                } else {
+                    te.setIntField(TileVending.FIELD_SELECTED, te.getIntField(TileVending.FIELD_SELECTED) - 1);
+                    te.setSelectedName(te.getItemStack(te.getIntField(TileVending.FIELD_SELECTED)).getDisplayName());
+                }
             }
         }
 

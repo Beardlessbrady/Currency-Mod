@@ -155,7 +155,7 @@ public class ContainerVending extends Container {
         if (slotId >= 37 && slotId <= 61) {  //te Inventory
             if(clickTypeIn == ClickType.CLONE) {
                 if (!(te.getIntField(TileVending.FIELD_SELECTED) == slotId)) {
-                    te.setIntField(te.FIELD_SELECTED, slotId);
+                    te.setIntField(te.FIELD_SELECTED, slotId - 37);
                     te.setSelectedName(te.getItemStack(index).getDisplayName());
                 }
             }
