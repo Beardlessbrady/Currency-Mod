@@ -5,6 +5,7 @@ import beardlessbrady.modcurrency.network.PacketHandler;
 import beardlessbrady.modcurrency.network.PacketSetFieldToServer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,6 +29,8 @@ public class GuiVending extends GuiContainer {
     private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(ModCurrency.MODID, "textures/gui/vendingmachinegui.png");
     private static final ResourceLocation ASSET_TEXTURE = new ResourceLocation(ModCurrency.MODID, "textures/gui/guiassets.png");
 
+    private GuiTextField priceField;
+
     TileVending te;
 
 
@@ -50,8 +53,13 @@ public class GuiVending extends GuiContainer {
 
         String mode = (te.getIntField(te.FIELD_MODE) == 1)? "STOCK" : "SELL";
         this.buttonList.add(new GuiButton(BUTTONADMIN,  i + 137 , j - 42, 32, 20, mode));
-    }
 
+        this.priceField = new GuiTextField(0, fontRenderer, 50, 50, 50, 8);
+        this.priceField.setTextColor(Integer.parseInt("0099ff", 16));
+        this.priceField.setEnableBackgroundDrawing(false);
+        this.priceField.setMaxStringLength(7);
+        this.priceField.setEnabled(false);
+    }
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);

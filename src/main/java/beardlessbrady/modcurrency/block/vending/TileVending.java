@@ -41,6 +41,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     private String selectedName;
     private int inventoryLimit, selectedSlot;
     private int[] inventorySize = new int[TE_INVENTORY_SLOT_COUNT];
+    private int[] inventoryCost = new int[TE_INVENTORY_SLOT_COUNT];
 
     public TileVending(){
         for(int i = 0; i < inventorySize.length; i++){
@@ -76,10 +77,13 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         compound.setString("selectedName", selectedName);
 
         NBTTagCompound inventorySizeNBT = new NBTTagCompound();
+        NBTTagCompound inventoryCostNBT = new NBTTagCompound();
         for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++){
             inventorySizeNBT.setInteger("inventory" + i, inventorySize[i]);
+            inventoryCostNBT.setInteger("cost" + i, inventoryCost[i]);
         }
         compound.setTag("inventorySize", inventorySizeNBT);
+        compound.setTag("inventoryCost", inventoryCostNBT);
 
         return compound;
     }
@@ -95,7 +99,11 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
         if(compound.hasKey("inventorySize")){
             NBTTagCompound inventoryLimitNBT = compound.getCompoundTag("inventorySize");
-            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) inventorySize[i] = inventoryLimitNBT.getInteger("inventory" + i);
+            NBTTagCompound inventoryCostNBT = compound.getCompoundTag("inventoryCost");
+            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) {
+                inventorySize[i] = inventoryLimitNBT.getInteger("inventory" + i);
+                inventoryCost[i] = inventoryCostNBT.getInteger("inventoryCost" + i);
+            }
         }
     }
 
@@ -109,10 +117,13 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         compound.setString("selectedName", selectedName);
 
         NBTTagCompound inventorySizeNBT = new NBTTagCompound();
+        NBTTagCompound inventoryCostNBT = new NBTTagCompound();
         for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++){
             inventorySizeNBT.setInteger("inventory" + i, inventorySize[i]);
+            inventoryCostNBT.setInteger("cost" + i, inventoryCost[i]);
         }
         compound.setTag("inventorySize", inventorySizeNBT);
+        compound.setTag("inventoryCost", inventoryCostNBT);
 
         return new SPacketUpdateTileEntity(pos, 1, compound);
     }
@@ -126,7 +137,11 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         selectedName = compound.getString("selectedName");
 
         NBTTagCompound inventoryLimitNBT = compound.getCompoundTag("inventorySize");
-        for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) inventorySize[i] = inventoryLimitNBT.getInteger("inventory" + i);
+        NBTTagCompound inventoryCostNBT = compound.getCompoundTag("inventoryCost");
+        for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++){
+            inventorySize[i] = inventoryLimitNBT.getInteger("inventory" + i);
+            inventoryCost[i] = inventoryCostNBT.getInteger("inventory" + i);
+        }
     }
     //</editor-fold>
 
