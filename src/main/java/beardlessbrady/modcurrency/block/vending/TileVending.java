@@ -286,4 +286,12 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     public void setSelectedName(String name){
         selectedName = name;
     }
+
+    public void setItemCost(int cost){
+        inventoryCost[selectedSlot] = cost;
+    }
+
+    public int getItemCost(){
+        return inventoryCost[selectedSlot];
+    }
 }

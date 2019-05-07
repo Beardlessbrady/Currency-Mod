@@ -17,7 +17,7 @@ public final class UtilMethods {
         boolean ench = false;
         if(one.hasTagCompound() && two.hasTagCompound()) {
             ench = (one.getTagCompound().equals(two.getTagCompound()));
-        }else if(one.hasTagCompound() == false && one.hasTagCompound() == false) ench = true;
+        }else if(one.hasTagCompound() == false && two.hasTagCompound() == false) ench = true;
         return basic && ench;
     }
 

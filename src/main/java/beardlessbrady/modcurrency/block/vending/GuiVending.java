@@ -29,7 +29,7 @@ public class GuiVending extends GuiContainer {
     private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(ModCurrency.MODID, "textures/gui/vendingmachinegui.png");
     private static final ResourceLocation ASSET_TEXTURE = new ResourceLocation(ModCurrency.MODID, "textures/gui/guiassets.png");
 
-    private GuiTextField priceField;
+    GuiTextField fieldPrice;
 
     TileVending te;
 
@@ -37,6 +37,8 @@ public class GuiVending extends GuiContainer {
     //Button ID's
     private static final int BUTTONCHANGE = 0;
     private static final int BUTTONADMIN = 1;
+
+    private static final int FIELDPRICE = 0;
 
     public GuiVending(EntityPlayer entityPlayer, TileVending te){
         super(new ContainerVending(entityPlayer, te));
@@ -54,15 +56,18 @@ public class GuiVending extends GuiContainer {
         String mode = (te.getIntField(te.FIELD_MODE) == 1)? "STOCK" : "SELL";
         this.buttonList.add(new GuiButton(BUTTONADMIN,  i + 137 , j - 42, 32, 20, mode));
 
-        this.priceField = new GuiTextField(0, fontRenderer, 50, 50, 50, 8);
-        this.priceField.setTextColor(Integer.parseInt("0099ff", 16));
-        this.priceField.setEnableBackgroundDrawing(false);
-        this.priceField.setMaxStringLength(7);
-        this.priceField.setEnabled(false);
+        this.fieldPrice = new GuiTextField(0, fontRenderer, i + 217, j + 30, 50, 8);        //Setting Costs
+        this.fieldPrice.setTextColor(Integer.parseInt("C35763", 16));
+        this.fieldPrice.setEnableBackgroundDrawing(false);
+        this.fieldPrice.setMaxStringLength(7);
+        this.fieldPrice.setEnabled(true);
+        this.fieldPrice.setText("0.00");
+
     }
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
+        this.fieldPrice.drawTextBox();
     }
 
     @Override
@@ -151,7 +156,7 @@ public class GuiVending extends GuiContainer {
             fontRenderer.drawString(I18n.format(itemName), 322 - (itemName.length() *2 ), 28,  Integer.parseInt("7B232D", 16));
             GL11.glPopMatrix();
 
-            fontRenderer.drawStringWithShadow(I18n.format("$"), 206, 30, Color.lightGray.getRGB());
+            fontRenderer.drawStringWithShadow(I18n.format("$"), 210, 30, Color.lightGray.getRGB());
 
 
 
