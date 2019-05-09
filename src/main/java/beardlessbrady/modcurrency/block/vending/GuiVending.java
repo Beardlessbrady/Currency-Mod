@@ -1,8 +1,10 @@
 package beardlessbrady.modcurrency.block.vending;
 
 import beardlessbrady.modcurrency.ModCurrency;
+import beardlessbrady.modcurrency.UtilMethods;
 import beardlessbrady.modcurrency.network.PacketHandler;
 import beardlessbrady.modcurrency.network.PacketSetFieldToServer;
+import beardlessbrady.modcurrency.network.PacketSetItemCostToServer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
@@ -56,14 +58,17 @@ public class GuiVending extends GuiContainer {
         String mode = (te.getIntField(te.FIELD_MODE) == 1)? "STOCK" : "SELL";
         this.buttonList.add(new GuiButton(BUTTONADMIN,  i + 137 , j - 42, 32, 20, mode));
 
-        this.fieldPrice = new GuiTextField(0, fontRenderer, i + 217, j + 30, 50, 8);        //Setting Costs
+        this.fieldPrice = new GuiTextField(FIELDPRICE, fontRenderer, i + 217, j + 30, 50, 8);        //Setting Costs
         this.fieldPrice.setTextColor(Integer.parseInt("C35763", 16));
         this.fieldPrice.setEnableBackgroundDrawing(false);
         this.fieldPrice.setMaxStringLength(7);
-        this.fieldPrice.setEnabled(true);
+        this.fieldPrice.setEnabled(false);
+        this.fieldPrice.setVisible(false);
         this.fieldPrice.setText("0.00");
 
+        updateTextField();
     }
+
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
@@ -94,8 +99,16 @@ public class GuiVending extends GuiContainer {
         drawItemStackSize();
 
         Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
-        drawSelectionOverlay();
-        drawAdminPanel();
+        if(te.getIntField(TileVending.FIELD_MODE) == 1) {
+            drawSelectionOverlay();
+            drawAdminPanel();
+
+            this.fieldPrice.setEnabled(true);
+            this.fieldPrice.setVisible(true);
+        }else{
+            this.fieldPrice.setEnabled(false);
+            this.fieldPrice.setVisible(false);
+        }
     }
 
     @Override
@@ -157,12 +170,6 @@ public class GuiVending extends GuiContainer {
             GL11.glPopMatrix();
 
             fontRenderer.drawStringWithShadow(I18n.format("$"), 210, 30, Color.lightGray.getRGB());
-
-
-
-
-
-
         }
     }
 
@@ -201,20 +208,91 @@ public class GuiVending extends GuiContainer {
                     te.setIntField(TileVending.FIELD_SELECTED, 0);
                     te.setSelectedName(te.getItemStack(0).getDisplayName());
 
+                    updateTextField();
                 } else {
                     te.setIntField(TileVending.FIELD_SELECTED, te.getIntField(TileVending.FIELD_SELECTED) + 1);
                     te.setSelectedName(te.getItemStack(te.getIntField(TileVending.FIELD_SELECTED)).getDisplayName());
+
+                    updateTextField();
                 }
             } else if (i == -1) {
                 if (te.getIntField(TileVending.FIELD_SELECTED) == 0) {
                     te.setIntField(TileVending.FIELD_SELECTED, 24);
                     te.setSelectedName(te.getItemStack(24).getDisplayName());
+
+                    updateTextField();
                 } else {
                     te.setIntField(TileVending.FIELD_SELECTED, te.getIntField(TileVending.FIELD_SELECTED) - 1);
                     te.setSelectedName(te.getItemStack(te.getIntField(TileVending.FIELD_SELECTED)).getDisplayName());
+
+                    updateTextField();
                 }
             }
         }
         super.handleMouseInput();
+    }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        int numChar = Character.getNumericValue(typedChar);
+        if ((te.getIntField(te.FIELD_MODE) == 1) && ((numChar >= 0 && numChar <= 9) || (keyCode == 14) || keyCode == 211 || (keyCode == 203) || (keyCode == 205) || (keyCode == 52))) { //Ensures keys input are only numbers or backspace type keys
+
+            if ((keyCode == 52 && !fieldPrice.getText().contains(".")) || keyCode != 52) {
+                if (this.fieldPrice.textboxKeyTyped(typedChar, keyCode)) setCost();
+            }
+
+            if (fieldPrice.getText().length() > 0)
+                if (fieldPrice.getText().substring(fieldPrice.getText().length() - 1).equals("."))
+                    fieldPrice.setMaxStringLength(fieldPrice.getText().length() + 2);
+            if (!fieldPrice.getText().contains(".")) fieldPrice.setMaxStringLength(7);
+
+        } else {
+            super.keyTyped(typedChar, keyCode);
+        }
+    }
+
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        if(te.getIntField(TileVending.FIELD_MODE) == 1) {
+            super.mouseClicked(mouseX, mouseY, mouseButton);
+            fieldPrice.mouseClicked(mouseX, mouseY, mouseButton);
+
+            updateTextField();
+        }else {
+            super.mouseClicked(mouseX, mouseY, mouseButton);
+        }
+    }
+
+    private void setCost() {
+        if (this.fieldPrice.getText().length() > 0) {
+            int newCost = 0;
+
+            if (fieldPrice.getText().contains(".")) {
+                if (fieldPrice.getText().lastIndexOf(".") + 1 != fieldPrice.getText().length()) {
+                    if (fieldPrice.getText().lastIndexOf(".") + 2 == fieldPrice.getText().length()) {
+                        newCost = Integer.valueOf(this.fieldPrice.getText().substring(fieldPrice.getText().lastIndexOf(".") + 1) + "0");
+                    } else {
+                        newCost = Integer.valueOf(this.fieldPrice.getText().substring(fieldPrice.getText().lastIndexOf(".") + 1));
+                    }
+                }
+
+                if (fieldPrice.getText().lastIndexOf(".") != 0)
+                    newCost += Integer.valueOf(this.fieldPrice.getText().substring(0, fieldPrice.getText().lastIndexOf("."))) * 100;
+
+            } else {
+                newCost = Integer.valueOf(this.fieldPrice.getText()) * 100;
+            }
+
+            te.setItemCost(newCost);
+            PacketSetItemCostToServer pack = new PacketSetItemCostToServer();
+            pack.setData(newCost, te.getPos());
+            PacketHandler.INSTANCE.sendToServer(pack);
+
+            te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
+        }
+    }
+
+    private void updateTextField() {
+        fieldPrice.setText(UtilMethods.translateMoney(te.getItemCost()));
     }
 }
