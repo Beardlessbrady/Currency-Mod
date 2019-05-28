@@ -1,6 +1,9 @@
 package beardlessbrady.modcurrency.block.vending;
 
+import beardlessbrady.modcurrency.ModCurrency;
+import beardlessbrady.modcurrency.block.ModBlocks;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
+import beardlessbrady.modcurrency.item.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
@@ -152,7 +155,14 @@ public class ContainerVending extends Container {
         }
         //</editor-fold>
 
-        if (slotId >= 37 && slotId <= 61) {  //te Inventory
+        if (slotId == GUI_INPUT_INDEX) {
+            if (playerStack.getItem().equals(ModItems.itemCurrency) || playerStack.isEmpty()) {
+            } else {
+                return ItemStack.EMPTY;
+            }
+        }
+
+        if(slotId >= 37 && slotId <= 61) {  //te Inventory
             if(clickTypeIn == ClickType.CLONE) {
                 if (!(te.getIntField(TileVending.FIELD_SELECTED) == slotId)) {
                     te.setIntField(te.FIELD_SELECTED, slotId - 37);

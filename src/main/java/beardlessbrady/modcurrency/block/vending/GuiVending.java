@@ -106,6 +106,11 @@ public class GuiVending extends GuiContainer {
             this.fieldPrice.setEnabled(true);
             this.fieldPrice.setVisible(true);
         }else{
+
+            //Todo add to lang
+            fontRenderer.drawStringWithShadow(I18n.format("Cash: $"), -90, 10, Integer.parseInt("ffffff", 16));
+            fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getLongField(TileVending.FIELD_LONG_CASHRESERVE))), -53, 10, Integer.parseInt("ffffff", 16));
+
             this.fieldPrice.setEnabled(false);
             this.fieldPrice.setVisible(false);
         }
@@ -162,6 +167,10 @@ public class GuiVending extends GuiContainer {
             drawTexturedModalRect(177, 0, 0, 202, 106, 54);
 
             fontRenderer.drawStringWithShadow(I18n.format("guivending.slotsettings"), 216, 10, Integer.parseInt("ffffff", 16));
+
+            //Todo add to lang file
+            fontRenderer.drawStringWithShadow(I18n.format("Cash: $"), -90, 10, Integer.parseInt("ffffff", 16));
+            fontRenderer.drawStringWithShadow(I18n.format(Long.toString(te.getLongField(TileVending.FIELD_LONG_CASHRESERVE))), -53, 10, Integer.parseInt("ffffff", 16));
 
             String itemName = "[" + te.getSelectedName() + "]";
             GL11.glPushMatrix();

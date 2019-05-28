@@ -1,9 +1,11 @@
 package beardlessbrady.modcurrency.block.vending;
 
+import beardlessbrady.modcurrency.ConfigCurrency;
 import beardlessbrady.modcurrency.ModCurrency;
 import beardlessbrady.modcurrency.UtilMethods;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.handler.StateHandler;
+import beardlessbrady.modcurrency.item.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -34,9 +36,6 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     public final int TE_INVENTORY_SLOT_COUNT = 25;
     public final int TE_OUTPUT_SLOT_COUNT = 5;
 
-    //private ItemStackHandler inputStackHandler = new ItemStackHandler(TE_INPUT_SLOT_COUNT);
-  //  private ItemStackHandler inventoryStackHandler = new ItemStackHandler(TE_INVENTORY_SLOT_COUNT);
-   // private ItemStackHandler outputStackHandler = new ItemStackHandler(TE_OUTPUT_SLOT_COUNT);
     private ItemStackHandler inputStackHandler = new ItemStackHandler(TE_INPUT_SLOT_COUNT) {
         @Override
         protected void onContentsChanged(int slot) {
@@ -74,7 +73,21 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
     @Override
     public void update() {
+        if(!inputStackHandler.getStackInSlot(0).isEmpty()){
+            if (inputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemCurrency)) {
+                ItemStack itemStack = inputStackHandler.getStackInSlot(0);
 
+                    float tempAmount = Float.valueOf(ConfigCurrency.currencyValues[itemStack.getItemDamage()]) * 100;
+                    long amount = (long) tempAmount;
+
+                    amount = amount * inputStackHandler.getStackInSlot(0).getCount();
+                    inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
+
+
+                    cashReserve += amount;
+                    System.out.println("DD" + cashReserve);
+            }
+        }
     }
 
     public void openGui(EntityPlayer player, World world, BlockPos pos){

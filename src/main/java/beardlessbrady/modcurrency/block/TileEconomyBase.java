@@ -18,7 +18,7 @@ import java.util.UUID;
  */
 
 public class TileEconomyBase extends TileEntity {
-    protected int cashReserve;
+    protected long cashReserve, cashRegister;
     protected boolean mode;
     protected UUID owner, playerUsing;
 
@@ -26,6 +26,7 @@ public class TileEconomyBase extends TileEntity {
 
     public TileEconomyBase(){
         cashReserve = 0;
+        cashRegister = 0;
         mode = false; //true == admin
 
         owner = new UUID(0L, 0L);
@@ -36,7 +37,8 @@ public class TileEconomyBase extends TileEntity {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
-        compound.setInteger("cashReserve", cashReserve);
+        compound.setLong("cashReserve", cashReserve);
+        compound.setLong("cashRegister", cashRegister);
         compound.setBoolean("mode", mode);
         compound.setUniqueId("playerUsing", playerUsing);
         compound.setUniqueId("owner", owner);
@@ -47,7 +49,8 @@ public class TileEconomyBase extends TileEntity {
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        if (compound.hasKey("cashReserve")) cashReserve = compound.getInteger("cashReserve");
+        if (compound.hasKey("cashReserve")) cashReserve = compound.getLong("cashReserve");
+        if(compound.hasKey("cashRegister")) cashRegister = compound.getLong("cashRegister");
         if (compound.hasKey("mode")) mode = compound.getBoolean("mode");
         if (compound.hasKey("playerUsing")) playerUsing = compound.getUniqueId("playerUsing");
         if (compound.hasKey("owner")) owner = compound.getUniqueId("owner");
@@ -62,7 +65,8 @@ public class TileEconomyBase extends TileEntity {
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound compound = new NBTTagCompound();
-        compound.setInteger("cashReserve", cashReserve);
+        compound.setLong("cashReserve", cashReserve);
+        compound.setLong("cashRegister", cashRegister);
         compound.setBoolean("mode", mode);
         compound.setUniqueId("playerUsing", playerUsing);
         compound.setUniqueId("owner", owner);
@@ -76,7 +80,8 @@ public class TileEconomyBase extends TileEntity {
         NBTTagCompound compound = pkt.getNbtCompound();
 
         mode = compound.getBoolean("mode");
-        cashReserve = compound.getInteger("cashReserve");
+        cashReserve = compound.getLong("cashReserve");
+        cashRegister = compound.getLong("cashRegister");
         playerUsing = compound.getUniqueId("playerUsing");
         owner = compound.getUniqueId("owner");
     }
@@ -85,6 +90,7 @@ public class TileEconomyBase extends TileEntity {
 
     //Field Id's
     public static final int FIELD_LONG_CASHRESERVE = 0;
+    public static final int FIELD_LONG_CASHREGISTER = 1;
 
     public static final int FIELD_MODE = 0;
 
@@ -110,13 +116,16 @@ public class TileEconomyBase extends TileEntity {
     }
 
     public int getLongFieldCount(){
-        return 1;
+        return 2;
     }
 
     public void setLongField(int id, int value){
         switch(id){
             case FIELD_LONG_CASHRESERVE:
                 cashReserve = value;
+                break;
+            case FIELD_LONG_CASHREGISTER:
+                cashRegister = value;
                 break;
         }
     }
@@ -125,6 +134,8 @@ public class TileEconomyBase extends TileEntity {
         switch(id){
             case FIELD_LONG_CASHRESERVE:
                 return cashReserve;
+            case FIELD_LONG_CASHREGISTER:
+                return cashRegister;
         }
         return -1;
     }
