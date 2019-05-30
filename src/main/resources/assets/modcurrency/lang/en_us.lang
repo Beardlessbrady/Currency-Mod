@@ -4,3 +4,6 @@ tile.modcurrency:blockvending.name=Vending Machine
 guivending.in=IN
 guivending.out=OUT
 guivending.slotsettings=Price
+guivending.moneysign=$
+guivending.cash=Cash
+guivending.profit=Profit

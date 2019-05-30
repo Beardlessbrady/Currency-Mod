@@ -92,6 +92,8 @@ public class GuiVending extends GuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+        int i = (this.width - this.xSize) / 2;
+        int j = (this.height - this.ySize) / 2;
 
         if(te.getPlayerUsing().equals(te.getOwner())){
             buttonList.get(BUTTONADMIN).visible = true;
@@ -107,9 +109,8 @@ public class GuiVending extends GuiContainer {
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glPushMatrix();
         GL11.glScalef(0.7F, 0.7F, 0.8F);
-        //Todo add to lang, Test that changes on server as well
-        fontRenderer.drawStringWithShadow(I18n.format("Cash"), 7, -40, Integer.parseInt("2DB22F", 16));
-        fontRenderer.drawStringWithShadow(I18n.format("$"), 7, -30, Integer.parseInt("ffffff", 16));
+        fontRenderer.drawStringWithShadow(I18n.format("guivending.cash"), 7, -40, Integer.parseInt("2DB22F", 16));
+        fontRenderer.drawStringWithShadow(I18n.format("guivending.moneysign"), 7, -30, Integer.parseInt("ffffff", 16));
         fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getLongField(TileVending.FIELD_LONG_CASHRESERVE))), 15, -30, Integer.parseInt("ffffff", 16));
         GL11.glPopMatrix();
         GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -117,15 +118,30 @@ public class GuiVending extends GuiContainer {
         drawItemStackSize();
 
         Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
+        //STOCK MODE, SELL MODE
         if(te.getIntField(TileVending.FIELD_MODE) == 1) {
             drawSelectionOverlay();
             drawAdminPanel();
 
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+            GL11.glPushMatrix();
+            GL11.glScalef(0.7F, 0.7F, 0.8F);
+            fontRenderer.drawStringWithShadow(I18n.format("guivending.profit"), 7, -10, Integer.parseInt("3D78E0", 16));
+            fontRenderer.drawStringWithShadow(I18n.format("guivending.moneysign"), 7, 0, Integer.parseInt("ffffff", 16));
+            fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getLongField(TileVending.FIELD_LONG_CASHREGISTER))), 15, 0, Integer.parseInt("ffffff", 16));
+            GL11.glPopMatrix();
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+
             this.fieldPrice.setEnabled(true);
             this.fieldPrice.setVisible(true);
+
+            this.buttonList.set(BUTTONCHANGE, new GuiButton(BUTTONCHANGE,  i + 143 , j + 27, 20, 20, TextFormatting.BLUE + "$"));
         }else{
+
             this.fieldPrice.setEnabled(false);
             this.fieldPrice.setVisible(false);
+
+            this.buttonList.set(BUTTONCHANGE, new GuiButton(BUTTONCHANGE,  i + 143 , j + 27, 20, 20, TextFormatting.GREEN + "$"));
         }
     }
 
@@ -180,16 +196,6 @@ public class GuiVending extends GuiContainer {
             drawTexturedModalRect(177, 0, 0, 202, 106, 54);
 
             fontRenderer.drawStringWithShadow(I18n.format("guivending.slotsettings"), 216, 10, Integer.parseInt("ffffff", 16));
-
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
-            GL11.glPushMatrix();
-            GL11.glScalef(0.7F, 0.7F, 0.8F);
-            //Todo add to lang, Test that changes on server as well
-            fontRenderer.drawStringWithShadow(I18n.format("Profit"), 7, -10, Integer.parseInt("3D78E0", 16));
-            fontRenderer.drawStringWithShadow(I18n.format("$"), 7, 0, Integer.parseInt("ffffff", 16));
-            fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getLongField(TileVending.FIELD_LONG_CASHREGISTER))), 15, 0, Integer.parseInt("ffffff", 16));
-            GL11.glPopMatrix();
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
 
             String itemName = "[" + te.getSelectedName() + "]";
             GL11.glPushMatrix();
