@@ -233,6 +233,12 @@ public class GuiVending extends GuiContainer {
         int j = (y - (this.height - this.ySize) / 2);
 
         if(j <= 58 && j >= -31 && i >= 43) {
+            int startY = -31;
+            int startX = 43;
+            int row = ((j - startY) / 18);
+            int column = ((i - startX) / 18);
+            int slot = column + (row * 5);
+
             List<String> list = new ArrayList<>();
             List<String> ogTooltip = stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
             int tooltipStart = 1;
@@ -257,7 +263,8 @@ public class GuiVending extends GuiContainer {
                 //     color = TextFormatting.GREEN;
                 // }
 
-                list.add("x"  + " for " + color + "$" );//UtilMethods.translateMoney(te.getItemCost(s)));
+                //list.add("x"  + " for " + color + "$"  + UtilMethods.translateMoney(te.getItemCost(slot)));
+                list.add(color + "$"  + UtilMethods.translateMoney(te.getItemCost(slot)));
             }
 
             //adding original extra stuff AFTER price and such

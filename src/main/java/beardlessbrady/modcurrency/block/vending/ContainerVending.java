@@ -1,7 +1,5 @@
 package beardlessbrady.modcurrency.block.vending;
 
-import beardlessbrady.modcurrency.ModCurrency;
-import beardlessbrady.modcurrency.block.ModBlocks;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.item.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
@@ -113,45 +111,48 @@ public class ContainerVending extends Container {
 
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-
         int index = slotId - 37;
         ItemStack playerStack = player.inventory.getItemStack();
         ItemStack copyStack = playerStack.copy();
 
-        //Ensures Pickup_All works without duplicating blocks
+        //Ensures Pickup_All works without pulling from the wrong slots
         //<editor-fold desc="PICKUP ALL">
-        if (clickTypeIn == ClickType.PICKUP_ALL && slotId >= 0 && slotId <= PLAYER_TOTAL_COUNT) {
-            Slot slot = this.inventorySlots.get(slotId);
-            ItemStack itemstack1 = player.inventory.getItemStack();
+        if (clickTypeIn == ClickType.PICKUP_ALL) {
+            if (slotId >= 0 && slotId <= PLAYER_TOTAL_COUNT) {
+                Slot slot = this.inventorySlots.get(slotId);
+                ItemStack itemstack1 = player.inventory.getItemStack();
 
-            if (!itemstack1.isEmpty() && (slot == null || !slot.getHasStack() || !slot.canTakeStack(player))) {
-                int i = dragType == 0 ? 0 : this.inventorySlots.size() - 1;
-                int j = dragType == 0 ? 1 : -1;
+                if (!itemstack1.isEmpty() && (slot == null || !slot.getHasStack() || !slot.canTakeStack(player))) {
+                    int i = dragType == 0 ? 0 : this.inventorySlots.size() - 1;
+                    int j = dragType == 0 ? 1 : -1;
 
-                for (int k = 0; k < 2; ++k) {
-                    for (int l = i; l >= 0 && l <= PLAYER_TOTAL_COUNT && itemstack1.getCount() < itemstack1.getMaxStackSize(); l += j) {
-                        Slot slot1 = this.inventorySlots.get(l);
+                    for (int k = 0; k < 2; ++k) {
+                        for (int l = i; l >= 0 && l <= PLAYER_TOTAL_COUNT && itemstack1.getCount() < itemstack1.getMaxStackSize(); l += j) {
+                            Slot slot1 = this.inventorySlots.get(l);
 
-                        if (slot1.getHasStack() && canAddItemToSlot(slot1, itemstack1, true) && slot1.canTakeStack(player) && this.canMergeSlot(itemstack1, slot1)) {
-                            ItemStack itemstack2 = slot1.getStack();
+                            if (slot1.getHasStack() && canAddItemToSlot(slot1, itemstack1, true) && slot1.canTakeStack(player) && this.canMergeSlot(itemstack1, slot1)) {
+                                ItemStack itemstack2 = slot1.getStack();
 
-                            if (k != 0 || itemstack2.getCount() != itemstack2.getMaxStackSize()) {
-                                int i1 = Math.min(itemstack1.getMaxStackSize() - itemstack1.getCount(), itemstack2.getCount());
-                                ItemStack itemstack3 = slot1.decrStackSize(i1);
-                                itemstack1.grow(i1);
+                                if (k != 0 || itemstack2.getCount() != itemstack2.getMaxStackSize()) {
+                                    int i1 = Math.min(itemstack1.getMaxStackSize() - itemstack1.getCount(), itemstack2.getCount());
+                                    ItemStack itemstack3 = slot1.decrStackSize(i1);
+                                    itemstack1.grow(i1);
 
-                                if (itemstack3.isEmpty()) {
-                                    slot1.putStack(ItemStack.EMPTY);
+                                    if (itemstack3.isEmpty()) {
+                                        slot1.putStack(ItemStack.EMPTY);
+                                    }
+
+                                    slot1.onTake(player, itemstack3);
                                 }
-
-                                slot1.onTake(player, itemstack3);
                             }
                         }
                     }
                 }
+                this.detectAndSendChanges();
+                return ItemStack.EMPTY;
+            } else if (slotId >= GUI_INVENTORY_FIRST_INDEX && slotId < GUI_OUTPUT_FIRST_INDEX) {
+                //TODO PICKUP_ALL FOR TE INVENTORY
             }
-            this.detectAndSendChanges();
-            return ItemStack.EMPTY;
         }
         //</editor-fold>
 
@@ -169,10 +170,9 @@ public class ContainerVending extends Container {
                     te.setSelectedName(te.getItemStack(index).getDisplayName());
                 }
             }
-
             if (te.getIntField(TileVending.FIELD_MODE) == 1) {            //ADMIN MODE
                 if (dragType == 0) { //Left Click
-                    if (playerStack.isEmpty()) {
+                  if (playerStack.isEmpty()) {
                         player.inventory.setItemStack(te.shrinkItemSize(64, index));
                     } else {
                         if (te.getItemStack(index).isEmpty()) {
@@ -203,6 +203,14 @@ public class ContainerVending extends Container {
                             } else {
                                 player.inventory.setItemStack(te.setItemAndSize(copyStack, index, 1));
                             }
+                        }
+                    }
+                } else if (dragType == 5) {
+                    if(clickTypeIn == ClickType.QUICK_CRAFT) { //Mimics Right Click
+                        if (te.getItemStack(index).isEmpty()) { //Place 1
+                            player.inventory.setItemStack(te.setItemAndSize(copyStack, index, 1));
+                        } else {
+                            player.inventory.setItemStack(te.setItemAndSize(copyStack, index, 1));
                         }
                     }
                 }
