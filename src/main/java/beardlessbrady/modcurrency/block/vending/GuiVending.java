@@ -2,21 +2,28 @@ package beardlessbrady.modcurrency.block.vending;
 
 import beardlessbrady.modcurrency.ModCurrency;
 import beardlessbrady.modcurrency.UtilMethods;
+import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.network.PacketHandler;
 import beardlessbrady.modcurrency.network.PacketSetFieldToServer;
 import beardlessbrady.modcurrency.network.PacketSetItemCostToServer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
@@ -72,6 +79,7 @@ public class GuiVending extends GuiContainer {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
+        this.renderHoveredToolTip(mouseX,mouseY);
         this.fieldPrice.drawTextBox();
     }
 
@@ -91,10 +99,20 @@ public class GuiVending extends GuiContainer {
             buttonList.get(BUTTONADMIN).visible = false;
         }
 
-        fontRenderer.drawString(I18n.format("tile.modcurrency:blockvending.name"), 8, -42,  Color.darkGray.getRGB());
+        fontRenderer.drawString(I18n.format("tile.modcurrency:blockvending.name"), 8, -42,  Integer.parseInt("ffffff", 16));
         fontRenderer.drawString(I18n.format("container.inventory"), 8, 114,  Color.darkGray.getRGB());
         fontRenderer.drawString(I18n.format("guivending.in"), 149, -8, Color.lightGray.getRGB());
         fontRenderer.drawString(I18n.format("guivending.out"), 80, 68, Color.lightGray.getRGB());
+
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GL11.glPushMatrix();
+        GL11.glScalef(0.7F, 0.7F, 0.8F);
+        //Todo add to lang, Test that changes on server as well
+        fontRenderer.drawStringWithShadow(I18n.format("Cash"), 7, -40, Integer.parseInt("2DB22F", 16));
+        fontRenderer.drawStringWithShadow(I18n.format("$"), 7, -30, Integer.parseInt("ffffff", 16));
+        fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getLongField(TileVending.FIELD_LONG_CASHRESERVE))), 15, -30, Integer.parseInt("ffffff", 16));
+        GL11.glPopMatrix();
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
 
         drawItemStackSize();
 
@@ -106,11 +124,6 @@ public class GuiVending extends GuiContainer {
             this.fieldPrice.setEnabled(true);
             this.fieldPrice.setVisible(true);
         }else{
-
-            //Todo add to lang
-            fontRenderer.drawStringWithShadow(I18n.format("Cash: $"), -90, 10, Integer.parseInt("ffffff", 16));
-            fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getLongField(TileVending.FIELD_LONG_CASHRESERVE))), -53, 10, Integer.parseInt("ffffff", 16));
-
             this.fieldPrice.setEnabled(false);
             this.fieldPrice.setVisible(false);
         }
@@ -168,9 +181,15 @@ public class GuiVending extends GuiContainer {
 
             fontRenderer.drawStringWithShadow(I18n.format("guivending.slotsettings"), 216, 10, Integer.parseInt("ffffff", 16));
 
-            //Todo add to lang file
-            fontRenderer.drawStringWithShadow(I18n.format("Cash: $"), -90, 10, Integer.parseInt("ffffff", 16));
-            fontRenderer.drawStringWithShadow(I18n.format(Long.toString(te.getLongField(TileVending.FIELD_LONG_CASHRESERVE))), -53, 10, Integer.parseInt("ffffff", 16));
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+            GL11.glPushMatrix();
+            GL11.glScalef(0.7F, 0.7F, 0.8F);
+            //Todo add to lang, Test that changes on server as well
+            fontRenderer.drawStringWithShadow(I18n.format("Profit"), 7, -10, Integer.parseInt("3D78E0", 16));
+            fontRenderer.drawStringWithShadow(I18n.format("$"), 7, 0, Integer.parseInt("ffffff", 16));
+            fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getLongField(TileVending.FIELD_LONG_CASHREGISTER))), 15, 0, Integer.parseInt("ffffff", 16));
+            GL11.glPopMatrix();
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
 
             String itemName = "[" + te.getSelectedName() + "]";
             GL11.glPushMatrix();
@@ -205,6 +224,55 @@ public class GuiVending extends GuiContainer {
             }
 
             drawTexturedModalRect(42 + (18 * slotRow), -32 + (18 * slotColumn), 0, 172, 29, 29);
+        }
+    }
+
+    @Override
+    protected void renderToolTip(ItemStack stack, int x, int y) {
+        int i = (x - (this.width - this.xSize) / 2);
+        int j = (y - (this.height - this.ySize) / 2);
+
+        if(j <= 58 && j >= -31 && i >= 43) {
+            List<String> list = new ArrayList<>();
+            List<String> ogTooltip = stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
+            int tooltipStart = 1;
+
+            //Adding name and subname of item before price and such
+            if (ogTooltip.size() > 0) {
+                list.add(ogTooltip.get(0));
+                list.set(0, stack.getRarity().rarityColor + (String) list.get(0));
+            }
+            if (ogTooltip.size() > 1) if (ogTooltip.get(1) != "") {
+                list.add(TextFormatting.GRAY + ogTooltip.get(1));
+                tooltipStart = 2;
+            }
+
+            //Adding Vending Strings
+            TextFormatting color = TextFormatting.YELLOW;
+            if (te.getIntField(TileEconomyBase.FIELD_MODE) == 0) {
+                //TODO color coding and x for y pricing
+                //  if (!te.canAfford(slot)) {
+                //      color = TextFormatting.RED;
+                //  } else {
+                //     color = TextFormatting.GREEN;
+                // }
+
+                list.add("x"  + " for " + color + "$" );//UtilMethods.translateMoney(te.getItemCost(s)));
+            }
+
+            //adding original extra stuff AFTER price and such
+            for (; tooltipStart < stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL).size(); tooltipStart++) {
+                list.add(TextFormatting.GRAY + stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL).get(tooltipStart));
+            }
+
+            FontRenderer font = stack.getItem().getFontRenderer(stack);
+            net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(stack);
+            this.drawHoveringText(list, x, y, (font == null ? fontRenderer : font));
+            net.minecraftforge.fml.client.config.GuiUtils.postItemToolTip();
+
+            te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
+        } else {
+            super.renderToolTip(stack, x, y);
         }
     }
 
