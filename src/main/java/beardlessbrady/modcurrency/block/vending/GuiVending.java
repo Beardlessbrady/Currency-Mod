@@ -262,7 +262,7 @@ public class GuiVending extends GuiContainer {
             //Adding Vending Strings
             TextFormatting color = TextFormatting.YELLOW;
             if (te.getIntField(TileEconomyBase.FIELD_MODE) == 0) {
-                if (te.canAfford(slot)) {
+                if (te.canAfford(slot, 1)) {
                      color = TextFormatting.GREEN;
                  } else {
                      color = TextFormatting.RED;

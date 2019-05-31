@@ -151,8 +151,9 @@ public class ContainerVending extends Container {
                 }
                 this.detectAndSendChanges();
                 return ItemStack.EMPTY;
-            } else if (slotId >= GUI_INVENTORY_FIRST_INDEX && slotId < GUI_OUTPUT_FIRST_INDEX) {
                 //TODO PICKUP_ALL FOR TE INVENTORY
+            } else if (slotId >= GUI_INVENTORY_FIRST_INDEX && slotId < GUI_OUTPUT_FIRST_INDEX + 4) {
+                return ItemStack.EMPTY;
             }
         }
         //</editor-fold>
@@ -218,27 +219,9 @@ public class ContainerVending extends Container {
                 return ItemStack.EMPTY;
             } else { //SELL MODE
                 if (dragType == 0){ //LEFT CLICK
-                    if(te.canAfford(index)){
-                        ItemStack outputStack = te.getInvItemStack(index).copy();
-                        outputStack.setCount(1);
-                        int outSlot = te.outputSlotCheck(outputStack);
-
-                        if(outSlot == -1){
-                            //TODO add OUT IS FULL WARNING
-                            return ItemStack.EMPTY;
-                        }else{
-                            if(te.growOutItemSize(outputStack, outSlot).equals(ItemStack.EMPTY)){
-                                long price = te.getLongField(TileEconomyBase.FIELD_LONG_CASHRESERVE) - te.getItemCost(index);
-                                te.setLongField(TileEconomyBase.FIELD_LONG_CASHRESERVE, price);
-                            }else{
-                                //TODO FAIl because no slots left in output
-                            }
-                            return ItemStack.EMPTY;
-                        }
-                    }
-                    //TODO play failure sound
+                    buyItem(index, 1);
                 }else if (dragType == 1){ //RIGHT CLICK
-
+                    buyItem(index, te.getItemSize(index)/2);
                 }
                 return ItemStack.EMPTY;
             }
@@ -292,5 +275,31 @@ public class ContainerVending extends Container {
         super.onContainerClosed(playerIn);
         te.voidPlayerUsing();
         te.setIntField(TileEconomyBase.FIELD_MODE, 0);
+    }
+
+    public ItemStack buyItem(int index, int count) {
+        if (!te.getInvItemStack(index).isEmpty()) {
+            if (te.canAfford(index, count)) {
+                ItemStack outputStack = te.getInvItemStack(index).copy();
+                outputStack.setCount(count);
+                int outSlot = te.outputSlotCheck(outputStack);
+
+                if (outSlot == -1) {
+                    //TODO add OUT IS FULL WARNING
+                    return ItemStack.EMPTY;
+                } else {
+                    if (te.growOutItemSize(outputStack, outSlot).equals(ItemStack.EMPTY)) {
+                        long price = te.getLongField(TileEconomyBase.FIELD_LONG_CASHRESERVE) - (te.getItemCost(index) * count);
+                        te.setLongField(TileEconomyBase.FIELD_LONG_CASHRESERVE, price);
+                        te.shrinkInvItemSize(count, index);
+                    } else {
+                        //TODO FAIl because no slots left in output
+                    }
+                    return ItemStack.EMPTY;
+                }
+            }
+            //TODO play failure sound
+        }
+        return ItemStack.EMPTY;
     }
 }

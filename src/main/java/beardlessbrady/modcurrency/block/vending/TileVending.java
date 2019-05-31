@@ -365,8 +365,8 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         return inventoryCost[i];
     }
 
-    public boolean canAfford(int slot){
-        if(getItemCost(slot) <= getLongField(TileEconomyBase.FIELD_LONG_CASHRESERVE)) return true;
+    public boolean canAfford(int slot, int amount){
+        if(getItemCost(slot) * amount <= getLongField(TileEconomyBase.FIELD_LONG_CASHRESERVE)) return true;
         return false;
     }
 
