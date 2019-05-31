@@ -174,7 +174,7 @@ public class GuiVending extends GuiContainer {
             for (int i = 0; i < 5; i++) {
                 if (te.getItemSize(i + (5 * j)) != 0 && te.getItemSize(i + (5 * j)) > 0) {
                     num = Integer.toString(te.getItemSize(i + (5 * j)));
-                } else if (!te.getItemStack(i + (5*j)).isEmpty()){
+                } else if (!te.getInvItemStack(i + (5*j)).isEmpty()){
                     num = "Out";
                 } else {
                     num = " ";
@@ -262,12 +262,11 @@ public class GuiVending extends GuiContainer {
             //Adding Vending Strings
             TextFormatting color = TextFormatting.YELLOW;
             if (te.getIntField(TileEconomyBase.FIELD_MODE) == 0) {
-                //TODO color coding and x for y pricing
-                //  if (!te.canAfford(slot)) {
-                //      color = TextFormatting.RED;
-                //  } else {
-                //     color = TextFormatting.GREEN;
-                // }
+                if (te.canAfford(slot)) {
+                     color = TextFormatting.GREEN;
+                 } else {
+                     color = TextFormatting.RED;
+                }
 
                 //list.add("x"  + " for " + color + "$"  + UtilMethods.translateMoney(te.getItemCost(slot)));
                 list.add(color + "$"  + UtilMethods.translateMoney(te.getItemCost(slot)));
@@ -296,24 +295,24 @@ public class GuiVending extends GuiContainer {
             if (i == 1) {
                 if (te.getIntField(TileVending.FIELD_SELECTED) == 24) {
                     te.setIntField(TileVending.FIELD_SELECTED, 0);
-                    te.setSelectedName(te.getItemStack(0).getDisplayName());
+                    te.setSelectedName(te.getInvItemStack(0).getDisplayName());
 
                     updateTextField();
                 } else {
                     te.setIntField(TileVending.FIELD_SELECTED, te.getIntField(TileVending.FIELD_SELECTED) + 1);
-                    te.setSelectedName(te.getItemStack(te.getIntField(TileVending.FIELD_SELECTED)).getDisplayName());
+                    te.setSelectedName(te.getInvItemStack(te.getIntField(TileVending.FIELD_SELECTED)).getDisplayName());
 
                     updateTextField();
                 }
             } else if (i == -1) {
                 if (te.getIntField(TileVending.FIELD_SELECTED) == 0) {
                     te.setIntField(TileVending.FIELD_SELECTED, 24);
-                    te.setSelectedName(te.getItemStack(24).getDisplayName());
+                    te.setSelectedName(te.getInvItemStack(24).getDisplayName());
 
                     updateTextField();
                 } else {
                     te.setIntField(TileVending.FIELD_SELECTED, te.getIntField(TileVending.FIELD_SELECTED) - 1);
-                    te.setSelectedName(te.getItemStack(te.getIntField(TileVending.FIELD_SELECTED)).getDisplayName());
+                    te.setSelectedName(te.getInvItemStack(te.getIntField(TileVending.FIELD_SELECTED)).getDisplayName());
 
                     updateTextField();
                 }

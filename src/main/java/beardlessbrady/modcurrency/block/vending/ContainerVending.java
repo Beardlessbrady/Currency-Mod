@@ -1,5 +1,6 @@
 package beardlessbrady.modcurrency.block.vending;
 
+import beardlessbrady.modcurrency.UtilMethods;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.item.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
@@ -113,7 +114,7 @@ public class ContainerVending extends Container {
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
         int index = slotId - 37;
         ItemStack playerStack = player.inventory.getItemStack();
-        ItemStack copyStack = playerStack.copy();
+        ItemStack copyPlayerStack = playerStack.copy();
 
         //Ensures Pickup_All works without pulling from the wrong slots
         //<editor-fold desc="PICKUP ALL">
@@ -167,55 +168,78 @@ public class ContainerVending extends Container {
             if(clickTypeIn == ClickType.CLONE) {
                 if (!(te.getIntField(TileVending.FIELD_SELECTED) == slotId)) {
                     te.setIntField(te.FIELD_SELECTED, slotId - 37);
-                    te.setSelectedName(te.getItemStack(index).getDisplayName());
+                    te.setSelectedName(te.getInvItemStack(index).getDisplayName());
                 }
             }
             if (te.getIntField(TileVending.FIELD_MODE) == 1) {            //ADMIN MODE
                 if (dragType == 0) { //Left Click
                   if (playerStack.isEmpty()) {
-                        player.inventory.setItemStack(te.shrinkItemSize(64, index));
+                        player.inventory.setItemStack(te.shrinkInvItemSize(64, index));
                     } else {
-                        if (te.getItemStack(index).isEmpty()) {
-                            player.inventory.setItemStack(te.setItem(copyStack, index, 0));
+                        if (te.getInvItemStack(index).isEmpty()) {
+                            player.inventory.setItemStack(te.setInvItem(copyPlayerStack, index, 0));
                         } else {
-                            player.inventory.setItemStack(te.growItemSize(copyStack, index));
+                            player.inventory.setItemStack(te.growInvItemSize(copyPlayerStack, index));
                         }
                     }
                 } else if (dragType == 1) { //Right Click
                     if(clickTypeIn == ClickType.QUICK_CRAFT) { //Mimics Left Click
                         if (playerStack.isEmpty()) {
-                            player.inventory.setItemStack(te.shrinkItemSize(64, index));
+                            player.inventory.setItemStack(te.shrinkInvItemSize(64, index));
                         } else {
-                            if (te.getItemStack(index).isEmpty()) {
-                                player.inventory.setItemStack(te.setItem(copyStack, index, 0));
+                            if (te.getInvItemStack(index).isEmpty()) {
+                                player.inventory.setItemStack(te.setInvItem(copyPlayerStack, index, 0));
                             } else {
-                                player.inventory.setItemStack(te.growItemSize(copyStack, index));
+                                player.inventory.setItemStack(te.growInvItemSize(copyPlayerStack, index));
                             }
                         }
                     }else {
                         if (playerStack.isEmpty()) { //Pickup Half
                             int half = te.getItemSize(index) / 2;
                             if (half >= 64) half = 64;
-                            player.inventory.setItemStack(te.shrinkItemSize(half, index));
+                            player.inventory.setItemStack(te.shrinkInvItemSize(half, index));
                         } else {
-                            if (te.getItemStack(index).isEmpty()) { //Place 1
-                                player.inventory.setItemStack(te.setItemAndSize(copyStack, index, 1));
+                            if (te.getInvItemStack(index).isEmpty()) { //Place 1
+                                player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, 1));
                             } else {
-                                player.inventory.setItemStack(te.setItemAndSize(copyStack, index, 1));
+                                player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, 1));
                             }
                         }
                     }
                 } else if (dragType == 5) {
                     if(clickTypeIn == ClickType.QUICK_CRAFT) { //Mimics Right Click
-                        if (te.getItemStack(index).isEmpty()) { //Place 1
-                            player.inventory.setItemStack(te.setItemAndSize(copyStack, index, 1));
+                        if (te.getInvItemStack(index).isEmpty()) { //Place 1
+                            player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, 1));
                         } else {
-                            player.inventory.setItemStack(te.setItemAndSize(copyStack, index, 1));
+                            player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, 1));
                         }
                     }
                 }
                 return ItemStack.EMPTY;
-            } else {
+            } else { //SELL MODE
+                if (dragType == 0){ //LEFT CLICK
+                    if(te.canAfford(index)){
+                        ItemStack outputStack = te.getInvItemStack(index).copy();
+                        outputStack.setCount(1);
+                        int outSlot = te.outputSlotCheck(outputStack);
+
+                        if(outSlot == -1){
+                            //TODO add OUT IS FULL WARNING
+                            return ItemStack.EMPTY;
+                        }else{
+                            if(te.growOutItemSize(outputStack, outSlot).equals(ItemStack.EMPTY)){
+                                long price = te.getLongField(TileEconomyBase.FIELD_LONG_CASHRESERVE) - te.getItemCost(index);
+                                te.setLongField(TileEconomyBase.FIELD_LONG_CASHRESERVE, price);
+                            }else{
+                                //TODO FAIl because no slots left in output
+                            }
+                            return ItemStack.EMPTY;
+                        }
+                    }
+                    //TODO play failure sound
+                }else if (dragType == 1){ //RIGHT CLICK
+
+                }
                 return ItemStack.EMPTY;
             }
         }

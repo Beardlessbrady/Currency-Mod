@@ -119,7 +119,7 @@ public class TileEconomyBase extends TileEntity {
         return 2;
     }
 
-    public void setLongField(int id, int value){
+    public void setLongField(int id, long value){
         switch(id){
             case FIELD_LONG_CASHRESERVE:
                 cashReserve = value;

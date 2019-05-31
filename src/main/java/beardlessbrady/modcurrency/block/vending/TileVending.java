@@ -85,7 +85,6 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
 
                     cashReserve += amount;
-                    System.out.println("DD" + cashReserve);
             }
         }
     }
@@ -261,11 +260,11 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         return inventorySize[index];
     }
 
-    public ItemStack getItemStack(int index){
+    public ItemStack getInvItemStack(int index){
         return inventoryStackHandler.getStackInSlot(index);
     }
 
-    public ItemStack setItem(ItemStack stack, int index, int addonSize){
+    public ItemStack setInvItem(ItemStack stack, int index, int addonSize){
         ItemStack copyStack = stack.copy();
         int output;
 
@@ -289,7 +288,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         return copyStack;
     }
 
-    public ItemStack setItemAndSize(ItemStack stack, int index, int amount){
+    public ItemStack setInvItemAndSize(ItemStack stack, int index, int amount){
         ItemStack userCopy = stack.copy();
         ItemStack machineCopy2 = stack.copy();
 
@@ -303,20 +302,20 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
         userCopy.shrink(amount);
 
-        int leftovers = setItem(machineCopy2, index, 0).getCount();
+        int leftovers = setInvItem(machineCopy2, index, 0).getCount();
         if (leftovers > 0) userCopy.grow(leftovers);
 
         return userCopy;
     }
 
-    public ItemStack growItemSize(ItemStack stack, int index) {
+    public ItemStack growInvItemSize(ItemStack stack, int index) {
             if (UtilMethods.equalStacks(stack, inventoryStackHandler.getStackInSlot(index))) {
-                return setItemAndSize(stack, index, stack.getCount());
+                return setInvItemAndSize(stack, index, stack.getCount());
             }
             return stack;
     }
 
-    public ItemStack shrinkItemSize(int num, int index){
+    public ItemStack shrinkInvItemSize(int num, int index){
         ItemStack outputStack = inventoryStackHandler.getStackInSlot(index).copy();
         int output = inventorySize[index] - num;
 
@@ -330,6 +329,19 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         }
 
         return outputStack;
+    }
+
+    public ItemStack growOutItemSize(ItemStack stack, int index){
+        if (UtilMethods.equalStacks(stack, outputStackHandler.getStackInSlot(index))) {
+            if(outputStackHandler.getStackInSlot(index).getCount() + stack.getCount() <= outputStackHandler.getStackInSlot(index).getMaxStackSize()){
+                outputStackHandler.getStackInSlot(index).grow(stack.getCount());
+                return ItemStack.EMPTY;
+            }
+        }else if(outputStackHandler.getStackInSlot(index).isEmpty()){
+            outputStackHandler.setStackInSlot(index, stack);
+            return ItemStack.EMPTY;
+        }
+        return stack;
     }
 
     public String getSelectedName(){
@@ -352,4 +364,30 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     public int getItemCost(int i){
         return inventoryCost[i];
     }
+
+    public boolean canAfford(int slot){
+        if(getItemCost(slot) <= getLongField(TileEconomyBase.FIELD_LONG_CASHRESERVE)) return true;
+        return false;
+    }
+
+    public int outputSlotCheck(ItemStack itemStack){
+        //Checks if any stacks in output are equal to the itemStack and can handle it being added in
+        for(int i = 0; i < TE_OUTPUT_SLOT_COUNT; i++){
+            if(UtilMethods.equalStacks(itemStack, outputStackHandler.getStackInSlot(i))){
+                if(outputStackHandler.getStackInSlot(i).getCount() + 1 <= outputStackHandler.getStackInSlot(i).getMaxStackSize()){
+                    return i;
+                }
+            }
+        }
+
+        //Checks for empty slots
+        for(int i = 0; i < TE_OUTPUT_SLOT_COUNT; i++) {
+            if(outputStackHandler.getStackInSlot(i).isEmpty()){
+                return i;
+            }
+        }
+        return -1;
+    }
+
+
 }
