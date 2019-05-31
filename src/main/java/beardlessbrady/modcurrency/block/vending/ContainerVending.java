@@ -113,7 +113,6 @@ public class ContainerVending extends Container {
 
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-        System.out.println(slotId);
         int index = slotId - 37;
         ItemStack playerStack = player.inventory.getItemStack();
         ItemStack copyPlayerStack = playerStack.copy();
@@ -244,7 +243,6 @@ public class ContainerVending extends Container {
            if (slotId >= 0 && slotId < PLAYER_TOTAL_COUNT) {
                if(te.getIntField(TileEconomyBase.FIELD_MODE) == 0){
                    if(itemStack.getItem().equals(ModItems.itemCurrency)){
-                       System.out.println(TE_INPUT_SLOT_INDEX);
                        if (!this.mergeItemStack(itemStack, PLAYER_TOTAL_COUNT + TE_INPUT_SLOT_INDEX, PLAYER_TOTAL_COUNT + TE_INPUT_SLOT_INDEX + 1, false)) {
                            return ItemStack.EMPTY;
                        }
@@ -320,8 +318,10 @@ public class ContainerVending extends Container {
                     return ItemStack.EMPTY;
                 } else {
                     if (te.growOutItemSize(outputStack, outSlot).equals(ItemStack.EMPTY)) {
-                        long price = te.getLongField(TileEconomyBase.FIELD_LONG_CASHRESERVE) - (te.getItemCost(index) * count);
-                        te.setLongField(TileEconomyBase.FIELD_LONG_CASHRESERVE, price);
+                        long newCashReserve = te.getLongField(TileEconomyBase.FIELD_LONG_CASHRESERVE) - (te.getItemCost(index) * count);
+                        long newCashRegister = te.getLongField(TileEconomyBase.FIELD_LONG_CASHREGISTER) + (te.getItemCost(index) * count);
+                        te.setLongField(TileEconomyBase.FIELD_LONG_CASHRESERVE, newCashReserve);
+                        te.setLongField(TileEconomyBase.FIELD_LONG_CASHREGISTER, newCashRegister);
                         te.shrinkInvItemSize(count, index);
                     } else {
                         //TODO FAIl because no slots left in output

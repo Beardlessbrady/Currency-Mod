@@ -158,6 +158,8 @@ public class GuiVending extends GuiContainer {
 
                 te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
                 break;
+            case BUTTONCHANGE:
+                te.outChange();
         }
     }
 

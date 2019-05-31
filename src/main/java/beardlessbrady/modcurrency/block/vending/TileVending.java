@@ -389,5 +389,43 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         return -1;
     }
 
+    public void outChange(){
+        long bank;
+        OUTER_LOOP: for(int i = ConfigCurrency.currencyValues.length-1; i >=0; i--){
+            if(mode == true){
+                bank = cashRegister;
+            }else{
+                bank = cashReserve;
+            }
 
+            boolean repeat = false;
+            if((bank / (Float.valueOf(ConfigCurrency.currencyValues[i])) * 100) > 0){ //Divisible by currency value
+                int amount = ((int)bank /((int)((Float.valueOf(ConfigCurrency.currencyValues[i])) * 100)));
+
+                if(amount > 64){
+                    amount = 64;
+                    repeat = true;
+                }
+
+                ItemStack outChange = new ItemStack(ModItems.itemCurrency, amount, i);
+
+
+                int outputSlot = outputSlotCheck(outChange);
+                if(outputSlot != -1){
+                    if (growOutItemSize(outChange, outputSlot).equals(ItemStack.EMPTY)) {
+                        if(mode == true){
+                            cashRegister -= (long)((Float.valueOf(ConfigCurrency.currencyValues[i]) * 100) * amount);
+                        }else{
+                            cashReserve -= (long)((Float.valueOf(ConfigCurrency.currencyValues[i]) * 100) * amount);
+                        }
+                    }
+                }else{
+                    break OUTER_LOOP;
+                }
+            }
+
+            if(repeat) i++;
+            if(bank == 0) break OUTER_LOOP;
+        }
+    }
 }
