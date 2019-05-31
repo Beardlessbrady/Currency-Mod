@@ -1,5 +1,6 @@
 package beardlessbrady.modcurrency.block.vending;
 
+import beardlessbrady.modcurrency.ModCurrency;
 import beardlessbrady.modcurrency.UtilMethods;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.item.ModItems;
@@ -112,6 +113,7 @@ public class ContainerVending extends Container {
 
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
+        System.out.println(slotId);
         int index = slotId - 37;
         ItemStack playerStack = player.inventory.getItemStack();
         ItemStack copyPlayerStack = playerStack.copy();
@@ -225,12 +227,32 @@ public class ContainerVending extends Container {
                 }
                 return ItemStack.EMPTY;
             }
+        }else if (slotId >= 62 && slotId <= 66){
+            if (!this.mergeItemStack(inventorySlots.get(slotId).getStack(), 0, PLAYER_TOTAL_COUNT, false)) {
+                return ItemStack.EMPTY;
+            }
+            return ItemStack.EMPTY;
         }
         return super.slotClick(slotId, dragType, clickTypeIn, player);
     }
 
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
+    public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotId) {
+      ItemStack itemStack = this.inventorySlots.get(slotId).getStack();
+
+       if(!itemStack.isEmpty()) {
+           if (slotId >= 0 && slotId < PLAYER_TOTAL_COUNT) {
+               if(te.getIntField(TileEconomyBase.FIELD_MODE) == 0){
+                   if(itemStack.getItem().equals(ModItems.itemCurrency)){
+                       System.out.println(TE_INPUT_SLOT_INDEX);
+                       if (!this.mergeItemStack(itemStack, PLAYER_TOTAL_COUNT + TE_INPUT_SLOT_INDEX, PLAYER_TOTAL_COUNT + TE_INPUT_SLOT_INDEX + 1, false)) {
+                           return ItemStack.EMPTY;
+                       }
+                   }
+               }
+           }
+           //TODO SHIFT CLICK PLAYER INV TO TE INV FOR STOCK MODE
+       }
         return ItemStack.EMPTY;
     }
 
@@ -275,7 +297,16 @@ public class ContainerVending extends Container {
         super.onContainerClosed(playerIn);
         te.voidPlayerUsing();
         te.setIntField(TileEconomyBase.FIELD_MODE, 0);
+
+        for (int i = PLAYER_TOTAL_COUNT + TE_OUTPUT_FIRST_SLOT_INDEX; i < PLAYER_TOTAL_COUNT + TE_OUTPUT_FIRST_SLOT_INDEX + TE_OUTPUT_SLOT_COUNT; i++) {
+            if (!this.mergeItemStack(inventorySlots.get(i).getStack(), 0, PLAYER_TOTAL_COUNT, false)) {
+                //TODO CHAT MESSAGE IT DIDNT WORK
+            }else{
+                //TODO IT WORKED, CHAT MESSAGE
+            }
+        }
     }
+
 
     public ItemStack buyItem(int index, int count) {
         if (!te.getInvItemStack(index).isEmpty()) {
@@ -302,4 +333,6 @@ public class ContainerVending extends Container {
         }
         return ItemStack.EMPTY;
     }
+
+
 }

@@ -67,7 +67,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         for(int i = 0; i < inventorySize.length; i++){
             inventorySize[i] = 0;
         }
-        inventoryLimit = 320;
+        inventoryLimit = 256;
         selectedName = "No Item Selected";
     }
 
