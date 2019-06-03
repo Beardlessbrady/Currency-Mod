@@ -6,6 +6,7 @@ import beardlessbrady.modcurrency.UtilMethods;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.handler.StateHandler;
 import beardlessbrady.modcurrency.item.ModItems;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -20,6 +21,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+
 import javax.annotation.Nullable;
 
 /**
@@ -389,7 +391,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         return -1;
     }
 
-    public void outChange(){
+    public void outChange(boolean blockBreak){
         long bank;
         OUTER_LOOP: for(int i = ConfigCurrency.currencyValues.length-1; i >=0; i--){
             if(mode == true){
@@ -407,25 +409,60 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
                     repeat = true;
                 }
 
+
                 ItemStack outChange = new ItemStack(ModItems.itemCurrency, amount, i);
 
-
-                int outputSlot = outputSlotCheck(outChange);
-                if(outputSlot != -1){
-                    if (growOutItemSize(outChange, outputSlot).equals(ItemStack.EMPTY)) {
-                        if(mode == true){
-                            cashRegister -= (long)((Float.valueOf(ConfigCurrency.currencyValues[i]) * 100) * amount);
-                        }else{
-                            cashReserve -= (long)((Float.valueOf(ConfigCurrency.currencyValues[i]) * 100) * amount);
-                        }
+                if(blockBreak){ //If Block Breaking spawn item
+                    world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), outChange));
+                    if (mode == true) {
+                        cashRegister -= (long) ((Float.valueOf(ConfigCurrency.currencyValues[i]) * 100) * amount);
+                    } else {
+                        cashReserve -= (long) ((Float.valueOf(ConfigCurrency.currencyValues[i]) * 100) * amount);
                     }
-                }else{
-                    break OUTER_LOOP;
+                }else {
+                    int outputSlot = outputSlotCheck(outChange);
+                    if (outputSlot != -1) {
+                        if (growOutItemSize(outChange, outputSlot).equals(ItemStack.EMPTY)) {
+                            if (mode == true) {
+                                cashRegister -= (long) ((Float.valueOf(ConfigCurrency.currencyValues[i]) * 100) * amount);
+                            } else {
+                                cashReserve -= (long) ((Float.valueOf(ConfigCurrency.currencyValues[i]) * 100) * amount);
+                            }
+                        }
+                    } else {
+                        break OUTER_LOOP;
+                    }
                 }
             }
 
-            if(repeat) i++;
+            if (repeat) i++;
             if(bank == 0) break OUTER_LOOP;
         }
+    }
+
+    public void dropInventory(){
+        for (int i = 0; i < inventoryStackHandler.getSlots(); i++) {
+            ItemStack item = inventoryStackHandler.getStackInSlot(i);
+            if (!item.isEmpty()) {
+                item.setCount(getItemSize(i));
+                world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), item));
+                inventoryStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
+            }
+        }
+        for (int i = 0; i < outputStackHandler.getSlots(); i++){
+            ItemStack item = outputStackHandler.getStackInSlot(i);
+            if (item != ItemStack.EMPTY) {
+                world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), item));
+                outputStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
+            }
+        }
+        for (int i = 0; i < inputStackHandler.getSlots(); i++){
+            ItemStack item = inputStackHandler.getStackInSlot(i);
+            if (item != ItemStack.EMPTY) {
+                world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), item));
+                inputStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
+            }
+        }
+
     }
 }

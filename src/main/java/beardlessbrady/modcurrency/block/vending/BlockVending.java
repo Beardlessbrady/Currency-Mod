@@ -6,6 +6,7 @@ import beardlessbrady.modcurrency.handler.StateHandler;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -61,10 +62,24 @@ public class BlockVending extends EconomyBlockBase {
 
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-        if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP) {     //TOP BLOCK
-            worldIn.setBlockToAir(pos.down());
-        }else if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOBOTTOM) { //BOTTOM BLOCK
-            worldIn.setBlockToAir(pos.up());
+        if(!worldIn.isRemote) {
+            TileVending tile = (TileVending) getTile(worldIn, pos, state);
+
+            tile.setIntField(TileEconomyBase.FIELD_MODE, 0);
+            tile.outChange(true);
+
+            tile.setIntField(TileEconomyBase.FIELD_MODE, 1);
+            tile.outChange(true);
+
+            tile.dropInventory();
+
+            if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP) {     //TOP BLOCK
+                worldIn.setBlockToAir(pos.down());
+            } else if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOBOTTOM) { //BOTTOM BLOCK
+                worldIn.setBlockToAir(pos.up());
+                worldIn.spawnEntity(new EntityItem(worldIn, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(this)));
+            }
+            super.breakBlock(worldIn, pos, state);
         }
     }
 
@@ -86,6 +101,17 @@ public class BlockVending extends EconomyBlockBase {
                 if (world.getTileEntity(pos) instanceof TileVending)
                     return (TileVending) world.getTileEntity(pos);
             }
+        return null;
+    }
+
+    public TileEconomyBase getTile(World world, BlockPos pos, IBlockState state) {
+        if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP){
+            if (world.getTileEntity(pos.down()) instanceof TileVending)
+                return (TileVending) world.getTileEntity(pos.down());
+        }else{
+            if (world.getTileEntity(pos) instanceof TileVending)
+                return (TileVending) world.getTileEntity(pos);
+        }
         return null;
     }
 

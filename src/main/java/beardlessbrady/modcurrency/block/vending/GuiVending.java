@@ -4,6 +4,7 @@ import beardlessbrady.modcurrency.ModCurrency;
 import beardlessbrady.modcurrency.UtilMethods;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.network.PacketHandler;
+import beardlessbrady.modcurrency.network.PacketOutChangeToServer;
 import beardlessbrady.modcurrency.network.PacketSetFieldToServer;
 import beardlessbrady.modcurrency.network.PacketSetItemCostToServer;
 import net.minecraft.client.Minecraft;
@@ -159,7 +160,10 @@ public class GuiVending extends GuiContainer {
                 te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
                 break;
             case BUTTONCHANGE:
-                te.outChange();
+                PacketOutChangeToServer pack0 = new PacketOutChangeToServer();
+                pack0.setData(te.getPos(), false);
+                PacketHandler.INSTANCE.sendToServer(pack0);
+                te.outChange(false);
         }
     }
 
