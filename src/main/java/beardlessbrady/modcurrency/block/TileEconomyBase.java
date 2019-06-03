@@ -27,7 +27,7 @@ public class TileEconomyBase extends TileEntity {
     public TileEconomyBase(){
         cashReserve = 0;
         cashRegister = 0;
-        mode = false; //true == admin
+        mode = true;
 
         owner = new UUID(0L, 0L);
         playerUsing = new UUID(0L, 0L);
