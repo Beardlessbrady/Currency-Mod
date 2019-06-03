@@ -20,7 +20,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  */
 
 public class ModBlocks {
-    EconomyBlockBase[] blocks = {new BlockVending()};
+    public static final BlockVending blockVending = new BlockVending();
+    EconomyBlockBase[] blocks = {blockVending};
 
     @SubscribeEvent
     public void registerBlocks(RegistryEvent.Register<Block> event){

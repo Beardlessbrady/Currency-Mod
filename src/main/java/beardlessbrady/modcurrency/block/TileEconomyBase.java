@@ -82,11 +82,10 @@ public class TileEconomyBase extends TileEntity {
         mode = compound.getBoolean("mode");
         cashReserve = compound.getLong("cashReserve");
         cashRegister = compound.getLong("cashRegister");
-        playerUsing = UUID.fromString(compound.getString("playerUsing"));
-        owner = UUID.fromString(compound.getString("owner"));
+        if(!UUID.fromString(compound.getString("playerUsing")).equals(new UUID(0L, 0L)))playerUsing = UUID.fromString(compound.getString("playerUsing"));
+        if(!UUID.fromString(compound.getString("owner")).equals(new UUID(0L, 0L))) owner = UUID.fromString(compound.getString("owner"));
     }
     //</editor-fold>
-
 
     //Field Id's
     public static final int FIELD_LONG_CASHRESERVE = 0;
@@ -150,7 +149,6 @@ public class TileEconomyBase extends TileEntity {
     }
 
     public boolean isOwner(){
-      //  System.out.println(owner + "  " + playerUsing);
         return owner.toString().equals(playerUsing.toString());
     }
 

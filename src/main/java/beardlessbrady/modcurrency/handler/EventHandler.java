@@ -1,5 +1,6 @@
 package beardlessbrady.modcurrency.handler;
 
+import beardlessbrady.modcurrency.block.ModBlocks;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.block.vending.BlockVending;
 import net.minecraft.block.Block;
@@ -22,11 +23,14 @@ public class EventHandler {
     public void protectedBreak(PlayerInteractEvent.LeftClickBlock e) {
         Block brokeBlock = e.getWorld().getBlockState(e.getPos()).getBlock();
 
-        if (brokeBlock == new BlockVending()) {
+        if (brokeBlock == ModBlocks.blockVending) {
             TileEconomyBase tile = (TileEconomyBase) e.getWorld().getTileEntity(e.getPos());
             if (e.getWorld().getBlockState(e.getPos()).getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP)
                 tile =  (TileEconomyBase) e.getWorld().getTileEntity(e.getPos().down());
-            if ((!e.getEntityPlayer().getUniqueID().toString().equals(tile.getOwner())) && !e.getEntityPlayer().isCreative()) {     //If not Owner (and not in creative) Can't Break
+
+
+            System.out.println((!e.getEntityPlayer().getUniqueID().toString().equals(tile.getOwner())) && !e.getEntityPlayer().isCreative());
+            if (!((e.getEntityPlayer().getUniqueID().toString().equals(tile.getOwner())) || e.getEntityPlayer().isCreative())) {     //If not Owner (and not in creative) Can't Break
                 e.setCanceled(true);
             }
 
