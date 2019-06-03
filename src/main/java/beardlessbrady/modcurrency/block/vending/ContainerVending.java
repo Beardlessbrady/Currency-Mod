@@ -174,6 +174,9 @@ public class ContainerVending extends Container {
                 }
             }
             if (te.getIntField(TileVending.FIELD_MODE) == 1) {            //ADMIN MODE
+                if(te.getItemSize(index) == 0){
+                    te.setInvItem(ItemStack.EMPTY, index, 0);
+                }
                 if (dragType == 0) { //Left Click
                   if (playerStack.isEmpty()) {
                         player.inventory.setItemStack(te.shrinkInvItemSize(64, index));
@@ -307,7 +310,7 @@ public class ContainerVending extends Container {
 
 
     public ItemStack buyItem(int index, int count) {
-        if (!te.getInvItemStack(index).isEmpty()) {
+        if (!te.getInvItemStack(index).isEmpty() && te.getItemSize(index) != 0) {
             if (te.canAfford(index, count)) {
                 ItemStack outputStack = te.getInvItemStack(index).copy();
                 outputStack.setCount(count);

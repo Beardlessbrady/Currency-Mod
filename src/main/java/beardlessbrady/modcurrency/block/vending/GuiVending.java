@@ -181,7 +181,7 @@ public class GuiVending extends GuiContainer {
                 if (te.getItemSize(i + (5 * j)) != 0 && te.getItemSize(i + (5 * j)) > 0) {
                     num = Integer.toString(te.getItemSize(i + (5 * j)));
                 } else if (!te.getInvItemStack(i + (5*j)).isEmpty()){
-                    num = "Out";
+                    num = TextFormatting.RED + "Out";
                 } else {
                     num = " ";
                 }

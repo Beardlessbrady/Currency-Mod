@@ -267,6 +267,11 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     }
 
     public ItemStack setInvItem(ItemStack stack, int index, int addonSize){
+        if(stack == ItemStack.EMPTY) {
+            inventoryStackHandler.setStackInSlot(index, ItemStack.EMPTY);
+            return ItemStack.EMPTY;
+        }
+
         ItemStack copyStack = stack.copy();
         int output;
 
@@ -282,7 +287,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         if(output > 0){
             copyStack.setCount(output);
             inventorySize[index] = inventoryLimit;
-        }else{
+        }else {
             copyStack= ItemStack.EMPTY;
             inventorySize[index] = inventoryLimit + output;
         }
@@ -324,9 +329,8 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         if(output > 0){
             inventorySize[index] = inventorySize[index] - num;
             outputStack.setCount(num);
-        }else{
+        }else {
             inventorySize[index] = 0;
-            inventoryStackHandler.setStackInSlot(index, ItemStack.EMPTY);
             outputStack.setCount(num + output);
         }
 
