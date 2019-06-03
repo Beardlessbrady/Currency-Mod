@@ -7,6 +7,8 @@ import net.minecraft.item.ItemBlock;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
@@ -33,6 +35,7 @@ public class ModBlocks {
     }
 
     @SubscribeEvent
+    @SideOnly(Side.CLIENT)
     public void registerModels(ModelRegistryEvent event){
         for(int i = 0; i < blocks.length; i++)
             registerModel(blocks[i]);

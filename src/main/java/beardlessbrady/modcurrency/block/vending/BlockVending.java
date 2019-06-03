@@ -16,9 +16,10 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
-import java.util.UUID;
 
 
 /**
@@ -133,9 +134,10 @@ public class BlockVending extends EconomyBlockBase {
 
     //<editor-fold desc="Rendering-----------------------------------------------------------------------------------------------------------">
     @Override
+    @SideOnly(Side.CLIENT)
     public void registerModel() {
         super.registerModel();
-        ClientRegistry.bindTileEntitySpecialRenderer(TileVending.class, new VendingRenderer());
+        ClientRegistry.bindTileEntitySpecialRenderer(TileVending.class, new RenderVending());
     }
 
     @Override

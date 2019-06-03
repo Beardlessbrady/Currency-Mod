@@ -21,7 +21,7 @@ import net.minecraft.util.math.RayTraceResult;
  * File Created 2019-02-15
  */
 
-public class VendingRenderer extends TileEntitySpecialRenderer<TileVending> {
+public class RenderVending extends TileEntitySpecialRenderer<TileVending> {
      @Override
     public void render(TileVending te, double x, double y, double z, float partialTicks, int destroyStage, float alpha) {
          if (!te.hasWorld())

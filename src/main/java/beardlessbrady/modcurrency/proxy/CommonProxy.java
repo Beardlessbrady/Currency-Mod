@@ -3,6 +3,7 @@ package beardlessbrady.modcurrency.proxy;
 import beardlessbrady.modcurrency.ConfigCurrency;
 import beardlessbrady.modcurrency.ModCurrency;
 import beardlessbrady.modcurrency.block.ModBlocks;
+import beardlessbrady.modcurrency.handler.EventHandler;
 import beardlessbrady.modcurrency.handler.GuiHandler;
 import beardlessbrady.modcurrency.item.ModItems;
 import net.minecraftforge.common.MinecraftForge;
@@ -39,6 +40,7 @@ public class CommonProxy {
     }
 
     public void Init(FMLInitializationEvent e){
+        MinecraftForge.EVENT_BUS.register(new EventHandler());
     }
 
 

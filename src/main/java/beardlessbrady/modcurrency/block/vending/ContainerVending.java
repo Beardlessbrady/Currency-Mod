@@ -57,6 +57,8 @@ public class ContainerVending extends Container {
         this.te = te;
         InventoryPlayer invPlayer = player.inventory;
 
+        te.setPlayerUsing(player.getUniqueID());
+
         setupPlayerInv(invPlayer);
         setupTeInv();
     }

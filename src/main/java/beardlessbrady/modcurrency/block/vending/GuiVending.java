@@ -96,7 +96,7 @@ public class GuiVending extends GuiContainer {
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
 
-        if(te.getPlayerUsing().equals(te.getOwner())){
+        if(te.isOwner()){
             buttonList.get(BUTTONADMIN).visible = true;
         }else{
             buttonList.get(BUTTONADMIN).visible = false;

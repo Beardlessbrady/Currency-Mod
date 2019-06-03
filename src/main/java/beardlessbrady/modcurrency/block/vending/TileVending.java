@@ -75,9 +75,10 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
     @Override
     public void update() {
-        if(!inputStackHandler.getStackInSlot(0).isEmpty()){
-            if (inputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemCurrency)) {
-                ItemStack itemStack = inputStackHandler.getStackInSlot(0);
+        if(playerUsing != null) {
+            if (!inputStackHandler.getStackInSlot(0).isEmpty()) {
+                if (inputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemCurrency)) {
+                    ItemStack itemStack = inputStackHandler.getStackInSlot(0);
 
                     float tempAmount = Float.valueOf(ConfigCurrency.currencyValues[itemStack.getItemDamage()]) * 100;
                     long amount = (long) tempAmount;
@@ -87,13 +88,12 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
 
                     cashReserve += amount;
+                }
             }
         }
     }
 
     public void openGui(EntityPlayer player, World world, BlockPos pos){
-        //TODO Sync with client playerunsing/owner?
-        playerUsing= player.getUniqueID();
         mode = false;
         if(world.getBlockState(pos).getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP) {
             player.openGui(ModCurrency.instance, 30, world, pos.getX(), pos.down().getY(), pos.getZ());
@@ -159,6 +159,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     @Nullable
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
+        super.getUpdatePacket();
         NBTTagCompound compound = new NBTTagCompound();
 
         compound.setString("selectedName", selectedName);
