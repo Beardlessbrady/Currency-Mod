@@ -28,9 +28,7 @@ public class EventHandler {
             if (e.getWorld().getBlockState(e.getPos()).getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP)
                 tile =  (TileEconomyBase) e.getWorld().getTileEntity(e.getPos().down());
 
-
-            System.out.println((!e.getEntityPlayer().getUniqueID().toString().equals(tile.getOwner())) && !e.getEntityPlayer().isCreative());
-            if (!((e.getEntityPlayer().getUniqueID().toString().equals(tile.getOwner())) || e.getEntityPlayer().isCreative())) {     //If not Owner (and not in creative) Can't Break
+            if (!((e.getEntityPlayer().getUniqueID().equals(tile.getOwner())) || e.getEntityPlayer().isCreative())) {     //If not Owner (and not in creative) Can't Break
                 e.setCanceled(true);
             }
 

@@ -79,7 +79,6 @@ public class BlockVending extends EconomyBlockBase {
                 worldIn.setBlockToAir(pos.down());
             } else if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOBOTTOM) { //BOTTOM BLOCK
                 worldIn.setBlockToAir(pos.up());
-                worldIn.spawnEntity(new EntityItem(worldIn, pos.getX(), pos.getY(), pos.getZ(), new ItemStack(this)));
             }
             super.breakBlock(worldIn, pos, state);
         }
