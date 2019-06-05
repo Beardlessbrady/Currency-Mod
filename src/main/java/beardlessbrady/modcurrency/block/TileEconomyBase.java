@@ -40,8 +40,8 @@ public class TileEconomyBase extends TileEntity {
         compound.setLong("cashReserve", cashReserve);
         compound.setLong("cashRegister", cashRegister);
         compound.setBoolean("mode", mode);
-        compound.setString("playerUsing", playerUsing.toString());
-        compound.setString("owner", owner.toString());
+        compound.setUniqueId("playerUsing", playerUsing);
+        compound.setUniqueId("owner", owner);
 
         return compound;
     }
@@ -52,8 +52,8 @@ public class TileEconomyBase extends TileEntity {
         if (compound.hasKey("cashReserve")) cashReserve = compound.getLong("cashReserve");
         if(compound.hasKey("cashRegister")) cashRegister = compound.getLong("cashRegister");
         if (compound.hasKey("mode")) mode = compound.getBoolean("mode");
-        if (compound.hasKey("playerUsing")) playerUsing = UUID.fromString(compound.getString("playerUsing"));
-        if (compound.hasKey("owner")) owner = UUID.fromString(compound.getString("owner"));
+        if (compound.hasKey("playerUsing")) playerUsing = compound.getUniqueId("playerUsing");
+        if (compound.hasKey("owner")) owner = compound.getUniqueId("owner");
     }
 
     @Override
@@ -68,8 +68,8 @@ public class TileEconomyBase extends TileEntity {
         compound.setLong("cashReserve", cashReserve);
         compound.setLong("cashRegister", cashRegister);
         compound.setBoolean("mode", mode);
-        compound.setString("playerUsing", playerUsing.toString());
-        compound.setString("owner", owner.toString());
+        compound.setUniqueId("playerUsing", playerUsing);
+        compound.setUniqueId("owner", owner);
 
         return new SPacketUpdateTileEntity(pos, 1, compound);
     }
@@ -82,8 +82,8 @@ public class TileEconomyBase extends TileEntity {
         mode = compound.getBoolean("mode");
         cashReserve = compound.getLong("cashReserve");
         cashRegister = compound.getLong("cashRegister");
-        if(!UUID.fromString(compound.getString("playerUsing")).equals(new UUID(0L, 0L)))playerUsing = UUID.fromString(compound.getString("playerUsing"));
-        if(!UUID.fromString(compound.getString("owner")).equals(new UUID(0L, 0L))) owner = UUID.fromString(compound.getString("owner"));
+        playerUsing = compound.getUniqueId("playerUsing");
+        owner = compound.getUniqueId("owner");
     }
     //</editor-fold>
 

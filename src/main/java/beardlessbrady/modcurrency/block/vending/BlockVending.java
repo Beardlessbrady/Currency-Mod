@@ -59,6 +59,7 @@ public class BlockVending extends EconomyBlockBase {
                 .withProperty(StateHandler.FACING, placer.getHorizontalFacing().getOpposite()));
 
         getTile(worldIn, pos).setOwner(placer.getUniqueID());
+        getTile(worldIn, pos).markDirty();
     }
 
     @Override
