@@ -159,8 +159,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     @Nullable
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
-        super.getUpdatePacket();
-        NBTTagCompound compound = new NBTTagCompound();
+        NBTTagCompound compound = super.getUpdatePacket().getNbtCompound();
 
         compound.setString("selectedName", selectedName);
         compound.setInteger("inventoryLimit", inventoryLimit);
