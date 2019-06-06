@@ -1,7 +1,5 @@
 package beardlessbrady.modcurrency.block.vending;
 
-import beardlessbrady.modcurrency.ModCurrency;
-import beardlessbrady.modcurrency.UtilMethods;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.item.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
@@ -227,7 +225,9 @@ public class ContainerVending extends Container {
                 if (dragType == 0){ //LEFT CLICK
                     buyItem(index, 1);
                 }else if (dragType == 1){ //RIGHT CLICK
-                    buyItem(index, te.getItemSize(index)/2);
+                    // int five = 5;
+                    // if(te.getItemSize(index) < 5) five = 1;
+                    // buyItem(index, five);
                 }
                 return ItemStack.EMPTY;
             }
@@ -312,6 +312,7 @@ public class ContainerVending extends Container {
 
 
     public ItemStack buyItem(int index, int count) {
+        count = count * te.getItemAmnt(index);
         if (!te.getInvItemStack(index).isEmpty() && te.getItemSize(index) != 0) {
             if (te.canAfford(index, count)) {
                 ItemStack outputStack = te.getInvItemStack(index).copy();

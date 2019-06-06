@@ -1,4 +1,4 @@
-package beardlessbrady.modcurrency;
+package beardlessbrady.modcurrency.utilities;
 
 import net.minecraft.item.ItemStack;
 

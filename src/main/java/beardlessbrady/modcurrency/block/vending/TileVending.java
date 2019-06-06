@@ -2,10 +2,10 @@ package beardlessbrady.modcurrency.block.vending;
 
 import beardlessbrady.modcurrency.ConfigCurrency;
 import beardlessbrady.modcurrency.ModCurrency;
-import beardlessbrady.modcurrency.UtilMethods;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.handler.StateHandler;
 import beardlessbrady.modcurrency.item.ModItems;
+import beardlessbrady.modcurrency.utilities.UtilMethods;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -64,10 +64,13 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     private int inventoryLimit, selectedSlot;
     private int[] inventorySize = new int[TE_INVENTORY_SLOT_COUNT];
     private int[] inventoryCost = new int[TE_INVENTORY_SLOT_COUNT];
+    private int[] inventoryAmnt = new int[TE_INVENTORY_SLOT_COUNT];
 
     public TileVending(){
         for(int i = 0; i < inventorySize.length; i++){
             inventorySize[i] = 0;
+            inventoryCost[i] = 0;
+            inventoryAmnt[i] = 1;
         }
         inventoryLimit = 256;
         selectedName = "No Item Selected";
@@ -120,12 +123,15 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
         NBTTagCompound inventorySizeNBT = new NBTTagCompound();
         NBTTagCompound inventoryCostNBT = new NBTTagCompound();
+        NBTTagCompound inventoryAmntNBT = new NBTTagCompound();
         for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++){
             inventorySizeNBT.setInteger("size" + i, inventorySize[i]);
             inventoryCostNBT.setInteger("cost" + i, inventoryCost[i]);
+            inventoryAmntNBT.setInteger("amnt" + i, inventoryAmnt[i]);
         }
         compound.setTag("inventorySizeNBT", inventorySizeNBT);
         compound.setTag("inventoryCostNBT", inventoryCostNBT);
+        compound.setTag("inventoryAmntNBT", inventoryAmntNBT);
 
         return compound;
     }
@@ -151,6 +157,11 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             NBTTagCompound inventoryCostNBT = compound.getCompoundTag("inventoryCostNBT");
             for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) inventoryCost[i] = inventoryCostNBT.getInteger("cost" + i);
         }
+
+        if(compound.hasKey("inventoryAmntNBT")){
+            NBTTagCompound inventoryAmntNBT = compound.getCompoundTag("inventoryAmntNBT");
+            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) inventoryAmnt[i] = inventoryAmntNBT.getInteger("amnt" + i);
+        }
     }
 
     @Override
@@ -170,12 +181,15 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
         NBTTagCompound inventorySizeNBT = new NBTTagCompound();
         NBTTagCompound inventoryCostNBT = new NBTTagCompound();
+        NBTTagCompound inventoryAmntNBT = new NBTTagCompound();
         for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++){
             inventorySizeNBT.setInteger("size" + i, inventorySize[i]);
             inventoryCostNBT.setInteger("cost" + i, inventoryCost[i]);
+            inventoryAmntNBT.setInteger("amnt" + i, inventoryAmnt[i]);
         }
         compound.setTag("inventorySizeNBT", inventorySizeNBT);
         compound.setTag("inventoryCostNBT", inventoryCostNBT);
+        compound.setTag("inventoryAmntNBT", inventoryAmntNBT);
 
 
         return new SPacketUpdateTileEntity(pos, 1, compound);
@@ -199,6 +213,11 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             NBTTagCompound inventoryCostNBT = compound.getCompoundTag("inventoryCostNBT");
             for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) inventoryCost[i] = inventoryCostNBT.getInteger("cost" + i);
         }
+
+        if(compound.hasKey("inventoryAmntNBT")){
+            NBTTagCompound inventoryAmntNBT = compound.getCompoundTag("inventoryAmntNBT");
+            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) inventoryAmnt[i] = inventoryAmntNBT.getInteger("amnt" + i);
+        }
     }
 
     //</editor-fold>
@@ -221,6 +240,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     }
     //</editor-fold>
 
+    //<editor-fold desc="fields">
     public static final int FIELD_INVLIMIT = 3;
     public static final int FIELD_SELECTED = 4;
 
@@ -263,9 +283,14 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
                 return super.getField(id);
         }
     }
+    //</editor-fold>
 
     public boolean isSlotEmpty(int index){
         return inventoryStackHandler.getStackInSlot(index).isEmpty();
+    }
+
+    public boolean isSlotEmpty(){
+        return isSlotEmpty(selectedSlot);
     }
 
     public int getItemSize(int index){
@@ -274,6 +299,10 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
     public ItemStack getInvItemStack(int index){
         return inventoryStackHandler.getStackInSlot(index);
+    }
+
+    public ItemStack getInvItemStack(){
+        return inventoryStackHandler.getStackInSlot(selectedSlot);
     }
 
     public ItemStack setInvItem(ItemStack stack, int index, int addonSize){
@@ -379,6 +408,18 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
     public int getItemCost(int i){
         return inventoryCost[i];
+    }
+
+    public void setItemAmnt(int amnt){
+        inventoryAmnt[selectedSlot] = amnt;
+    }
+
+    public int getItemAmnt(){
+        return inventoryAmnt[selectedSlot];
+    }
+
+    public int getItemAmnt(int i){
+        return inventoryAmnt[i];
     }
 
     public boolean canAfford(int slot, int amount){
