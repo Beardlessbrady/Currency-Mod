@@ -170,12 +170,12 @@ public class ContainerVending extends Container {
 
         if(slotId >= 37 && slotId <= 61) {  //te Inventory
             if(clickTypeIn == ClickType.CLONE) {
-                if (!(te.getIntField(TileVending.FIELD_SELECTED) == slotId)) {
-                    te.setIntField(te.FIELD_SELECTED, slotId - 37);
+                if (!(te.getField(TileVending.FIELD_SELECTED) == slotId)) {
+                    te.setField(te.FIELD_SELECTED, slotId - 37);
                     te.setSelectedName(te.getInvItemStack(index).getDisplayName());
                 }
             }
-            if (te.getIntField(TileVending.FIELD_MODE) == 1) {            //ADMIN MODE
+            if (te.getField(TileVending.FIELD_MODE) == 1) {            //ADMIN MODE
                 if(te.getItemSize(index) == 0){
                     te.setInvItem(ItemStack.EMPTY, index, 0);
                 }
@@ -246,7 +246,7 @@ public class ContainerVending extends Container {
 
        if(!itemStack.isEmpty()) {
            if (slotId >= 0 && slotId < PLAYER_TOTAL_COUNT) {
-               if(te.getIntField(TileEconomyBase.FIELD_MODE) == 0){
+               if(te.getField(TileEconomyBase.FIELD_MODE) == 0){
                    if(itemStack.getItem().equals(ModItems.itemCurrency)){
                        if (!this.mergeItemStack(itemStack, PLAYER_TOTAL_COUNT + TE_INPUT_SLOT_INDEX, PLAYER_TOTAL_COUNT + TE_INPUT_SLOT_INDEX + 1, false)) {
                            return ItemStack.EMPTY;
@@ -268,19 +268,19 @@ public class ContainerVending extends Container {
     @Override
     public void detectAndSendChanges() {
         super.detectAndSendChanges();
-        boolean fieldChanged[] = new boolean[te.getIntFieldCount()];
+        boolean fieldChanged[] = new boolean[te.getFieldCount()];
 
-        if (cachedFields == null) cachedFields = new int[te.getIntFieldCount()];
+        if (cachedFields == null) cachedFields = new int[te.getFieldCount()];
 
         for (int i = 0; i < cachedFields.length; i++) {
-            if (cachedFields[i] != te.getIntField(i)) {
-                cachedFields[i] = te.getIntField(i);
+            if (cachedFields[i] != te.getField(i)) {
+                cachedFields[i] = te.getField(i);
                 fieldChanged[i] = true;
             }
         }
 
         for (IContainerListener listener : this.listeners) {
-            for (int field = 0; field < te.getIntFieldCount(); ++field) {
+            for (int field = 0; field < te.getFieldCount(); ++field) {
                 if (fieldChanged[field]) {
                     listener.sendWindowProperty(this, field, cachedFields[field]);
                 }
@@ -290,7 +290,7 @@ public class ContainerVending extends Container {
 
     @Override
     public void updateProgressBar(int id, int data) {
-        te.setIntField(id, data);
+        te.setField(id, data);
     }
     //</editor-fold>
 
@@ -299,7 +299,7 @@ public class ContainerVending extends Container {
     public void onContainerClosed(EntityPlayer playerIn) {
         super.onContainerClosed(playerIn);
         te.voidPlayerUsing();
-        te.setIntField(TileEconomyBase.FIELD_MODE, 0);
+        te.setField(TileEconomyBase.FIELD_MODE, 0);
 
         for (int i = PLAYER_TOTAL_COUNT + TE_OUTPUT_FIRST_SLOT_INDEX; i < PLAYER_TOTAL_COUNT + TE_OUTPUT_FIRST_SLOT_INDEX + TE_OUTPUT_SLOT_COUNT; i++) {
             if (!this.mergeItemStack(inventorySlots.get(i).getStack(), 0, PLAYER_TOTAL_COUNT, false)) {
@@ -323,10 +323,10 @@ public class ContainerVending extends Container {
                     return ItemStack.EMPTY;
                 } else {
                     if (te.growOutItemSize(outputStack, outSlot).equals(ItemStack.EMPTY)) {
-                        long newCashReserve = te.getLongField(TileEconomyBase.FIELD_LONG_CASHRESERVE) - (te.getItemCost(index) * count);
-                        long newCashRegister = te.getLongField(TileEconomyBase.FIELD_LONG_CASHREGISTER) + (te.getItemCost(index) * count);
-                        te.setLongField(TileEconomyBase.FIELD_LONG_CASHRESERVE, newCashReserve);
-                        te.setLongField(TileEconomyBase.FIELD_LONG_CASHREGISTER, newCashRegister);
+                        int newCashReserve = te.getField(TileEconomyBase.FIELD_CASHRESERVE) - (te.getItemCost(index) * count);
+                        int newCashRegister = te.getField(TileEconomyBase.FIELD_CASHREGISTER) + (te.getItemCost(index) * count);
+                        te.setField(TileEconomyBase.FIELD_CASHRESERVE, newCashReserve);
+                        te.setField(TileEconomyBase.FIELD_CASHREGISTER, newCashRegister);
                         te.shrinkInvItemSize(count, index);
                     } else {
                         //TODO FAIl because no slots left in output

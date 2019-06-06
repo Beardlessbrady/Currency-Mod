@@ -81,13 +81,15 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
                     ItemStack itemStack = inputStackHandler.getStackInSlot(0);
 
                     float tempAmount = Float.valueOf(ConfigCurrency.currencyValues[itemStack.getItemDamage()]) * 100;
-                    long amount = (long) tempAmount;
-
+                    int amount = (int) tempAmount;
                     amount = amount * inputStackHandler.getStackInSlot(0).getCount();
-                    inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
 
+                    if(amount + cashReserve <= 999999999) {
+                        inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
+                        cashReserve += amount;
 
-                    cashReserve += amount;
+                        //TODO inform of machine cap
+                    }
                 }
             }
         }
@@ -219,16 +221,16 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     }
     //</editor-fold>
 
-    public static final int FIELD_INVLIMIT = 1;
-    public static final int FIELD_SELECTED = 2;
+    public static final int FIELD_INVLIMIT = 3;
+    public static final int FIELD_SELECTED = 4;
 
     @Override
-    public int getIntFieldCount(){
-        return 2;
+    public int getFieldCount(){
+        return super.getFieldCount() + 2;
     }
 
     @Override
-    public void setIntField(int id, int value){
+    public void setField(int id, int value){
         switch(id){
             case FIELD_MODE:
                 mode = (value == 1);
@@ -239,20 +241,27 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             case FIELD_SELECTED:
                 selectedSlot = value;
                 break;
+            default:
+                super.setField(id, value);
         }
     }
 
     @Override
-    public int getIntField(int id){
+    public int getField(int id){
         switch(id){
             case FIELD_MODE:
                 return (mode)? 1 : 0;
+            case FIELD_CASHRESERVE:
+                return cashReserve;
+            case FIELD_CASHREGISTER:
+                return cashRegister;
             case FIELD_INVLIMIT:
                 return inventoryLimit;
             case FIELD_SELECTED:
                 return selectedSlot;
+            default:
+                return super.getField(id);
         }
-        return 0;
     }
 
     public boolean isSlotEmpty(int index){
@@ -373,7 +382,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     }
 
     public boolean canAfford(int slot, int amount){
-        if(getItemCost(slot) * amount <= getLongField(TileEconomyBase.FIELD_LONG_CASHRESERVE)) return true;
+        if(getItemCost(slot) * amount <= getField(TileEconomyBase.FIELD_CASHRESERVE)) return true;
         return false;
     }
 
@@ -397,7 +406,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     }
 
     public void outChange(boolean blockBreak){
-        long bank;
+        int bank;
         OUTER_LOOP: for(int i = ConfigCurrency.currencyValues.length-1; i >=0; i--){
             if(mode == true){
                 bank = cashRegister;
@@ -407,7 +416,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
             boolean repeat = false;
             if((bank / (Float.valueOf(ConfigCurrency.currencyValues[i])) * 100) > 0){ //Divisible by currency value
-                int amount = ((int)bank /((int)((Float.valueOf(ConfigCurrency.currencyValues[i])) * 100)));
+                int amount = (bank /((int)((Float.valueOf(ConfigCurrency.currencyValues[i])) * 100)));
 
                 if(amount > 64){
                     amount = 64;
@@ -420,18 +429,18 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
                 if(blockBreak){ //If Block Breaking spawn item
                     world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), outChange));
                     if (mode == true) {
-                        cashRegister -= (long) ((Float.valueOf(ConfigCurrency.currencyValues[i]) * 100) * amount);
+                        cashRegister -= ((Float.valueOf(ConfigCurrency.currencyValues[i]) * 100) * amount);
                     } else {
-                        cashReserve -= (long) ((Float.valueOf(ConfigCurrency.currencyValues[i]) * 100) * amount);
+                        cashReserve -= ((Float.valueOf(ConfigCurrency.currencyValues[i]) * 100) * amount);
                     }
                 }else {
                     int outputSlot = outputSlotCheck(outChange);
                     if (outputSlot != -1) {
                         if (growOutItemSize(outChange, outputSlot).equals(ItemStack.EMPTY)) {
                             if (mode == true) {
-                                cashRegister -= (long) ((Float.valueOf(ConfigCurrency.currencyValues[i]) * 100) * amount);
+                                cashRegister -= ((Float.valueOf(ConfigCurrency.currencyValues[i]) * 100) * amount);
                             } else {
-                                cashReserve -= (long) ((Float.valueOf(ConfigCurrency.currencyValues[i]) * 100) * amount);
+                                cashReserve -= ((Float.valueOf(ConfigCurrency.currencyValues[i]) * 100) * amount);
                             }
                         }
                     } else {

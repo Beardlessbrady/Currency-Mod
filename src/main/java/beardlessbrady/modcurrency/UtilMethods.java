@@ -21,15 +21,15 @@ public final class UtilMethods {
         return basic && ench;
     }
 
-    public static String translateMoney(long amount){
-        String amnt = Long.toString(amount);
+    public static String translateMoney(int amount){
+        String amnt = Integer.toString(amount);
         String finalTranslation;
 
 
         if(amnt.length() == 1) {
             finalTranslation = "0.0" + amnt;
         }else if(amnt.length() >2){   //At least one dollar
-            finalTranslation = amnt.substring(0, amnt.length()-2) + "." + amnt.substring(amnt.length()-2, amnt.length());
+            finalTranslation = amnt.substring(0, amnt.length()-2) + "." + amnt.substring(amnt.length()-2);
         }else if(amnt.equals(0)) {
             finalTranslation = amnt;
         }else{

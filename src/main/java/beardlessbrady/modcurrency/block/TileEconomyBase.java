@@ -18,7 +18,7 @@ import java.util.UUID;
  */
 
 public class TileEconomyBase extends TileEntity {
-    protected long cashReserve, cashRegister;
+    protected int cashReserve, cashRegister;
     protected boolean mode;
     protected UUID owner, playerUsing;
 
@@ -37,8 +37,8 @@ public class TileEconomyBase extends TileEntity {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
-        compound.setLong("cashReserve", cashReserve);
-        compound.setLong("cashRegister", cashRegister);
+        compound.setInteger("cashReserve", cashReserve);
+        compound.setInteger("cashRegister", cashRegister);
         compound.setBoolean("mode", mode);
         compound.setUniqueId("playerUsing", playerUsing);
         compound.setUniqueId("owner", owner);
@@ -49,8 +49,8 @@ public class TileEconomyBase extends TileEntity {
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        if (compound.hasKey("cashReserve")) cashReserve = compound.getLong("cashReserve");
-        if(compound.hasKey("cashRegister")) cashRegister = compound.getLong("cashRegister");
+        if (compound.hasKey("cashReserve")) cashReserve = compound.getInteger("cashReserve");
+        if(compound.hasKey("cashRegister")) cashRegister = compound.getInteger("cashRegister");
         if (compound.hasKey("mode")) mode = compound.getBoolean("mode");
         if (compound.hasKey("playerUsing")) playerUsing = compound.getUniqueId("playerUsing");
         if (compound.hasUniqueId("owner")) owner = compound.getUniqueId("owner");
@@ -66,8 +66,8 @@ public class TileEconomyBase extends TileEntity {
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound compound = new NBTTagCompound();
-        compound.setLong("cashReserve", cashReserve);
-        compound.setLong("cashRegister", cashRegister);
+        compound.setInteger("cashReserve", cashReserve);
+        compound.setInteger("cashRegister", cashRegister);
         compound.setBoolean("mode", mode);
         compound.setUniqueId("playerUsing", playerUsing);
         compound.setUniqueId("owner", owner);
@@ -81,8 +81,8 @@ public class TileEconomyBase extends TileEntity {
         NBTTagCompound compound = pkt.getNbtCompound();
 
         if(compound.hasKey("mode")) mode = compound.getBoolean("mode");
-        if(compound.hasKey("cashReserve")) cashReserve = compound.getLong("cashReserve");
-        if(compound.hasKey("cashRegister")) cashRegister = compound.getLong("cashRegister");
+        if(compound.hasKey("cashReserve")) cashReserve = compound.getInteger("cashReserve");
+        if(compound.hasKey("cashRegister")) cashRegister = compound.getInteger("cashRegister");
         if(compound.hasKey("playerUsing")) playerUsing = compound.getUniqueId("playerUsing");
         if(compound.hasUniqueId("owner")) owner = compound.getUniqueId("owner");
 
@@ -90,57 +90,40 @@ public class TileEconomyBase extends TileEntity {
     //</editor-fold>
 
     //Field Id's
-    public static final int FIELD_LONG_CASHRESERVE = 0;
-    public static final int FIELD_LONG_CASHREGISTER = 1;
-
     public static final int FIELD_MODE = 0;
+    public static final int FIELD_CASHRESERVE = 1;
+    public static final int FIELD_CASHREGISTER = 2;
 
-
-    public int getIntFieldCount(){
-        return 1;
+    public int getFieldCount(){
+        return 3;
     }
 
-    public void setIntField(int id, int value){
+    public void setField(int id, int value){
         switch(id){
             case FIELD_MODE:
                 mode = (value == 1);
                 break;
-        }
-    }
-
-    public int getIntField(int id){
-        switch(id){
-            case FIELD_MODE:
-                return (mode)? 1 : 0;
-        }
-        return 0;
-    }
-
-    public int getLongFieldCount(){
-        return 2;
-    }
-
-    public void setLongField(int id, long value){
-        switch(id){
-            case FIELD_LONG_CASHRESERVE:
+            case FIELD_CASHRESERVE:
                 cashReserve = value;
                 break;
-            case FIELD_LONG_CASHREGISTER:
+            case FIELD_CASHREGISTER:
                 cashRegister = value;
                 break;
         }
     }
 
-    public long getLongField(int id){
+    public int getField(int id){
         switch(id){
-            case FIELD_LONG_CASHRESERVE:
+            case FIELD_MODE:
+                return (mode)? 1 : 0;
+            case FIELD_CASHRESERVE:
+                System.out.println("POOP" + cashReserve);
                 return cashReserve;
-            case FIELD_LONG_CASHREGISTER:
+            case FIELD_CASHREGISTER:
                 return cashRegister;
         }
-        return -1;
+        return 0;
     }
-
 
     public UUID getOwner(){
         return owner;

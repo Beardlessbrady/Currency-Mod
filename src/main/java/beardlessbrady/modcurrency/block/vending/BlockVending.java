@@ -67,10 +67,10 @@ public class BlockVending extends EconomyBlockBase {
         if(!worldIn.isRemote) {
             TileVending tile = (TileVending) getTile(worldIn, pos, state);
 
-            tile.setIntField(TileEconomyBase.FIELD_MODE, 0);
+            tile.setField(TileEconomyBase.FIELD_MODE, 0);
             tile.outChange(true);
 
-            tile.setIntField(TileEconomyBase.FIELD_MODE, 1);
+            tile.setField(TileEconomyBase.FIELD_MODE, 1);
             tile.outChange(true);
 
             tile.dropInventory();

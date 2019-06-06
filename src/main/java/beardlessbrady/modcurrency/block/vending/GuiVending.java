@@ -64,10 +64,10 @@ public class GuiVending extends GuiContainer {
 
         this.buttonList.add(new GuiButton(BUTTONCHANGE,  i + 143 , j + 27, 20, 20, "$"));
 
-        String mode = (te.getIntField(te.FIELD_MODE) == 1)? "STOCK" : "SELL";
+        String mode = (te.getField(te.FIELD_MODE) == 1)? "STOCK" : "SELL";
         this.buttonList.add(new GuiButton(BUTTONADMIN,  i + 137 , j - 42, 32, 20, mode));
 
-        this.fieldPrice = new GuiTextField(FIELDPRICE, fontRenderer, i + 217, j + 30, 50, 8);        //Setting Costs
+        this.fieldPrice = new GuiTextField(FIELDPRICE, fontRenderer, i + 213, j + 30, 90, 8);        //Setting Costs
         this.fieldPrice.setTextColor(Integer.parseInt("C35763", 16));
         this.fieldPrice.setEnableBackgroundDrawing(false);
         this.fieldPrice.setMaxStringLength(7);
@@ -113,7 +113,8 @@ public class GuiVending extends GuiContainer {
         GL11.glScalef(0.7F, 0.7F, 0.8F);
         fontRenderer.drawStringWithShadow(I18n.format("guivending.cash"), 7, -40, Integer.parseInt("2DB22F", 16));
         fontRenderer.drawStringWithShadow(I18n.format("guivending.moneysign"), 7, -30, Integer.parseInt("ffffff", 16));
-        fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getLongField(TileVending.FIELD_LONG_CASHRESERVE))), 15, -30, Integer.parseInt("ffffff", 16));
+
+        fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getField(TileVending.FIELD_CASHRESERVE))), 15, -30, Integer.parseInt("ffffff", 16));
         GL11.glPopMatrix();
         GL11.glDisable(GL11.GL_DEPTH_TEST);
 
@@ -121,7 +122,7 @@ public class GuiVending extends GuiContainer {
 
         Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
         //STOCK MODE, SELL MODE
-        if(te.getIntField(TileVending.FIELD_MODE) == 1) {
+        if(te.getField(TileVending.FIELD_MODE) == 1) {
             drawSelectionOverlay();
             drawAdminPanel();
 
@@ -130,7 +131,8 @@ public class GuiVending extends GuiContainer {
             GL11.glScalef(0.7F, 0.7F, 0.8F);
             fontRenderer.drawStringWithShadow(I18n.format("guivending.profit"), 7, -10, Integer.parseInt("3D78E0", 16));
             fontRenderer.drawStringWithShadow(I18n.format("guivending.moneysign"), 7, 0, Integer.parseInt("ffffff", 16));
-            fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getLongField(TileVending.FIELD_LONG_CASHREGISTER))), 15, 0, Integer.parseInt("ffffff", 16));
+
+            fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getField(TileVending.FIELD_CASHREGISTER))), 15, 0, Integer.parseInt("ffffff", 16));
             GL11.glPopMatrix();
             GL11.glDisable(GL11.GL_DEPTH_TEST);
 
@@ -152,10 +154,10 @@ public class GuiVending extends GuiContainer {
         switch(button.id){
             case BUTTONADMIN:
                 PacketSetFieldToServer pack = new PacketSetFieldToServer();
-                pack.setData((te.getIntField(te.FIELD_MODE) == 1) ? 0 : 1, te.FIELD_MODE, te.getPos());
+                pack.setData((te.getField(te.FIELD_MODE) == 1) ? 0 : 1, te.FIELD_MODE, te.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack);
 
-                String mode = (te.getIntField(te.FIELD_MODE) == 0)? "STOCK" : "SELL";
+                String mode = (te.getField(te.FIELD_MODE) == 0)? "STOCK" : "SELL";
                 buttonList.get(BUTTONADMIN).displayString = mode;
 
                 te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
@@ -199,7 +201,7 @@ public class GuiVending extends GuiContainer {
     }
 
     private void drawAdminPanel(){
-        if(te.getIntField(TileVending.FIELD_MODE) == 1){
+        if(te.getField(TileVending.FIELD_MODE) == 1){
             drawTexturedModalRect(177, 0, 0, 202, 106, 54);
 
             fontRenderer.drawStringWithShadow(I18n.format("guivending.slotsettings"), 216, 10, Integer.parseInt("ffffff", 16));
@@ -210,13 +212,13 @@ public class GuiVending extends GuiContainer {
             fontRenderer.drawString(I18n.format(itemName), 322 - (itemName.length() *2 ), 28,  Integer.parseInt("7B232D", 16));
             GL11.glPopMatrix();
 
-            fontRenderer.drawStringWithShadow(I18n.format("$"), 210, 30, Color.lightGray.getRGB());
+            fontRenderer.drawStringWithShadow(I18n.format("$"), 206, 30, Color.lightGray.getRGB());
         }
     }
 
     private void drawSelectionOverlay() {
-        if(te.getIntField(TileVending.FIELD_MODE) == 1) {
-            int slotId = te.getIntField(TileVending.FIELD_SELECTED);
+        if(te.getField(TileVending.FIELD_MODE) == 1) {
+            int slotId = te.getField(TileVending.FIELD_SELECTED);
             int slotColumn = 0, slotRow = 0;
 
             if (slotId >= 0 && slotId <= 4) {
@@ -268,7 +270,7 @@ public class GuiVending extends GuiContainer {
 
             //Adding Vending Strings
             TextFormatting color = TextFormatting.YELLOW;
-            if (te.getIntField(TileEconomyBase.FIELD_MODE) == 0) {
+            if (te.getField(TileEconomyBase.FIELD_MODE) == 0) {
                 if (te.canAfford(slot, 1)) {
                      color = TextFormatting.GREEN;
                  } else {
@@ -297,29 +299,29 @@ public class GuiVending extends GuiContainer {
 
     @Override
     public void handleMouseInput() throws IOException {
-        if(te.getIntField(TileVending.FIELD_MODE) == 1) {
+        if(te.getField(TileVending.FIELD_MODE) == 1) {
             int i = Integer.signum(Mouse.getEventDWheel());
             if (i == 1) {
-                if (te.getIntField(TileVending.FIELD_SELECTED) == 24) {
-                    te.setIntField(TileVending.FIELD_SELECTED, 0);
+                if (te.getField(TileVending.FIELD_SELECTED) == 24) {
+                    te.setField(TileVending.FIELD_SELECTED, 0);
                     te.setSelectedName(te.getInvItemStack(0).getDisplayName());
 
                     updateTextField();
                 } else {
-                    te.setIntField(TileVending.FIELD_SELECTED, te.getIntField(TileVending.FIELD_SELECTED) + 1);
-                    te.setSelectedName(te.getInvItemStack(te.getIntField(TileVending.FIELD_SELECTED)).getDisplayName());
+                    te.setField(TileVending.FIELD_SELECTED, te.getField(TileVending.FIELD_SELECTED) + 1);
+                    te.setSelectedName(te.getInvItemStack(te.getField(TileVending.FIELD_SELECTED)).getDisplayName());
 
                     updateTextField();
                 }
             } else if (i == -1) {
-                if (te.getIntField(TileVending.FIELD_SELECTED) == 0) {
-                    te.setIntField(TileVending.FIELD_SELECTED, 24);
+                if (te.getField(TileVending.FIELD_SELECTED) == 0) {
+                    te.setField(TileVending.FIELD_SELECTED, 24);
                     te.setSelectedName(te.getInvItemStack(24).getDisplayName());
 
                     updateTextField();
                 } else {
-                    te.setIntField(TileVending.FIELD_SELECTED, te.getIntField(TileVending.FIELD_SELECTED) - 1);
-                    te.setSelectedName(te.getInvItemStack(te.getIntField(TileVending.FIELD_SELECTED)).getDisplayName());
+                    te.setField(TileVending.FIELD_SELECTED, te.getField(TileVending.FIELD_SELECTED) - 1);
+                    te.setSelectedName(te.getInvItemStack(te.getField(TileVending.FIELD_SELECTED)).getDisplayName());
 
                     updateTextField();
                 }
@@ -331,9 +333,9 @@ public class GuiVending extends GuiContainer {
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         int numChar = Character.getNumericValue(typedChar);
-        if ((te.getIntField(te.FIELD_MODE) == 1) && ((numChar >= 0 && numChar <= 9) || (keyCode == 14) || keyCode == 211 || (keyCode == 203) || (keyCode == 205) || (keyCode == 52))) { //Ensures keys input are only numbers or backspace type keys
+        if ((te.getField(TileEconomyBase.FIELD_MODE) == 1) && ((numChar >= 0 && numChar <= 9) || (keyCode == 14) || keyCode == 211 || (keyCode == 203) || (keyCode == 205) || (keyCode == 52))) { //Ensures keys input are only numbers or backspace type keys
 
-            if ((keyCode == 52 && !fieldPrice.getText().contains(".")) || keyCode != 52) {
+            if ((!fieldPrice.getText().contains(".")) || keyCode != 52) {
                 if (this.fieldPrice.textboxKeyTyped(typedChar, keyCode)) setCost();
             }
 
@@ -349,7 +351,7 @@ public class GuiVending extends GuiContainer {
 
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        if(te.getIntField(TileVending.FIELD_MODE) == 1) {
+        if(te.getField(TileVending.FIELD_MODE) == 1) {
             super.mouseClicked(mouseX, mouseY, mouseButton);
             fieldPrice.mouseClicked(mouseX, mouseY, mouseButton);
 
@@ -379,10 +381,10 @@ public class GuiVending extends GuiContainer {
                 newCost = Integer.valueOf(this.fieldPrice.getText()) * 100;
             }
 
-            te.setItemCost(newCost);
-            PacketSetItemCostToServer pack = new PacketSetItemCostToServer();
-            pack.setData(newCost, te.getPos());
-            PacketHandler.INSTANCE.sendToServer(pack);
+                te.setItemCost(newCost);
+                PacketSetItemCostToServer pack = new PacketSetItemCostToServer();
+                pack.setData(newCost, te.getPos());
+                PacketHandler.INSTANCE.sendToServer(pack);
 
             te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
         }
