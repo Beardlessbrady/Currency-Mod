@@ -2,6 +2,7 @@ package beardlessbrady.modcurrency.block.vending;
 
 import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.item.ModItems;
+import beardlessbrady.modcurrency.utilities.UtilMethods;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
@@ -9,6 +10,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -152,7 +154,6 @@ public class ContainerVending extends Container {
                 }
                 this.detectAndSendChanges();
                 return ItemStack.EMPTY;
-                //TODO PICKUP_ALL FOR TE INVENTORY
             } else if (slotId >= GUI_INVENTORY_FIRST_INDEX && slotId < GUI_OUTPUT_FIRST_INDEX + 4) {
                 return ItemStack.EMPTY;
             }
@@ -243,6 +244,7 @@ public class ContainerVending extends Container {
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotId) {
       ItemStack itemStack = this.inventorySlots.get(slotId).getStack();
+      ItemStack copyStack = itemStack.copy();
 
        if(!itemStack.isEmpty()) {
            if (slotId >= 0 && slotId < PLAYER_TOTAL_COUNT) {
@@ -252,9 +254,36 @@ public class ContainerVending extends Container {
                            return ItemStack.EMPTY;
                        }
                    }
+               }else{
+                   for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++){
+                       if(UtilMethods.equalStacks(itemStack, inventorySlots.get(GUI_INVENTORY_FIRST_INDEX + i).getStack())){
+                           int count = 0;
+                           if(te.getItemSize(i) + itemStack.getCount() <= te.getField(TileVending.FIELD_INVLIMIT)){
+                               count = itemStack.getCount();
+                           }else{
+                               count = te.getField(TileVending.FIELD_INVLIMIT) - te.getItemSize(i);
+                           }
+                           copyStack.setCount(count);
+                           te.growInvItemSize(copyStack, i);
+                           itemStack.shrink(count);
+                           if(itemStack.getCount() == 0) this.inventorySlots.get(slotId).putStack(ItemStack.EMPTY);
+                       }
+                   }
                }
+           }else if (slotId >= GUI_INVENTORY_FIRST_INDEX && slotId < GUI_OUTPUT_FIRST_INDEX){
+              /*
+               if(te.getField(TileEconomyBase.FIELD_MODE) == 0){
+                   int count = te.getItemSize(slotId - PLAYER_TOTAL_COUNT);
+                   if(count > itemStack.getMaxStackSize()){
+                       count = itemStack.getMaxStackSize();
+                   }
+
+                   copyStack.setCount(count);
+                   if (!this.mergeItemStack(copyStack, 0, PLAYER_TOTAL_COUNT, false)) {
+                       return ItemStack.EMPTY;
+                   }
+               }*/
            }
-           //TODO SHIFT CLICK PLAYER INV TO TE INV FOR STOCK MODE
        }
         return ItemStack.EMPTY;
     }
@@ -301,12 +330,21 @@ public class ContainerVending extends Container {
         te.voidPlayerUsing();
         te.setField(TileEconomyBase.FIELD_MODE, 0);
 
+        boolean success = false;
+
         for (int i = PLAYER_TOTAL_COUNT + TE_OUTPUT_FIRST_SLOT_INDEX; i < PLAYER_TOTAL_COUNT + TE_OUTPUT_FIRST_SLOT_INDEX + TE_OUTPUT_SLOT_COUNT; i++) {
             if (!this.mergeItemStack(inventorySlots.get(i).getStack(), 0, PLAYER_TOTAL_COUNT, false)) {
-                //TODO CHAT MESSAGE IT DIDNT WORK
+                success = false;
             }else{
-                //TODO IT WORKED, CHAT MESSAGE
+                success = true;
             }
+        }
+
+        if(playerIn.getEntityWorld().isRemote) {
+            if (success) {
+                playerIn.sendMessage(new TextComponentString("The Vending Machine's Output was placed in your inventory."));
+            } else
+                playerIn.sendMessage(new TextComponentString("Your inventory is full and unable to be filled by the Vending Machine's Output."));
         }
     }
 
