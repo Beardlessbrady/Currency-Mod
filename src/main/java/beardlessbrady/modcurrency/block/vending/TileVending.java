@@ -99,7 +99,6 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     }
 
     public void openGui(EntityPlayer player, World world, BlockPos pos){
-        mode = false;
         if(world.getBlockState(pos).getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP) {
             player.openGui(ModCurrency.instance, 30, world, pos.getX(), pos.down().getY(), pos.getZ());
         }else {

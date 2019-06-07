@@ -6,7 +6,6 @@ import beardlessbrady.modcurrency.handler.StateHandler;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -39,12 +38,19 @@ public class BlockVending extends EconomyBlockBase {
 
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        if(!worldIn.isRemote) {
-            if(TileEconomyBase.EMPTYID.equals(getTile(worldIn,pos).getPlayerUsing())) {
+        TileVending tile = (TileVending) getTile(worldIn, pos);
+        if (TileEconomyBase.EMPTYID.equals(getTile(worldIn, pos).getPlayerUsing())) {
+            if (playerIn.isSneaking() && tile.getOwner().equals(playerIn.getUniqueID())) {
+                tile.setField(TileEconomyBase.FIELD_MODE, 1);
+            } else {
+                tile.setField(TileEconomyBase.FIELD_MODE, 0);
+            }
+
+            if (!worldIn.isRemote) {
                 ((TileVending) getTile(worldIn, pos)).openGui(playerIn, worldIn, pos);
                 return true;
             }
-       }
+        }
         return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
     }
 
