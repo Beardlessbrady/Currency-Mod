@@ -3,6 +3,7 @@ package beardlessbrady.modcurrency.block.vending;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.item.ModItems;
 import beardlessbrady.modcurrency.utilities.UtilMethods;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
@@ -14,6 +15,7 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
+import org.lwjgl.input.Keyboard;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
@@ -154,7 +156,7 @@ public class ContainerVending extends Container {
                 }
                 this.detectAndSendChanges();
                 return ItemStack.EMPTY;
-            } else if (slotId >= GUI_INVENTORY_FIRST_INDEX && slotId < GUI_OUTPUT_FIRST_INDEX + 4) {
+            } else{
                 return ItemStack.EMPTY;
             }
         }
@@ -350,25 +352,36 @@ public class ContainerVending extends Container {
 
 
     public ItemStack buyItem(int index, int count) {
-        count = count * te.getItemAmnt(index);
+        int amount = te.getItemAmnt(index);
+
+        //If Sneak button held down, show a full stack (or as close to it)
+        //If Jump button held down, show half a stack (or as close to it)
+        if(Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode())) {
+            amount = te.whileSneakDown(index, amount);
+        } else if(Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindJump.getKeyCode())){
+            amount = te.whileJumpDown(index, amount);
+        }
+
+        count = count * amount;
+
         if (!te.getInvItemStack(index).isEmpty() && te.getItemSize(index) != 0) {
-            if (te.canAfford(index, count)) {
+            if (te.canAfford(index, count) && amount <= te.getItemSize(index)) {
                 ItemStack outputStack = te.getInvItemStack(index).copy();
                 outputStack.setCount(count);
-                int outSlot = te.outputSlotCheck(outputStack);
+                int outSlot = te.outputSlotCheck(outputStack, amount);
 
                 if (outSlot == -1) {
                     //TODO add OUT IS FULL WARNING
                     return ItemStack.EMPTY;
                 } else {
                     if (te.growOutItemSize(outputStack, outSlot).equals(ItemStack.EMPTY)) {
-                        int newCashReserve = te.getField(TileEconomyBase.FIELD_CASHRESERVE) - (te.getItemCost(index) * count);
-                        int newCashRegister = te.getField(TileEconomyBase.FIELD_CASHREGISTER) + (te.getItemCost(index) * count);
+                        int newCashReserve = te.getField(TileEconomyBase.FIELD_CASHRESERVE) - (te.getItemCost(index) * (count / te.getItemAmnt(index)));
+                        int newCashRegister = te.getField(TileEconomyBase.FIELD_CASHREGISTER) + (te.getItemCost(index) * (count / te.getItemAmnt(index)));
                         te.setField(TileEconomyBase.FIELD_CASHRESERVE, newCashReserve);
                         te.setField(TileEconomyBase.FIELD_CASHREGISTER, newCashRegister);
                         te.shrinkInvItemSize(count, index);
                     } else {
-                        //TODO FAIl because no slots left in output
+                        //TODO add OUT IS FULL WARNING
                     }
                     return ItemStack.EMPTY;
                 }

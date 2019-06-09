@@ -1,10 +1,9 @@
 package beardlessbrady.modcurrency.block.vending;
 
 import beardlessbrady.modcurrency.ModCurrency;
-import beardlessbrady.modcurrency.network.*;
-import beardlessbrady.modcurrency.utilities.GuiButtonTextured;
-import beardlessbrady.modcurrency.utilities.UtilMethods;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
+import beardlessbrady.modcurrency.network.*;
+import beardlessbrady.modcurrency.utilities.UtilMethods;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -16,9 +15,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
-import scala.Int;
 
 import java.awt.*;
 import java.io.IOException;
@@ -199,7 +198,18 @@ public class GuiVending extends GuiContainer {
                 if(te.getField(TileEconomyBase.FIELD_MODE) == 1) {
                     this.fontRenderer.drawStringWithShadow(num, 66 + (i * 26), startY + (j * 26), -1);
                 }else{
-                    String amount = Integer.toString(te.getItemAmnt(index));
+                    int startAmount = te.getItemAmnt(index);
+
+
+                    //If Sneak button held down, show a full stack (or as close to it)
+                    //If Jump button held down, show half a stack (or as close to it)
+                    if(Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode())) {
+                        startAmount = te.whileSneakDown(index, startAmount);
+                    } else if(Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindJump.getKeyCode())){
+                        startAmount = te.whileJumpDown(index, startAmount);
+                    }
+
+                    String amount = Integer.toString(startAmount);
 
                     if(amount.length() == 1) amount = "  " + amount;
                     if(amount.length() == 2) amount = " " + amount;
@@ -209,8 +219,7 @@ public class GuiVending extends GuiContainer {
                     if(num.equals(TextFormatting.RED + "Out")){
                         this.fontRenderer.drawStringWithShadow(num, 66 + (i * 26), startY + (j * 26), -1);
                     }else{
-                        if(te.getItemAmnt(index) != 1)
-
+                        if(startAmount != 1 && !te.getInvItemStack(index).isEmpty())
                             this.fontRenderer.drawStringWithShadow(amount, 66 + (i * 26), startY + (j * 26), -1);
                     }
                 }
@@ -310,10 +319,25 @@ public class GuiVending extends GuiContainer {
                  } else {
                      color = TextFormatting.RED;
                 }
+
+                int cost = te.getItemCost(slot);
+                int amount = te.getItemAmnt(slot);
+
+                //If Sneak button held down, show a full stack (or as close to it)
+                //If Jump button held down, show half a stack (or as close to it)
+                if(Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode())) {
+                    amount = te.whileSneakDown(slot, amount);
+                    cost = cost * (amount / te.getItemAmnt(slot));
+                } else if(Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindJump.getKeyCode())){
+                    amount = te.whileJumpDown(slot, amount);
+                    cost = cost * (amount / te.getItemAmnt(slot));
+                }
+
+
                 if(te.getItemAmnt(slot) == 1) {
-                    list.add(color + "$" + UtilMethods.translateMoney(te.getItemCost(slot)));
+                    list.add(color + "$" + UtilMethods.translateMoney(cost));
                 }else{
-                    list.add(TextFormatting.BLUE + Integer.toString(te.getItemAmnt(slot)) + TextFormatting.RESET + " for " + color + "$"  + UtilMethods.translateMoney(te.getItemCost(slot)));
+                    list.add(TextFormatting.BLUE + Integer.toString(amount) + TextFormatting.RESET + " for " + color + "$"  + UtilMethods.translateMoney(cost));
                 }
 
                 list.add("Stock: " + TextFormatting.BLUE + te.getItemSize(slot));
@@ -367,9 +391,9 @@ public class GuiVending extends GuiContainer {
         }
         super.handleMouseInput();
     }
-
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
+
         int numChar = Character.getNumericValue(typedChar);
         if ((te.getField(TileEconomyBase.FIELD_MODE) == 1) && ((numChar >= 0 && numChar <= 9) || (keyCode == 14) || keyCode == 211 || (keyCode == 203) || (keyCode == 205) || (keyCode == 52))) { //Ensures keys input are only numbers or backspace type keys
 

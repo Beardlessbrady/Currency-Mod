@@ -91,7 +91,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
                         inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
                         cashReserve += amount;
 
-                        //TODO inform of machine cap
+                        //TODO inform of machine cap WARNING
                     }
                 }
             }
@@ -422,15 +422,15 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     }
 
     public boolean canAfford(int slot, int amount){
-        if(getItemCost(slot) * amount <= getField(TileEconomyBase.FIELD_CASHRESERVE)) return true;
+        if(getItemCost(slot) * (amount / getItemAmnt(slot)) <= getField(TileEconomyBase.FIELD_CASHRESERVE)) return true;
         return false;
     }
 
-    public int outputSlotCheck(ItemStack itemStack){
+    public int outputSlotCheck(ItemStack itemStack, int amount){
         //Checks if any stacks in output are equal to the itemStack and can handle it being added in
         for(int i = 0; i < TE_OUTPUT_SLOT_COUNT; i++){
             if(UtilMethods.equalStacks(itemStack, outputStackHandler.getStackInSlot(i))){
-                if(outputStackHandler.getStackInSlot(i).getCount() + 1 <= outputStackHandler.getStackInSlot(i).getMaxStackSize()){
+                if(outputStackHandler.getStackInSlot(i).getCount() +  amount <= outputStackHandler.getStackInSlot(i).getMaxStackSize()){
                     return i;
                 }
             }
@@ -474,7 +474,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
                         cashReserve -= ((Float.valueOf(ConfigCurrency.currencyValues[i]) * 100) * amount);
                     }
                 }else {
-                    int outputSlot = outputSlotCheck(outChange);
+                    int outputSlot = outputSlotCheck(outChange, amount);
                     if (outputSlot != -1) {
                         if (growOutItemSize(outChange, outputSlot).equals(ItemStack.EMPTY)) {
                             if (mode == true) {
@@ -518,5 +518,33 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             }
         }
 
+    }
+
+    //If Sneak button held down, show a full stack (or as close to it)
+    public int whileSneakDown(int index, int num) {
+        int newNum = num;
+        if (getItemSize(index) < getInvItemStack(index).getMaxStackSize()) {
+            newNum = getItemSize(index);
+        } else newNum = getInvItemStack(index).getMaxStackSize();
+
+        while (newNum % getItemAmnt(index) != 0)
+            newNum--;
+
+        return newNum;
+    }
+
+    //If Jump button held down, show half a stack (or as close to it)
+    public int whileJumpDown(int index, int num) {
+        int newNum = num;
+        if (getItemSize(index) < getInvItemStack(index).getMaxStackSize() / 2) {
+            newNum = getItemSize(index);
+        } else newNum = getInvItemStack(index).getMaxStackSize() / 2;
+
+        if (newNum < 1) newNum = 1;
+
+        while (newNum % getItemAmnt(index) != 0)
+            newNum--;
+
+        return newNum;
     }
 }
