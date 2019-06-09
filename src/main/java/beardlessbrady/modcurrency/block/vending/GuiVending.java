@@ -62,7 +62,7 @@ public class GuiVending extends GuiContainer {
 
         this.buttonList.add(new GuiButton(BUTTONCHANGE,  i + 143 , j + 27, 20, 20, "$"));
 
-        String mode = (te.getField(te.FIELD_MODE) == 1)? "STOCK" : "SELL";
+        String mode = (te.getField(te.FIELD_MODE) == 1)? "STOCK" : "TRADE";
         this.buttonList.add(new GuiButton(BUTTONADMIN,  i + 137 , j - 42, 32, 20, mode));
 
         this.fieldPrice = new GuiTextField(FIELDPRICE, fontRenderer, i + 213, j + 30, 90, 8);        //Setting Costs
@@ -104,7 +104,7 @@ public class GuiVending extends GuiContainer {
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
 
-        if(te.isOwner()){
+        if(te.isOwner() || Minecraft.getMinecraft().player.isCreative()){
             buttonList.get(BUTTONADMIN).visible = true;
         }else{
             buttonList.get(BUTTONADMIN).visible = false;
@@ -158,7 +158,7 @@ public class GuiVending extends GuiContainer {
                 pack.setData((te.getField(te.FIELD_MODE) == 1) ? 0 : 1, te.FIELD_MODE, te.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack);
 
-                String mode = (te.getField(te.FIELD_MODE) == 0)? "STOCK" : "SELL";
+                String mode = (te.getField(te.FIELD_MODE) == 0)? "STOCK" : "TRADE";
                 buttonList.get(BUTTONADMIN).displayString = mode;
 
                 te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
@@ -359,38 +359,6 @@ public class GuiVending extends GuiContainer {
         }
     }
 
-    @Override
-    public void handleMouseInput() throws IOException {
-        if(te.getField(TileVending.FIELD_MODE) == 1) {
-            int i = Integer.signum(Mouse.getEventDWheel());
-            if (i == 1) {
-                if (te.getField(TileVending.FIELD_SELECTED) == 24) {
-                    te.setField(TileVending.FIELD_SELECTED, 0);
-                    te.setSelectedName(te.getInvItemStack(0).getDisplayName());
-
-                    updateTextField();
-                } else {
-                    te.setField(TileVending.FIELD_SELECTED, te.getField(TileVending.FIELD_SELECTED) + 1);
-                    te.setSelectedName(te.getInvItemStack(te.getField(TileVending.FIELD_SELECTED)).getDisplayName());
-
-                    updateTextField();
-                }
-            } else if (i == -1) {
-                if (te.getField(TileVending.FIELD_SELECTED) == 0) {
-                    te.setField(TileVending.FIELD_SELECTED, 24);
-                    te.setSelectedName(te.getInvItemStack(24).getDisplayName());
-
-                    updateTextField();
-                } else {
-                    te.setField(TileVending.FIELD_SELECTED, te.getField(TileVending.FIELD_SELECTED) - 1);
-                    te.setSelectedName(te.getInvItemStack(te.getField(TileVending.FIELD_SELECTED)).getDisplayName());
-
-                    updateTextField();
-                }
-            }
-        }
-        super.handleMouseInput();
-    }
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
 

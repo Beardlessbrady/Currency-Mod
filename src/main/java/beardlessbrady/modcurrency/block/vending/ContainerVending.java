@@ -170,12 +170,6 @@ public class ContainerVending extends Container {
         }
 
         if(slotId >= 37 && slotId <= 61) {  //te Inventory
-            if(clickTypeIn == ClickType.CLONE) {
-                if (!(te.getField(TileVending.FIELD_SELECTED) == slotId)) {
-                    te.setField(te.FIELD_SELECTED, slotId - 37);
-                    te.setSelectedName(te.getInvItemStack(index).getDisplayName());
-                }
-            }
             if (te.getField(TileVending.FIELD_MODE) == 1) {            //ADMIN MODE
                 if(te.getItemSize(index) == 0){
                     te.setInvItem(ItemStack.EMPTY, index, 0);
@@ -190,8 +184,19 @@ public class ContainerVending extends Container {
                             player.inventory.setItemStack(te.growInvItemSize(copyPlayerStack, index));
                         }
                     }
-                } else if (dragType == 1) { //Right Click
-                    if(clickTypeIn == ClickType.QUICK_CRAFT) { //Mimics Left Click
+                  if(te.getItemSize(index) == 0){
+                      te.setInvItem(ItemStack.EMPTY, index, 0);
+                      te.setItemAmnt(0, index);
+                      te.setItemCost(0, index);
+                  }
+                } else if (dragType == 1 && clickTypeIn == ClickType.PICKUP) { //Right Click
+                    if (!(te.getField(TileVending.FIELD_SELECTED) == slotId)) {
+                        te.setField(te.FIELD_SELECTED, slotId - 37);
+                        te.setSelectedName(te.getInvItemStack(index).getDisplayName());
+                    }
+                    return ItemStack.EMPTY;
+
+                   /* if(clickTypeIn == ClickType.QUICK_CRAFT) { //Mimics Left Click
                         if (playerStack.isEmpty()) {
                             player.inventory.setItemStack(te.shrinkInvItemSize(64, index));
                         } else {
@@ -213,21 +218,20 @@ public class ContainerVending extends Container {
                                 player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, 1));
                             }
                         }
+                    }*/
+                } else if (clickTypeIn == ClickType.QUICK_CRAFT) { //Mimics Right Click
+                    if (te.getInvItemStack(index).isEmpty()) { //Place 1
+                        player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, 1));
+                    } else {
+                        player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, 1));
                     }
-                } else if (dragType == 5) {
-                    if(clickTypeIn == ClickType.QUICK_CRAFT) { //Mimics Right Click
-                        if (te.getInvItemStack(index).isEmpty()) { //Place 1
-                            player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, 1));
-                        } else {
-                            player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, 1));
-                        }
-                    }
+
                 }
                 return ItemStack.EMPTY;
             } else { //SELL MODE
-                if (dragType == 0){ //LEFT CLICK
+                if (dragType == 0) { //LEFT CLICK
                     buyItem(index, 1);
-                }else if (dragType == 1){ //RIGHT CLICK
+                } else if (dragType == 1) { //RIGHT CLICK
                     // int five = 5;
                     // if(te.getItemSize(index) < 5) five = 1;
                     // buyItem(index, five);
@@ -332,21 +336,27 @@ public class ContainerVending extends Container {
         te.voidPlayerUsing();
         te.setField(TileEconomyBase.FIELD_MODE, 0);
 
-        boolean success = false;
+            boolean success = false;
+            boolean items = false;
 
         for (int i = PLAYER_TOTAL_COUNT + TE_OUTPUT_FIRST_SLOT_INDEX; i < PLAYER_TOTAL_COUNT + TE_OUTPUT_FIRST_SLOT_INDEX + TE_OUTPUT_SLOT_COUNT; i++) {
-            if (!this.mergeItemStack(inventorySlots.get(i).getStack(), 0, PLAYER_TOTAL_COUNT, false)) {
-                success = false;
-            }else{
-                success = true;
+            if(!inventorySlots.get(i).getStack().isEmpty()) {
+                items = true;
+                if (!this.mergeItemStack(inventorySlots.get(i).getStack(), 0, PLAYER_TOTAL_COUNT, false)) {
+                    success = false;
+                } else {
+                    success = true;
+                }
             }
         }
 
-        if(playerIn.getEntityWorld().isRemote) {
-            if (success) {
-                playerIn.sendMessage(new TextComponentString("The Vending Machine's Output was placed in your inventory."));
-            } else
-                playerIn.sendMessage(new TextComponentString("Your inventory is full and unable to be filled by the Vending Machine's Output."));
+        if(items) {
+            if (playerIn.getEntityWorld().isRemote) {
+                if (success) {
+                    playerIn.sendMessage(new TextComponentString("The Vending Machine's Output was placed in your inventory."));
+                } else
+                    playerIn.sendMessage(new TextComponentString("Your inventory is full and unable to be filled by the Vending Machine's Output."));
+            }
         }
     }
 

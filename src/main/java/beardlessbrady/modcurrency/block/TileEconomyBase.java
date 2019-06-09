@@ -117,7 +117,6 @@ public class TileEconomyBase extends TileEntity {
             case FIELD_MODE:
                 return (mode)? 1 : 0;
             case FIELD_CASHRESERVE:
-                System.out.println("POOP" + cashReserve);
                 return cashReserve;
             case FIELD_CASHREGISTER:
                 return cashRegister;

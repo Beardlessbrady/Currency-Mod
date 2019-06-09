@@ -401,6 +401,10 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         inventoryCost[selectedSlot] = cost;
     }
 
+    public void setItemCost(int cost, int index){
+        inventoryCost[index] = cost;
+    }
+
     public int getItemCost(){
         return inventoryCost[selectedSlot];
     }
@@ -411,6 +415,10 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
     public void setItemAmnt(int amnt){
         inventoryAmnt[selectedSlot] = amnt;
+    }
+
+    public void setItemAmnt(int amnt, int index){
+        inventoryAmnt[index] = amnt;
     }
 
     public int getItemAmnt(){
