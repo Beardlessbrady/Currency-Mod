@@ -203,7 +203,6 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         compound.setTag("inventoryCostNBT", inventoryCostNBT);
         compound.setTag("inventoryAmntNBT", inventoryAmntNBT);
         compound.setTag("inventoryBundleNBT", inventoryBundleNBT);
-
         return new SPacketUpdateTileEntity(pos, 1, compound);
     }
 
@@ -414,7 +413,10 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     }
 
     public void setSlotBundle(int index, int slotSet){
-        inventoryBundle[index] = slotSet;
+        if(index >= 0 && index < TE_INVENTORY_SLOT_COUNT && slotSet >= 0 && slotSet < TE_INVENTORY_SLOT_COUNT) {
+            inventoryBundle[index] = slotSet;
+            inventoryBundle[slotSet] = slotSet;
+        }
     }
 
     public String getSelectedName(){
