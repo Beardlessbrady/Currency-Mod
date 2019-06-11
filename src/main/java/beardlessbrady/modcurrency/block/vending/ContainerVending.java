@@ -186,7 +186,7 @@ public class ContainerVending extends Container {
                     }
                   if(te.getItemSize(index) == 0){
                       te.setInvItem(ItemStack.EMPTY, index, 0);
-                      te.setItemAmnt(0, index);
+                      te.setItemAmnt(1, index);
                       te.setItemCost(0, index);
                   }
                 } else if (dragType == 1 && clickTypeIn == ClickType.PICKUP) { //Right Click
@@ -194,31 +194,8 @@ public class ContainerVending extends Container {
                         te.setField(te.FIELD_SELECTED, slotId - 37);
                         te.setSelectedName(te.getInvItemStack(index).getDisplayName());
                     }
-                    return ItemStack.EMPTY;
 
-                   /* if(clickTypeIn == ClickType.QUICK_CRAFT) { //Mimics Left Click
-                        if (playerStack.isEmpty()) {
-                            player.inventory.setItemStack(te.shrinkInvItemSize(64, index));
-                        } else {
-                            if (te.getInvItemStack(index).isEmpty()) {
-                                player.inventory.setItemStack(te.setInvItem(copyPlayerStack, index, 0));
-                            } else {
-                                player.inventory.setItemStack(te.growInvItemSize(copyPlayerStack, index));
-                            }
-                        }
-                    }else {
-                        if (playerStack.isEmpty()) { //Pickup Half
-                            int half = te.getItemSize(index) / 2;
-                            if (half >= 64) half = 64;
-                            player.inventory.setItemStack(te.shrinkInvItemSize(half, index));
-                        } else {
-                            if (te.getInvItemStack(index).isEmpty()) { //Place 1
-                                player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, 1));
-                            } else {
-                                player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, 1));
-                            }
-                        }
-                    }*/
+                    return ItemStack.EMPTY;
                 } else if (clickTypeIn == ClickType.QUICK_CRAFT) { //Mimics Right Click
                     if (te.getInvItemStack(index).isEmpty()) { //Place 1
                         player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, 1));
@@ -232,9 +209,6 @@ public class ContainerVending extends Container {
                 if (dragType == 0) { //LEFT CLICK
                     buyItem(index, 1);
                 } else if (dragType == 1) { //RIGHT CLICK
-                    // int five = 5;
-                    // if(te.getItemSize(index) < 5) five = 1;
-                    // buyItem(index, five);
                 }
                 return ItemStack.EMPTY;
             }
@@ -329,7 +303,6 @@ public class ContainerVending extends Container {
     }
     //</editor-fold>
 
-
     @Override
     public void onContainerClosed(EntityPlayer playerIn) {
         super.onContainerClosed(playerIn);
@@ -367,9 +340,9 @@ public class ContainerVending extends Container {
         //If Sneak button held down, show a full stack (or as close to it)
         //If Jump button held down, show half a stack (or as close to it)
         if(Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode())) {
-            amount = te.whileSneakDown(index, amount);
+            amount = te.sneakFullStack(index, amount);
         } else if(Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindJump.getKeyCode())){
-            amount = te.whileJumpDown(index, amount);
+            amount = te.jumpHalfStack(index, amount);
         }
 
         count = count * amount;

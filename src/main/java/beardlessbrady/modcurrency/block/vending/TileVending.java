@@ -60,17 +60,20 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         }
     };
 
-    private String selectedName;
-    private int inventoryLimit, selectedSlot;
     private int[] inventorySize = new int[TE_INVENTORY_SLOT_COUNT];
     private int[] inventoryCost = new int[TE_INVENTORY_SLOT_COUNT];
     private int[] inventoryAmnt = new int[TE_INVENTORY_SLOT_COUNT];
+    private int[] inventoryBundle = new int[TE_INVENTORY_SLOT_COUNT];
+
+    private String selectedName;
+    private int inventoryLimit, selectedSlot;
 
     public TileVending(){
         for(int i = 0; i < inventorySize.length; i++){
             inventorySize[i] = 0;
             inventoryCost[i] = 0;
             inventoryAmnt[i] = 1;
+            inventoryBundle[i] = -1;
         }
         inventoryLimit = 256;
         selectedName = "No Item Selected";
@@ -123,14 +126,17 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         NBTTagCompound inventorySizeNBT = new NBTTagCompound();
         NBTTagCompound inventoryCostNBT = new NBTTagCompound();
         NBTTagCompound inventoryAmntNBT = new NBTTagCompound();
+        NBTTagCompound inventoryBundleNBT = new NBTTagCompound();
         for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++){
             inventorySizeNBT.setInteger("size" + i, inventorySize[i]);
             inventoryCostNBT.setInteger("cost" + i, inventoryCost[i]);
             inventoryAmntNBT.setInteger("amnt" + i, inventoryAmnt[i]);
+            inventoryBundleNBT.setInteger("bundle" + i, inventoryBundle[i]);
         }
         compound.setTag("inventorySizeNBT", inventorySizeNBT);
         compound.setTag("inventoryCostNBT", inventoryCostNBT);
         compound.setTag("inventoryAmntNBT", inventoryAmntNBT);
+        compound.setTag("inventoryBundleNBT", inventoryBundleNBT);
 
         return compound;
     }
@@ -161,6 +167,11 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             NBTTagCompound inventoryAmntNBT = compound.getCompoundTag("inventoryAmntNBT");
             for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) inventoryAmnt[i] = inventoryAmntNBT.getInteger("amnt" + i);
         }
+
+        if(compound.hasKey("inventoryBundleNBT")){
+            NBTTagCompound inventoryBundleNBT = compound.getCompoundTag("inventoryBundleNBT");
+            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) inventoryBundle[i] = inventoryBundleNBT.getInteger("bundle" + i);
+        }
     }
 
     @Override
@@ -181,15 +192,17 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         NBTTagCompound inventorySizeNBT = new NBTTagCompound();
         NBTTagCompound inventoryCostNBT = new NBTTagCompound();
         NBTTagCompound inventoryAmntNBT = new NBTTagCompound();
+        NBTTagCompound inventoryBundleNBT = new NBTTagCompound();
         for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++){
             inventorySizeNBT.setInteger("size" + i, inventorySize[i]);
             inventoryCostNBT.setInteger("cost" + i, inventoryCost[i]);
             inventoryAmntNBT.setInteger("amnt" + i, inventoryAmnt[i]);
+            inventoryBundleNBT.setInteger("bundle" + i, inventoryBundle[i]);
         }
         compound.setTag("inventorySizeNBT", inventorySizeNBT);
         compound.setTag("inventoryCostNBT", inventoryCostNBT);
         compound.setTag("inventoryAmntNBT", inventoryAmntNBT);
-
+        compound.setTag("inventoryBundleNBT", inventoryBundleNBT);
 
         return new SPacketUpdateTileEntity(pos, 1, compound);
     }
@@ -216,6 +229,11 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         if(compound.hasKey("inventoryAmntNBT")){
             NBTTagCompound inventoryAmntNBT = compound.getCompoundTag("inventoryAmntNBT");
             for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) inventoryAmnt[i] = inventoryAmntNBT.getInteger("amnt" + i);
+        }
+
+        if(compound.hasKey("inventoryBundleNBT")){
+            NBTTagCompound inventoryBundleNBT = compound.getCompoundTag("inventoryBundleNBT");
+            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) inventoryBundle[i] = inventoryBundleNBT.getInteger("bundle" + i);
         }
     }
 
@@ -388,6 +406,17 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         return stack;
     }
 
+    public int getSlotBundle(int index){
+        if(index >= 0 && index < TE_INVENTORY_SLOT_COUNT)
+            return inventoryBundle[index];
+
+        return -1;
+    }
+
+    public void setSlotBundle(int index, int slotSet){
+        inventoryBundle[index] = slotSet;
+    }
+
     public String getSelectedName(){
         if(selectedName.equals("Air")) return "No Item";
         return selectedName;
@@ -529,7 +558,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     }
 
     //If Sneak button held down, show a full stack (or as close to it)
-    public int whileSneakDown(int index, int num) {
+    public int sneakFullStack(int index, int num) {
         int newNum = num;
         if (getItemSize(index) < getInvItemStack(index).getMaxStackSize()) {
             newNum = getItemSize(index);
@@ -542,7 +571,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     }
 
     //If Jump button held down, show half a stack (or as close to it)
-    public int whileJumpDown(int index, int num) {
+    public int jumpHalfStack(int index, int num) {
         int newNum = num;
         if (getItemSize(index) < getInvItemStack(index).getMaxStackSize() / 2) {
             newNum = getItemSize(index);
