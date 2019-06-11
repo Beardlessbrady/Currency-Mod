@@ -409,6 +409,8 @@ public class GuiVending extends GuiContainer {
                 tooltipStart = 2;
             }
 
+            list.add("slot: " + te.getSlotBundle(slot));
+
             //Adding Vending Strings
             TextFormatting color = TextFormatting.YELLOW;
             if (te.getField(TileEconomyBase.FIELD_MODE) == 0) {
@@ -430,8 +432,6 @@ public class GuiVending extends GuiContainer {
                     amount = te.jumpHalfStack(slot, amount);
                     cost = cost * (amount / te.getItemAmnt(slot));
                 }
-
-                list.add("SLOT: " + te.getSlotBundle(slot));
 
                 if (te.getItemAmnt(slot) == 1) {
                     list.add(color + "$" + UtilMethods.translateMoney(cost));

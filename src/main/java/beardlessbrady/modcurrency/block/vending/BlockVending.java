@@ -51,7 +51,7 @@ public class BlockVending extends EconomyBlockBase {
                 return true;
             }
         }
-        return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
+        return true;
     }
 
     @Override

@@ -175,7 +175,7 @@ public class ContainerVending extends Container {
                     te.setInvItem(ItemStack.EMPTY, index, 0);
                 }
                 if (dragType == 0) { //Left Click
-                  if (playerStack.isEmpty()) {
+                    if (playerStack.isEmpty()) {
                         player.inventory.setItemStack(te.shrinkInvItemSize(64, index));
                     } else {
                         if (te.getInvItemStack(index).isEmpty()) {
@@ -184,22 +184,48 @@ public class ContainerVending extends Container {
                             player.inventory.setItemStack(te.growInvItemSize(copyPlayerStack, index));
                         }
                     }
-                  if(te.getItemSize(index) == 0){
-                      te.setInvItem(ItemStack.EMPTY, index, 0);
-                      te.setItemAmnt(1, index);
-                      te.setItemCost(0, index);
-                  }
-                } else if (dragType == 1 && clickTypeIn == ClickType.PICKUP) { //Right Click
+                    if (te.getItemSize(index) == 0) {
+                        te.setInvItem(ItemStack.EMPTY, index, 0);
+                        te.setItemAmnt(1, index);
+                        te.setItemCost(0, index);
+                        te.setSlotBundle(index, -1);
+                    }
+                } else if (dragType == 1) { //Right Click
+                    if (clickTypeIn == ClickType.QUICK_CRAFT) { //Mimics Left Click
+                        if (playerStack.isEmpty()) {
+                            player.inventory.setItemStack(te.shrinkInvItemSize(64, index));
+                        } else {
+                            if (te.getInvItemStack(index).isEmpty()) {
+                                player.inventory.setItemStack(te.setInvItem(copyPlayerStack, index, 0));
+                            } else {
+                                player.inventory.setItemStack(te.growInvItemSize(copyPlayerStack, index));
+                            }
+                        }
+                    } else {
+                        if (playerStack.isEmpty()) { //Pickup Half
+                            int half = te.getItemSize(index) / 2;
+                            if (half >= 64) half = 64;
+                            player.inventory.setItemStack(te.shrinkInvItemSize(half, index));
+                        } else {
+                            if (te.getInvItemStack(index).isEmpty()) { //Place 1
+                                player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, 1));
+                            } else {
+                                player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, 1));
+                            }
+                        }
+                    }
+
+                /*else if (dragType == 1 && clickTypeIn == ClickType.PICKUP) { //Right Click
                 if (!(te.getField(TileVending.FIELD_SELECTED) == slotId)) {
                     te.setField(te.FIELD_SELECTED, slotId - 37);
                     te.setSelectedName(te.getInvItemStack(index).getDisplayName());
-                }
-                return ItemStack.EMPTY;
+                }*/
+                    return ItemStack.EMPTY;
                 } else if (clickTypeIn == ClickType.QUICK_CRAFT) { //Mimics Right Click
                     if (te.getInvItemStack(index).isEmpty()) { //Place 1
-                        player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, copyPlayerStack.getCount()));
+                        player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, 1));
                     } else {
-                        player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, copyPlayerStack.getCount()));
+                        player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, 1));
                     }
 
                 }
