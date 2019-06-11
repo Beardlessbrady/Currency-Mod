@@ -300,13 +300,8 @@ public class GuiVending extends GuiContainer {
                         endDirection = 2;
                     }
 
-                    int yChange = 0;
-                    if(te.getField(TileVending.FIELD_SELECTED) == slot && te.getField(TileEconomyBase.FIELD_MODE) == 1){ //Selected is on a bundle
-                        yChange = 21;
-                    }
-
                     //Starting
-                    drawTexturedModalRect(42 + (18 * slotRow), -32 + (18 * slotColumn), 21 * direction, 130 + yChange, 20, 20);
+                    drawTexturedModalRect(42 + (18 * slotRow), -32 + (18 * slotColumn), 21 * direction, 130, 20, 20);
 
                     int forIncrement = 1;
                     switch (direction) {
@@ -346,13 +341,13 @@ public class GuiVending extends GuiContainer {
 
                             if (te.getSlotBundle(slot2 + (forIncrement)) == slot) { //This slot is NOT the end of the bundle
                                 if(direction == 0 || direction == 1){
-                                    drawTexturedModalRect(42 + (18 * slotRow2), -32 + (18 * slotColumn2), 84, 130 + yChange, 20, 20);
+                                    drawTexturedModalRect(42 + (18 * slotRow2), -32 + (18 * slotColumn2), 84, 130, 20, 20);
                                 }else{
-                                    drawTexturedModalRect(42 + (18 * slotRow2), -32 + (18 * slotColumn2), 105, 130 + yChange, 20, 20);
+                                    drawTexturedModalRect(42 + (18 * slotRow2), -32 + (18 * slotColumn2), 105, 130, 20, 20);
 
                                 }
                             } else { //This slot IS the end of the bundle
-                                drawTexturedModalRect(42 + (18 * slotRow2), -32 + (18 * slotColumn2), 21 * endDirection, 130 + yChange, 20, 20);
+                                drawTexturedModalRect(42 + (18 * slotRow2), -32 + (18 * slotColumn2), 21 * endDirection, 130, 20, 20);
                             }
                         }
                     }
@@ -383,8 +378,7 @@ public class GuiVending extends GuiContainer {
                 slotRow = (slotId) - 20;
             }
 
-            if(te.getSlotBundle(slotId) != slotId)
-                drawTexturedModalRect(42 + (18 * slotRow), -32 + (18 * slotColumn), 0, 172, 20, 20);
+            drawTexturedModalRect(42 + (18 * slotRow), -32 + (18 * slotColumn), 0, 172, 20, 20);
             drawTexturedModalRect(42 + (18 * slotRow) + 14, -32 + (18 * slotColumn) + 15, 21, 187, 16, 14);
         }
     }

@@ -190,22 +190,13 @@ public class ContainerVending extends Container {
                       te.setItemCost(0, index);
                   }
                 } else if (dragType == 1 && clickTypeIn == ClickType.PICKUP) { //Right Click
-                    if (!(te.getField(TileVending.FIELD_SELECTED) == slotId)) {
-                        int toSelect = index;
-                        if(te.getSlotBundle(index) != -1) {
-                            toSelect = te.getSlotBundle(index);
-                            te.setSelectedName("bundle");
-                        }else{
-                            te.setSelectedName(te.getInvItemStack(index).getDisplayName());
-                        }
-
-                        te.setField(te.FIELD_SELECTED, toSelect);
-                    }
-
-                    return ItemStack.EMPTY;
+                if (!(te.getField(TileVending.FIELD_SELECTED) == slotId)) {
+                    te.setField(te.FIELD_SELECTED, slotId - 37);
+                    te.setSelectedName(te.getInvItemStack(index).getDisplayName());
+                }
+                return ItemStack.EMPTY;
                 } else if (clickTypeIn == ClickType.QUICK_CRAFT) { //Mimics Right Click
                     if (te.getInvItemStack(index).isEmpty()) { //Place 1
-                        System.out.println("EEE");
                         player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, copyPlayerStack.getCount()));
                     } else {
                         player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, copyPlayerStack.getCount()));
