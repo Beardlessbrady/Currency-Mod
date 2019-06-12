@@ -156,7 +156,21 @@ public class ContainerVending extends Container {
                 }
                 this.detectAndSendChanges();
                 return ItemStack.EMPTY;
-            } else{
+            } else if (slotId >= GUI_INVENTORY_FIRST_INDEX && slotId < GUI_OUTPUT_FIRST_INDEX){
+                Loop: for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++){
+                    if(UtilMethods.equalStacks(playerStack, te.getInvItemStack(i))){
+                        if(playerStack.getCount() + te.getItemSize(i) <= playerStack.getMaxStackSize()) {
+                            playerStack.grow(te.getItemSize(i));
+                            te.voidSlot(i);
+                        }else{
+                            int teSize = playerStack.getMaxStackSize() - playerStack.getCount();
+                            playerStack.setCount(playerStack.getMaxStackSize());
+                            te.shrinkInvItemSize(teSize, i);
+                        }
+                        if(playerStack.getCount() == playerStack.getMaxStackSize())
+                            break Loop;
+                    }
+                }
                 return ItemStack.EMPTY;
             }
         }

@@ -393,10 +393,13 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         return outputStack;
     }
 
-    public void cleanUpStackSize(int index){
-        //DELETE
+    public void voidSlot(int index){
+        inventorySize[index] = 0;
+        inventoryBundle[index] = -1;
+        inventoryCost[index] = 0;
+        inventoryAmnt[index] = 1;
+        inventoryStackHandler.setStackInSlot(index, ItemStack.EMPTY);
     }
-
 
     public ItemStack growOutItemSize(ItemStack stack, int index){
         if (UtilMethods.equalStacks(stack, outputStackHandler.getStackInSlot(index))) {
