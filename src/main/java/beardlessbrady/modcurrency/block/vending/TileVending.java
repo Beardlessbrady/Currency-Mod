@@ -24,6 +24,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 
 import javax.annotation.Nullable;
+import java.lang.reflect.Array;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
@@ -64,7 +65,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     private int[] inventorySize = new int[TE_INVENTORY_SLOT_COUNT];
     private int[] inventoryCost = new int[TE_INVENTORY_SLOT_COUNT];
     private int[] inventoryAmnt = new int[TE_INVENTORY_SLOT_COUNT];
-    private int[] inventoryBundle = new int[TE_INVENTORY_SLOT_COUNT];
+    private int[][] inventoryBundle = new int[TE_INVENTORY_SLOT_COUNT][];
 
     private String selectedName;
     private int inventoryLimit, selectedSlot;
@@ -74,7 +75,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             inventorySize[i] = 0;
             inventoryCost[i] = 0;
             inventoryAmnt[i] = 1;
-            inventoryBundle[i] = -1;
+            inventoryBundle[i] = new int[]{-1};
         }
         inventoryLimit = 256;
         selectedName = "No Item Selected";
@@ -132,7 +133,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             inventorySizeNBT.setInteger("size" + i, inventorySize[i]);
             inventoryCostNBT.setInteger("cost" + i, inventoryCost[i]);
             inventoryAmntNBT.setInteger("amnt" + i, inventoryAmnt[i]);
-            inventoryBundleNBT.setInteger("bundle" + i, inventoryBundle[i]);
+            inventoryBundleNBT.setIntArray("bundle" + i, inventoryBundle[i]);
         }
         compound.setTag("inventorySizeNBT", inventorySizeNBT);
         compound.setTag("inventoryCostNBT", inventoryCostNBT);
@@ -171,7 +172,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
         if(compound.hasKey("inventoryBundleNBT")){
             NBTTagCompound inventoryBundleNBT = compound.getCompoundTag("inventoryBundleNBT");
-            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) inventoryBundle[i] = inventoryBundleNBT.getInteger("bundle" + i);
+            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) inventoryBundle[i] = inventoryBundleNBT.getIntArray("bundle" + i);
         }
     }
 
@@ -198,7 +199,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             inventorySizeNBT.setInteger("size" + i, inventorySize[i]);
             inventoryCostNBT.setInteger("cost" + i, inventoryCost[i]);
             inventoryAmntNBT.setInteger("amnt" + i, inventoryAmnt[i]);
-            inventoryBundleNBT.setInteger("bundle" + i, inventoryBundle[i]);
+            inventoryBundleNBT.setIntArray("bundle" + i, inventoryBundle[i]);
         }
         compound.setTag("inventorySizeNBT", inventorySizeNBT);
         compound.setTag("inventoryCostNBT", inventoryCostNBT);
@@ -233,7 +234,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
         if(compound.hasKey("inventoryBundleNBT")){
             NBTTagCompound inventoryBundleNBT = compound.getCompoundTag("inventoryBundleNBT");
-            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) inventoryBundle[i] = inventoryBundleNBT.getInteger("bundle" + i);
+            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) inventoryBundle[i] = inventoryBundleNBT.getIntArray("bundle" + i);
         }
     }
 
@@ -398,7 +399,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         inventoryCost[index] = 0;
         inventoryAmnt[index] = 1;
         inventoryStackHandler.setStackInSlot(index, ItemStack.EMPTY);
-        removeBundles(inventoryBundle[index]);
+        removeBundle(index);
     }
 
     public ItemStack growOutItemSize(ItemStack stack, int index){
@@ -414,25 +415,27 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         return stack;
     }
 
-    public int getSlotBundle(int index){
+    public int bundleMainSlot(int index){
         if(index >= 0 && index < TE_INVENTORY_SLOT_COUNT)
-            return inventoryBundle[index];
+            return inventoryBundle[index][0];
 
         return -1;
     }
 
-    public void setSlotBundle(int index, int slotSet){
-        if(index >= 0 && index < TE_INVENTORY_SLOT_COUNT && slotSet >= 0 && slotSet < TE_INVENTORY_SLOT_COUNT) {
-            inventoryBundle[index] = slotSet;
-            inventoryBundle[slotSet] = slotSet;
-        }
+    public void setBundle(int index, int[] bundleArray){
+        inventoryBundle[index] = bundleArray.clone();
     }
 
-    public void removeBundles(int index){
-        if(index != -1){
-            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++){
-                if(inventoryBundle[i] == index)
-                    inventoryBundle[i] = -1;
+    public int[] getBundle(int index){
+        return inventoryBundle[index];
+    }
+
+    public void removeBundle(int index){
+        if(bundleMainSlot(index) != -1) {
+            int[] copy = inventoryBundle[bundleMainSlot(index)].clone();
+            for (int i = 0; i < copy.length; i++) {
+                System.out.println(copy[i]);
+                inventoryBundle[copy[i]] = new int[]{-1};
             }
         }
     }

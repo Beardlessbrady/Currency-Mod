@@ -263,23 +263,23 @@ public class GuiVending extends GuiContainer {
     private void drawBundles() {
         Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
         for (int slot = 0; slot < te.TE_INVENTORY_SLOT_COUNT; slot++) {
-            if (te.getSlotBundle(slot) != -1) {
-                if (te.getSlotBundle(slot) == slot) { //is the main slot
+            int[] bundle = te.getBundle(slot);
+            if (bundle[0] != -1) {
+                if (bundle[0] == slot) { //is the main slot
                     int slotColumn = 0, slotRow = 0;
 
-                    if (slot >= 0 && slot <= 4) {
-                        slotColumn = 0;
+                    if (slot <= 4) {
                         slotRow = slot;
-                    } else if (slot >= 5 && slot <= 9) {
+                    } else if (slot <= 9) {
                         slotColumn = 1;
                         slotRow = (slot) - 5;
-                    } else if (slot >= 10 && slot <= 14) {
+                    } else if (slot <= 14) {
                         slotColumn = 2;
                         slotRow = (slot) - 10;
-                    } else if (slot >= 15 && slot <= 19) {
+                    } else if (slot <= 19) {
                         slotColumn = 3;
                         slotRow = (slot) - 15;
-                    } else if (slot >= 20 && slot <= 24) {
+                    } else {
                         slotColumn = 4;
                         slotRow = (slot) - 20;
                     }
@@ -287,16 +287,17 @@ public class GuiVending extends GuiContainer {
                     //Check which direction bundle is going
                     int direction = 0; //0=Left, 1=Right, 2=Down, 3=Up
                     int endDirection = 0;
-                    if (te.getSlotBundle(slot - 1) == slot) {
+
+                    if (te.bundleMainSlot(slot - 1) == slot) {
                         direction = 0;
                         endDirection = 1;
-                    } else if (te.getSlotBundle(slot + 1) == slot) {
+                    } else if (te.bundleMainSlot(slot + 1) == slot) {
                         direction = 1;
                         endDirection = 0;
-                    } else if (te.getSlotBundle(slot + 5) == slot) {
+                    } else if (te.bundleMainSlot(slot + 5) == slot) {
                         direction = 2;
                         endDirection = 3;
-                    } else if (te.getSlotBundle(slot - 5) == slot) {
+                    } else if (te.bundleMainSlot(slot - 5) == slot) {
                         direction = 3;
                         endDirection = 2;
                     }
@@ -305,7 +306,6 @@ public class GuiVending extends GuiContainer {
                     if(te.getField(TileVending.FIELD_SELECTED) == slot && te.getField(TileEconomyBase.FIELD_MODE) == 1){ //Selected is on a bundle
                         yChange = 21;
                     }
-
 
                     //Starting
                     drawTexturedModalRect(42 + (18 * slotRow), -32 + (18 * slotColumn), 21 * direction, 130 + yChange, 20, 20);
@@ -323,11 +323,11 @@ public class GuiVending extends GuiContainer {
                             break;
                     }
 
-                    for (int i = 1; i < 5; i++) {
+                    for (int i = 1; i < bundle.length; i++) {
                         int slotColumn2 = 0;
                         int slotRow2 = 0;
                         int slot2 = slot + (forIncrement * i);
-                        if (te.getSlotBundle(slot2) == slot) {
+                        if (te.bundleMainSlot(slot2) == slot) {
 
                             if (slot2 >= 0 && slot2 <= 4) {
                                 slotColumn2 = 0;
@@ -346,7 +346,7 @@ public class GuiVending extends GuiContainer {
                                 slotRow2 = (slot2) - 20;
                             }
 
-                            if (te.getSlotBundle(slot2 + (forIncrement)) == slot) { //This slot is NOT the end of the bundle
+                            if (te.bundleMainSlot(slot2 + (forIncrement)) == slot) { //This slot is NOT the end of the bundle
                                 if(direction == 0 || direction == 1){
                                     drawTexturedModalRect(42 + (18 * slotRow2), -32 + (18 * slotColumn2), 84, 130 + yChange, 20, 20);
                                 }else{
@@ -385,7 +385,7 @@ public class GuiVending extends GuiContainer {
                 slotRow = (slotId) - 20;
             }
 
-            if(te.getSlotBundle(slotId) != slotId)
+            if(te.bundleMainSlot(slotId) != slotId)
                 drawTexturedModalRect(42 + (18 * slotRow), -32 + (18 * slotColumn), 0, 172, 20, 20);
             drawTexturedModalRect(42 + (18 * slotRow) + 14, -32 + (18 * slotColumn) + 15, 21, 187, 16, 14);
         }
@@ -416,6 +416,8 @@ public class GuiVending extends GuiContainer {
                 list.add(TextFormatting.GRAY + ogTooltip.get(1));
                 tooltipStart = 2;
             }
+
+            list.add("SLOT: " + te.bundleMainSlot(slot));
 
             //Adding Vending Strings
             TextFormatting color = TextFormatting.YELLOW;
@@ -569,76 +571,101 @@ public class GuiVending extends GuiContainer {
             int slot = column + (row * 5);
             int selectedSlot = te.getField(TileVending.FIELD_SELECTED);
 
-            int displacement = selectedSlot - slot;
-            int[] movementArray = {-1, -2, -3, -4, 1, 2, 3, 4, -5, -10, -15, -20, 5, 10, 15, 20};
-            //-1,-2,-3,-4 Right
-            //1,2,3,4 Left
-            //-5,-10,-15,-20 Down
-            //5,10,15,20 Up
+            if (te.bundleMainSlot(slot) == -1) {
 
-            int direction = 0; //0 Right, 1 Left, 2 Down, 3 Up
-            switch (displacement) {
-                case -1:
-                case -2:
-                case -3:
-                case -4:
-                    direction = 0;
-                    break;
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                    direction = 1;
-                    break;
-                case -5:
-                case -10:
-                case -15:
-                case -20:
-                    direction = 2;
-                    break;
-                case 5:
-                case 10:
-                case 15:
-                case 20:
-                    direction = 3;
-                    break;
-            }
+                int displacement = selectedSlot - slot;
+                int[] movementArray = {-1, -2, -3, -4, 1, 2, 3, 4, -5, -10, -15, -20, 5, 10, 15, 20};
+                //-1,-2,-3,-4 Right
+                //1,2,3,4 Left
+                //-5,-10,-15,-20 Down
+                //5,10,15,20 Up
 
-            boolean possibleValue = false;
-            Loop: for (int element : movementArray) {
-                if (element == displacement) {
-                    possibleValue = true;
-                    break Loop;
+                int direction = 0; //0 Right, 1 Left, 2 Down, 3 Up
+                switch (displacement) {
+                    case -1:
+                    case -2:
+                    case -3:
+                    case -4:
+                        direction = 0;
+                        break;
+                    case 1:
+                    case 2:
+                    case 3:
+                    case 4:
+                        direction = 1;
+                        break;
+                    case -5:
+                    case -10:
+                    case -15:
+                    case -20:
+                        direction = 2;
+                        break;
+                    case 5:
+                    case 10:
+                    case 15:
+                    case 20:
+                        direction = 3;
+                        break;
                 }
-            }
 
-            if (possibleValue) {
-                if (Math.abs(displacement) == 1 || Math.abs(displacement) == 5) {
-                    if(te.getSlotBundle(selectedSlot) != selectedSlot) {
-                        te.setSlotBundle(slot, selectedSlot);
-                        PacketSetItemBundleToServer pack = new PacketSetItemBundleToServer();
-                        pack.setData(slot, selectedSlot, te.getPos());
-                        PacketHandler.INSTANCE.sendToServer(pack);
+                boolean possibleValue = false;
+                Loop:
+                for (int element : movementArray) {
+                    if (element == displacement) {
+                        possibleValue = true;
+                        break Loop;
                     }
-                } else {
-                    int previousSlot = slot;
+                }
 
-                    switch (direction) {
-                        case 0: previousSlot--;
-                            break;
-                        case 1: previousSlot++;
-                            break;
-                        case 2: previousSlot -= 5;
-                            break;
-                        case 3: previousSlot += 5;
-                            break;
-                    }
+                if (possibleValue) {
+                    if (Math.abs(displacement) == 1 || Math.abs(displacement) == 5) {
+                        if (te.bundleMainSlot(selectedSlot) != selectedSlot) {
+                            int[] bundle = {selectedSlot, slot};
+                            te.setBundle(selectedSlot, bundle);
+                            PacketSetItemBundleToServer pack0 = new PacketSetItemBundleToServer();
+                            pack0.setData(selectedSlot, bundle, te.getPos());
+                            PacketHandler.INSTANCE.sendToServer(pack0);
 
-                    if(te.getSlotBundle(previousSlot) == selectedSlot) {
-                        te.setSlotBundle(slot, selectedSlot);
-                        PacketSetItemBundleToServer pack = new PacketSetItemBundleToServer();
-                        pack.setData(slot, selectedSlot, te.getPos());
-                        PacketHandler.INSTANCE.sendToServer(pack);
+                            te.setBundle(slot, new int[]{selectedSlot});
+                            PacketSetItemBundleToServer pack = new PacketSetItemBundleToServer();
+                            pack.setData(slot, new int[]{selectedSlot}, te.getPos());
+                            PacketHandler.INSTANCE.sendToServer(pack);
+                        }
+                    } else {
+                        int previousSlot = slot;
+
+                        switch (direction) {
+                            case 0:
+                                previousSlot--;
+                                break;
+                            case 1:
+                                previousSlot++;
+                                break;
+                            case 2:
+                                previousSlot -= 5;
+                                break;
+                            case 3:
+                                previousSlot += 5;
+                                break;
+                        }
+
+                        if (te.bundleMainSlot(previousSlot) == selectedSlot) {
+                            int[] oldBundle = te.getBundle(selectedSlot).clone();
+                            int[] newBundle = new int[oldBundle.length + 1];
+                            for (int k = 0; k < oldBundle.length; k++) {
+                                newBundle[k] = oldBundle[k];
+                            }
+                            newBundle[newBundle.length - 1] = slot;
+                            te.setBundle(selectedSlot, newBundle);
+                            PacketSetItemBundleToServer pack0 = new PacketSetItemBundleToServer();
+                            pack0.setData(selectedSlot, newBundle, te.getPos());
+                            PacketHandler.INSTANCE.sendToServer(pack0);
+
+                            te.setBundle(slot, new int[]{selectedSlot});
+                            PacketSetItemBundleToServer pack = new PacketSetItemBundleToServer();
+                            pack.setData(slot, new int[]{selectedSlot}, te.getPos());
+                            PacketHandler.INSTANCE.sendToServer(pack);
+                        }
                     }
                 }
             }

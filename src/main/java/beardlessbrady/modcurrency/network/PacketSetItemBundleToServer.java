@@ -23,11 +23,12 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class PacketSetItemBundleToServer implements IMessage {
     //Vendor: Uses player input anf sets cost of item, sends to server
     private BlockPos blockPos;
-    private int data, bundle;
+    private int data;
+    private int[] bundle;
 
     public PacketSetItemBundleToServer(){}
 
-    public void setData(int slot, int bundle, BlockPos pos) {
+    public void setData(int slot, int[] bundle, BlockPos pos) {
         this.blockPos = pos;
         this.data = slot;
         this.bundle = bundle;
@@ -38,7 +39,11 @@ public class PacketSetItemBundleToServer implements IMessage {
     public void fromBytes(ByteBuf buf) {
         blockPos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
         data = buf.readInt();
-        bundle = buf.readInt();
+        bundle = new int[buf.readInt()];
+
+        for(int i = 0; i < bundle.length; i++){
+            bundle[i] = buf.readInt();
+        }
     }
 
     @Override
@@ -47,7 +52,11 @@ public class PacketSetItemBundleToServer implements IMessage {
         buf.writeInt(blockPos.getY());
         buf.writeInt(blockPos.getZ());
         buf.writeInt(data);
-        buf.writeInt(bundle);
+        buf.writeInt(bundle.length);
+
+        for(int i = 0; i < bundle.length; i++) {
+            buf.writeInt(bundle[i]);
+        }
     }
 
     public static class Handler implements IMessageHandler<PacketSetItemBundleToServer, IMessage> {
@@ -63,7 +72,8 @@ public class PacketSetItemBundleToServer implements IMessage {
             World world = playerEntity.world;
             TileEntity tile = world.getTileEntity(message.blockPos);
 
-            if(tile instanceof TileVending) ((TileVending) tile).setSlotBundle(message.data, message.bundle);
+
+            if(tile instanceof TileVending) ((TileVending) tile).setBundle(message.data, message.bundle);
         }
     }
 }
