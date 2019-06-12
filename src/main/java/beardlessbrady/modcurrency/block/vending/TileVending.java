@@ -395,10 +395,10 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
     public void voidSlot(int index){
         inventorySize[index] = 0;
-        inventoryBundle[index] = -1;
         inventoryCost[index] = 0;
         inventoryAmnt[index] = 1;
         inventoryStackHandler.setStackInSlot(index, ItemStack.EMPTY);
+        removeBundles(inventoryBundle[index]);
     }
 
     public ItemStack growOutItemSize(ItemStack stack, int index){
@@ -425,6 +425,15 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         if(index >= 0 && index < TE_INVENTORY_SLOT_COUNT && slotSet >= 0 && slotSet < TE_INVENTORY_SLOT_COUNT) {
             inventoryBundle[index] = slotSet;
             inventoryBundle[slotSet] = slotSet;
+        }
+    }
+
+    public void removeBundles(int index){
+        if(index != -1){
+            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++){
+                if(inventoryBundle[i] == index)
+                    inventoryBundle[i] = -1;
+            }
         }
     }
 

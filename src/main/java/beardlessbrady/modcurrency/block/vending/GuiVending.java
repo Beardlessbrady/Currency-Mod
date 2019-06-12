@@ -205,7 +205,7 @@ public class GuiVending extends GuiContainer {
                     //If Jump button held down, show half a stack (or as close to it)
                     if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode())) {
                         startAmount = te.sneakFullStack(index, startAmount);
-                    } else if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindJump.getKeyCode())) {
+                    } else if (Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157)) {
                         startAmount = te.jumpHalfStack(index, startAmount);
                     }
 
@@ -301,8 +301,14 @@ public class GuiVending extends GuiContainer {
                         endDirection = 2;
                     }
 
+                    int yChange = 0;
+                    if(te.getField(TileVending.FIELD_SELECTED) == slot && te.getField(TileEconomyBase.FIELD_MODE) == 1){ //Selected is on a bundle
+                        yChange = 21;
+                    }
+
+
                     //Starting
-                    drawTexturedModalRect(42 + (18 * slotRow), -32 + (18 * slotColumn), 21 * direction, 130, 20, 20);
+                    drawTexturedModalRect(42 + (18 * slotRow), -32 + (18 * slotColumn), 21 * direction, 130 + yChange, 20, 20);
 
                     int forIncrement = 1;
                     switch (direction) {
@@ -342,13 +348,13 @@ public class GuiVending extends GuiContainer {
 
                             if (te.getSlotBundle(slot2 + (forIncrement)) == slot) { //This slot is NOT the end of the bundle
                                 if(direction == 0 || direction == 1){
-                                    drawTexturedModalRect(42 + (18 * slotRow2), -32 + (18 * slotColumn2), 84, 130, 20, 20);
+                                    drawTexturedModalRect(42 + (18 * slotRow2), -32 + (18 * slotColumn2), 84, 130 + yChange, 20, 20);
                                 }else{
-                                    drawTexturedModalRect(42 + (18 * slotRow2), -32 + (18 * slotColumn2), 105, 130, 20, 20);
+                                    drawTexturedModalRect(42 + (18 * slotRow2), -32 + (18 * slotColumn2), 105, 130 + yChange, 20, 20);
 
                                 }
                             } else { //This slot IS the end of the bundle
-                                drawTexturedModalRect(42 + (18 * slotRow2), -32 + (18 * slotColumn2), 21 * endDirection, 130, 20, 20);
+                                drawTexturedModalRect(42 + (18 * slotRow2), -32 + (18 * slotColumn2), 21 * endDirection, 130 + yChange, 20, 20);
                             }
                         }
                     }
@@ -379,7 +385,8 @@ public class GuiVending extends GuiContainer {
                 slotRow = (slotId) - 20;
             }
 
-            drawTexturedModalRect(42 + (18 * slotRow), -32 + (18 * slotColumn), 0, 172, 20, 20);
+            if(te.getSlotBundle(slotId) != slotId)
+                drawTexturedModalRect(42 + (18 * slotRow), -32 + (18 * slotColumn), 0, 172, 20, 20);
             drawTexturedModalRect(42 + (18 * slotRow) + 14, -32 + (18 * slotColumn) + 15, 21, 187, 16, 14);
         }
     }
@@ -410,8 +417,6 @@ public class GuiVending extends GuiContainer {
                 tooltipStart = 2;
             }
 
-            list.add("slot: " + te.getSlotBundle(slot));
-
             //Adding Vending Strings
             TextFormatting color = TextFormatting.YELLOW;
             if (te.getField(TileEconomyBase.FIELD_MODE) == 0) {
@@ -429,7 +434,7 @@ public class GuiVending extends GuiContainer {
                 if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode())) {
                     amount = te.sneakFullStack(slot, amount);
                     cost = cost * (amount / te.getItemAmnt(slot));
-                } else if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindJump.getKeyCode())) {
+                } else if (Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157)) {
                     amount = te.jumpHalfStack(slot, amount);
                     cost = cost * (amount / te.getItemAmnt(slot));
                 }
@@ -553,7 +558,7 @@ public class GuiVending extends GuiContainer {
     @Override
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
         super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
-        if (te.getField(TileEconomyBase.FIELD_MODE) == 1) {
+        if (te.getField(TileEconomyBase.FIELD_MODE) == 1 && Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode())) {
             int i = (mouseX - (this.width - this.xSize) / 2);
             int j = (mouseY - (this.height - this.ySize) / 2);
 

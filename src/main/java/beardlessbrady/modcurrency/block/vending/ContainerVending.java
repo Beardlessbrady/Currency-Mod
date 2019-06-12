@@ -204,11 +204,22 @@ public class ContainerVending extends Container {
                         te.setSlotBundle(index, -1);
                     }
                 } else if (dragType == 1) { //Right Click
-                    if (playerStack.isEmpty()) { //Pickup Half
-                        int half = te.getItemSize(index) / 2;
-                        if (half >= 64) half = 64;
-                        player.inventory.setItemStack(te.shrinkInvItemSize(half, index));
-                    } else {
+                    if (Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157)) {
+                        te.removeBundles(te.getSlotBundle(index));
+                    }else {
+                        //Moves Selected Slot
+                        if (!(te.getField(TileVending.FIELD_SELECTED) == slotId)) {
+                            int toSelect = index;
+                            if (te.getSlotBundle(index) != -1) {
+                                toSelect = te.getSlotBundle(index);
+                                te.setSelectedName("bundle");
+                            } else {
+                                te.setSelectedName(te.getInvItemStack(index).getDisplayName());
+                            }
+
+                            te.setField(te.FIELD_SELECTED, toSelect);
+                        }
+
                         if (te.getInvItemStack(index).isEmpty()) { //Place 1
                             player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, 1));
                         } else {
@@ -355,7 +366,7 @@ public class ContainerVending extends Container {
         //If Jump button held down, show half a stack (or as close to it)
         if(Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode())) {
             amount = te.sneakFullStack(index, amount);
-        } else if(Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindJump.getKeyCode())){
+        } else if (Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157)) {
             amount = te.jumpHalfStack(index, amount);
         }
 
