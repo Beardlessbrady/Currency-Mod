@@ -8,6 +8,7 @@ import beardlessbrady.modcurrency.item.ModItems;
 import beardlessbrady.modcurrency.utilities.UtilMethods;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -391,6 +392,11 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
         return outputStack;
     }
+
+    public void cleanUpStackSize(int index){
+        //DELETE
+    }
+
 
     public ItemStack growOutItemSize(ItemStack stack, int index){
         if (UtilMethods.equalStacks(stack, outputStackHandler.getStackInSlot(index))) {

@@ -195,7 +195,8 @@ public class GuiVending extends GuiContainer {
                 if (num.length() == 2) num = " " + num;
 
                 if (te.getField(TileEconomyBase.FIELD_MODE) == 1) {
-                    this.fontRenderer.drawStringWithShadow(num, 66 + (i * 26), startY + (j * 26), -1);
+                    if(te.getItemSize(i + (5 * j)) != 1)
+                        this.fontRenderer.drawStringWithShadow(num, 66 + (i * 26), startY + (j * 26), -1);
                 } else {
                     int startAmount = te.getItemAmnt(index);
 

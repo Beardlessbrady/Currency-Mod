@@ -168,51 +168,41 @@ public class ContainerVending extends Container {
                 return ItemStack.EMPTY;
             }
         }
-
-        if(slotId >= 37 && slotId <= 61) {  //te Inventory
+        if (slotId >= 37 && slotId <= 61) {  //te Inventory
             if (te.getField(TileVending.FIELD_MODE) == 1) {            //ADMIN MODE
-                if(te.getItemSize(index) == 0){
+                if (te.getItemSize(index) == 0) {
                     te.setInvItem(ItemStack.EMPTY, index, 0);
                 }
-                if(clickTypeIn != ClickType.QUICK_CRAFT) {
-                    if (dragType == 0) { //Left Click
-                        if (playerStack.isEmpty()) {
-                            player.inventory.setItemStack(te.shrinkInvItemSize(64, index));
-                        } else {
-                            if (te.getInvItemStack(index).isEmpty()) {
-                                player.inventory.setItemStack(te.setInvItem(copyPlayerStack, index, 0));
-                            } else {
-                                player.inventory.setItemStack(te.growInvItemSize(copyPlayerStack, index));
-                            }
-                        }
-                        if (te.getItemSize(index) == 0) {
-                            te.setInvItem(ItemStack.EMPTY, index, 0);
-                            te.setItemAmnt(1, index);
-                            te.setItemCost(0, index);
-                            te.setSlotBundle(index, -1);
-                        }
-                    } else if (dragType == 1) { //Right Click
-                        if (playerStack.isEmpty()) { //Pickup Half
-                            int half = te.getItemSize(index) / 2;
-                            if (half >= 64) half = 64;
-                            player.inventory.setItemStack(te.shrinkInvItemSize(half, index));
-                        } else {
-                            if (te.getInvItemStack(index).isEmpty()) { //Place 1
-                                player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, 1));
-                            } else {
-                                player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, 1));
-                            }
-                        }
-
-                        return ItemStack.EMPTY;
-                    }
-                }else if (clickTypeIn == ClickType.QUICK_CRAFT) { //Mimics Right Click
-                    if (te.getInvItemStack(index).isEmpty()) { //Place 1
-                        player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, 1));
+                if (dragType == 0 || (dragType == 1 && clickTypeIn == ClickType.QUICK_CRAFT)) { //Left Click
+                    if (playerStack.isEmpty()) {
+                        player.inventory.setItemStack(te.shrinkInvItemSize(64, index));
                     } else {
-                        player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, 1));
+                        if (te.getInvItemStack(index).isEmpty()) {
+                            player.inventory.setItemStack(te.setInvItem(copyPlayerStack, index, 0));
+                        } else {
+                            player.inventory.setItemStack(te.growInvItemSize(copyPlayerStack, index));
+                        }
                     }
-
+                    if (te.getItemSize(index) == 0) {
+                        te.setInvItem(ItemStack.EMPTY, index, 0);
+                        te.setItemAmnt(1, index);
+                        te.setItemCost(0, index);
+                        te.setSlotBundle(index, -1);
+                    }
+                } else if (dragType == 1) { //Right Click
+                    if (playerStack.isEmpty()) { //Pickup Half
+                        int half = te.getItemSize(index) / 2;
+                        if (half >= 64) half = 64;
+                        player.inventory.setItemStack(te.shrinkInvItemSize(half, index));
+                    } else {
+                        if (te.getInvItemStack(index).isEmpty()) { //Place 1
+                            player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, 1));
+                        } else {
+                            player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, 1));
+                        }
+                    }
+                } else if (dragType == 5) { //Quick Craft Right
+                    player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, 1));
                 }
                 return ItemStack.EMPTY;
             } else { //SELL MODE
