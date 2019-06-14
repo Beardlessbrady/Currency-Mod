@@ -278,7 +278,7 @@ public class GuiVending extends GuiContainer {
         int j = (this.height - this.ySize) / 2;
         if (te.getField(TileVending.FIELD_MODE) == 1) {
             if (te.bundleMainSlot(te.getField(TileVending.FIELD_SELECTED)) != te.getField(TileVending.FIELD_SELECTED)) {
-                drawTexturedModalRect(177, 0, 0, 202, 106, 54);
+                drawTexturedModalRect(177, 0, 150, 135, 106, 54);
 
                 fontRenderer.drawStringWithShadow(I18n.format("guivending.slotsettings"), 216, 10, Integer.parseInt("ffffff", 16));
 
@@ -507,7 +507,7 @@ public class GuiVending extends GuiContainer {
 
             if(te.bundleMainSlot(slotId) != slotId)
                 drawTexturedModalRect(42 + (18 * slotRow), -32 + (18 * slotColumn), 0, 172, 20, 20);
-            drawTexturedModalRect(42 + (18 * slotRow) + 14, -32 + (18 * slotColumn) + 15, 21, 187, 16, 14);
+            drawTexturedModalRect(42 + (18 * slotRow) + 14, -32 + (18 * slotColumn) + 15, 3, 3, 16, 14);
         }
     }
 
@@ -536,8 +536,6 @@ public class GuiVending extends GuiContainer {
                 list.add(TextFormatting.GRAY + ogTooltip.get(1));
                 tooltipStart = 2;
             }
-
-            list.add("SLOT: " + te.bundleMainSlot(slot));
 
             //Adding Vending Strings
             TextFormatting color = TextFormatting.YELLOW;
