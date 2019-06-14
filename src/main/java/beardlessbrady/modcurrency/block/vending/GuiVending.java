@@ -3,6 +3,7 @@ package beardlessbrady.modcurrency.block.vending;
 import beardlessbrady.modcurrency.ModCurrency;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.network.*;
+import beardlessbrady.modcurrency.proxy.ClientProxy;
 import beardlessbrady.modcurrency.utilities.UtilMethods;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -10,6 +11,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -39,6 +41,8 @@ public class GuiVending extends GuiContainer {
 
     private GuiTextField fieldPrice, fieldAmnt, fieldAmnt2, fieldAmnt3, fieldAmnt4, fieldAmnt5;
     private TileVending te;
+
+    private final KeyBinding[] keyBindings = ClientProxy.keyBindings.clone();
 
     //Button ID's
     private static final int BUTTONCHANGE = 0;
@@ -244,9 +248,9 @@ public class GuiVending extends GuiContainer {
 
                     //If Sneak button held down, show a full stack (or as close to it)
                     //If Jump button held down, show half a stack (or as close to it)
-                    if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode())) {
+                    if (Keyboard.isKeyDown(keyBindings[0].getKeyCode())) {
                         startAmount = te.sneakFullStack(index, startAmount);
-                    } else if (Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157)) {
+                    } else if (Keyboard.isKeyDown(keyBindings[1].getKeyCode())) {
                         startAmount = te.jumpHalfStack(index, startAmount);
                     }
 
@@ -551,10 +555,10 @@ public class GuiVending extends GuiContainer {
 
                 //If Sneak button held down, show a full stack (or as close to it)
                 //If Jump button held down, show half a stack (or as close to it)
-                if (Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode())) {
+                if (Keyboard.isKeyDown(keyBindings[0].getKeyCode())) {
                     amount = te.sneakFullStack(slot, amount);
                     cost = cost * (amount / te.getItemAmnt(slot));
-                } else if (Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157)) {
+                } else if (Keyboard.isKeyDown(keyBindings[1].getKeyCode())) {
                     amount = te.jumpHalfStack(slot, amount);
                     cost = cost * (amount / te.getItemAmnt(slot));
                 }
@@ -678,7 +682,7 @@ public class GuiVending extends GuiContainer {
     @Override
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
         super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
-        if (te.getField(TileEconomyBase.FIELD_MODE) == 1 && Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode())) {
+        if (te.getField(TileEconomyBase.FIELD_MODE) == 1 && Keyboard.isKeyDown(keyBindings[0].getKeyCode())) {
             int i = (mouseX - (this.width - this.xSize) / 2);
             int j = (mouseY - (this.height - this.ySize) / 2);
 

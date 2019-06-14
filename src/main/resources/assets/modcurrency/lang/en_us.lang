@@ -10,3 +10,7 @@ guivending.cash=Cash
 guivending.profit=Profit
 guivending.amnt=Amnt:
 guivending.amnt_bundled=-Amnts-
+
+key.goodolcurrency.category=Good Ol' Currency
+key.shift.desc=GOC Key 1
+key.control.desc=GOC Key 2

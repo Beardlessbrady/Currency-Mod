@@ -1,9 +1,13 @@
 package beardlessbrady.modcurrency.block.vending;
 
+import beardlessbrady.modcurrency.ModCurrency;
+import beardlessbrady.modcurrency.block.ModBlocks;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.item.ModItems;
+import beardlessbrady.modcurrency.proxy.ClientProxy;
 import beardlessbrady.modcurrency.utilities.UtilMethods;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
@@ -46,6 +50,8 @@ public class ContainerVending extends Container {
     public final int GUI_INPUT_INDEX = GUI_PLAYER_FIRST_INDEX + PLAYER_TOTAL_COUNT;
     public final int GUI_INVENTORY_FIRST_INDEX = GUI_INPUT_INDEX + TE_INPUT_SLOT_COUNT;
     public final int GUI_OUTPUT_FIRST_INDEX = GUI_INVENTORY_FIRST_INDEX + TE_INVENTORY_SLOT_COUNT;
+
+    private final KeyBinding[] keyBindings = ClientProxy.keyBindings.clone();
 
     final int TE_INV_COLUMN_COUNT = 5;
     final int TE_INV_ROW_COUNT = 5;
@@ -201,7 +207,7 @@ public class ContainerVending extends Container {
                         te.voidSlot(index);
                     }
                 } else if (dragType == 1) { //Right Click
-                    if (Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157)) {
+                    if (Keyboard.isKeyDown(keyBindings[1].getKeyCode()) ) {
                         te.removeBundle(index);
                     }else {
                         //Moves Selected Slot
@@ -360,9 +366,9 @@ public class ContainerVending extends Container {
 
         //If Sneak button held down, show a full stack (or as close to it)
         //If Jump button held down, show half a stack (or as close to it)
-        if(Keyboard.isKeyDown(Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode())) {
+        if(Keyboard.isKeyDown(keyBindings[0].getKeyCode())) {
             amount = te.sneakFullStack(index, amount);
-        } else if (Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157)) {
+        } else if (Keyboard.isKeyDown(keyBindings[1].getKeyCode())) {
             amount = te.jumpHalfStack(index, amount);
         }
 
