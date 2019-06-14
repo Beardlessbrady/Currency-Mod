@@ -434,7 +434,6 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         if(bundleMainSlot(index) != -1) {
             int[] copy = inventoryBundle[bundleMainSlot(index)].clone();
             for (int i = 0; i < copy.length; i++) {
-                System.out.println(copy[i]);
                 inventoryBundle[copy[i]] = new int[]{-1};
             }
         }

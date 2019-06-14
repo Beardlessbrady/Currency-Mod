@@ -15,6 +15,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
+import org.apache.commons.lang3.text.WordUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -36,10 +37,8 @@ public class GuiVending extends GuiContainer {
     private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(ModCurrency.MODID, "textures/gui/vendingmachinegui.png");
     private static final ResourceLocation ASSET_TEXTURE = new ResourceLocation(ModCurrency.MODID, "textures/gui/guiassets.png");
 
-    GuiTextField fieldPrice, fieldAmnt;
-
-    TileVending te;
-
+    private GuiTextField fieldPrice, fieldAmnt, fieldAmnt2, fieldAmnt3, fieldAmnt4, fieldAmnt5;
+    private TileVending te;
 
     //Button ID's
     private static final int BUTTONCHANGE = 0;
@@ -47,6 +46,10 @@ public class GuiVending extends GuiContainer {
 
     private static final int FIELDPRICE = 0;
     private static final int FIELDAMNT = 1;
+    private static final int FIELDAMNT2 =2;
+    private static final int FIELDAMNT3 = 3;
+    private static final int FIELDAMNT4 = 4;
+    private static final int FIELDAMNT5 = 5;
 
     public GuiVending(EntityPlayer entityPlayer, TileVending te) {
         super(new ContainerVending(entityPlayer, te));
@@ -80,6 +83,39 @@ public class GuiVending extends GuiContainer {
         this.fieldAmnt.setVisible(false);
         this.fieldAmnt.setText("1");
 
+        this.fieldAmnt2 = new GuiTextField(FIELDAMNT2, fontRenderer, i + 253, j + 68, 90, 8);        //Setting Amount Sold in Bulk
+        this.fieldAmnt2.setTextColor(Integer.parseInt("C35763", 16));
+        this.fieldAmnt2.setEnableBackgroundDrawing(false);
+        this.fieldAmnt2.setMaxStringLength(2);
+        this.fieldAmnt2.setEnabled(false);
+        this.fieldAmnt2.setVisible(false);
+        this.fieldAmnt2.setText("1");
+
+        this.fieldAmnt3 = new GuiTextField(FIELDAMNT3, fontRenderer, i + 253, j + 83, 90, 8);        //Setting Amount Sold in Bulk
+        this.fieldAmnt3.setTextColor(Integer.parseInt("C35763", 16));
+        this.fieldAmnt3.setEnableBackgroundDrawing(false);
+        this.fieldAmnt3.setMaxStringLength(2);
+        this.fieldAmnt3.setEnabled(false);
+        this.fieldAmnt3.setVisible(false);
+        this.fieldAmnt3.setText("1");
+
+
+        this.fieldAmnt4 = new GuiTextField(FIELDAMNT4, fontRenderer, i + 253, j + 98, 90, 8);        //Setting Amount Sold in Bulk
+        this.fieldAmnt4.setTextColor(Integer.parseInt("C35763", 16));
+        this.fieldAmnt4.setEnableBackgroundDrawing(false);
+        this.fieldAmnt4.setMaxStringLength(2);
+        this.fieldAmnt4.setEnabled(false);
+        this.fieldAmnt4.setVisible(false);
+        this.fieldAmnt4.setText("1");
+
+        this.fieldAmnt5 = new GuiTextField(FIELDAMNT5, fontRenderer, i + 253, j + 113, 90, 8);        //Setting Amount Sold in Bulk
+        this.fieldAmnt5.setTextColor(Integer.parseInt("C35763", 16));
+        this.fieldAmnt5.setEnableBackgroundDrawing(false);
+        this.fieldAmnt5.setMaxStringLength(2);
+        this.fieldAmnt5.setEnabled(false);
+        this.fieldAmnt5.setVisible(false);
+        this.fieldAmnt5.setText("1");
+
         updateTextField();
     }
 
@@ -89,6 +125,11 @@ public class GuiVending extends GuiContainer {
         this.renderHoveredToolTip(mouseX, mouseY);
         this.fieldPrice.drawTextBox();
         this.fieldAmnt.drawTextBox();
+        this.fieldAmnt2.drawTextBox();
+        this.fieldAmnt3.drawTextBox();
+        this.fieldAmnt4.drawTextBox();
+        this.fieldAmnt5.drawTextBox();
+
     }
 
     @Override
@@ -233,30 +274,109 @@ public class GuiVending extends GuiContainer {
 
     private void drawAdminPanel() {
         Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
+        int i = (this.width - this.xSize) / 2;
+        int j = (this.height - this.ySize) / 2;
         if (te.getField(TileVending.FIELD_MODE) == 1) {
-            drawTexturedModalRect(177, 0, 0, 202, 106, 54);
+            if (te.bundleMainSlot(te.getField(TileVending.FIELD_SELECTED)) != te.getField(TileVending.FIELD_SELECTED)) {
+                drawTexturedModalRect(177, 0, 0, 202, 106, 54);
 
-            fontRenderer.drawStringWithShadow(I18n.format("guivending.slotsettings"), 216, 10, Integer.parseInt("ffffff", 16));
+                fontRenderer.drawStringWithShadow(I18n.format("guivending.slotsettings"), 216, 10, Integer.parseInt("ffffff", 16));
 
-            String itemName = "[" + te.getSelectedName() + "]";
-            GL11.glPushMatrix();
-            GL11.glScaled(0.7, 0.7, 0.7);
-            fontRenderer.drawString(I18n.format(itemName), 322 - (itemName.length() * 2), 28, Integer.parseInt("7B232D", 16));
-            GL11.glPopMatrix();
+                String itemName = "[" + te.getSelectedName() + "]";
+                GL11.glPushMatrix();
+                GL11.glScaled(0.7, 0.7, 0.7);
+                fontRenderer.drawString(I18n.format(itemName), 322 - (itemName.length() * 2), 28, Integer.parseInt("7B232D", 16));
+                GL11.glPopMatrix();
 
-            fontRenderer.drawStringWithShadow(I18n.format("$"), 206, 30, Color.lightGray.getRGB());
-            this.fieldPrice.setEnabled(true);
-            this.fieldPrice.setVisible(true);
+                fontRenderer.drawStringWithShadow(I18n.format("$"), 206, 30, Color.lightGray.getRGB());
 
-            fontRenderer.drawStringWithShadow(I18n.format("Amnt:"), 206, 40, Color.lightGray.getRGB());
-            this.fieldAmnt.setEnabled(true);
-            this.fieldAmnt.setVisible(true);
+                this.fieldPrice.x = i + 213;
+                this.fieldPrice.y = j + 30;
+                this.fieldPrice.setEnabled(true);
+                this.fieldPrice.setVisible(true);
+
+                fontRenderer.drawStringWithShadow(I18n.format("guivending.amnt"), 206, 40, Color.lightGray.getRGB());
+                this.fieldAmnt.x = i + 233;
+                this.fieldAmnt.y = j + 40;
+                this.fieldAmnt.setEnabled(true);
+                this.fieldAmnt.setVisible(true);
+
+                this.fieldAmnt2.setEnabled(false);
+                this.fieldAmnt2.setVisible(false);
+
+                this.fieldAmnt3.setEnabled(false);
+                this.fieldAmnt3.setVisible(false);
+
+                this.fieldAmnt4.setEnabled(false);
+                this.fieldAmnt4.setVisible(false);
+
+                this.fieldAmnt5.setEnabled(false);
+                this.fieldAmnt5.setVisible(false);
+            }else{
+                drawTexturedModalRect(177, -5, 166, 0, 90, 134);
+
+                fontRenderer.drawStringWithShadow(I18n.format("guivending.slotsettings_bundled"), 187, 18, Integer.parseInt("ffffff", 16));
+                fontRenderer.drawStringWithShadow(I18n.format("$"), 206, 30, Color.lightGray.getRGB());
+
+                this.fieldPrice.x = i + 211;
+                this.fieldPrice.y = j + 30;
+                this.fieldPrice.setEnabled(true);
+                this.fieldPrice.setVisible(true);
+
+                fontRenderer.drawStringWithShadow(I18n.format("guivending.amnt_bundled"), 200, 45, Color.lightGray.getRGB());
+                this.fieldAmnt.setEnabled(true);
+                this.fieldAmnt.setVisible(true);
+
+                int[] bundleSlots = te.getBundle(te.getField(TileVending.FIELD_SELECTED));
+                String bundleName = "";
+                for(int slot = 0; slot < bundleSlots.length; slot++) {
+                    bundleName += "\n•" + te.getInvItemStack(bundleSlots[slot]).getDisplayName() + "\n";
+                }
+
+                GL11.glPushMatrix();
+                GL11.glScaled(0.7, 0.7, 0.7);
+                fontRenderer.drawSplitString(bundleName, 260, 70, 90, Color.lightGray.getRGB());
+                GL11.glPopMatrix();
+
+                fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 53, Color.lightGray.getRGB());
+                fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 68, Color.lightGray.getRGB());
+                fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 83, Color.lightGray.getRGB());
+                fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 98, Color.lightGray.getRGB());
+                fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 113, Color.lightGray.getRGB());
+
+                this.fieldAmnt.x = i + 253;
+                this.fieldAmnt.y = j + 53;
+
+                this.fieldAmnt2.setEnabled(true);
+                this.fieldAmnt2.setVisible(true);
+
+                this.fieldAmnt3.setEnabled(true);
+                this.fieldAmnt3.setVisible(true);
+
+                this.fieldAmnt4.setEnabled(true);
+                this.fieldAmnt4.setVisible(true);
+
+                this.fieldAmnt5.setEnabled(true);
+                this.fieldAmnt5.setVisible(true);
+            }
         } else {
             this.fieldPrice.setEnabled(false);
             this.fieldPrice.setVisible(false);
 
             this.fieldAmnt.setEnabled(false);
             this.fieldAmnt.setVisible(false);
+
+            this.fieldAmnt2.setEnabled(false);
+            this.fieldAmnt2.setVisible(false);
+
+            this.fieldAmnt3.setEnabled(false);
+            this.fieldAmnt3.setVisible(false);
+
+            this.fieldAmnt4.setEnabled(false);
+            this.fieldAmnt4.setVisible(false);
+
+            this.fieldAmnt5.setEnabled(false);
+            this.fieldAmnt5.setVisible(false);
         }
     }
 
