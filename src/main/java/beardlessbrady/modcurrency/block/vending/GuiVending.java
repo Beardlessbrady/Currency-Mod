@@ -246,12 +246,14 @@ public class GuiVending extends GuiContainer {
                     int startAmount = te.getItemAmnt(index);
 
 
-                    //If Sneak button held down, show a full stack (or as close to it)
-                    //If Jump button held down, show half a stack (or as close to it)
-                    if (Keyboard.isKeyDown(keyBindings[0].getKeyCode())) {
-                        startAmount = te.sneakFullStack(index, startAmount);
-                    } else if (Keyboard.isKeyDown(keyBindings[1].getKeyCode())) {
-                        startAmount = te.jumpHalfStack(index, startAmount);
+                    if(te.bundleMainSlot(index) == -1) {
+                        //If Sneak button held down, show a full stack (or as close to it)
+                        //If Jump button held down, show half a stack (or as close to it)
+                        if (Keyboard.isKeyDown(keyBindings[0].getKeyCode())) {
+                            startAmount = te.sneakFullStack(index, startAmount);
+                        } else if (Keyboard.isKeyDown(keyBindings[1].getKeyCode())) {
+                            startAmount = te.jumpHalfStack(index, startAmount);
+                        }
                     }
 
                     String amount = Integer.toString(startAmount);
@@ -343,25 +345,69 @@ public class GuiVending extends GuiContainer {
                 GL11.glPopMatrix();
 
                 fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 53, Color.lightGray.getRGB());
-                fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 68, Color.lightGray.getRGB());
-                fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 83, Color.lightGray.getRGB());
-                fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 98, Color.lightGray.getRGB());
-                fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 113, Color.lightGray.getRGB());
 
                 this.fieldAmnt.x = i + 253;
                 this.fieldAmnt.y = j + 53;
 
-                this.fieldAmnt2.setEnabled(true);
-                this.fieldAmnt2.setVisible(true);
+                switch(bundleSlots.length) {
+                    case 5:
+                        fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 113, Color.lightGray.getRGB());
+                        this.fieldAmnt5.setEnabled(true);
+                        this.fieldAmnt5.setVisible(true);
+                        fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 98, Color.lightGray.getRGB());
+                        this.fieldAmnt4.setEnabled(true);
+                        this.fieldAmnt4.setVisible(true);
+                        fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 83, Color.lightGray.getRGB());
+                        this.fieldAmnt3.setEnabled(true);
+                        this.fieldAmnt3.setVisible(true);
+                        fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 68, Color.lightGray.getRGB());
+                        this.fieldAmnt2.setEnabled(true);
+                        this.fieldAmnt2.setVisible(true);
 
-                this.fieldAmnt3.setEnabled(true);
-                this.fieldAmnt3.setVisible(true);
+                        break;
+                    case 4:
+                        fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 98, Color.lightGray.getRGB());
+                        this.fieldAmnt4.setEnabled(true);
+                        this.fieldAmnt4.setVisible(true);
+                        fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 83, Color.lightGray.getRGB());
+                        this.fieldAmnt3.setEnabled(true);
+                        this.fieldAmnt3.setVisible(true);
+                        fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 68, Color.lightGray.getRGB());
+                        this.fieldAmnt2.setEnabled(true);
+                        this.fieldAmnt2.setVisible(true);
 
-                this.fieldAmnt4.setEnabled(true);
-                this.fieldAmnt4.setVisible(true);
 
-                this.fieldAmnt5.setEnabled(true);
-                this.fieldAmnt5.setVisible(true);
+                        this.fieldAmnt5.setEnabled(false);
+                        this.fieldAmnt5.setVisible(false);
+
+                        break;
+                    case 3:
+                        fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 83, Color.lightGray.getRGB());
+                        this.fieldAmnt3.setEnabled(true);
+                        this.fieldAmnt3.setVisible(true);
+                        fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 68, Color.lightGray.getRGB());
+                        this.fieldAmnt2.setEnabled(true);
+                        this.fieldAmnt2.setVisible(true);
+
+                        this.fieldAmnt4.setEnabled(false);
+                        this.fieldAmnt4.setVisible(false);
+                        this.fieldAmnt5.setEnabled(false);
+                        this.fieldAmnt5.setVisible(false);
+
+                        break;
+                    case 2:
+                        fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 68, Color.lightGray.getRGB());
+                        this.fieldAmnt2.setEnabled(true);
+                        this.fieldAmnt2.setVisible(true);
+
+                        this.fieldAmnt3.setEnabled(false);
+                        this.fieldAmnt3.setVisible(false);
+                        this.fieldAmnt4.setEnabled(false);
+                        this.fieldAmnt4.setVisible(false);
+                        this.fieldAmnt5.setEnabled(false);
+                        this.fieldAmnt5.setVisible(false);
+                        break;
+                }
             }
         } else {
             this.fieldPrice.setEnabled(false);
@@ -531,52 +577,86 @@ public class GuiVending extends GuiContainer {
             List<String> ogTooltip = stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
             int tooltipStart = 1;
 
-            //Adding name and subname of item before price and such
-            if (ogTooltip.size() > 0) {
-                list.add(ogTooltip.get(0));
-                list.set(0, stack.getRarity().rarityColor + (String) list.get(0));
-            }
-            if (ogTooltip.size() > 1) if (ogTooltip.get(1) != "") {
-                list.add(TextFormatting.GRAY + ogTooltip.get(1));
-                tooltipStart = 2;
-            }
-
-            //Adding Vending Strings
-            TextFormatting color = TextFormatting.YELLOW;
-            if (te.getField(TileEconomyBase.FIELD_MODE) == 0) {
-                if (te.canAfford(slot, 1)) {
-                    color = TextFormatting.GREEN;
-                } else {
-                    color = TextFormatting.RED;
+            if(te.bundleMainSlot(slot) == -1) {
+                //Adding name and subname of item before price and such
+                if (ogTooltip.size() > 0) {
+                    list.add(ogTooltip.get(0));
+                    list.set(0, stack.getRarity().rarityColor + (String) list.get(0));
+                }
+                if (ogTooltip.size() > 1) if (ogTooltip.get(1) != "") {
+                    list.add(TextFormatting.GRAY + ogTooltip.get(1));
+                    tooltipStart = 2;
                 }
 
-                int cost = te.getItemCost(slot);
-                int amount = te.getItemAmnt(slot);
+                //Adding Vending Strings
+                TextFormatting color = TextFormatting.YELLOW;
+                if (te.getField(TileEconomyBase.FIELD_MODE) == 0) {
+                    if (te.canAfford(slot, 1)) {
+                        color = TextFormatting.GREEN;
+                    } else {
+                        color = TextFormatting.RED;
+                    }
 
-                //If Sneak button held down, show a full stack (or as close to it)
-                //If Jump button held down, show half a stack (or as close to it)
-                if (Keyboard.isKeyDown(keyBindings[0].getKeyCode())) {
-                    amount = te.sneakFullStack(slot, amount);
-                    cost = cost * (amount / te.getItemAmnt(slot));
-                } else if (Keyboard.isKeyDown(keyBindings[1].getKeyCode())) {
-                    amount = te.jumpHalfStack(slot, amount);
-                    cost = cost * (amount / te.getItemAmnt(slot));
+                    int cost = te.getItemCost(slot);
+                    int amount = te.getItemAmnt(slot);
+
+                    //If Sneak button held down, show a full stack (or as close to it)
+                    //If Jump button held down, show half a stack (or as close to it)
+                    if (Keyboard.isKeyDown(keyBindings[0].getKeyCode())) {
+                        amount = te.sneakFullStack(slot, amount);
+                        cost = cost * (amount / te.getItemAmnt(slot));
+                    } else if (Keyboard.isKeyDown(keyBindings[1].getKeyCode())) {
+                        amount = te.jumpHalfStack(slot, amount);
+                        cost = cost * (amount / te.getItemAmnt(slot));
+                    }
+
+                    if (te.getItemAmnt(slot) == 1) {
+                        list.add(color + "$" + UtilMethods.translateMoney(cost));
+                    } else {
+                        list.add(TextFormatting.BLUE + Integer.toString(amount) + TextFormatting.RESET + " for " + color + "$" + UtilMethods.translateMoney(cost));
+                    }
+
+                    list.add("Stock: " + TextFormatting.BLUE + te.getItemSize(slot));
                 }
 
-                if (te.getItemAmnt(slot) == 1) {
+                //adding original extra stuff AFTER price and such
+                for (; tooltipStart < stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL).size(); tooltipStart++) {
+                    list.add(TextFormatting.GRAY + stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL).get(tooltipStart));
+                }
+
+            }else{ //Is a BUNDLE
+                list.add("Bundle");
+
+                //Adding Vending Strings
+                TextFormatting color = TextFormatting.YELLOW;
+                if (te.getField(TileEconomyBase.FIELD_MODE) == 0) {
+                    if (te.canAfford(slot, 1)) {
+                        color = TextFormatting.GREEN;
+                    } else {
+                        color = TextFormatting.RED;
+                    }
+
+                    int mainSlot= te.bundleMainSlot(slot);
+                    int cost = te.getItemCost(mainSlot);
+                    int amount = te.getItemAmnt(slot);
+
                     list.add(color + "$" + UtilMethods.translateMoney(cost));
-                } else {
-                    list.add(TextFormatting.BLUE + Integer.toString(amount) + TextFormatting.RESET + " for " + color + "$" + UtilMethods.translateMoney(cost));
+
+                    list.add(" ");
+                    list.add("Includes:");
+
+
+                    int[] bundle = te.getBundle(mainSlot);
+                    for(int k = 0; k < bundle.length; k++){
+                        list.add("x" + TextFormatting.BLUE + te.getItemAmnt(bundle[k]) + " " + TextFormatting.RESET + te.getInvItemStack(bundle[k]).getDisplayName());
+                    }
                 }
 
-                list.add("Stock: " + TextFormatting.BLUE + te.getItemSize(slot));
-            }
 
-            //adding original extra stuff AFTER price and such
-            for (; tooltipStart < stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL).size(); tooltipStart++) {
-                list.add(TextFormatting.GRAY + stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL).get(tooltipStart));
-            }
 
+
+
+            }
             FontRenderer font = stack.getItem().getFontRenderer(stack);
             net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(stack);
             this.drawHoveringText(list, x, y, (font == null ? fontRenderer : font));
@@ -603,8 +683,22 @@ public class GuiVending extends GuiContainer {
                     fieldPrice.setMaxStringLength(fieldPrice.getText().length() + 2);
             if (!fieldPrice.getText().contains(".")) fieldPrice.setMaxStringLength(7);
 
-            if (this.fieldAmnt.textboxKeyTyped(typedChar, keyCode)) setAmnt();
+            if (this.fieldAmnt.textboxKeyTyped(typedChar, keyCode)) setAmnt(te.getField(TileVending.FIELD_SELECTED), this.fieldAmnt);
 
+            if(te.bundleMainSlot(te.getField((TileVending.FIELD_SELECTED))) == te.getField(TileVending.FIELD_SELECTED)){
+                int[] bundle = te.getBundle(te.getField(TileVending.FIELD_SELECTED));
+
+                switch(bundle.length){
+                    case 5:
+                        if (this.fieldAmnt5.textboxKeyTyped(typedChar, keyCode)) setAmnt(bundle[4], this.fieldAmnt5);
+                    case 4:
+                        if (this.fieldAmnt4.textboxKeyTyped(typedChar, keyCode)) setAmnt(bundle[3], this.fieldAmnt4);
+                    case 3:
+                        if (this.fieldAmnt3.textboxKeyTyped(typedChar, keyCode)) setAmnt(bundle[2], this.fieldAmnt3);
+                    case 2:
+                        if (this.fieldAmnt2.textboxKeyTyped(typedChar, keyCode)) setAmnt(bundle[1], this.fieldAmnt2);
+                }
+            }
         } else {
             super.keyTyped(typedChar, keyCode);
         }
@@ -616,6 +710,10 @@ public class GuiVending extends GuiContainer {
             super.mouseClicked(mouseX, mouseY, mouseButton);
             fieldPrice.mouseClicked(mouseX, mouseY, mouseButton);
             fieldAmnt.mouseClicked(mouseX, mouseY, mouseButton);
+            fieldAmnt2.mouseClicked(mouseX, mouseY, mouseButton);
+            fieldAmnt3.mouseClicked(mouseX, mouseY, mouseButton);
+            fieldAmnt4.mouseClicked(mouseX, mouseY, mouseButton);
+            fieldAmnt5.mouseClicked(mouseX, mouseY, mouseButton);
 
             updateTextField();
         } else {
@@ -652,22 +750,20 @@ public class GuiVending extends GuiContainer {
         }
     }
 
-    private void setAmnt() {
-        if (this.fieldAmnt.getText().length() > 0) {
-            int amount = Integer.valueOf(fieldAmnt.getText());
+    private void setAmnt(int slot, GuiTextField guiTextField){
+        if (guiTextField.getText().length() > 0) {
+            int amount = Integer.valueOf(guiTextField.getText());
 
-            if (te.isSlotEmpty()) {
+            if (te.isSlotEmpty(slot)) {
                 amount = 1;
-            } else if (Integer.valueOf(fieldAmnt.getText()) > te.getInvItemStack().getMaxStackSize())
-                amount = te.getInvItemStack().getMaxStackSize();
+            } else if (Integer.valueOf(guiTextField.getText()) > te.getInvItemStack(slot).getMaxStackSize())
+                amount = te.getInvItemStack(slot).getMaxStackSize();
 
             if (amount == 0) amount = 1;
 
-            te.setItemAmnt(amount);
-
-            te.setItemAmnt(amount);
+            te.setItemAmnt(amount, slot);
             PacketSetItemAmntToServer pack = new PacketSetItemAmntToServer();
-            pack.setData(amount, te.getPos());
+            pack.setData(amount, slot, te.getPos());
             PacketHandler.INSTANCE.sendToServer(pack);
 
             te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
@@ -677,6 +773,21 @@ public class GuiVending extends GuiContainer {
     private void updateTextField() {
         fieldPrice.setText(UtilMethods.translateMoney(te.getItemCost()));
         fieldAmnt.setText(Integer.toString(te.getItemAmnt()));
+
+        if(te.bundleMainSlot(te.getField(TileVending.FIELD_SELECTED)) == te.getField(TileVending.FIELD_SELECTED)) {
+            int[] bundle = te.getBundle(te.getField(TileVending.FIELD_SELECTED));
+
+            switch(bundle.length){
+                case 5:
+                    fieldAmnt5.setText(Integer.toString(te.getItemAmnt(bundle[4])));
+                case 4:
+                    fieldAmnt4.setText(Integer.toString(te.getItemAmnt(bundle[3])));
+                case 3:
+                    fieldAmnt3.setText(Integer.toString(te.getItemAmnt(bundle[2])));
+                case 2:
+                    fieldAmnt2.setText(Integer.toString(te.getItemAmnt(bundle[1])));
+            }
+        }
     }
 
     @Override
@@ -693,7 +804,7 @@ public class GuiVending extends GuiContainer {
             int slot = column + (row * 5);
             int selectedSlot = te.getField(TileVending.FIELD_SELECTED);
 
-            if (te.bundleMainSlot(slot) == -1) {
+            if (te.bundleMainSlot(slot) == -1 && !te.getInvItemStack(slot).isEmpty() && !te.getInvItemStack(selectedSlot).isEmpty()) {
 
                 int displacement = selectedSlot - slot;
                 int[] movementArray = {-1, -2, -3, -4, 1, 2, 3, 4, -5, -10, -15, -20, 5, 10, 15, 20};

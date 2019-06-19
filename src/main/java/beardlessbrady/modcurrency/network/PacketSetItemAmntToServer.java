@@ -23,19 +23,21 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class PacketSetItemAmntToServer implements IMessage {
     //Vendor: Uses player input anf sets cost of item, sends to server
     private BlockPos blockPos;
-    private int data;
+    private int data, slot;
 
     public PacketSetItemAmntToServer(){}
 
-    public void setData(int data, BlockPos pos) {
+    public void setData(int data, int slot, BlockPos pos) {
         this.blockPos = pos;
         this.data = data;
+        this.slot = slot;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         blockPos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
         data = buf.readInt();
+        slot = buf.readInt();
     }
 
     @Override
@@ -44,6 +46,7 @@ public class PacketSetItemAmntToServer implements IMessage {
         buf.writeInt(blockPos.getY());
         buf.writeInt(blockPos.getZ());
         buf.writeInt(data);
+        buf.writeInt(slot);
     }
 
     public static class Handler implements IMessageHandler<PacketSetItemAmntToServer, IMessage> {
@@ -59,7 +62,7 @@ public class PacketSetItemAmntToServer implements IMessage {
             World world = playerEntity.world;
             TileEntity tile = world.getTileEntity(message.blockPos);
 
-            if(tile instanceof TileVending) ((TileVending) tile).setItemAmnt(message.data);
+            if(tile instanceof TileVending) ((TileVending) tile).setItemAmnt(message.data, message.slot);
         }
     }
 }

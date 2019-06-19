@@ -39,13 +39,18 @@ public class BlockVending extends EconomyBlockBase {
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         TileVending tile = (TileVending) getTile(worldIn, pos);
+
+        //Checks if no other player is using the block, if not then allows access to GUI
         if (TileEconomyBase.EMPTYID.equals(getTile(worldIn, pos).getPlayerUsing())) {
+
+            //If Sneaking and the player is the owner of the machine it will auto open the machine into STOCK MODE
             if (playerIn.isSneaking() && tile.getOwner().equals(playerIn.getUniqueID())) {
                 tile.setField(TileEconomyBase.FIELD_MODE, 1);
             } else {
                 tile.setField(TileEconomyBase.FIELD_MODE, 0);
             }
 
+            //Opens GUI if CLIENT SIDE
             if (!worldIn.isRemote) {
                 ((TileVending) getTile(worldIn, pos)).openGui(playerIn, worldIn, pos);
                 return true;
@@ -56,14 +61,17 @@ public class BlockVending extends EconomyBlockBase {
 
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+        //Sets facing of the block
         worldIn.setBlockState(pos, state.withProperty(StateHandler.FACING, placer.getHorizontalFacing().getOpposite()));
 
+        //Creates the top and bottom part of the block (since this block is 2 blocks on top of each other)
         worldIn.setBlockState(pos, state.withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.TWOBOTTOM)
                 .withProperty(StateHandler.FACING, placer.getHorizontalFacing().getOpposite()));
 
         worldIn.setBlockState(pos.up(), state.withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.TWOTOP)
                 .withProperty(StateHandler.FACING, placer.getHorizontalFacing().getOpposite()));
 
+        //Sets owner to the placer
         getTile(worldIn, pos).setOwner(placer.getUniqueID());
         getTile(worldIn, pos).markDirty();
     }
@@ -73,6 +81,7 @@ public class BlockVending extends EconomyBlockBase {
         if(!worldIn.isRemote) {
             TileVending tile = (TileVending) getTile(worldIn, pos, state);
 
+            //Outputs the change in STOCK then SELL MODE
             tile.setField(TileEconomyBase.FIELD_MODE, 0);
             tile.outChange(true);
 

@@ -235,7 +235,12 @@ public class ContainerVending extends Container {
                 return ItemStack.EMPTY;
             } else { //SELL MODE
                 if (dragType == 0) { //LEFT CLICK
-                    buyItem(index, 1);
+                    //If not in a bundle buy normally
+                    if(te.bundleMainSlot(index) == -1) {
+                        buyItem(index, 1);
+                    }else{
+                        buyBundle(te.bundleMainSlot(index));
+                    }
                 } else if (dragType == 1) { //RIGHT CLICK
                 }
                 return ItemStack.EMPTY;
@@ -397,6 +402,45 @@ public class ContainerVending extends Container {
                 }
             }
             //TODO play failure sound
+        }
+        return ItemStack.EMPTY;
+    }
+
+    public ItemStack buyBundle(int mainIndex) {
+        int[] bundle = te.getBundle(mainIndex);
+
+        boolean notEmpty = true;
+        for (int i = 0; i < bundle.length; i++) {
+            if (te.getInvItemStack(bundle[i]).isEmpty() || te.getItemSize(bundle[i]) < te.getItemAmnt(bundle[i]))
+                notEmpty = false;
+        }
+
+        if (notEmpty && te.canAfford(mainIndex, te.getItemAmnt(mainIndex))) {
+            boolean canOutput = true;
+            int[] slotsUsed = new int[bundle.length];
+            for (int i = 0; i < bundle.length; i++) {
+                int EmptySlots = 0;
+                for(int j = 0; j < TE_OUTPUT_SLOT_COUNT; j++){
+                    //TODO CHECK IF ENOUGH OUTPUT SLOTS
+                }
+            }
+
+            if (canOutput) {
+                for(int i = 0; i < bundle.length; i++){
+                    ItemStack outputStack = te.getInvItemStack(bundle[i]).copy();
+                    outputStack.setCount(te.getItemAmnt(bundle[i]));
+                    int outSlot = te.outputSlotCheck(outputStack, te.getItemAmnt(bundle[i]));
+
+                    if (te.growOutItemSize(outputStack, outSlot).equals(ItemStack.EMPTY)) {
+                        te.shrinkInvItemSize(te.getItemAmnt(bundle[i]), bundle[i]);
+                    }
+                }
+
+                int newCashReserve = te.getField(TileEconomyBase.FIELD_CASHRESERVE) - (te.getItemCost(mainIndex));
+                int newCashRegister = te.getField(TileEconomyBase.FIELD_CASHREGISTER) + (te.getItemCost(mainIndex));
+                te.setField(TileEconomyBase.FIELD_CASHRESERVE, newCashReserve);
+                te.setField(TileEconomyBase.FIELD_CASHREGISTER, newCashRegister);
+            }
         }
         return ItemStack.EMPTY;
     }
