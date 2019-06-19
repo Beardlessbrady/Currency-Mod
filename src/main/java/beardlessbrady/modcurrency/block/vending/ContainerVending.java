@@ -416,15 +416,8 @@ public class ContainerVending extends Container {
         }
 
         if (notEmpty && te.canAfford(mainIndex, te.getItemAmnt(mainIndex))) {
-            boolean canOutput = true;
-            int[] slotsUsed = new int[bundle.length];
-            for (int i = 0; i < bundle.length; i++) {
-                int EmptySlots = 0;
-                for(int j = 0; j < TE_OUTPUT_SLOT_COUNT; j++){
-                    //TODO CHECK IF ENOUGH OUTPUT SLOTS
-                }
-            }
-
+            boolean canOutput = te.bundleOutSlotCheck(te.getBundle(mainIndex));
+            System.out.println("OUT" + canOutput);
             if (canOutput) {
                 for(int i = 0; i < bundle.length; i++){
                     ItemStack outputStack = te.getInvItemStack(bundle[i]).copy();

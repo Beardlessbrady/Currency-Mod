@@ -504,6 +504,31 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         return -1;
     }
 
+    public boolean bundleOutSlotCheck(int[] bundleSlots){
+        int ignoreSlots = 0;
+
+        for(int i = 0; i < bundleSlots.length; i++){
+            for(int j = 0; j < outputStackHandler.getSlots(); j++) {
+                if (UtilMethods.equalStacks(getInvItemStack(bundleSlots[i]), outputStackHandler.getStackInSlot(j))) {
+                    if (outputStackHandler.getStackInSlot(j).getCount() + getItemAmnt(bundleSlots[i]) <= outputStackHandler.getStackInSlot(j).getMaxStackSize()) {
+                        ignoreSlots++;
+                    }
+                }
+            }
+        }
+
+        int emptySlots = 0;
+        for(int i = 0; i < outputStackHandler.getSlots(); i++)
+            if(outputStackHandler.getStackInSlot(i).isEmpty())
+                emptySlots++;
+
+            System.out.println(bundleSlots.length - ignoreSlots);
+        if(bundleSlots.length - ignoreSlots <= emptySlots)
+            return true;
+
+        return false;
+    }
+
     public void outChange(boolean blockBreak){
         int bank;
         OUTER_LOOP: for(int i = ConfigCurrency.currencyValues.length-1; i >=0; i--){
