@@ -76,8 +76,7 @@
           "texture": "modcurrency:blocks/blockvending_pink"
         }
       },
-      "gray":{}
-      },
+      "gray":{},
       "silver":{
         "textures": {
           "particle": "blocks/wool_colored_silver",

@@ -14,6 +14,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
@@ -35,7 +36,6 @@ import java.util.List;
  */
 
 public class GuiVending extends GuiContainer {
-    private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(ModCurrency.MODID, "textures/gui/vendingmachinegui.png");
     private static final ResourceLocation ASSET_TEXTURE = new ResourceLocation(ModCurrency.MODID, "textures/gui/guiassets.png");
 
     private GuiTextField fieldPrice, fieldAmnt, fieldAmnt2, fieldAmnt3, fieldAmnt4, fieldAmnt5;
@@ -137,7 +137,7 @@ public class GuiVending extends GuiContainer {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        Minecraft.getMinecraft().getTextureManager().bindTexture(BACKGROUND_TEXTURE);
+        Minecraft.getMinecraft().getTextureManager().bindTexture(backgroundTexture());
         drawTexturedModalRect(guiLeft, guiTop - 47, 0, 0, 176, 254);
     }
 
@@ -558,6 +558,45 @@ public class GuiVending extends GuiContainer {
                 drawTexturedModalRect(42 + (18 * slotRow), -32 + (18 * slotColumn), 0, 172, 20, 20);
             drawTexturedModalRect(42 + (18 * slotRow) + 14, -32 + (18 * slotColumn) + 15, 3, 3, 16, 14);
         }
+    }
+
+    private ResourceLocation backgroundTexture(){
+        switch(te.getColor()){
+            case GRAY:
+                return new ResourceLocation(ModCurrency.MODID, "textures/gui/vendingmachinegui_grey.png");
+            case BLUE:
+                return new ResourceLocation(ModCurrency.MODID, "textures/gui/vendingmachinegui_blue.png");
+            case GREEN:
+                return new ResourceLocation(ModCurrency.MODID, "textures/gui/vendingmachinegui_green.png");
+            case RED:
+                return new ResourceLocation(ModCurrency.MODID, "textures/gui/vendingmachinegui_red.png");
+            case YELLOW:
+                return new ResourceLocation(ModCurrency.MODID, "textures/gui/vendingmachinegui_yellow.png");
+            case BLACK:
+                return new ResourceLocation(ModCurrency.MODID, "textures/gui/vendingmachinegui_black.png");
+            case BROWN:
+                return new ResourceLocation(ModCurrency.MODID, "textures/gui/vendingmachinegui_brown.png");
+            case CYAN:
+                return new ResourceLocation(ModCurrency.MODID, "textures/gui/vendingmachinegui_cyan.png");
+            case LIGHT_BLUE:
+                return new ResourceLocation(ModCurrency.MODID, "textures/gui/vendingmachinegui_lightblue.png");
+            case LIME:
+                return new ResourceLocation(ModCurrency.MODID, "textures/gui/vendingmachinegui_lime.png");
+            case MAGENTA:
+                return new ResourceLocation(ModCurrency.MODID, "textures/gui/vendingmachinegui_magenta.png");
+            case ORANGE:
+                return new ResourceLocation(ModCurrency.MODID, "textures/gui/vendingmachinegui_orange.png");
+            case PINK:
+                return new ResourceLocation(ModCurrency.MODID, "textures/gui/vendingmachinegui_pink.png");
+            case PURPLE:
+                return new ResourceLocation(ModCurrency.MODID, "textures/gui/vendingmachinegui_purple.png");
+            case SILVER:
+                return new ResourceLocation(ModCurrency.MODID, "textures/gui/vendingmachinegui_silver.png");
+            case WHITE:
+                return new ResourceLocation(ModCurrency.MODID, "textures/gui/vendingmachinegui_white.png");
+        }
+
+        return new ResourceLocation(ModCurrency.MODID, "textures/gui/vendingmachinegui_grey.png");
     }
 
     @Override

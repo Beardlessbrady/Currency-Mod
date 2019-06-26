@@ -47,8 +47,6 @@ public class BlockVending extends EconomyBlockBase {
         if (TileEconomyBase.EMPTYID.equals(getTile(worldIn, pos).getPlayerUsing())) {
             if(playerIn.getHeldItemMainhand().getItem() == Items.DYE){
                 tile.setColor(EnumDyeColor.byDyeDamage(playerIn.getHeldItemMainhand().getItemDamage()));
-
-                worldIn.upda
             }else {
                 //If Sneaking and the player is the owner of the machine it will auto open the machine into STOCK MODE
                 if (playerIn.isSneaking() && tile.getOwner().equals(playerIn.getUniqueID())) {
@@ -69,9 +67,6 @@ public class BlockVending extends EconomyBlockBase {
 
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        //Sets facing of the block
-        //worldIn.setBlockState(pos, state.withProperty(StateHandler.FACING, placer.getHorizontalFacing().getOpposite()));
-
         //Creates the top and bottom part of the block (since this block is 2 blocks on top of each other)
         worldIn.setBlockState(pos, state.withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.TWOBOTTOM)
                 .withProperty(StateHandler.FACING, placer.getHorizontalFacing().getOpposite()));
@@ -159,8 +154,6 @@ public class BlockVending extends EconomyBlockBase {
     public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
         TileVending tile;
 
-
-        System.out.println("DDD");
         if(StateHandler.EnumTwoBlock.class.getEnumConstants()[getMetaFromState(state) / 4] == StateHandler.EnumTwoBlock.TWOTOP){
             tile = (TileVending) worldIn.getTileEntity(pos.down());
         }else{
