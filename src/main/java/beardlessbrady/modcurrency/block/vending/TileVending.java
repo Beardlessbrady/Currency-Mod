@@ -8,7 +8,7 @@ import beardlessbrady.modcurrency.item.ModItems;
 import beardlessbrady.modcurrency.utilities.UtilMethods;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
@@ -22,9 +22,7 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
-
 import javax.annotation.Nullable;
-import java.lang.reflect.Array;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
@@ -70,6 +68,8 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     private String selectedName;
     private int inventoryLimit, selectedSlot;
 
+    private EnumDyeColor color;
+
     public TileVending(){
         for(int i = 0; i < inventorySize.length; i++){
             inventorySize[i] = 0;
@@ -79,6 +79,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         }
         inventoryLimit = 256;
         selectedName = "No Item Selected";
+        color = EnumDyeColor.GRAY;
     }
 
     @Override
@@ -122,6 +123,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         compound.setTag("output", outputStackHandler.serializeNBT());
 
         compound.setString("selectedName", selectedName);
+        compound.setInteger("color", color.getDyeDamage());
         compound.setInteger("inventoryLimit", inventoryLimit);
         compound.setInteger("selectedSlot", selectedSlot);
 
@@ -152,6 +154,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         if(compound.hasKey("output")) outputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("output"));
 
         if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
+        if(compound.hasKey("color")) color = EnumDyeColor.byDyeDamage(compound.getInteger("color"));
         if(compound.hasKey("inventoryLimit")) inventoryLimit = compound.getInteger("inventoryLimit");
         if(compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
 
@@ -188,6 +191,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         NBTTagCompound compound = new NBTTagCompound();
 
         compound.setString("selectedName", selectedName);
+        compound.setInteger("color", color.getDyeDamage());
         compound.setInteger("inventoryLimit", inventoryLimit);
         compound.setInteger("selectedSlot", selectedSlot);
 
@@ -214,6 +218,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         NBTTagCompound compound = pkt.getNbtCompound();
 
         if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
+        if(compound.hasKey("color")) color = EnumDyeColor.byDyeDamage(compound.getInteger("color"));
         if(compound.hasKey("inventoryLimit")) inventoryLimit = compound.getInteger("inventoryLimit");
         if(compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
 
@@ -602,6 +607,14 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             }
         }
 
+    }
+
+    public EnumDyeColor getColor(){
+        return color;
+    }
+
+    public void setColor(EnumDyeColor color){
+        this.color = color;
     }
 
     //If Sneak button held down, show a full stack (or as close to it)
