@@ -47,6 +47,11 @@ public class BlockVending extends EconomyBlockBase {
         if (TileEconomyBase.EMPTYID.equals(getTile(worldIn, pos).getPlayerUsing())) {
             if(playerIn.getHeldItemMainhand().getItem() == Items.DYE){
                 tile.setColor(EnumDyeColor.byDyeDamage(playerIn.getHeldItemMainhand().getItemDamage()));
+
+                worldIn.markBlockRangeForRenderUpdate(pos, pos);
+                worldIn.notifyBlockUpdate(pos, worldIn.getBlockState(pos), worldIn.getBlockState(pos), 3);
+                worldIn.scheduleBlockUpdate(pos, this,0,0);
+                tile.markDirty();
             }else {
                 //If Sneaking and the player is the owner of the machine it will auto open the machine into STOCK MODE
                 if (playerIn.isSneaking() && tile.getOwner().equals(playerIn.getUniqueID())) {

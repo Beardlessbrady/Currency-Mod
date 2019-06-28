@@ -4,6 +4,7 @@ import beardlessbrady.modcurrency.ModCurrency;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.network.*;
 import beardlessbrady.modcurrency.proxy.ClientProxy;
+import beardlessbrady.modcurrency.utilities.GuiButtonTextured;
 import beardlessbrady.modcurrency.utilities.UtilMethods;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -43,9 +44,12 @@ public class GuiVending extends GuiContainer {
 
     private final KeyBinding[] keyBindings = ClientProxy.keyBindings.clone();
 
+    private boolean help;
+
     //Button ID's
     private static final int BUTTONCHANGE = 0;
     private static final int BUTTONADMIN = 1;
+    private static final int BUTTONHELP = 2;
 
     private static final int FIELDPRICE = 0;
     private static final int FIELDAMNT = 1;
@@ -65,10 +69,14 @@ public class GuiVending extends GuiContainer {
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
 
+        help = false;
+
         this.buttonList.add(new GuiButton(BUTTONCHANGE, i + 143, j + 27, 20, 20, "$"));
 
         String mode = (te.getField(te.FIELD_MODE) == 1) ? "STOCK" : "TRADE";
         this.buttonList.add(new GuiButton(BUTTONADMIN, i + 137, j - 42, 32, 20, mode));
+
+        this.buttonList.add(new GuiButtonTextured("help", BUTTONHELP, i + -19, j + -20, 21, 1, 19, 17, 0, "", ASSET_TEXTURE));
 
         this.fieldPrice = new GuiTextField(FIELDPRICE, fontRenderer, i + 213, j + 30, 90, 8);        //Setting Costs
         this.fieldPrice.setTextColor(Integer.parseInt("C35763", 16));
@@ -190,6 +198,34 @@ public class GuiVending extends GuiContainer {
         } else {
             this.buttonList.set(BUTTONCHANGE, new GuiButton(BUTTONCHANGE, i + 143, j + 27, 20, 20, TextFormatting.GREEN + "$"));
         }
+
+        if(help){
+            this.buttonList.set(BUTTONHELP, new GuiButtonTextured("help", BUTTONHELP, i + -70, j + -20, 21, 1, 19, 17, 0, "", ASSET_TEXTURE));
+
+            Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
+            drawTexturedModalRect(-70, -20, 23, 20, 70, 54);
+
+            fontRenderer.drawStringWithShadow(I18n.format("Help Tab"), -50, -13, Color.yellow.getRGB());
+
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+            GL11.glPushMatrix();
+            GL11.glScalef(0.7F, 0.7F, 0.8F);
+            if(te.getField(TileEconomyBase.FIELD_MODE) == 0) {
+                fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[0].getDisplayName()), -90, 0, Color.gray.getRGB());
+                fontRenderer.drawStringWithShadow(I18n.format("Buy max stack"), -85, 10, Color.white.getRGB());
+                fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[1].getDisplayName()), -90, 25, Color.gray.getRGB());
+                fontRenderer.drawStringWithShadow(I18n.format("Buy half stack"), -85, 35, Color.white.getRGB());
+            }else{
+                fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[0].getDisplayName()), -90, 0, Color.gray.getRGB());
+                fontRenderer.drawStringWithShadow(I18n.format("Create bundles"), -85, 10, Color.white.getRGB());
+                fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[1].getDisplayName()), -90, 25, Color.gray.getRGB());
+                fontRenderer.drawStringWithShadow(I18n.format("Delete bundles"), -85, 35, Color.white.getRGB());
+            }
+            GL11.glPopMatrix();
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+        }else
+            this.buttonList.set(BUTTONHELP, new GuiButtonTextured("help", BUTTONHELP, i + -19, j + -20, 21, 1, 19, 17, 0, "", ASSET_TEXTURE));
+
         drawAdminPanel();
     }
 
@@ -211,6 +247,9 @@ public class GuiVending extends GuiContainer {
                 pack0.setData(te.getPos(), false);
                 PacketHandler.INSTANCE.sendToServer(pack0);
                 te.outChange(false);
+                break;
+            case BUTTONHELP:
+                help = !help;
         }
     }
 
