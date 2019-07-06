@@ -5,6 +5,7 @@ import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.IStringSerializable;
+import scala.sys.Prop;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as

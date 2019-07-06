@@ -15,7 +15,9 @@
   },
   "variants": {
     "normal": [{}],
-    "inventory": [{}],
+    "inventory": [{
+      "model": "modcurrency:vendingitem"
+    }],
     "twotall": {
       "one": {},
       "twobottom": {},

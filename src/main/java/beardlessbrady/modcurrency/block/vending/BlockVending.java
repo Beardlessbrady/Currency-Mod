@@ -1,19 +1,24 @@
 package beardlessbrady.modcurrency.block.vending;
 
+import beardlessbrady.modcurrency.ModCurrency;
 import beardlessbrady.modcurrency.block.EconomyBlockBase;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.handler.StateHandler;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -168,6 +173,20 @@ public class BlockVending extends EconomyBlockBase {
         return this.getDefaultState().withProperty(StateHandler.FACING, EnumFacing.getHorizontal(getMetaFromState(state) % 4))
                 .withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.class.getEnumConstants()[getMetaFromState(state) / 4])
                 .withProperty(StateHandler.COLOR, tile.getColor());
+    }
+
+    @Override
+    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items) {
+        if (tab == ModCurrency.tabCurrency) {
+            items.add(new ItemStack(this, 1, 0));
+
+            ItemStack creative = new ItemStack(this, 1, 0);
+            NBTTagCompound nbtTagCompound = new NBTTagCompound();
+            nbtTagCompound.setBoolean("creative", true);
+            creative.writeToNBT(nbtTagCompound);
+            creative.setStackDisplayName("CREATIVE " + getLocalizedName());
+            items.add(creative);
+        }
     }
 
     //<editor-fold desc="Rendering-----------------------------------------------------------------------------------------------------------">

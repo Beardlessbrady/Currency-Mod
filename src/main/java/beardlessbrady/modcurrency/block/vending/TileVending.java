@@ -66,6 +66,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     private int[][] inventoryBundle = new int[TE_INVENTORY_SLOT_COUNT][];
 
     private String selectedName;
+    private boolean creative;
     private int inventoryLimit, selectedSlot;
 
     private EnumDyeColor color;
@@ -80,6 +81,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         inventoryLimit = 256;
         selectedName = "No Item Selected";
         color = EnumDyeColor.GRAY;
+        creative = false;;
     }
 
     @Override
