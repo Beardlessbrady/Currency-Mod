@@ -1,0 +1,29 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "model": "modcurrency:tradeinbottom",
+    "textures": {
+      "texture": "modcurrency:blocks/tradein",
+      "particle": "blocks/coal_block"
+    },
+    "transform": "forge:default-block"
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{}],
+    "twotall": {
+      "one": {},
+      "twobottom": {},
+      "twotop": {
+        "model": "modcurrency:tradeintop"
+      }
+    },
+    "facing": {
+      "north": {},
+      "south": {"y": 180},
+      "west": {"y": 270},
+      "east": {"y": 90}
+    }
+  }
+}
+
