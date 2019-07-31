@@ -1,7 +1,7 @@
 {
 	"__comment": "Designed by Beardlessbrady with Cubik Studio - https://cubik.studio",
 	"textures": {
-		"texture": "tradein"
+		"texture": "#texture"
 	},
 	"elements": [ 	 
 		{

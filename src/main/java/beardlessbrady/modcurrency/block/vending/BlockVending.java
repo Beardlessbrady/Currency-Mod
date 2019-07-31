@@ -10,8 +10,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -51,7 +49,6 @@ public class BlockVending extends EconomyBlockBase {
         //Checks if no other player is using the block, if not then allows access to GUI
         if (TileEconomyBase.EMPTYID.equals(getTile(worldIn, pos).getPlayerUsing())) {
             if(playerIn.getHeldItemMainhand().getItem() == Items.DYE){
-                tile.setColor(EnumDyeColor.byDyeDamage(playerIn.getHeldItemMainhand().getItemDamage()));
 
                 worldIn.markBlockRangeForRenderUpdate(pos, pos);
                 worldIn.notifyBlockUpdate(pos, worldIn.getBlockState(pos), worldIn.getBlockState(pos), 3);
@@ -146,7 +143,7 @@ public class BlockVending extends EconomyBlockBase {
 
     @Override
     protected BlockStateContainer createBlockState() {
-        return new BlockStateContainer(this, StateHandler.FACING, StateHandler.TWOTALL, StateHandler.COLOR);
+        return new BlockStateContainer(this, StateHandler.FACING, StateHandler.TWOTALL);
     }
 
     @Override
@@ -171,8 +168,7 @@ public class BlockVending extends EconomyBlockBase {
         }
 
         return this.getDefaultState().withProperty(StateHandler.FACING, EnumFacing.getHorizontal(getMetaFromState(state) % 4))
-                .withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.class.getEnumConstants()[getMetaFromState(state) / 4])
-                .withProperty(StateHandler.COLOR, tile.getColor());
+                .withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.class.getEnumConstants()[getMetaFromState(state) / 4]);
     }
 
     @Override
