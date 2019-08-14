@@ -46,9 +46,6 @@
     }],
     "basetwotopwindow": [{
       "model": "modcurrency:windowtop"
-    }],
-    "baseitem": [{
-      "model": "modcurrency:vendingitem"
     }]
   }
 }

@@ -1,14 +1,18 @@
 package beardlessbrady.modcurrency.block.tradein;
 
 import beardlessbrady.modcurrency.block.EconomyBlockBase;
+import beardlessbrady.modcurrency.block.TileEconomyBase;
+import beardlessbrady.modcurrency.block.vending.TileVending;
 import beardlessbrady.modcurrency.handler.StateHandler;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -32,6 +36,17 @@ public class BlockTradein extends EconomyBlockBase {
     }
 
     @Override
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
+        //Opens GUI if CLIENT SIDE
+        if (!worldIn.isRemote) {
+            ((TileTradein) getTile(worldIn, pos)).openGui(playerIn, worldIn, pos);
+            return true;
+        }
+
+        return true;
+    }
+
+    @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         //Creates the top and bottom part of the block (since this block is 2 blocks on top of each other)
         worldIn.setBlockState(pos, state.withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.TWOBOTTOM)
@@ -43,6 +58,41 @@ public class BlockTradein extends EconomyBlockBase {
         //Sets owner to the placer
         getTile(worldIn, pos).setOwner(placer.getUniqueID());
         getTile(worldIn, pos).markDirty();
+    }
+
+    @Override
+    public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
+        if(!worldIn.isRemote) {
+            if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP) {     //TOP BLOCK
+                worldIn.setBlockToAir(pos.down());
+            } else if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOBOTTOM) { //BOTTOM BLOCK
+                worldIn.setBlockToAir(pos.up());
+            }
+            super.breakBlock(worldIn, pos, state);
+        }
+    }
+
+    @Override
+    public TileEconomyBase getTile(World world, BlockPos pos) {
+        if (world.getBlockState(pos).getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP){
+            if (world.getTileEntity(pos.down()) instanceof TileTradein)
+                return (TileTradein) world.getTileEntity(pos.down());
+        }else{
+            if (world.getTileEntity(pos) instanceof TileTradein)
+                return (TileTradein) world.getTileEntity(pos);
+        }
+        return null;
+    }
+
+    public TileEconomyBase getTile(World world, BlockPos pos, IBlockState state) {
+        if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP){
+            if (world.getTileEntity(pos.down()) instanceof TileTradein)
+                return (TileTradein) world.getTileEntity(pos.down());
+        }else{
+            if (world.getTileEntity(pos) instanceof TileTradein)
+                return (TileTradein) world.getTileEntity(pos);
+        }
+        return null;
     }
 
     @Override

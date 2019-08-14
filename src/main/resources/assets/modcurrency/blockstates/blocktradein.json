@@ -10,7 +10,9 @@
   },
   "variants": {
     "normal": [{}],
-    "inventory": [{}],
+    "inventory": [{
+      "model": "modcurrency:tradeinitem"
+    }],
     "twotall": {
       "one": {},
       "twobottom": {},

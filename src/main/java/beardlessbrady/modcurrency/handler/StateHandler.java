@@ -19,6 +19,7 @@ import scala.sys.Prop;
 public class StateHandler {
     public static final PropertyDirection FACING = PropertyDirection.create("facing", EnumFacing.Plane.HORIZONTAL);
     public static final PropertyEnum<EnumTwoBlock> TWOTALL = PropertyEnum.create("twotall", EnumTwoBlock.class);
+    public static final PropertyEnum<EnumDyeColor> COLOR = PropertyEnum.create("color", EnumDyeColor.class);
 
     public enum EnumTwoBlock implements IStringSerializable {
         ONE,

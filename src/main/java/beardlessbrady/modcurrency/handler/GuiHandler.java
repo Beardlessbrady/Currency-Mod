@@ -1,5 +1,8 @@
 package beardlessbrady.modcurrency.handler;
 
+import beardlessbrady.modcurrency.block.tradein.ContainerTradein;
+import beardlessbrady.modcurrency.block.tradein.GuiTradein;
+import beardlessbrady.modcurrency.block.tradein.TileTradein;
 import beardlessbrady.modcurrency.block.vending.ContainerVending;
 import beardlessbrady.modcurrency.block.vending.GuiVending;
 import beardlessbrady.modcurrency.block.vending.TileVending;
@@ -28,8 +31,11 @@ public class GuiHandler implements IGuiHandler {
         TileEntity tileEntity = world.getTileEntity(xyz);
 
         if(tileEntity instanceof TileVending && ID == 30){
-            TileVending tilevendor = (TileVending) tileEntity;
-            return new ContainerVending(player, tilevendor);
+            TileVending tileVendor = (TileVending) tileEntity;
+            return new ContainerVending(player, tileVendor);
+        } else if(tileEntity instanceof TileTradein && ID == 31){
+            TileTradein tileTradeIn = (TileTradein) tileEntity;
+            return new ContainerTradein(player, tileTradeIn);
         }
 
         return null;
@@ -42,8 +48,11 @@ public class GuiHandler implements IGuiHandler {
         TileEntity tileEntity = world.getTileEntity(xyz);
 
         if(tileEntity instanceof TileVending && ID == 30){
-            TileVending tilevendor = (TileVending) tileEntity;
-            return new GuiVending(player, tilevendor);
+            TileVending tileVendor = (TileVending) tileEntity;
+            return new GuiVending(player, tileVendor);
+        } else if(tileEntity instanceof TileTradein && ID == 31){
+            TileTradein tileTradein = (TileTradein) tileEntity;
+            return new GuiTradein(player, tileTradein);
         }
 
         return null;

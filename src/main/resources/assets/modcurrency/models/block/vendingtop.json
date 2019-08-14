@@ -1,5 +1,6 @@
 {
 	"__comment": "Designed by Beardlessbrady with Cubik Studio - https://cubik.studio",
+	"parent": "block/tinted_cross",
 	"textures": {
 		"texture": "#texture"
 	},

@@ -1,5 +1,6 @@
 package beardlessbrady.modcurrency.block;
 
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -19,6 +20,7 @@ import java.util.UUID;
 
 public class TileEconomyBase extends TileEntity {
     protected int cashReserve, cashRegister;
+    protected EnumDyeColor color;
     protected boolean mode;
     protected UUID owner, playerUsing;
 
@@ -28,6 +30,7 @@ public class TileEconomyBase extends TileEntity {
         cashReserve = 0;
         cashRegister = 0;
         mode = false;
+        color = EnumDyeColor.GRAY;
 
         owner = new UUID(0L, 0L);
         playerUsing = new UUID(0L, 0L);
@@ -37,6 +40,7 @@ public class TileEconomyBase extends TileEntity {
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
+        compound.setInteger("color", color.getDyeDamage());
         compound.setInteger("cashReserve", cashReserve);
         compound.setInteger("cashRegister", cashRegister);
         compound.setBoolean("mode", mode);
@@ -49,6 +53,7 @@ public class TileEconomyBase extends TileEntity {
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
+        if (compound.hasKey("color")) color = EnumDyeColor.byDyeDamage(compound.getInteger("color"));
         if (compound.hasKey("cashReserve")) cashReserve = compound.getInteger("cashReserve");
         if(compound.hasKey("cashRegister")) cashRegister = compound.getInteger("cashRegister");
         if (compound.hasKey("mode")) mode = compound.getBoolean("mode");
@@ -66,6 +71,7 @@ public class TileEconomyBase extends TileEntity {
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound compound = new NBTTagCompound();
+        compound.setInteger("color", color.getDyeDamage());
         compound.setInteger("cashReserve", cashReserve);
         compound.setInteger("cashRegister", cashRegister);
         compound.setBoolean("mode", mode);
@@ -80,6 +86,7 @@ public class TileEconomyBase extends TileEntity {
         super.onDataPacket(net, pkt);
         NBTTagCompound compound = pkt.getNbtCompound();
 
+        if(compound.hasKey("color")) color = EnumDyeColor.byDyeDamage(compound.getInteger("color"));
         if(compound.hasKey("mode")) mode = compound.getBoolean("mode");
         if(compound.hasKey("cashReserve")) cashReserve = compound.getInteger("cashReserve");
         if(compound.hasKey("cashRegister")) cashRegister = compound.getInteger("cashRegister");
@@ -146,6 +153,14 @@ public class TileEconomyBase extends TileEntity {
 
     public void voidPlayerUsing(){
         playerUsing = EMPTYID;
+    }
+
+    public EnumDyeColor getColor(){
+        return color;
+    }
+
+    public void setColor(EnumDyeColor newColor){
+        color = newColor;
     }
 
 
