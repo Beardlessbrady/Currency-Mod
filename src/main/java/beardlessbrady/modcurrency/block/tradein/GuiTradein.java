@@ -16,7 +16,7 @@ import net.minecraft.util.ResourceLocation;
  */
 
 public class GuiTradein extends GuiContainer {
-    private static final ResourceLocation BACK_TEXTURE = new ResourceLocation(ModCurrency.MODID, "textures/gui/vendinggui.png");
+    private static final ResourceLocation BACK_TEXTURE = new ResourceLocation(ModCurrency.MODID, "textures/gui/tradeingui.png");
 
     public GuiTradein(EntityPlayer entityPlayer, TileTradein te) {
         super(new ContainerTradein(entityPlayer, te));
