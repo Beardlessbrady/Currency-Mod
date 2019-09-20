@@ -361,9 +361,9 @@ public class ContainerVending extends Container {
         if (items) {
             if (playerIn.getEntityWorld().isRemote) {
                 if (success) {
-                    playerIn.sendMessage(new TextComponentString("The Vending Machine's Output was placed in your inventory."));
+                    playerIn.sendStatusMessage(new TextComponentString("The Vending Machine's output was placed in your inventory."), true);
                 } else
-                    playerIn.sendMessage(new TextComponentString("Your inventory is full and unable to be filled by the Vending Machine's Output."));
+                    playerIn.sendStatusMessage(new TextComponentString("Your inventory is full and unable to be filled by the Vending Machine's output."), true);
             }
         }
     }
