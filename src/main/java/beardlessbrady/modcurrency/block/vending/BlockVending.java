@@ -11,6 +11,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -50,6 +51,11 @@ public class BlockVending extends EconomyBlockBase implements IBlockColor {
         //Checks if no other player is using the block, if not then allows access to GUI
         if (TileEconomyBase.EMPTYID.equals(getTile(worldIn, pos).getPlayerUsing())) {
             if(playerIn.getHeldItemMainhand().getItem() == Items.DYE){
+
+                if(!playerIn.isCreative())
+                    playerIn.getHeldItemMainhand().shrink(1);
+
+                tile.setColor(EnumDyeColor.byDyeDamage(playerIn.getHeldItemMainhand().getItemDamage()));
 
                 worldIn.markBlockRangeForRenderUpdate(pos, pos);
                 worldIn.notifyBlockUpdate(pos, worldIn.getBlockState(pos), worldIn.getBlockState(pos), 3);
@@ -132,6 +138,17 @@ public class BlockVending extends EconomyBlockBase implements IBlockColor {
     }
 
     public TileEconomyBase getTile(World world, BlockPos pos, IBlockState state) {
+        if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP){
+            if (world.getTileEntity(pos.down()) instanceof TileVending)
+                return (TileVending) world.getTileEntity(pos.down());
+        }else{
+            if (world.getTileEntity(pos) instanceof TileVending)
+                return (TileVending) world.getTileEntity(pos);
+        }
+        return null;
+    }
+
+    public TileEconomyBase getTile(IBlockAccess world, BlockPos pos, IBlockState state) {
         if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP){
             if (world.getTileEntity(pos.down()) instanceof TileVending)
                 return (TileVending) world.getTileEntity(pos.down());
