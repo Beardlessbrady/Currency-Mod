@@ -8,6 +8,7 @@ import beardlessbrady.modcurrency.item.ModItems;
 import beardlessbrady.modcurrency.utilities.UtilMethods;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,6 +16,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -65,6 +67,9 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     private int[] inventoryAmnt = new int[TE_INVENTORY_SLOT_COUNT];
     private int[][] inventoryBundle = new int[TE_INVENTORY_SLOT_COUNT][];
 
+    private String message= "";
+    private byte messageTime = 0;
+
     private String selectedName;
     private boolean creative;
     private int inventoryLimit, selectedSlot;
@@ -99,9 +104,17 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
                         inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
                         cashReserve += amount;
 
-                        //TODO inform of machine cap WARNING
+                        setMessage("CAN'T FIT ANYMORE CURRENCY!", (byte) 40);
+                        world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 3.0F, false);
+
                     }
                 }
+            }
+
+            if(messageTime > 0) {
+                messageTime--;
+            }else{
+                message = "";
             }
         }
     }
@@ -645,5 +658,14 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             newNum--;
 
         return newNum;
+    }
+
+    public void setMessage(String newMessage, byte time){
+        message = newMessage;
+        messageTime = time;
+    }
+
+    public String getMessage(){
+        return message;
     }
 }

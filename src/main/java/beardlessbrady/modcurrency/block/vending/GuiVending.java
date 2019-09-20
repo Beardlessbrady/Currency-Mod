@@ -10,14 +10,18 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
@@ -228,6 +232,7 @@ public class GuiVending extends GuiContainer {
             this.buttonList.set(BUTTONHELP, new GuiButtonTextured("help", BUTTONHELP, i + -19, j + -20, 21, 1, 19, 17, 0, "", ASSET_TEXTURE));
 
         drawAdminPanel();
+        message();
     }
 
     @Override
@@ -598,6 +603,29 @@ public class GuiVending extends GuiContainer {
                 drawTexturedModalRect(42 + (18 * slotRow), -32 + (18 * slotColumn), 0, 172, 20, 20);
             drawTexturedModalRect(42 + (18 * slotRow) + 14, -32 + (18 * slotColumn) + 15, 3, 3, 16, 14);
         }
+    }
+
+    private void message(){
+        FontRenderer fontRenderer = Minecraft.getMinecraft().ingameGUI.getFontRenderer();
+        String message = te.getMessage();
+
+        if(message != ""){
+            //Draws beginning of back panel of message
+            drawTexturedModalRect(70 - ((message.length()) *5 / 2),55, 0, 20, 21, 21);
+
+            //Draws extentions of the back panel of message
+            int panelAmounts = (message.length()*5) / 17;
+            for(int i = 0; i < panelAmounts; i++) {
+                drawTexturedModalRect(91 - (message.length()*5 / 2) + (i * 17), 55, 4, 20, 17, 21);
+            }
+
+            //Draws end of back panel of message
+            drawTexturedModalRect(91 - (message.length()*5 / 2) + (panelAmounts * 17), 55, 0, 42, 21, 21);
+
+            //Draws Warning Symbol
+            drawTexturedModalRect(74 - (message.length()*5 / 2),58, 41, 1, 19, 17);
+        }
+        fontRenderer.drawStringWithShadow(message, 94 - (message.length()*5) / 2,62, 0xDE3131);
     }
 
     @Override
