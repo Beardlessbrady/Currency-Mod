@@ -1,6 +1,8 @@
 package beardlessbrady.modcurrency.proxy;
 
+import beardlessbrady.modcurrency.block.ModBlockColors;
 import beardlessbrady.modcurrency.network.PacketHandler;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -27,6 +29,7 @@ public class ClientProxy extends CommonProxy{
 
     public void Init(FMLInitializationEvent e) {
         super.Init(e);
+        ModBlockColors.registerBlockColors();
         registerKeyBindings();
     }
 

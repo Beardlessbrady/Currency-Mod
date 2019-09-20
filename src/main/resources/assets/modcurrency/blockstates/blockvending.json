@@ -1,6 +1,7 @@
 {
   "forge_marker": 1,
   "defaults": {
+    "parent": "block/tinted_cross",
     "model": "forge:multi-layer",
     "textures": {
       "texture": "modcurrency:blocks/blockvending",

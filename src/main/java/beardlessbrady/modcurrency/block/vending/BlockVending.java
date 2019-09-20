@@ -6,6 +6,7 @@ import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.handler.StateHandler;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -36,7 +37,7 @@ import javax.annotation.Nullable;
  * File Created 2019-02-10
  */
 
-public class BlockVending extends EconomyBlockBase {
+public class BlockVending extends EconomyBlockBase implements IBlockColor {
 
     public BlockVending() {
         super("blockvending", TileVending.class);
@@ -206,6 +207,11 @@ public class BlockVending extends EconomyBlockBase {
     @Override
     public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
         return layer == BlockRenderLayer.TRANSLUCENT || layer == BlockRenderLayer.SOLID;
+    }
+
+    @Override
+    public int colorMultiplier(IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int tintIndex) {
+        return 0;
     }
 
     //</editor-fold>

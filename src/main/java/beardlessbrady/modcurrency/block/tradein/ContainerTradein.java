@@ -1,23 +1,15 @@
 package beardlessbrady.modcurrency.block.tradein;
 
-import beardlessbrady.modcurrency.block.TileEconomyBase;
-import beardlessbrady.modcurrency.block.vending.TileVending;
-import beardlessbrady.modcurrency.item.ModItems;
 import beardlessbrady.modcurrency.proxy.ClientProxy;
-import beardlessbrady.modcurrency.utilities.UtilMethods;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
-import org.lwjgl.input.Keyboard;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
