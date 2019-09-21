@@ -151,6 +151,7 @@ public class GuiVending extends GuiContainer {
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         Minecraft.getMinecraft().getTextureManager().bindTexture(BACK_TEXTURE);
+        //Todo Color GUI with Model GlStateManager.color(222.0F, 1.0F, 1.0F, 1.0F);
         drawTexturedModalRect(guiLeft, guiTop - 47, 0, 0, 176, 254);
     }
 

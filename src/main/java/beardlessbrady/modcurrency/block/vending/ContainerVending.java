@@ -398,7 +398,7 @@ public class ContainerVending extends Container {
                     return ItemStack.EMPTY;
                 } else {
                     if (te.growOutItemSize(outputStack, outSlot).equals(ItemStack.EMPTY)) {
-                        player.world.playSound(player.posX, player.posY, player.posZ, SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.BLOCKS, 0.5F, 0.0F, false);
+                        player.world.playSound(player.posX, player.posY, player.posZ, SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.BLOCKS, 0.05F, 5.0F, false);
 
                         int newCashReserve = te.getField(TileEconomyBase.FIELD_CASHRESERVE) - (te.getItemCost(index) * (count / te.getItemAmnt(index)));
                         int newCashRegister = te.getField(TileEconomyBase.FIELD_CASHREGISTER) + (te.getItemCost(index) * (count / te.getItemAmnt(index)));

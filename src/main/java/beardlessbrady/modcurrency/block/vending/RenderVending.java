@@ -41,24 +41,24 @@ public class RenderVending extends TileEntitySpecialRenderer<TileVending> {
 
                  switch (this.getWorld().getBlockState(te.getPos()).getValue(StateHandler.FACING)) {
                      default:
-                         GlStateManager.translate(x + 0.913, y + 1.77, z + 0.2);
+                         GlStateManager.translate(x + 0.93, y + 1.5, z + 0.1);
                          break;
                      case EAST:
-                         GlStateManager.translate(x + 0.813, y + 1.77, z + 0.913);
+                         GlStateManager.translate(x + 0.9, y + 1.5, z + 0.93);
                          rotation = -90;
                          break;
                      case WEST:
-                         GlStateManager.translate(x + 0.15, y + 1.77, z + 0.085);
+                         GlStateManager.translate(x + 0.1, y + 1.5, z + 0.07);
                          rotation = 90;
                          break;
                      case SOUTH:
-                         GlStateManager.translate(x + 0.087, y + 1.77, z + 0.813);
+                         GlStateManager.translate(x + 0.07, y + 1.5, z + 0.9);
                          rotation = 180;
                          break;
                  }
 
                  GlStateManager.rotate(rotation, 0f, 1f, 0f);
-                 GlStateManager.scale(0.13f, 0.13f, 0.13f);
+                 GlStateManager.scale(0.16f, 0.16f, 0.16f);
 
 
                  ItemStack itemStack;
@@ -66,11 +66,11 @@ public class RenderVending extends TileEntitySpecialRenderer<TileVending> {
                      for (int j = 0; j < 5; j++) {
                         itemStack = te.getInvItemStack((j + (i*5)));
 
-                        GlStateManager.translate(-0.9, 0, 0);
+                        GlStateManager.translate(-0.7, 0, 0);
                         if(!itemStack.isEmpty()) itemRenderer.renderItem(itemStack, ItemCameraTransforms.TransformType.FIXED);
 
                      }
-                     GlStateManager.translate(4.5, -1.95, 0);
+                     GlStateManager.translate(3.5, -1.8, 0);
                  }
                  RenderHelper.disableStandardItemLighting();
                  GlStateManager.popAttrib();

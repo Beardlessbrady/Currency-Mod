@@ -5,13 +5,15 @@
 	},
 	"elements": [ 	 
 		{
-			"__comment": "WINDOW",
-			"from": [ 4.5, 10.5, 0 ],
-			"to": [ 13.5, 16, 0.5 ],
+			"__comment": "Box3",
+			"from": [ 5, 5, 0.3 ],
+			"to": [ 14, 16, 0.8 ],
 			"faces": {
-				"down": { "uv": [ 4.75, 9.75, 5, 10 ], "texture": "#texture", "cullface": "up" },
-				"north": { "uv": [ 4.75, 9.75, 5, 10 ], "texture": "#texture", "cullface": "up" },
-				"south": { "uv": [ 4.75, 9.75, 5, 10 ], "texture": "#texture", "cullface": "up" }
+				"down": { "uv": [ 4.25, 8.25, 4.5, 8.5 ], "texture": "#texture" },
+				"north": { "uv": [ 4.25, 8.25, 4.5, 8.5 ], "texture": "#texture" },
+				"south": { "uv": [ 4.25, 8.25, 4.5, 8.5 ], "texture": "#texture" },
+				"west": { "uv": [ 4.25, 8.25, 4.5, 8.5 ], "texture": "#texture" },
+				"east": { "uv": [ 4.25, 8.25, 4.5, 8.5 ], "texture": "#texture" }
 			}
 		}
 	]
