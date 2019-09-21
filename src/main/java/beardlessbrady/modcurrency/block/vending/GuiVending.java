@@ -150,9 +150,16 @@ public class GuiVending extends GuiContainer {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        GlStateManager.pushMatrix();
+        guiColor(te.getColor());
+
         Minecraft.getMinecraft().getTextureManager().bindTexture(BACK_TEXTURE);
-        //Todo Color GUI with Model GlStateManager.color(222.0F, 1.0F, 1.0F, 1.0F);
-        drawTexturedModalRect(guiLeft, guiTop - 47, 0, 0, 176, 254);
+        drawTexturedModalRect(guiLeft, guiTop - 47, 0, 0, 176, 154);
+
+        GlStateManager.color(1F, 1F, 1F, 1.0F);
+        GlStateManager.popMatrix();
+
+        drawTexturedModalRect(guiLeft, guiTop + 109, 0, 156, 176, 99);
     }
 
     @Override
@@ -627,6 +634,59 @@ public class GuiVending extends GuiContainer {
             drawTexturedModalRect(74 - (message.length()*5 / 2),58, 41, 1, 19, 17);
         }
         fontRenderer.drawStringWithShadow(message, 94 - (message.length()*5) / 2,62, 0xDE3131);
+    }
+
+    private void guiColor(EnumDyeColor dyeColor){
+        switch(dyeColor){
+            case LIGHT_BLUE:
+                GlStateManager.color(143F/255F, 185F/255F, 244F/255F, 1.0F);
+                break;
+            case MAGENTA:
+                GlStateManager.color(203F/255F, 105F/255F, 197F/255F, 1.0F);
+                break;
+            case YELLOW:
+                GlStateManager.color(231F/255F, 231F/255F, 42F/255F, 1.0F);
+                break;
+            case SILVER:
+                GlStateManager.color(186F/255F, 186F/255F, 193F/255F, 1.0F);
+                break;
+            case PURPLE:
+                GlStateManager.color(164F/255F, 83F/255F, 206F/255F, 1.0F);
+                break;
+            case ORANGE:
+                GlStateManager.color(230F/255F, 158F/255F, 52F/255F, 1.0F);
+                break;
+            case WHITE:
+                GlStateManager.color(234F/255F, 234F/255F, 234F/255F, 1.0F);
+                break;
+            case GREEN:
+                GlStateManager.color(74F/255F, 107F/255F, 24F/255F, 1.0F);
+                break;
+            case BROWN:
+                GlStateManager.color(112F/255F, 68F/255F, 37F/255F, 1.0F);
+                break;
+            case BLACK:
+                GlStateManager.color(31F/255F, 31F/255F, 36F/255F, 1.0F);
+                break;
+            case PINK:
+                GlStateManager.color(247F/255F, 180F/255F, 214F/255F, 1.0F);
+                break;
+            case LIME:
+                GlStateManager.color(135F/255F, 202F/255F, 49F/255F, 1.0F);
+                break;
+            case GRAY:
+                GlStateManager.color(103F/255F, 103F/255F, 103F/255F, 1.0F);
+                break;
+            case CYAN:
+                GlStateManager.color(60F/255F, 142F/255F, 176F/255F, 1.0F);
+                break;
+            case BLUE:
+                GlStateManager.color(45F/255F, 93F/255F, 167F/255F, 1.0F);
+                break;
+            case RED:
+                GlStateManager.color(211F/255F, 90F/255F, 86F/255F, 1.0F);
+                break;
+        }
     }
 
     @Override
