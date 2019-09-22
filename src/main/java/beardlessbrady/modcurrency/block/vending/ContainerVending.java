@@ -341,6 +341,9 @@ public class ContainerVending extends Container {
     @Override
     public void onContainerClosed(EntityPlayer playerIn) {
         super.onContainerClosed(playerIn);
+
+        playerIn.playSound(SoundEvents.BLOCK_IRON_TRAPDOOR_CLOSE,0.2F, -100.0F);
+
         te.voidPlayerUsing();
         te.setField(TileEconomyBase.FIELD_MODE, 0);
 
