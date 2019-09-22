@@ -648,7 +648,7 @@ public class GuiVending extends GuiContainer {
                 GlStateManager.color(231F/255F, 231F/255F, 42F/255F, 1.0F);
                 break;
             case SILVER:
-                GlStateManager.color(186F/255F, 186F/255F, 193F/255F, 1.0F);
+                GlStateManager.color(196F/255F, 196F/255F, 203F/255F, 1.0F);
                 break;
             case PURPLE:
                 GlStateManager.color(164F/255F, 83F/255F, 206F/255F, 1.0F);
@@ -675,7 +675,7 @@ public class GuiVending extends GuiContainer {
                 GlStateManager.color(135F/255F, 202F/255F, 49F/255F, 1.0F);
                 break;
             case GRAY:
-                GlStateManager.color(103F/255F, 103F/255F, 103F/255F, 1.0F);
+                GlStateManager.color(160F/255F, 160F/255F, 160F/255F, 1.0F);
                 break;
             case CYAN:
                 GlStateManager.color(60F/255F, 142F/255F, 176F/255F, 1.0F);

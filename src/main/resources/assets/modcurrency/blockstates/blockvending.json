@@ -17,6 +17,10 @@
   "variants": {
     "normal": [{}],
     "inventory": [{
+      "textures": {
+        "texture": "modcurrency:blocks/blockvendingitem",
+        "particle": "blocks/coal_block"
+      },
       "model": "modcurrency:vendingitem",
       "transform": {
         "thirdperson_righthand": {
