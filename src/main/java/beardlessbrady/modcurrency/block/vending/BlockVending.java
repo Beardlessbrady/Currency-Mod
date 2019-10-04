@@ -211,7 +211,7 @@ public class BlockVending extends EconomyBlockBase implements IBlockColor {
     public void registerModel() {
         super.registerModel();
         ClientRegistry.bindTileEntitySpecialRenderer(TileVending.class, new RenderVending());
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 1, new ModelResourceLocation(getRegistryName(), "inventory"));
     }
 
     @Override

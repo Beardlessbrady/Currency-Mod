@@ -197,6 +197,9 @@ public class GuiVending extends GuiContainer {
         if (te.getField(TileVending.FIELD_MODE) == 1) {
             drawSelectionOverlay();
 
+            if(te.getField(TileVending.FIELD_CREATIVE) == 1)
+                fontRenderer.drawString(I18n.format("guivending.creative"), 90, -42, Color.pink.getRGB());
+
             GL11.glDisable(GL11.GL_DEPTH_TEST);
             GL11.glPushMatrix();
             GL11.glScalef(0.7F, 0.7F, 0.8F);
@@ -210,8 +213,6 @@ public class GuiVending extends GuiContainer {
             this.buttonList.set(BUTTONCHANGE, new GuiButton(BUTTONCHANGE, i + 143, j + 27, 20, 20, TextFormatting.BLUE + "$"));
         } else {
             this.buttonList.set(BUTTONCHANGE, new GuiButton(BUTTONCHANGE, i + 143, j + 27, 20, 20, TextFormatting.GREEN + "$"));
-            if(te.getField(TileVending.FIELD_CREATIVE) == 1)
-                fontRenderer.drawStringWithShadow(I18n.format("guivending.creative"), 80, 0, Color.pink.getRGB());
         }
 
         if(help){
@@ -746,7 +747,11 @@ public class GuiVending extends GuiContainer {
                         list.add(TextFormatting.BLUE + Integer.toString(amount) + TextFormatting.RESET + " for " + color + "$" + UtilMethods.translateMoney(cost));
                     }
 
-                    list.add("Stock: " + TextFormatting.BLUE + te.getItemSize(slot));
+                    if(te.getField(TileVending.FIELD_CREATIVE) == 0) {
+                        list.add("Stock: " + TextFormatting.BLUE + te.getItemSize(slot));
+                    }else{
+                        list.add("Stock: " + TextFormatting.BLUE + "Infinite");
+                    }
                 }
 
                 //adding original extra stuff AFTER price and such

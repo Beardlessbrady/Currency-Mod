@@ -122,6 +122,7 @@ public class ContainerVending extends Container {
 
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
+        boolean creative = te.getField(TileVending.FIELD_CREATIVE) == 1;
         int index = slotId - 37;
         ItemStack playerStack = player.inventory.getItemStack();
         ItemStack copyPlayerStack = playerStack.copy();
@@ -196,12 +197,20 @@ public class ContainerVending extends Container {
                 }
                 if (dragType == 0 || (dragType == 1 && clickTypeIn == ClickType.QUICK_CRAFT)) { //Left Click
                     if (playerStack.isEmpty()) {
-                        player.inventory.setItemStack(te.shrinkInvItemSize(64, index));
+                        if(!creative) {
+                            player.inventory.setItemStack(te.shrinkInvItemSize(64, index));
+                        }else{
+                            te.shrinkInvItemSize(64, index);
+                        }
                     } else {
-                        if (te.getInvItemStack(index).isEmpty()) {
-                            player.inventory.setItemStack(te.setInvItem(copyPlayerStack, index, 0));
-                        } else {
-                            player.inventory.setItemStack(te.growInvItemSize(copyPlayerStack, index));
+                        if(!creative) {
+                            if (te.getInvItemStack(index).isEmpty()) {
+                                player.inventory.setItemStack(te.setInvItem(copyPlayerStack, index, 0));
+                            } else {
+                                player.inventory.setItemStack(te.growInvItemSize(copyPlayerStack, index));
+                            }
+                        }else{
+                            te.setInvItemAndSize(copyPlayerStack, index, 1);
                         }
                     }
                     if (te.getItemSize(index) == 0) {
@@ -373,6 +382,7 @@ public class ContainerVending extends Container {
 
 
     public ItemStack buyItem(int index, int count) {
+        boolean creative = te.getField(TileVending.FIELD_CREATIVE) == 1;
         int amount = te.getItemAmnt(index);
 
         //If Sneak button held down, show a full stack (or as close to it)
@@ -386,7 +396,7 @@ public class ContainerVending extends Container {
         count = count * amount;
 
         if (!te.getInvItemStack(index).isEmpty() && te.getItemSize(index) != 0) {
-            if (te.canAfford(index, count) && amount <= te.getItemSize(index)) {
+            if (te.canAfford(index, count) && (amount <= te.getItemSize(index) || creative)) {
                 ItemStack outputStack = te.getInvItemStack(index).copy();
 
                 outputStack.setCount(count);
@@ -407,7 +417,8 @@ public class ContainerVending extends Container {
                         int newCashRegister = te.getField(TileEconomyBase.FIELD_CASHREGISTER) + (te.getItemCost(index) * (count / te.getItemAmnt(index)));
                         te.setField(TileEconomyBase.FIELD_CASHRESERVE, newCashReserve);
                         te.setField(TileEconomyBase.FIELD_CASHREGISTER, newCashRegister);
-                        te.shrinkInvItemSize(count, index);
+                        if(!creative)
+                            te.shrinkInvItemSize(count, index);
                     }
                     return ItemStack.EMPTY;
                 }

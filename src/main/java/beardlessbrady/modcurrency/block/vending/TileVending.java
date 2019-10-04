@@ -103,10 +103,9 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
                     if(amount + cashReserve <= 999999999) {
                         inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
                         cashReserve += amount;
-
+                    }else{
                         setMessage("CAN'T FIT ANYMORE CURRENCY!", (byte) 40);
                         world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 3.0F, false);
-
                     }
                 }
             }
@@ -648,27 +647,35 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     //If Sneak button held down, show a full stack (or as close to it)
     public int sneakFullStack(int index, int num) {
         int newNum = num;
-        if (getItemSize(index) < getInvItemStack(index).getMaxStackSize()) {
-            newNum = getItemSize(index);
-        } else newNum = getInvItemStack(index).getMaxStackSize();
+        if(!creative) {
+            if (getItemSize(index) < getInvItemStack(index).getMaxStackSize()) {
+                newNum = getItemSize(index);
+            } else newNum = getInvItemStack(index).getMaxStackSize();
 
-        while (newNum % getItemAmnt(index) != 0)
-            newNum--;
+            while (newNum % getItemAmnt(index) != 0)
+                newNum--;
 
+        }else{
+            newNum = getInvItemStack(index).getMaxStackSize();
+        }
         return newNum;
     }
 
     //If Jump button held down, show half a stack (or as close to it)
     public int jumpHalfStack(int index, int num) {
         int newNum = num;
-        if (getItemSize(index) < getInvItemStack(index).getMaxStackSize() / 2) {
-            newNum = getItemSize(index);
-        } else newNum = getInvItemStack(index).getMaxStackSize() / 2;
+        if(!creative) {
+            if (getItemSize(index) < getInvItemStack(index).getMaxStackSize() / 2) {
+                newNum = getItemSize(index);
+            } else newNum = getInvItemStack(index).getMaxStackSize() / 2;
 
-        if (newNum < 1) newNum = 1;
+            if (newNum < 1) newNum = 1;
 
-        while (newNum % getItemAmnt(index) != 0)
-            newNum--;
+            while (newNum % getItemAmnt(index) != 0)
+                newNum--;
+        }else{
+            newNum = getInvItemStack(index).getMaxStackSize() / 2;
+        }
 
         return newNum;
     }
