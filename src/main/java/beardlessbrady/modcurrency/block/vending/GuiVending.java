@@ -210,6 +210,8 @@ public class GuiVending extends GuiContainer {
             this.buttonList.set(BUTTONCHANGE, new GuiButton(BUTTONCHANGE, i + 143, j + 27, 20, 20, TextFormatting.BLUE + "$"));
         } else {
             this.buttonList.set(BUTTONCHANGE, new GuiButton(BUTTONCHANGE, i + 143, j + 27, 20, 20, TextFormatting.GREEN + "$"));
+            if(te.getField(TileVending.FIELD_CREATIVE) == 1)
+                fontRenderer.drawStringWithShadow(I18n.format("guivending.creative"), 80, 0, Color.pink.getRGB());
         }
 
         if(help){

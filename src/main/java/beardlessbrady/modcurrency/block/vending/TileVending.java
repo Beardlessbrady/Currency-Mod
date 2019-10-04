@@ -86,7 +86,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         inventoryLimit = 256;
         selectedName = "No Item Selected";
         color = EnumDyeColor.GRAY;
-        creative = false;;
+        creative = false;
     }
 
     @Override
@@ -137,6 +137,8 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         compound.setTag("input", inputStackHandler.serializeNBT());
         compound.setTag("output", outputStackHandler.serializeNBT());
 
+        compound.setBoolean("creative", creative);
+
         compound.setString("selectedName", selectedName);
         compound.setInteger("color", color.getDyeDamage());
         compound.setInteger("inventoryLimit", inventoryLimit);
@@ -167,6 +169,8 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         if(compound.hasKey("inventory")) inventoryStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("inventory"));
         if(compound.hasKey("input")) inputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("input"));
         if(compound.hasKey("output")) outputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("output"));
+
+        if(compound.hasKey("creative")) creative = compound.getBoolean("creative");
 
         if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
         if(compound.hasKey("color")) color = EnumDyeColor.byDyeDamage(compound.getInteger("color"));
@@ -205,6 +209,8 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         super.getUpdatePacket();
         NBTTagCompound compound = new NBTTagCompound();
 
+        compound.setBoolean("creative", creative);
+
         compound.setString("selectedName", selectedName);
         compound.setInteger("color", color.getDyeDamage());
         compound.setInteger("inventoryLimit", inventoryLimit);
@@ -231,6 +237,8 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         super.onDataPacket(net, pkt);
         NBTTagCompound compound = pkt.getNbtCompound();
+
+        if(compound.hasKey("creative")) creative = compound.getBoolean("creative");
 
         if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
         if(compound.hasKey("color")) color = EnumDyeColor.byDyeDamage(compound.getInteger("color"));
@@ -281,6 +289,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     //<editor-fold desc="fields">
     public static final int FIELD_INVLIMIT = 3;
     public static final int FIELD_SELECTED = 4;
+    public static final int FIELD_CREATIVE = 5;
 
     @Override
     public int getFieldCount(){
@@ -299,6 +308,8 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             case FIELD_SELECTED:
                 selectedSlot = value;
                 break;
+            case FIELD_CREATIVE:
+                creative = (value == 1);
             default:
                 super.setField(id, value);
         }
@@ -317,6 +328,8 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
                 return inventoryLimit;
             case FIELD_SELECTED:
                 return selectedSlot;
+            case FIELD_CREATIVE:
+                return (creative)? 1 : 0;
             default:
                 return super.getField(id);
         }

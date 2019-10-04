@@ -1,6 +1,7 @@
 //Vending Machine
 tile.modcurrency:blockvending.name=Vending Machine
 
+
 guivending.in=IN
 guivending.out=OUT
 guivending.slotsettings=Price
@@ -10,6 +11,7 @@ guivending.cash=Cash
 guivending.profit=Profit
 guivending.amnt=Amnt:
 guivending.amnt_bundled=-Amnts-
+guivending.creative=Creative
 
 key.goodolcurrency.category=Good Ol' Currency
 key.shift.desc=GOC Key 1

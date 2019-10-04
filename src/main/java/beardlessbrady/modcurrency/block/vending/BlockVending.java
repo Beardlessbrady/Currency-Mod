@@ -6,6 +6,7 @@ import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.handler.StateHandler;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.client.renderer.color.IBlockColor;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
@@ -13,6 +14,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -20,6 +22,7 @@ import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -85,6 +88,10 @@ public class BlockVending extends EconomyBlockBase implements IBlockColor {
 
         worldIn.setBlockState(pos.up(), state.withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.TWOTOP)
                 .withProperty(StateHandler.FACING, placer.getHorizontalFacing().getOpposite()));
+
+        System.out.println(stack.getMetadata());
+        if(stack.getMetadata() == 1)
+            getTile(worldIn, pos).setField(TileVending.FIELD_CREATIVE, 1);
 
         //Sets owner to the placer
         getTile(worldIn, pos).setOwner(placer.getUniqueID());
@@ -192,10 +199,7 @@ public class BlockVending extends EconomyBlockBase implements IBlockColor {
         if (tab == ModCurrency.tabCurrency) {
             items.add(new ItemStack(this, 1, 0));
 
-            ItemStack creative = new ItemStack(this, 1, 0);
-            NBTTagCompound nbtTagCompound = new NBTTagCompound();
-            nbtTagCompound.setBoolean("creative", true);
-            creative.writeToNBT(nbtTagCompound);
+            ItemStack creative = new ItemStack(this, 1, 1);
             creative.setStackDisplayName("CREATIVE " + getLocalizedName());
             items.add(creative);
         }
@@ -207,6 +211,7 @@ public class BlockVending extends EconomyBlockBase implements IBlockColor {
     public void registerModel() {
         super.registerModel();
         ClientRegistry.bindTileEntitySpecialRenderer(TileVending.class, new RenderVending());
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
     }
 
     @Override
