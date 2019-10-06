@@ -81,7 +81,7 @@ public class GuiVending extends GuiContainer {
         String mode = (te.getField(te.FIELD_MODE) == 1) ? "STOCK" : "TRADE";
         this.buttonList.add(new GuiButton(BUTTONADMIN, i + 137, j - 42, 32, 20, mode));
 
-        this.buttonList.add(new GuiButtonTextured("help", BUTTONHELP, i + -19, j + -20, 21, 1, 19, 17, 0, "", ASSET_TEXTURE));
+        this.buttonList.add(new GuiButtonTextured("help", BUTTONHELP, i + -19, j + -20, 0, 64, 19, 17, 0, "", ASSET_TEXTURE));
 
         this.fieldPrice = new GuiTextField(FIELDPRICE, fontRenderer, i + 213, j + 30, 90, 8);        //Setting Costs
         this.fieldPrice.setTextColor(Integer.parseInt("C35763", 16));
@@ -169,80 +169,68 @@ public class GuiVending extends GuiContainer {
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
 
+        //If owner or creative make admin button visible
         if (te.isOwner() || Minecraft.getMinecraft().player.isCreative()) {
             buttonList.get(BUTTONADMIN).visible = true;
         } else {
             buttonList.get(BUTTONADMIN).visible = false;
         }
 
+        //Basics GUI labels
         fontRenderer.drawString(I18n.format("tile.modcurrency:blockvending.name"), 8, -42, Integer.parseInt("ffffff", 16));
         fontRenderer.drawString(I18n.format("container.inventory"), 8, 114, Color.darkGray.getRGB());
         fontRenderer.drawString(I18n.format("guivending.in"), 149, -8, Color.lightGray.getRGB());
         fontRenderer.drawString(I18n.format("guivending.out"), 80, 68, Color.lightGray.getRGB());
 
+        //Money total and cashout button labels
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glPushMatrix();
         GL11.glScalef(0.7F, 0.7F, 0.8F);
         fontRenderer.drawStringWithShadow(I18n.format("guivending.cash"), 7, -40, Integer.parseInt("2DB22F", 16));
         fontRenderer.drawStringWithShadow(I18n.format("guivending.moneysign"), 7, -30, Integer.parseInt("ffffff", 16));
 
+        //draws players cash in machine
         fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getField(TileVending.FIELD_CASHRESERVE))), 15, -30, Integer.parseInt("ffffff", 16));
         GL11.glPopMatrix();
         GL11.glDisable(GL11.GL_DEPTH_TEST);
 
+        //Draws custom stack sizes
         drawItemStackSize();
 
         Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
-        //STOCK MODE, SELL MODE
+        //STOCK MODE - SELL MODE
         if (te.getField(TileVending.FIELD_MODE) == 1) {
+            //Draws the red selection overlay when determining which slot is selected
             drawSelectionOverlay();
 
+            //If a creative machine add an extra label saying so
             if(te.getField(TileVending.FIELD_CREATIVE) == 1)
                 fontRenderer.drawString(I18n.format("guivending.creative"), 90, -42, Color.pink.getRGB());
 
+            //Draws machines cash total and its labels
             GL11.glDisable(GL11.GL_DEPTH_TEST);
             GL11.glPushMatrix();
             GL11.glScalef(0.7F, 0.7F, 0.8F);
             fontRenderer.drawStringWithShadow(I18n.format("guivending.profit"), 7, -10, Integer.parseInt("3D78E0", 16));
             fontRenderer.drawStringWithShadow(I18n.format("guivending.moneysign"), 7, 0, Integer.parseInt("ffffff", 16));
-
             fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getField(TileVending.FIELD_CASHREGISTER))), 15, 0, Integer.parseInt("ffffff", 16));
             GL11.glPopMatrix();
             GL11.glDisable(GL11.GL_DEPTH_TEST);
 
+            //Changes '$' button to blue to signify clicking it cashes out Machines money
             this.buttonList.set(BUTTONCHANGE, new GuiButton(BUTTONCHANGE, i + 143, j + 27, 20, 20, TextFormatting.BLUE + "$"));
         } else {
+            //Changes '$' button to green to signify clicking it cashes out Players money
             this.buttonList.set(BUTTONCHANGE, new GuiButton(BUTTONCHANGE, i + 143, j + 27, 20, 20, TextFormatting.GREEN + "$"));
         }
 
-        if(help){
-            this.buttonList.set(BUTTONHELP, new GuiButtonTextured("help", BUTTONHELP, i + -70, j + -20, 21, 1, 19, 17, 0, "", ASSET_TEXTURE));
+        //Help Tab rendering
+        drawHelpTab();
 
-            Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
-            drawTexturedModalRect(-70, -20, 23, 20, 70, 54);
-
-            fontRenderer.drawStringWithShadow(I18n.format("Help Tab"), -50, -13, Color.yellow.getRGB());
-
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
-            GL11.glPushMatrix();
-            GL11.glScalef(0.7F, 0.7F, 0.8F);
-            if(te.getField(TileEconomyBase.FIELD_MODE) == 0) {
-                fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[0].getDisplayName()), -90, 0, Color.gray.getRGB());
-                fontRenderer.drawStringWithShadow(I18n.format("Buy max stack"), -85, 10, Color.white.getRGB());
-                fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[1].getDisplayName()), -90, 25, Color.gray.getRGB());
-                fontRenderer.drawStringWithShadow(I18n.format("Buy half stack"), -85, 35, Color.white.getRGB());
-            }else{
-                fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[0].getDisplayName()), -90, 0, Color.gray.getRGB());
-                fontRenderer.drawStringWithShadow(I18n.format("Create bundles"), -85, 10, Color.white.getRGB());
-                fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[1].getDisplayName()), -90, 25, Color.gray.getRGB());
-                fontRenderer.drawStringWithShadow(I18n.format("Delete bundles"), -85, 35, Color.white.getRGB());
-            }
-            GL11.glPopMatrix();
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
-        }else
-            this.buttonList.set(BUTTONHELP, new GuiButtonTextured("help", BUTTONHELP, i + -19, j + -20, 21, 1, 19, 17, 0, "", ASSET_TEXTURE));
-
+        //Admin 'Price Tag' rendering
         drawAdminPanel();
+
+        //Warning Message Rendering
         message();
     }
 
@@ -482,6 +470,33 @@ public class GuiVending extends GuiContainer {
 
             this.fieldAmnt5.setEnabled(false);
             this.fieldAmnt5.setVisible(false);
+        }
+    }
+
+    private void drawHelpTab(){
+        //If Help Open - Help Closed
+        if(help){
+            Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
+            drawTexturedModalRect(-68, -20, 23, 20, 68, 54);
+
+            fontRenderer.drawStringWithShadow(I18n.format("guivending.help"), -60, -13, Color.yellow.getRGB());
+
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+            GL11.glPushMatrix();
+            GL11.glScalef(0.7F, 0.7F, 0.8F);
+            if(te.getField(TileEconomyBase.FIELD_MODE) == 0) {
+                fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[0].getDisplayName()), -90, 0, Color.gray.getRGB());
+                fontRenderer.drawStringWithShadow(I18n.format("guivending.help.max"), -85, 10, Color.white.getRGB());
+                fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[1].getDisplayName()), -90, 25, Color.gray.getRGB());
+                fontRenderer.drawStringWithShadow(I18n.format("guivending.help.half"), -85, 35, Color.white.getRGB());
+            }else{
+                fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[0].getDisplayName()), -90, 0, Color.gray.getRGB());
+                fontRenderer.drawStringWithShadow(I18n.format("guivending.help.create"), -85, 10, Color.white.getRGB());
+                fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[1].getDisplayName()), -90, 25, Color.gray.getRGB());
+                fontRenderer.drawStringWithShadow(I18n.format("guivending.help.delete"), -85, 35, Color.white.getRGB());
+            }
+            GL11.glPopMatrix();
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
         }
     }
 
