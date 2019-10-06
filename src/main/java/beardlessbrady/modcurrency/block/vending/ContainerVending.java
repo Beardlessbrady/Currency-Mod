@@ -221,16 +221,16 @@ public class ContainerVending extends Container {
                         te.removeBundle(index);
                     } else {
                         //Moves Selected Slot
-                        if (!(te.getField(TileVending.FIELD_SELECTED) == slotId)) {
-                            int toSelect = index;
+                        if (!(te.getShort(TileVending.SHORT_SELECTED) == slotId)) {
+                            short toSelect = (short)index;
                             if (te.bundleMainSlot(index) != -1) {
-                                toSelect = te.bundleMainSlot(index);
+                                toSelect = (short) te.bundleMainSlot(index);
                                 te.setSelectedName("bundle");
                             } else {
                                 te.setSelectedName(te.getInvItemStack(index).getDisplayName());
                             }
 
-                            te.setField(te.FIELD_SELECTED, toSelect);
+                            te.setShort(TileVending.SHORT_SELECTED, toSelect);
                         }
 
                         if (te.getInvItemStack(index).isEmpty()) { //Place 1

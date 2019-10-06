@@ -338,7 +338,7 @@ public class GuiVending extends GuiContainer {
         int i = (this.width - this.xSize) / 2;
         int j = (this.height - this.ySize) / 2;
         if (te.getField(TileVending.FIELD_MODE) == 1) {
-            if (te.bundleMainSlot(te.getField(TileVending.FIELD_SELECTED)) != te.getField(TileVending.FIELD_SELECTED)) {
+            if (te.bundleMainSlot(te.getShort(TileVending.SHORT_SELECTED)) != te.getShort(TileVending.SHORT_SELECTED)) {
                 drawTexturedModalRect(177, 0, 150, 135, 106, 54);
 
                 fontRenderer.drawStringWithShadow(I18n.format("guivending.slotsettings"), 216, 10, Integer.parseInt("ffffff", 16));
@@ -388,7 +388,7 @@ public class GuiVending extends GuiContainer {
                 this.fieldAmnt.setEnabled(true);
                 this.fieldAmnt.setVisible(true);
 
-                int[] bundleSlots = te.getBundle(te.getField(TileVending.FIELD_SELECTED));
+                int[] bundleSlots = te.getBundle(te.getShort(TileVending.SHORT_SELECTED));
                 String bundleName = "";
                 for(int slot = 0; slot < bundleSlots.length; slot++) {
                     bundleName += "\n•" + te.getInvItemStack(bundleSlots[slot]).getDisplayName() + "\n";
@@ -528,7 +528,7 @@ public class GuiVending extends GuiContainer {
                     }
 
                     int yChange = 0;
-                    if(te.getField(TileVending.FIELD_SELECTED) == slot && te.getField(TileEconomyBase.FIELD_MODE) == 1){ //Selected is on a bundle
+                    if(te.getShort(TileVending.SHORT_SELECTED) == slot && te.getField(TileEconomyBase.FIELD_MODE) == 1){ //Selected is on a bundle
                         yChange = 21;
                     }
 
@@ -590,7 +590,7 @@ public class GuiVending extends GuiContainer {
 
     private void drawSelectionOverlay() {
         if (te.getField(TileVending.FIELD_MODE) == 1) {
-            int slotId = te.getField(TileVending.FIELD_SELECTED);
+            int slotId = te.getShort(TileVending.SHORT_SELECTED);
             int slotColumn = 0, slotRow = 0;
 
             if (slotId >= 0 && slotId <= 4) {
@@ -818,10 +818,10 @@ public class GuiVending extends GuiContainer {
                     fieldPrice.setMaxStringLength(fieldPrice.getText().length() + 2);
             if (!fieldPrice.getText().contains(".")) fieldPrice.setMaxStringLength(7);
 
-            if (this.fieldAmnt.textboxKeyTyped(typedChar, keyCode)) setAmnt(te.getField(TileVending.FIELD_SELECTED), this.fieldAmnt);
+            if (this.fieldAmnt.textboxKeyTyped(typedChar, keyCode)) setAmnt(te.getShort(TileVending.SHORT_SELECTED), this.fieldAmnt);
 
-            if(te.bundleMainSlot(te.getField((TileVending.FIELD_SELECTED))) == te.getField(TileVending.FIELD_SELECTED)){
-                int[] bundle = te.getBundle(te.getField(TileVending.FIELD_SELECTED));
+            if(te.bundleMainSlot(te.getShort(TileVending.SHORT_SELECTED)) == te.getShort(TileVending.SHORT_SELECTED)){
+                int[] bundle = te.getBundle(te.getShort(TileVending.SHORT_SELECTED));
 
                 switch(bundle.length){
                     case 5:
@@ -909,8 +909,8 @@ public class GuiVending extends GuiContainer {
         fieldPrice.setText(UtilMethods.translateMoney(te.getItemCost()));
         fieldAmnt.setText(Integer.toString(te.getItemAmnt()));
 
-        if(te.bundleMainSlot(te.getField(TileVending.FIELD_SELECTED)) == te.getField(TileVending.FIELD_SELECTED)) {
-            int[] bundle = te.getBundle(te.getField(TileVending.FIELD_SELECTED));
+        if(te.bundleMainSlot(te.getShort(TileVending.SHORT_SELECTED)) == te.getShort(TileVending.SHORT_SELECTED)) {
+            int[] bundle = te.getBundle(te.getShort(TileVending.SHORT_SELECTED));
 
             switch(bundle.length){
                 case 5:
@@ -937,7 +937,7 @@ public class GuiVending extends GuiContainer {
             int row = ((j - startY) / 18);
             int column = ((i - startX) / 18);
             int slot = column + (row * 5);
-            int selectedSlot = te.getField(TileVending.FIELD_SELECTED);
+            int selectedSlot = te.getShort(TileVending.SHORT_SELECTED);
 
             if (slot >= 0 && slot < 25) {
 

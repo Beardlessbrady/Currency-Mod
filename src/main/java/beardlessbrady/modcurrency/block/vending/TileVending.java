@@ -36,9 +36,9 @@ import javax.annotation.Nullable;
  */
 
 public class TileVending extends TileEconomyBase implements ICapabilityProvider, ITickable {
-    public final int TE_INPUT_SLOT_COUNT = 1;
-    public final int TE_INVENTORY_SLOT_COUNT = 25;
-    public final int TE_OUTPUT_SLOT_COUNT = 5;
+    public final short TE_INPUT_SLOT_COUNT = 1;
+    public final short TE_INVENTORY_SLOT_COUNT = 25;
+    public final short TE_OUTPUT_SLOT_COUNT = 5;
 
     private ItemStackHandler inputStackHandler = new ItemStackHandler(TE_INPUT_SLOT_COUNT) {
         @Override
@@ -72,7 +72,8 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
     private String selectedName;
     private boolean creative;
-    private int inventoryLimit, selectedSlot;
+    private int inventoryLimit;
+    private short selectedSlot;
 
     private EnumDyeColor color;
 
@@ -141,7 +142,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         compound.setString("selectedName", selectedName);
         compound.setInteger("color", color.getDyeDamage());
         compound.setInteger("inventoryLimit", inventoryLimit);
-        compound.setInteger("selectedSlot", selectedSlot);
+        compound.setShort("selectedSlot", selectedSlot);
 
         NBTTagCompound inventorySizeNBT = new NBTTagCompound();
         NBTTagCompound inventoryCostNBT = new NBTTagCompound();
@@ -174,7 +175,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
         if(compound.hasKey("color")) color = EnumDyeColor.byDyeDamage(compound.getInteger("color"));
         if(compound.hasKey("inventoryLimit")) inventoryLimit = compound.getInteger("inventoryLimit");
-        if(compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
+        if(compound.hasKey("selectedSlot")) selectedSlot = compound.getShort("selectedSlot");
 
         if(compound.hasKey("inventorySizeNBT")){
             NBTTagCompound inventorySizeNBT = compound.getCompoundTag("inventorySizeNBT");
@@ -213,7 +214,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         compound.setString("selectedName", selectedName);
         compound.setInteger("color", color.getDyeDamage());
         compound.setInteger("inventoryLimit", inventoryLimit);
-        compound.setInteger("selectedSlot", selectedSlot);
+        compound.setShort("selectedSlot", selectedSlot);
 
         NBTTagCompound inventorySizeNBT = new NBTTagCompound();
         NBTTagCompound inventoryCostNBT = new NBTTagCompound();
@@ -242,7 +243,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
         if(compound.hasKey("color")) color = EnumDyeColor.byDyeDamage(compound.getInteger("color"));
         if(compound.hasKey("inventoryLimit")) inventoryLimit = compound.getInteger("inventoryLimit");
-        if(compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
+        if(compound.hasKey("selectedSlot")) selectedSlot = compound.getShort("selectedSlot");
 
         if(compound.hasKey("inventorySizeNBT")){
             NBTTagCompound inventorySizeNBT = compound.getCompoundTag("inventorySizeNBT");
@@ -287,8 +288,9 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
     //<editor-fold desc="fields">
     public static final int FIELD_INVLIMIT = 3;
-    public static final int FIELD_SELECTED = 4;
-    public static final int FIELD_CREATIVE = 5;
+    public static final int FIELD_CREATIVE = 4;
+
+    public static final int SHORT_SELECTED = 0;
 
     @Override
     public int getFieldCount(){
@@ -303,9 +305,6 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
                 break;
             case FIELD_INVLIMIT:
                 inventoryLimit = value;
-                break;
-            case FIELD_SELECTED:
-                selectedSlot = value;
                 break;
             case FIELD_CREATIVE:
                 creative = (value == 1);
@@ -325,13 +324,28 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
                 return cashRegister;
             case FIELD_INVLIMIT:
                 return inventoryLimit;
-            case FIELD_SELECTED:
-                return selectedSlot;
             case FIELD_CREATIVE:
                 return (creative)? 1 : 0;
             default:
                 return super.getField(id);
         }
+    }
+
+    public void setShort(int id, short value){
+        switch(id) {
+            case SHORT_SELECTED:
+                selectedSlot = value;
+                break;
+        }
+    }
+
+    public short getShort(int id){
+        switch(id) {
+            case SHORT_SELECTED:
+                return selectedSlot;
+        }
+
+        return 0;
     }
     //</editor-fold>
 
