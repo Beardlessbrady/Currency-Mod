@@ -59,7 +59,7 @@ public class GuiVending extends GuiContainer {
 
     private static final int FIELDPRICE = 0;
     private static final int FIELDAMNT = 1;
-    private static final int FIELDAMNT2 =2;
+    private static final int FIELDAMNT2 = 2;
     private static final int FIELDAMNT3 = 3;
     private static final int FIELDAMNT4 = 4;
     private static final int FIELDAMNT5 = 5;
@@ -85,7 +85,7 @@ public class GuiVending extends GuiContainer {
         buttonList.add(new GuiButton(BUTTONADMIN, i + 137, j - 42, 32, 20, mode));
 
         buttonList.add(new GuiButtonTextured("help", BUTTONHELP, i + -19, j + -20, 0, 64, 19, 17, 0, "", ASSET_TEXTURE));
-        buttonList.add(new GuiButtonTextured("creative", BUTTONINFINITE, i + -19, j + -2, 0, 82, 19, 17, 0, "", ASSET_TEXTURE));
+        buttonList.add(new GuiButtonTextured("infinite", BUTTONINFINITE, i + 176, j + 55, 0, 82, 21, 17, 0, "", ASSET_TEXTURE));
         buttonList.get(BUTTONINFINITE).visible = false;
 
         fieldPrice = new GuiTextField(FIELDPRICE, fontRenderer, i + 213, j + 30, 90, 8);        //Setting Costs
@@ -153,6 +153,8 @@ public class GuiVending extends GuiContainer {
         fieldTimeRestock.setVisible(false);
         fieldTimeRestock.setText("1");
 
+        GlStateManager.color(0xFF, 0xFF, 0xFF);
+
         updateTextField();
     }
 
@@ -183,6 +185,19 @@ public class GuiVending extends GuiContainer {
         GlStateManager.popMatrix();
 
         drawTexturedModalRect(guiLeft, guiTop + 109, 0, 156, 176, 99);
+
+        //Tag background
+        Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
+
+        //Admin Tag
+        if(te.getField(FIELD_MODE) == 1) {
+            drawTexturedModalRect(guiLeft + 177, guiTop + 5, 150, 135, 106, 48);
+            if (te.getField(FIELD_INFINITE) == 1) {
+                //Infinite Tag
+                drawTexturedModalRect(guiLeft + 181, guiTop + 62, 156, 184, 100, 36);
+                drawTexturedModalRect(guiLeft + 182, guiTop + 26, 144, 182, 11, 57);
+            }
+        }
     }
 
     @Override
@@ -226,7 +241,7 @@ public class GuiVending extends GuiContainer {
             drawSelectionOverlay();
 
             //If a creative machine add an extra label saying so
-            if(te.getField(TileVending.FIELD_CREATIVE) == 1)
+            if (te.getField(TileVending.FIELD_CREATIVE) == 1)
                 fontRenderer.drawString(I18n.format("guivending.creative"), 90, -42, Color.pink.getRGB());
 
             //Draws machines cash total and its labels
@@ -245,7 +260,7 @@ public class GuiVending extends GuiContainer {
             //Changes '$' button to green to signify clicking it cashes out Players money
             buttonList.set(BUTTONCHANGE, new GuiButton(BUTTONCHANGE, i + 143, j + 27, 20, 20, TextFormatting.GREEN + "$"));
 
-            if(te.getField(TileVending.FIELD_CREATIVE) == 1)
+            if (te.getField(TileVending.FIELD_CREATIVE) == 1)
                 buttonList.get(BUTTONINFINITE).visible = false;
         }
 
@@ -281,13 +296,13 @@ public class GuiVending extends GuiContainer {
                 if (num.length() == 2) num = " " + num;
 
                 if (te.getField(FIELD_MODE) == 1) {
-                    if(te.getItemSize(i + (5 * j)) != 1)
+                    if (te.getItemSize(i + (5 * j)) != 1)
                         fontRenderer.drawStringWithShadow(num, 66 + (i * 26), startY + (j * 26), -1);
                 } else {
                     int startAmount = te.getItemAmnt(index);
 
 
-                    if(te.bundleMainSlot(index) == -1) {
+                    if (te.bundleMainSlot(index) == -1) {
                         //If Sneak button held down, show a full stack (or as close to it)
                         //If Jump button held down, show half a stack (or as close to it)
                         if (Keyboard.isKeyDown(keyBindings[0].getKeyCode())) {
@@ -312,6 +327,7 @@ public class GuiVending extends GuiContainer {
                             fontRenderer.drawStringWithShadow(amount, 66 + (i * 26), startY + (j * 26), -1);
                     }
                 }
+                GlStateManager.color(0xFF, 0xFF, 0xFF);
             }
         }
 
@@ -327,7 +343,6 @@ public class GuiVending extends GuiContainer {
             //Main Admin Panel
             if (te.bundleMainSlot(te.getShort(TileVending.SHORT_SELECTED)) != te.getShort(TileVending.SHORT_SELECTED)) {
                 Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
-                drawTexturedModalRect(177, 5, 150, 135, 106, 48);
 
                 fontRenderer.drawStringWithShadow(I18n.format("guivending.slotsettings"), 216, 10, Integer.parseInt("ffffff", 16));
 
@@ -361,7 +376,7 @@ public class GuiVending extends GuiContainer {
 
                 fieldAmnt5.setEnabled(false);
                 fieldAmnt5.setVisible(false);
-            }else{
+            } else {
                 drawTexturedModalRect(177, -5, 166, 0, 90, 134);
 
                 fontRenderer.drawStringWithShadow(I18n.format("guivending.slotsettings_bundled"), 187, 18, Integer.parseInt("ffffff", 16));
@@ -391,7 +406,7 @@ public class GuiVending extends GuiContainer {
                 fieldAmnt.x = i + 253;
                 fieldAmnt.y = j + 53;
 
-                switch(bundleSlots.length) {
+                switch (bundleSlots.length) {
                     case 5:
                         fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 113, Color.lightGray.getRGB());
                         fieldAmnt5.setEnabled(true);
@@ -451,23 +466,19 @@ public class GuiVending extends GuiContainer {
                         break;
                 }
             }
+            GlStateManager.color(0xFF, 0xFF, 0xFF);
 
             //Finite Restock for Creative machine
-            if(te.getField(FIELD_CREATIVE) == 1) {
+            if (te.getField(FIELD_CREATIVE) == 1) {
                 Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
 
-                //Changes 'Infinite' button position based on help tab
-                if (help) {
-                    if(te.getField(FIELD_INFINITE) == 0) drawTexturedModalRect(-18, + 35, 61, 1, 19, 17);
-                    buttonList.set(BUTTONINFINITE, new GuiButtonTextured("creative", BUTTONINFINITE, i + -19, j + 35, 0, 82, 19, 17, 0, "", ASSET_TEXTURE));
-                } else {
-                    if(te.getField(FIELD_INFINITE) == 0) drawTexturedModalRect(-18, -2, 61, 1, 19, 17);
-                    buttonList.set(BUTTONINFINITE, new GuiButtonTextured("creative", BUTTONINFINITE, i + -19, j + -2, 0, 82, 19, 17, 0, "", ASSET_TEXTURE));
-                }
+                //'Infinite' button slashed if 0
+                if (te.getField(FIELD_INFINITE) == 0) drawTexturedModalRect(-18, +35, 61, 1, 19, 17);
+                buttonList.get(BUTTONINFINITE).visible = true;
+
 
                 //Adds extra 'Restock' screen if inventory is 'finite'
-                if(te.getField(FIELD_INFINITE) == 1){
-                    drawTexturedModalRect(181,29, 156, 190, 100, 61);
+                if (te.getField(FIELD_INFINITE) == 1) {
                     fontRenderer.drawStringWithShadow(I18n.format("     items"), 205, 66, Color.lightGray.getRGB());
                     fontRenderer.drawStringWithShadow(I18n.format("per       sec"), 205, 74, Color.lightGray.getRGB());
                     fontRenderer.drawStringWithShadow(I18n.format("Restock"), 210, 57, Color.WHITE.getRGB());
@@ -476,7 +487,7 @@ public class GuiVending extends GuiContainer {
                     fieldTimeRestock.setVisible(true);
                     fieldItemRestock.setEnabled(true);
                     fieldItemRestock.setVisible(true);
-                }else{
+                } else {
                     fieldTimeRestock.setEnabled(false);
                     fieldTimeRestock.setVisible(false);
                     fieldItemRestock.setEnabled(false);
@@ -509,9 +520,9 @@ public class GuiVending extends GuiContainer {
         }
     }
 
-    private void drawHelpTab(){
+    private void drawHelpTab() {
         //If Help Open - Help Closed
-        if(help){
+        if (help) {
             Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
             drawTexturedModalRect(-68, -20, 23, 20, 68, 54);
 
@@ -520,12 +531,12 @@ public class GuiVending extends GuiContainer {
             GL11.glDisable(GL11.GL_DEPTH_TEST);
             GL11.glPushMatrix();
             GL11.glScalef(0.7F, 0.7F, 0.8F);
-            if(te.getField(FIELD_MODE) == 0) {
+            if (te.getField(FIELD_MODE) == 0) {
                 fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[0].getDisplayName()), -90, 0, Color.gray.getRGB());
                 fontRenderer.drawStringWithShadow(I18n.format("guivending.help.max"), -85, 10, Color.white.getRGB());
                 fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[1].getDisplayName()), -90, 25, Color.gray.getRGB());
                 fontRenderer.drawStringWithShadow(I18n.format("guivending.help.half"), -85, 35, Color.white.getRGB());
-            }else{
+            } else {
                 fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[0].getDisplayName()), -90, 0, Color.gray.getRGB());
                 fontRenderer.drawStringWithShadow(I18n.format("guivending.help.create"), -85, 10, Color.white.getRGB());
                 fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[1].getDisplayName()), -90, 25, Color.gray.getRGB());
@@ -534,6 +545,7 @@ public class GuiVending extends GuiContainer {
             GL11.glPopMatrix();
             GL11.glDisable(GL11.GL_DEPTH_TEST);
         }
+        GlStateManager.color(0xFF, 0xFF, 0xFF);
     }
 
     private void drawBundles() {
@@ -578,7 +590,7 @@ public class GuiVending extends GuiContainer {
                     }
 
                     int yChange = 0;
-                    if(te.getShort(TileVending.SHORT_SELECTED) == slot && te.getField(FIELD_MODE) == 1){ //Selected is on a bundle
+                    if (te.getShort(TileVending.SHORT_SELECTED) == slot && te.getField(FIELD_MODE) == 1) { //Selected is on a bundle
                         yChange = 21;
                     }
 
@@ -621,9 +633,9 @@ public class GuiVending extends GuiContainer {
                             }
 
                             if (te.bundleMainSlot(slot2 + (forIncrement)) == slot) { //This slot is NOT the end of the bundle
-                                if(direction == 0 || direction == 1){
+                                if (direction == 0 || direction == 1) {
                                     drawTexturedModalRect(42 + (18 * slotRow2), -32 + (18 * slotColumn2), 84, 130 + yChange, 20, 20);
-                                }else{
+                                } else {
                                     drawTexturedModalRect(42 + (18 * slotRow2), -32 + (18 * slotColumn2), 105, 130 + yChange, 20, 20);
 
                                 }
@@ -658,84 +670,85 @@ public class GuiVending extends GuiContainer {
                 slotRow = (slotId) - 20;
             }
 
-            if(te.bundleMainSlot(slotId) != slotId)
+            if (te.bundleMainSlot(slotId) != slotId)
                 drawTexturedModalRect(42 + (18 * slotRow), -32 + (18 * slotColumn), 0, 172, 20, 20);
             drawTexturedModalRect(42 + (18 * slotRow) + 14, -32 + (18 * slotColumn) + 15, 3, 3, 16, 14);
         }
     }
 
-    private void message(){
+    private void message() {
         FontRenderer fontRenderer = Minecraft.getMinecraft().ingameGUI.getFontRenderer();
         String message = te.getMessage();
 
-        if(!message.equals("")){
+        if (!message.equals("")) {
             //Draws beginning of back panel of message
-            drawTexturedModalRect(70 - ((message.length()) *5 / 2),55, 0, 20, 21, 21);
+            drawTexturedModalRect(70 - ((message.length()) * 5 / 2), 55, 0, 20, 21, 21);
 
             //Draws extentions of the back panel of message
-            int panelAmounts = (message.length()*5) / 17;
-            for(int i = 0; i < panelAmounts; i++) {
-                drawTexturedModalRect(91 - (message.length()*5 / 2) + (i * 17), 55, 4, 20, 17, 21);
+            int panelAmounts = (message.length() * 5) / 17;
+            for (int i = 0; i < panelAmounts; i++) {
+                drawTexturedModalRect(91 - (message.length() * 5 / 2) + (i * 17), 55, 4, 20, 17, 21);
             }
 
             //Draws end of back panel of message
-            drawTexturedModalRect(91 - (message.length()*5 / 2) + (panelAmounts * 17), 55, 0, 42, 21, 21);
+            drawTexturedModalRect(91 - (message.length() * 5 / 2) + (panelAmounts * 17), 55, 0, 42, 21, 21);
 
             //Draws Warning Symbol
-            drawTexturedModalRect(74 - (message.length()*5 / 2),58, 41, 1, 19, 17);
+            drawTexturedModalRect(74 - (message.length() * 5 / 2), 58, 41, 1, 19, 17);
         }
-        fontRenderer.drawStringWithShadow(message, 94 - (message.length()*5) / 2,62, 0xDE3131);
+        fontRenderer.drawStringWithShadow(message, 94 - (message.length() * 5) / 2, 62, 0xDE3131);
+        GlStateManager.color(0xFF, 0xFF, 0xFF);
     }
 
-    private void guiColor(EnumDyeColor dyeColor){
-        switch(dyeColor){
+    private void guiColor(EnumDyeColor dyeColor) {
+        switch (dyeColor) {
             case LIGHT_BLUE:
-                GlStateManager.color(143F/255F, 185F/255F, 244F/255F, 1.0F);
+                GlStateManager.color(143F / 255F, 185F / 255F, 244F / 255F, 1.0F);
                 break;
             case MAGENTA:
-                GlStateManager.color(203F/255F, 105F/255F, 197F/255F, 1.0F);
+                GlStateManager.color(203F / 255F, 105F / 255F, 197F / 255F, 1.0F);
                 break;
             case YELLOW:
-                GlStateManager.color(231F/255F, 231F/255F, 42F/255F, 1.0F);
+                GlStateManager.color(231F / 255F, 231F / 255F, 42F / 255F, 1.0F);
                 break;
             case SILVER:
-                GlStateManager.color(196F/255F, 196F/255F, 203F/255F, 1.0F);
+                GlStateManager.color(196F / 255F, 196F / 255F, 203F / 255F, 1.0F);
                 break;
             case PURPLE:
-                GlStateManager.color(164F/255F, 83F/255F, 206F/255F, 1.0F);
+                GlStateManager.color(164F / 255F, 83F / 255F, 206F / 255F, 1.0F);
                 break;
             case ORANGE:
-                GlStateManager.color(230F/255F, 158F/255F, 52F/255F, 1.0F);
+                GlStateManager.color(230F / 255F, 158F / 255F, 52F / 255F, 1.0F);
                 break;
             case WHITE:
-                GlStateManager.color(234F/255F, 234F/255F, 234F/255F, 1.0F);
+                GlStateManager.color(234F / 255F, 234F / 255F, 234F / 255F, 1.0F);
                 break;
             case GREEN:
-                GlStateManager.color(74F/255F, 107F/255F, 24F/255F, 1.0F);
+                GlStateManager.color(74F / 255F, 107F / 255F, 24F / 255F, 1.0F);
                 break;
             case BROWN:
-                GlStateManager.color(112F/255F, 68F/255F, 37F/255F, 1.0F);
+                GlStateManager.color(112F / 255F, 68F / 255F, 37F / 255F, 1.0F);
                 break;
             case BLACK:
-                GlStateManager.color(31F/255F, 31F/255F, 36F/255F, 1.0F);
+                GlStateManager.color(31F / 255F, 31F / 255F, 36F / 255F, 1.0F);
                 break;
             case PINK:
-                GlStateManager.color(247F/255F, 180F/255F, 214F/255F, 1.0F);
+                GlStateManager.color(247F / 255F, 180F / 255F, 214F / 255F, 1.0F);
                 break;
             case LIME:
-                GlStateManager.color(135F/255F, 202F/255F, 49F/255F, 1.0F);
+                GlStateManager.color(135F / 255F, 202F / 255F, 49F / 255F, 1.0F);
                 break;
             case GRAY:
-                GlStateManager.color(160F/255F, 160F/255F, 160F/255F, 1.0F);
+                GlStateManager.color(160F / 255F, 160F / 255F, 160F / 255F, 1.0F);
                 break;
             case CYAN:
-                GlStateManager.color(60F/255F, 142F/255F, 176F/255F, 1.0F);
+                GlStateManager.color(60F / 255F, 142F / 255F, 176F / 255F, 1.0F);
                 break;
             case BLUE:
-                GlStateManager.color(45F/255F, 93F/255F, 167F/255F, 1.0F);
+                GlStateManager.color(45F / 255F, 93F / 255F, 167F / 255F, 1.0F);
                 break;
             case RED:
-                GlStateManager.color(211F/255F, 90F/255F, 86F/255F, 1.0F);
+                GlStateManager.color(211F / 255F, 90F / 255F, 86F / 255F, 1.0F);
                 break;
         }
     }
@@ -756,7 +769,7 @@ public class GuiVending extends GuiContainer {
             List<String> ogTooltip = stack.getTooltip(mc.player, mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
             int tooltipStart = 1;
 
-            if(te.bundleMainSlot(slot) == -1) {
+            if (te.bundleMainSlot(slot) == -1) {
                 //Adding name and subname of item before price and such
                 if (ogTooltip.size() > 0) {
                     list.add(ogTooltip.get(0));
@@ -793,9 +806,9 @@ public class GuiVending extends GuiContainer {
                         list.add(TextFormatting.BLUE + Integer.toString(amount) + TextFormatting.RESET + " for " + color + "$" + UtilMethods.translateMoney(cost));
                     }
 
-                    if(te.getField(FIELD_INFINITE) == 0) {
+                    if (te.getField(FIELD_INFINITE) == 0) {
                         list.add("Stock: " + TextFormatting.BLUE + te.getItemSize(slot));
-                    }else{
+                    } else {
                         list.add("Stock: " + TextFormatting.BLUE + "Infinite");
                     }
                 }
@@ -805,7 +818,7 @@ public class GuiVending extends GuiContainer {
                     list.add(TextFormatting.GRAY + stack.getTooltip(mc.player, mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL).get(tooltipStart));
                 }
 
-            }else{ //Is a BUNDLE
+            } else { //Is a BUNDLE
                 list.add("Bundle");
 
                 //Adding Vending Strings
@@ -815,7 +828,7 @@ public class GuiVending extends GuiContainer {
                         color = TextFormatting.GREEN;
                     }
 
-                    int mainSlot= te.bundleMainSlot(slot);
+                    int mainSlot = te.bundleMainSlot(slot);
                     int cost = te.getItemCost(mainSlot);
 
                     list.add(color + "$" + UtilMethods.translateMoney(cost));
@@ -825,13 +838,10 @@ public class GuiVending extends GuiContainer {
 
 
                     int[] bundle = te.getBundle(mainSlot);
-                    for (int k:bundle){
+                    for (int k : bundle) {
                         list.add("x" + TextFormatting.BLUE + te.getItemAmnt(bundle[k]) + " " + TextFormatting.RESET + te.getInvItemStack(bundle[k]).getDisplayName());
                     }
                 }
-
-
-
 
 
             }
@@ -861,12 +871,13 @@ public class GuiVending extends GuiContainer {
                     fieldPrice.setMaxStringLength(fieldPrice.getText().length() + 2);
             if (!fieldPrice.getText().contains(".")) fieldPrice.setMaxStringLength(7);
 
-            if (fieldAmnt.textboxKeyTyped(typedChar, keyCode)) setAmnt(te.getShort(TileVending.SHORT_SELECTED), fieldAmnt);
+            if (fieldAmnt.textboxKeyTyped(typedChar, keyCode))
+                setAmnt(te.getShort(TileVending.SHORT_SELECTED), fieldAmnt);
 
-            if(te.bundleMainSlot(te.getShort(TileVending.SHORT_SELECTED)) == te.getShort(TileVending.SHORT_SELECTED)){
+            if (te.bundleMainSlot(te.getShort(TileVending.SHORT_SELECTED)) == te.getShort(TileVending.SHORT_SELECTED)) {
                 int[] bundle = te.getBundle(te.getShort(TileVending.SHORT_SELECTED));
 
-                switch(bundle.length){
+                switch (bundle.length) {
                     case 5:
                         if (fieldAmnt5.textboxKeyTyped(typedChar, keyCode)) setAmnt(bundle[4], fieldAmnt5);
                     case 4:
@@ -878,13 +889,15 @@ public class GuiVending extends GuiContainer {
                 }
             }
 
-            if(te.getField(FIELD_CREATIVE) == 1 && te.getField(FIELD_INFINITE) == 1){
-                if (fieldItemRestock.textboxKeyTyped(typedChar, keyCode)) {}
-                        //TODO
+            if (te.getField(FIELD_CREATIVE) == 1 && te.getField(FIELD_INFINITE) == 1) {
+                if (fieldItemRestock.textboxKeyTyped(typedChar, keyCode)) {
+                }
+                //TODO
 
 
-                if (fieldTimeRestock.textboxKeyTyped(typedChar, keyCode)) {}
-                        //TODO
+                if (fieldTimeRestock.textboxKeyTyped(typedChar, keyCode)) {
+                }
+                //TODO
 
             }
         } else {
@@ -903,7 +916,7 @@ public class GuiVending extends GuiContainer {
             fieldAmnt4.mouseClicked(mouseX, mouseY, mouseButton);
             fieldAmnt5.mouseClicked(mouseX, mouseY, mouseButton);
             fieldItemRestock.mouseClicked(mouseX, mouseY, mouseButton);
-            fieldTimeRestock.mouseClicked(mouseX,mouseY, mouseButton);
+            fieldTimeRestock.mouseClicked(mouseX, mouseY, mouseButton);
 
             updateTextField();
         } else {
@@ -940,7 +953,7 @@ public class GuiVending extends GuiContainer {
         }
     }
 
-    private void setAmnt(int slot, GuiTextField guiTextField){
+    private void setAmnt(int slot, GuiTextField guiTextField) {
         if (guiTextField.getText().length() > 0) {
             int amount = Integer.valueOf(guiTextField.getText());
 
@@ -966,10 +979,10 @@ public class GuiVending extends GuiContainer {
         fieldItemRestock.setText(Integer.toString(te.getRestockAmount()));
         fieldTimeRestock.setText(Integer.toString(te.getRestockTime()));
 
-        if(te.bundleMainSlot(te.getShort(TileVending.SHORT_SELECTED)) == te.getShort(TileVending.SHORT_SELECTED)) {
+        if (te.bundleMainSlot(te.getShort(TileVending.SHORT_SELECTED)) == te.getShort(TileVending.SHORT_SELECTED)) {
             int[] bundle = te.getBundle(te.getShort(TileVending.SHORT_SELECTED));
 
-            switch(bundle.length){
+            switch (bundle.length) {
                 case 5:
                     fieldAmnt5.setText(Integer.toString(te.getItemAmnt(bundle[4])));
                 case 4:
@@ -1080,7 +1093,7 @@ public class GuiVending extends GuiContainer {
                                 int[] newBundle = new int[oldBundle.length + 1];
 
                                 System.arraycopy(oldBundle, 0, newBundle, 0, oldBundle.length);
-                       
+
                                 newBundle[newBundle.length - 1] = slot;
                                 te.setBundle(selectedSlot, newBundle);
                                 PacketSetItemBundleToServer pack0 = new PacketSetItemBundleToServer();
@@ -1100,13 +1113,13 @@ public class GuiVending extends GuiContainer {
     }
 
     @Override
-    protected void actionPerformed(GuiButton button){
+    protected void actionPerformed(GuiButton button) {
         switch (button.id) {
             case BUTTONADMIN:
                 PacketSetFieldToServer pack = new PacketSetFieldToServer();
                 pack.setData((te.getField(FIELD_MODE) == 1) ? 0 : 1, FIELD_MODE, te.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack);
-                
+
                 buttonList.get(BUTTONADMIN).displayString = (te.getField(FIELD_MODE) == 0) ? "STOCK" : "TRADE";
 
                 te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
