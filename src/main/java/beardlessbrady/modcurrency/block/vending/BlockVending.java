@@ -16,9 +16,11 @@ import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.*;
+import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -69,6 +71,8 @@ public class BlockVending extends EconomyBlockBase implements IBlockColor {
                 } else {
                     tile.setField(TileEconomyBase.FIELD_MODE, 0);
                 }
+
+                playerIn.playSound(SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN,0.2F, -100.0F);
 
                 //Opens GUI if CLIENT SIDE
                 if (!worldIn.isRemote) {

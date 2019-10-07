@@ -80,11 +80,11 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     //Used for Creative auto refill of item slots
     private long serverTime;
     private int[] itemRaise = new int[TE_INVENTORY_SLOT_COUNT];
-    private long[] timeRaise = new long[TE_INVENTORY_SLOT_COUNT];
-    private long[] timeElapsed = new long[TE_INVENTORY_SLOT_COUNT];
+    private int[] timeRaise = new int[TE_INVENTORY_SLOT_COUNT];
+    private int[] timeElapsed = new int[TE_INVENTORY_SLOT_COUNT];
 
     private String selectedName;
-    private boolean creative;
+    private boolean creative, infinite;
     private int inventoryLimit;
     private short selectedSlot;
 
@@ -107,6 +107,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         selectedName = "No Item Selected";
         color = EnumDyeColor.GRAY;
         creative = false;
+        infinite = false;
     }
 
     @Override
@@ -163,6 +164,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         compound.setTag("output", outputStackHandler.serializeNBT());
 
         compound.setBoolean("creative", creative);
+        compound.setBoolean("infinite", infinite);
 
         compound.setString("selectedName", selectedName);
         compound.setInteger("color", color.getDyeDamage());
@@ -183,8 +185,8 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             inventoryBundleNBT.setIntArray("bundle" + i, inventoryBundle[i]);
 
             itemRaiseNBT.setInteger("itemRaise" + i, itemRaise[i]);
-            timeRaiseNBT.setLong("timeRaise" + i, timeRaise[i]);
-            timeElapsedNBT.setLong("timeElapsed" + i, timeElapsed[i]);
+            timeRaiseNBT.setInteger("timeRaise" + i, timeRaise[i]);
+            timeElapsedNBT.setInteger("timeElapsed" + i, timeElapsed[i]);
         }
         compound.setTag("inventorySizeNBT", inventorySizeNBT);
         compound.setTag("inventoryCostNBT", inventoryCostNBT);
@@ -208,6 +210,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
         if(compound.hasKey("serverTime")) serverTime = compound.getLong("serverTime");
         if(compound.hasKey("creative")) creative = compound.getBoolean("creative");
+        if(compound.hasKey("infinite")) infinite = compound.getBoolean("infinite");
 
         if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
         if(compound.hasKey("color")) color = EnumDyeColor.byDyeDamage(compound.getInteger("color"));
@@ -263,6 +266,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
         compound.setLong("serverTime", serverTime);
         compound.setBoolean("creative", creative);
+        compound.setBoolean("infinite", infinite);
 
         compound.setString("selectedName", selectedName);
         compound.setInteger("color", color.getDyeDamage());
@@ -283,8 +287,8 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             inventoryBundleNBT.setIntArray("bundle" + i, inventoryBundle[i]);
 
             itemRaiseNBT.setInteger("itemRaise" + i, itemRaise[i]);
-            timeRaiseNBT.setLong("timeRaise" + i, timeRaise[i]);
-            timeElapsedNBT.setLong("timeElapsed" + i, timeElapsed[i]);
+            timeRaiseNBT.setInteger("timeRaise" + i, timeRaise[i]);
+            timeElapsedNBT.setInteger("timeElapsed" + i, timeElapsed[i]);
         }
         compound.setTag("inventorySizeNBT", inventorySizeNBT);
         compound.setTag("inventoryCostNBT", inventoryCostNBT);
@@ -304,6 +308,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
         if(compound.hasKey("serverTime")) serverTime = compound.getLong("serverTime");
         if(compound.hasKey("creative")) creative = compound.getBoolean("creative");
+        if(compound.hasKey("infinite")) infinite = compound.getBoolean("infinite");
 
         if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
         if(compound.hasKey("color")) color = EnumDyeColor.byDyeDamage(compound.getInteger("color"));
@@ -369,12 +374,13 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     //<editor-fold desc="fields">
     public static final int FIELD_INVLIMIT = 3;
     public static final int FIELD_CREATIVE = 4;
+    public static final int FIELD_INFINITE = 5;
 
     public static final int SHORT_SELECTED = 0;
 
     @Override
     public int getFieldCount(){
-        return super.getFieldCount() + 2;
+        return super.getFieldCount() + 3;
     }
 
     @Override
@@ -388,6 +394,10 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
                 break;
             case FIELD_CREATIVE:
                 creative = (value == 1);
+                break;
+            case FIELD_INFINITE:
+                infinite = (value == 1);
+                break;
             default:
                 super.setField(id, value);
         }
@@ -406,6 +416,8 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
                 return inventoryLimit;
             case FIELD_CREATIVE:
                 return (creative)? 1 : 0;
+            case FIELD_INFINITE:
+                return (infinite)? 1 : 0;
             default:
                 return super.getField(id);
         }
@@ -741,7 +753,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     //If Sneak button held down, show a full stack (or as close to it)
     public int sneakFullStack(int index, int num) {
         int newNum = num;
-        if(!creative) {
+        if(!infinite) {
             if (getItemSize(index) < getInvItemStack(index).getMaxStackSize()) {
                 newNum = getItemSize(index);
             } else newNum = getInvItemStack(index).getMaxStackSize();
@@ -758,7 +770,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     //If Jump button held down, show half a stack (or as close to it)
     public int jumpHalfStack(int index, int num) {
         int newNum = num;
-        if(!creative) {
+        if(!infinite) {
             if (getItemSize(index) < getInvItemStack(index).getMaxStackSize() / 2) {
                 newNum = getItemSize(index);
             } else newNum = getInvItemStack(index).getMaxStackSize() / 2;
@@ -781,5 +793,21 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
     public String getMessage(){
         return message;
+    }
+
+    public int getRestockAmount(){
+        return itemRaise[selectedSlot];
+    }
+
+    public void setRestockAmount(int amount){
+        itemRaise[selectedSlot] = amount;
+    }
+
+    public int getRestockTime(){
+        return timeRaise[selectedSlot];
+    }
+
+    public void setRestockTime(int time){
+        timeRaise[selectedSlot] = time;
     }
 }

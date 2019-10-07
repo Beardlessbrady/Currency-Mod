@@ -1,7 +1,6 @@
 package beardlessbrady.modcurrency.block.vending;
 
 import beardlessbrady.modcurrency.ModCurrency;
-import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.network.*;
 import beardlessbrady.modcurrency.proxy.ClientProxy;
 import beardlessbrady.modcurrency.utilities.GuiButtonTextured;
@@ -10,18 +9,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.TextFormatting;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
@@ -30,6 +26,10 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static beardlessbrady.modcurrency.block.TileEconomyBase.FIELD_MODE;
+import static beardlessbrady.modcurrency.block.vending.TileVending.FIELD_CREATIVE;
+import static beardlessbrady.modcurrency.block.vending.TileVending.FIELD_INFINITE;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
@@ -44,7 +44,7 @@ public class GuiVending extends GuiContainer {
     private static final ResourceLocation ASSET_TEXTURE = new ResourceLocation(ModCurrency.MODID, "textures/gui/guiassets.png");
     private static final ResourceLocation BACK_TEXTURE = new ResourceLocation(ModCurrency.MODID, "textures/gui/vendinggui.png");
 
-    private GuiTextField fieldPrice, fieldAmnt, fieldAmnt2, fieldAmnt3, fieldAmnt4, fieldAmnt5;
+    private GuiTextField fieldPrice, fieldAmnt, fieldAmnt2, fieldAmnt3, fieldAmnt4, fieldAmnt5, fieldItemRestock, fieldTimeRestock;
     private TileVending te;
 
     private final KeyBinding[] keyBindings = ClientProxy.keyBindings.clone();
@@ -55,6 +55,7 @@ public class GuiVending extends GuiContainer {
     private static final int BUTTONCHANGE = 0;
     private static final int BUTTONADMIN = 1;
     private static final int BUTTONHELP = 2;
+    private static final int BUTTONINFINITE = 3;
 
     private static final int FIELDPRICE = 0;
     private static final int FIELDAMNT = 1;
@@ -62,6 +63,8 @@ public class GuiVending extends GuiContainer {
     private static final int FIELDAMNT3 = 3;
     private static final int FIELDAMNT4 = 4;
     private static final int FIELDAMNT5 = 5;
+    private static final int FIELDITEMRESTOCK = 6;
+    private static final int FIELDTIMERESTOCK = 7;
 
     public GuiVending(EntityPlayer entityPlayer, TileVending te) {
         super(new ContainerVending(entityPlayer, te));
@@ -71,66 +74,84 @@ public class GuiVending extends GuiContainer {
     @Override
     public void initGui() {
         super.initGui();
-        int i = (this.width - this.xSize) / 2;
-        int j = (this.height - this.ySize) / 2;
+        int i = (width - xSize) / 2;
+        int j = (height - ySize) / 2;
 
         help = false;
 
-        this.buttonList.add(new GuiButton(BUTTONCHANGE, i + 143, j + 27, 20, 20, "$"));
+        buttonList.add(new GuiButton(BUTTONCHANGE, i + 143, j + 27, 20, 20, "$"));
 
-        String mode = (te.getField(te.FIELD_MODE) == 1) ? "STOCK" : "TRADE";
-        this.buttonList.add(new GuiButton(BUTTONADMIN, i + 137, j - 42, 32, 20, mode));
+        String mode = (te.getField(FIELD_MODE) == 1) ? "STOCK" : "TRADE";
+        buttonList.add(new GuiButton(BUTTONADMIN, i + 137, j - 42, 32, 20, mode));
 
-        this.buttonList.add(new GuiButtonTextured("help", BUTTONHELP, i + -19, j + -20, 0, 64, 19, 17, 0, "", ASSET_TEXTURE));
+        buttonList.add(new GuiButtonTextured("help", BUTTONHELP, i + -19, j + -20, 0, 64, 19, 17, 0, "", ASSET_TEXTURE));
+        buttonList.add(new GuiButtonTextured("creative", BUTTONINFINITE, i + -19, j + -2, 0, 82, 19, 17, 0, "", ASSET_TEXTURE));
+        buttonList.get(BUTTONINFINITE).visible = false;
 
-        this.fieldPrice = new GuiTextField(FIELDPRICE, fontRenderer, i + 213, j + 30, 90, 8);        //Setting Costs
-        this.fieldPrice.setTextColor(Integer.parseInt("C35763", 16));
-        this.fieldPrice.setEnableBackgroundDrawing(false);
-        this.fieldPrice.setMaxStringLength(7);
-        this.fieldPrice.setEnabled(false);
-        this.fieldPrice.setVisible(false);
-        this.fieldPrice.setText("0.00");
+        fieldPrice = new GuiTextField(FIELDPRICE, fontRenderer, i + 213, j + 30, 90, 8);        //Setting Costs
+        fieldPrice.setTextColor(Integer.parseInt("C35763", 16));
+        fieldPrice.setEnableBackgroundDrawing(false);
+        fieldPrice.setMaxStringLength(7);
+        fieldPrice.setEnabled(false);
+        fieldPrice.setVisible(false);
+        fieldPrice.setText("0.00");
 
-        this.fieldAmnt = new GuiTextField(FIELDAMNT, fontRenderer, i + 233, j + 40, 90, 8);        //Setting Amount Sold in Bulk
-        this.fieldAmnt.setTextColor(Integer.parseInt("C35763", 16));
-        this.fieldAmnt.setEnableBackgroundDrawing(false);
-        this.fieldAmnt.setMaxStringLength(2);
-        this.fieldAmnt.setEnabled(false);
-        this.fieldAmnt.setVisible(false);
-        this.fieldAmnt.setText("1");
+        fieldAmnt = new GuiTextField(FIELDAMNT, fontRenderer, i + 233, j + 40, 90, 8);        //Setting Amount Sold in Bulk
+        fieldAmnt.setTextColor(Integer.parseInt("C35763", 16));
+        fieldAmnt.setEnableBackgroundDrawing(false);
+        fieldAmnt.setMaxStringLength(2);
+        fieldAmnt.setEnabled(false);
+        fieldAmnt.setVisible(false);
+        fieldAmnt.setText("1");
 
-        this.fieldAmnt2 = new GuiTextField(FIELDAMNT2, fontRenderer, i + 253, j + 68, 90, 8);        //Setting Amount Sold in Bulk
-        this.fieldAmnt2.setTextColor(Integer.parseInt("C35763", 16));
-        this.fieldAmnt2.setEnableBackgroundDrawing(false);
-        this.fieldAmnt2.setMaxStringLength(2);
-        this.fieldAmnt2.setEnabled(false);
-        this.fieldAmnt2.setVisible(false);
-        this.fieldAmnt2.setText("1");
+        fieldAmnt2 = new GuiTextField(FIELDAMNT2, fontRenderer, i + 253, j + 68, 90, 8);        //Setting Amount Sold in Bulk
+        fieldAmnt2.setTextColor(Integer.parseInt("C35763", 16));
+        fieldAmnt2.setEnableBackgroundDrawing(false);
+        fieldAmnt2.setMaxStringLength(2);
+        fieldAmnt2.setEnabled(false);
+        fieldAmnt2.setVisible(false);
+        fieldAmnt2.setText("1");
 
-        this.fieldAmnt3 = new GuiTextField(FIELDAMNT3, fontRenderer, i + 253, j + 83, 90, 8);        //Setting Amount Sold in Bulk
-        this.fieldAmnt3.setTextColor(Integer.parseInt("C35763", 16));
-        this.fieldAmnt3.setEnableBackgroundDrawing(false);
-        this.fieldAmnt3.setMaxStringLength(2);
-        this.fieldAmnt3.setEnabled(false);
-        this.fieldAmnt3.setVisible(false);
-        this.fieldAmnt3.setText("1");
+        fieldAmnt3 = new GuiTextField(FIELDAMNT3, fontRenderer, i + 253, j + 83, 90, 8);        //Setting Amount Sold in Bulk
+        fieldAmnt3.setTextColor(Integer.parseInt("C35763", 16));
+        fieldAmnt3.setEnableBackgroundDrawing(false);
+        fieldAmnt3.setMaxStringLength(2);
+        fieldAmnt3.setEnabled(false);
+        fieldAmnt3.setVisible(false);
+        fieldAmnt3.setText("1");
 
 
-        this.fieldAmnt4 = new GuiTextField(FIELDAMNT4, fontRenderer, i + 253, j + 98, 90, 8);        //Setting Amount Sold in Bulk
-        this.fieldAmnt4.setTextColor(Integer.parseInt("C35763", 16));
-        this.fieldAmnt4.setEnableBackgroundDrawing(false);
-        this.fieldAmnt4.setMaxStringLength(2);
-        this.fieldAmnt4.setEnabled(false);
-        this.fieldAmnt4.setVisible(false);
-        this.fieldAmnt4.setText("1");
+        fieldAmnt4 = new GuiTextField(FIELDAMNT4, fontRenderer, i + 253, j + 98, 90, 8);        //Setting Amount Sold in Bulk
+        fieldAmnt4.setTextColor(Integer.parseInt("C35763", 16));
+        fieldAmnt4.setEnableBackgroundDrawing(false);
+        fieldAmnt4.setMaxStringLength(2);
+        fieldAmnt4.setEnabled(false);
+        fieldAmnt4.setVisible(false);
+        fieldAmnt4.setText("1");
 
-        this.fieldAmnt5 = new GuiTextField(FIELDAMNT5, fontRenderer, i + 253, j + 113, 90, 8);        //Setting Amount Sold in Bulk
-        this.fieldAmnt5.setTextColor(Integer.parseInt("C35763", 16));
-        this.fieldAmnt5.setEnableBackgroundDrawing(false);
-        this.fieldAmnt5.setMaxStringLength(2);
-        this.fieldAmnt5.setEnabled(false);
-        this.fieldAmnt5.setVisible(false);
-        this.fieldAmnt5.setText("1");
+        fieldAmnt5 = new GuiTextField(FIELDAMNT5, fontRenderer, i + 253, j + 113, 90, 8);        //Setting Amount Sold in Bulk
+        fieldAmnt5.setTextColor(Integer.parseInt("C35763", 16));
+        fieldAmnt5.setEnableBackgroundDrawing(false);
+        fieldAmnt5.setMaxStringLength(2);
+        fieldAmnt5.setEnabled(false);
+        fieldAmnt5.setVisible(false);
+        fieldAmnt5.setText("1");
+
+        fieldItemRestock = new GuiTextField(FIELDITEMRESTOCK, fontRenderer, i + 205, j + 67, 90, 8);
+        fieldItemRestock.setTextColor(Integer.parseInt("BEA63D", 16));
+        fieldItemRestock.setEnableBackgroundDrawing(false);
+        fieldItemRestock.setMaxStringLength(3);
+        fieldItemRestock.setEnabled(false);
+        fieldItemRestock.setVisible(false);
+        fieldItemRestock.setText("1");
+
+        fieldTimeRestock = new GuiTextField(FIELDTIMERESTOCK, fontRenderer, i + 225, j + 75, 90, 8);
+        fieldTimeRestock.setTextColor(Integer.parseInt("BEA63D", 16));
+        fieldTimeRestock.setEnableBackgroundDrawing(false);
+        fieldTimeRestock.setMaxStringLength(4);
+        fieldTimeRestock.setEnabled(false);
+        fieldTimeRestock.setVisible(false);
+        fieldTimeRestock.setText("1");
 
         updateTextField();
     }
@@ -138,13 +159,15 @@ public class GuiVending extends GuiContainer {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
-        this.renderHoveredToolTip(mouseX, mouseY);
-        this.fieldPrice.drawTextBox();
-        this.fieldAmnt.drawTextBox();
-        this.fieldAmnt2.drawTextBox();
-        this.fieldAmnt3.drawTextBox();
-        this.fieldAmnt4.drawTextBox();
-        this.fieldAmnt5.drawTextBox();
+        renderHoveredToolTip(mouseX, mouseY);
+        fieldPrice.drawTextBox();
+        fieldAmnt.drawTextBox();
+        fieldAmnt2.drawTextBox();
+        fieldAmnt3.drawTextBox();
+        fieldAmnt4.drawTextBox();
+        fieldAmnt5.drawTextBox();
+        fieldItemRestock.drawTextBox();
+        fieldTimeRestock.drawTextBox();
 
     }
 
@@ -166,15 +189,11 @@ public class GuiVending extends GuiContainer {
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
         drawBundles();
-        int i = (this.width - this.xSize) / 2;
-        int j = (this.height - this.ySize) / 2;
+        int i = (width - xSize) / 2;
+        int j = (height - ySize) / 2;
 
         //If owner or creative make admin button visible
-        if (te.isOwner() || Minecraft.getMinecraft().player.isCreative()) {
-            buttonList.get(BUTTONADMIN).visible = true;
-        } else {
-            buttonList.get(BUTTONADMIN).visible = false;
-        }
+        buttonList.get(BUTTONADMIN).visible = te.isOwner() || Minecraft.getMinecraft().player.isCreative();
 
         //Basics GUI labels
         fontRenderer.drawString(I18n.format("tile.modcurrency:blockvending.name"), 8, -42, Integer.parseInt("ffffff", 16));
@@ -197,6 +216,9 @@ public class GuiVending extends GuiContainer {
         //Draws custom stack sizes
         drawItemStackSize();
 
+        //Admin 'Price Tag' rendering
+        drawAdminPanel();
+
         Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
         //STOCK MODE - SELL MODE
         if (te.getField(TileVending.FIELD_MODE) == 1) {
@@ -218,44 +240,20 @@ public class GuiVending extends GuiContainer {
             GL11.glDisable(GL11.GL_DEPTH_TEST);
 
             //Changes '$' button to blue to signify clicking it cashes out Machines money
-            this.buttonList.set(BUTTONCHANGE, new GuiButton(BUTTONCHANGE, i + 143, j + 27, 20, 20, TextFormatting.BLUE + "$"));
+            buttonList.set(BUTTONCHANGE, new GuiButton(BUTTONCHANGE, i + 143, j + 27, 20, 20, TextFormatting.BLUE + "$"));
         } else {
             //Changes '$' button to green to signify clicking it cashes out Players money
-            this.buttonList.set(BUTTONCHANGE, new GuiButton(BUTTONCHANGE, i + 143, j + 27, 20, 20, TextFormatting.GREEN + "$"));
+            buttonList.set(BUTTONCHANGE, new GuiButton(BUTTONCHANGE, i + 143, j + 27, 20, 20, TextFormatting.GREEN + "$"));
+
+            if(te.getField(TileVending.FIELD_CREATIVE) == 1)
+                buttonList.get(BUTTONINFINITE).visible = false;
         }
 
         //Help Tab rendering
         drawHelpTab();
 
-        //Admin 'Price Tag' rendering
-        drawAdminPanel();
-
         //Warning Message Rendering
         message();
-    }
-
-    @Override
-    protected void actionPerformed(GuiButton button) throws IOException {
-        switch (button.id) {
-            case BUTTONADMIN:
-                PacketSetFieldToServer pack = new PacketSetFieldToServer();
-                pack.setData((te.getField(te.FIELD_MODE) == 1) ? 0 : 1, te.FIELD_MODE, te.getPos());
-                PacketHandler.INSTANCE.sendToServer(pack);
-
-                String mode = (te.getField(te.FIELD_MODE) == 0) ? "STOCK" : "TRADE";
-                buttonList.get(BUTTONADMIN).displayString = mode;
-
-                te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
-                break;
-            case BUTTONCHANGE:
-                PacketOutChangeToServer pack0 = new PacketOutChangeToServer();
-                pack0.setData(te.getPos(), false);
-                PacketHandler.INSTANCE.sendToServer(pack0);
-                te.outChange(false);
-                break;
-            case BUTTONHELP:
-                help = !help;
-        }
     }
 
     private void drawItemStackSize() {
@@ -263,7 +261,7 @@ public class GuiVending extends GuiContainer {
         GL11.glPushMatrix();
         GL11.glScalef(0.7F, 0.7F, 0.8F);
 
-        String num = " ";
+        String num;
         int startY = -29;
         int columnCount = 5;
 
@@ -282,9 +280,9 @@ public class GuiVending extends GuiContainer {
                 if (num.length() == 1) num = "  " + num;
                 if (num.length() == 2) num = " " + num;
 
-                if (te.getField(TileEconomyBase.FIELD_MODE) == 1) {
+                if (te.getField(FIELD_MODE) == 1) {
                     if(te.getItemSize(i + (5 * j)) != 1)
-                        this.fontRenderer.drawStringWithShadow(num, 66 + (i * 26), startY + (j * 26), -1);
+                        fontRenderer.drawStringWithShadow(num, 66 + (i * 26), startY + (j * 26), -1);
                 } else {
                     int startAmount = te.getItemAmnt(index);
 
@@ -308,10 +306,10 @@ public class GuiVending extends GuiContainer {
                         num = TextFormatting.RED + "Out";
 
                     if (num.equals(TextFormatting.RED + "Out")) {
-                        this.fontRenderer.drawStringWithShadow(num, 66 + (i * 26), startY + (j * 26), -1);
+                        fontRenderer.drawStringWithShadow(num, 66 + (i * 26), startY + (j * 26), -1);
                     } else {
                         if (startAmount != 1 && !te.getInvItemStack(index).isEmpty())
-                            this.fontRenderer.drawStringWithShadow(amount, 66 + (i * 26), startY + (j * 26), -1);
+                            fontRenderer.drawStringWithShadow(amount, 66 + (i * 26), startY + (j * 26), -1);
                     }
                 }
             }
@@ -322,12 +320,14 @@ public class GuiVending extends GuiContainer {
     }
 
     private void drawAdminPanel() {
-        Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
-        int i = (this.width - this.xSize) / 2;
-        int j = (this.height - this.ySize) / 2;
+        int i = (width - xSize) / 2;
+        int j = (height - ySize) / 2;
         if (te.getField(TileVending.FIELD_MODE) == 1) {
+
+            //Main Admin Panel
             if (te.bundleMainSlot(te.getShort(TileVending.SHORT_SELECTED)) != te.getShort(TileVending.SHORT_SELECTED)) {
-                drawTexturedModalRect(177, 0, 150, 135, 106, 54);
+                Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
+                drawTexturedModalRect(177, 5, 150, 135, 106, 48);
 
                 fontRenderer.drawStringWithShadow(I18n.format("guivending.slotsettings"), 216, 10, Integer.parseInt("ffffff", 16));
 
@@ -339,137 +339,173 @@ public class GuiVending extends GuiContainer {
 
                 fontRenderer.drawStringWithShadow(I18n.format("$"), 206, 30, Color.lightGray.getRGB());
 
-                this.fieldPrice.x = i + 213;
-                this.fieldPrice.y = j + 30;
-                this.fieldPrice.setEnabled(true);
-                this.fieldPrice.setVisible(true);
+                fieldPrice.x = i + 213;
+                fieldPrice.y = j + 30;
+                fieldPrice.setEnabled(true);
+                fieldPrice.setVisible(true);
 
                 fontRenderer.drawStringWithShadow(I18n.format("guivending.amnt"), 206, 40, Color.lightGray.getRGB());
-                this.fieldAmnt.x = i + 233;
-                this.fieldAmnt.y = j + 40;
-                this.fieldAmnt.setEnabled(true);
-                this.fieldAmnt.setVisible(true);
+                fieldAmnt.x = i + 233;
+                fieldAmnt.y = j + 40;
+                fieldAmnt.setEnabled(true);
+                fieldAmnt.setVisible(true);
 
-                this.fieldAmnt2.setEnabled(false);
-                this.fieldAmnt2.setVisible(false);
+                fieldAmnt2.setEnabled(false);
+                fieldAmnt2.setVisible(false);
 
-                this.fieldAmnt3.setEnabled(false);
-                this.fieldAmnt3.setVisible(false);
+                fieldAmnt3.setEnabled(false);
+                fieldAmnt3.setVisible(false);
 
-                this.fieldAmnt4.setEnabled(false);
-                this.fieldAmnt4.setVisible(false);
+                fieldAmnt4.setEnabled(false);
+                fieldAmnt4.setVisible(false);
 
-                this.fieldAmnt5.setEnabled(false);
-                this.fieldAmnt5.setVisible(false);
+                fieldAmnt5.setEnabled(false);
+                fieldAmnt5.setVisible(false);
             }else{
                 drawTexturedModalRect(177, -5, 166, 0, 90, 134);
 
                 fontRenderer.drawStringWithShadow(I18n.format("guivending.slotsettings_bundled"), 187, 18, Integer.parseInt("ffffff", 16));
                 fontRenderer.drawStringWithShadow(I18n.format("$"), 206, 30, Color.lightGray.getRGB());
 
-                this.fieldPrice.x = i + 211;
-                this.fieldPrice.y = j + 30;
-                this.fieldPrice.setEnabled(true);
-                this.fieldPrice.setVisible(true);
+                fieldPrice.x = i + 211;
+                fieldPrice.y = j + 30;
+                fieldPrice.setEnabled(true);
+                fieldPrice.setVisible(true);
 
                 fontRenderer.drawStringWithShadow(I18n.format("guivending.amnt_bundled"), 200, 45, Color.lightGray.getRGB());
-                this.fieldAmnt.setEnabled(true);
-                this.fieldAmnt.setVisible(true);
+                fieldAmnt.setEnabled(true);
+                fieldAmnt.setVisible(true);
 
                 int[] bundleSlots = te.getBundle(te.getShort(TileVending.SHORT_SELECTED));
-                String bundleName = "";
-                for(int slot = 0; slot < bundleSlots.length; slot++) {
-                    bundleName += "\n•" + te.getInvItemStack(bundleSlots[slot]).getDisplayName() + "\n";
-                }
+                StringBuilder bundleName = new StringBuilder();
+                for (int bundleSlot : bundleSlots)
+                    bundleName.append("\n•").append(te.getInvItemStack(bundleSlot).getDisplayName()).append("\n");
 
                 GL11.glPushMatrix();
                 GL11.glScaled(0.7, 0.7, 0.7);
-                fontRenderer.drawSplitString(bundleName, 260, 70, 90, Color.lightGray.getRGB());
+                fontRenderer.drawSplitString(bundleName.toString(), 260, 70, 90, Color.lightGray.getRGB());
                 GL11.glPopMatrix();
 
                 fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 53, Color.lightGray.getRGB());
 
-                this.fieldAmnt.x = i + 253;
-                this.fieldAmnt.y = j + 53;
+                fieldAmnt.x = i + 253;
+                fieldAmnt.y = j + 53;
 
                 switch(bundleSlots.length) {
                     case 5:
                         fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 113, Color.lightGray.getRGB());
-                        this.fieldAmnt5.setEnabled(true);
-                        this.fieldAmnt5.setVisible(true);
+                        fieldAmnt5.setEnabled(true);
+                        fieldAmnt5.setVisible(true);
                         fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 98, Color.lightGray.getRGB());
-                        this.fieldAmnt4.setEnabled(true);
-                        this.fieldAmnt4.setVisible(true);
+                        fieldAmnt4.setEnabled(true);
+                        fieldAmnt4.setVisible(true);
                         fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 83, Color.lightGray.getRGB());
-                        this.fieldAmnt3.setEnabled(true);
-                        this.fieldAmnt3.setVisible(true);
+                        fieldAmnt3.setEnabled(true);
+                        fieldAmnt3.setVisible(true);
                         fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 68, Color.lightGray.getRGB());
-                        this.fieldAmnt2.setEnabled(true);
-                        this.fieldAmnt2.setVisible(true);
+                        fieldAmnt2.setEnabled(true);
+                        fieldAmnt2.setVisible(true);
 
                         break;
                     case 4:
                         fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 98, Color.lightGray.getRGB());
-                        this.fieldAmnt4.setEnabled(true);
-                        this.fieldAmnt4.setVisible(true);
+                        fieldAmnt4.setEnabled(true);
+                        fieldAmnt4.setVisible(true);
                         fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 83, Color.lightGray.getRGB());
-                        this.fieldAmnt3.setEnabled(true);
-                        this.fieldAmnt3.setVisible(true);
+                        fieldAmnt3.setEnabled(true);
+                        fieldAmnt3.setVisible(true);
                         fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 68, Color.lightGray.getRGB());
-                        this.fieldAmnt2.setEnabled(true);
-                        this.fieldAmnt2.setVisible(true);
+                        fieldAmnt2.setEnabled(true);
+                        fieldAmnt2.setVisible(true);
 
 
-                        this.fieldAmnt5.setEnabled(false);
-                        this.fieldAmnt5.setVisible(false);
+                        fieldAmnt5.setEnabled(false);
+                        fieldAmnt5.setVisible(false);
 
                         break;
                     case 3:
                         fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 83, Color.lightGray.getRGB());
-                        this.fieldAmnt3.setEnabled(true);
-                        this.fieldAmnt3.setVisible(true);
+                        fieldAmnt3.setEnabled(true);
+                        fieldAmnt3.setVisible(true);
                         fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 68, Color.lightGray.getRGB());
-                        this.fieldAmnt2.setEnabled(true);
-                        this.fieldAmnt2.setVisible(true);
+                        fieldAmnt2.setEnabled(true);
+                        fieldAmnt2.setVisible(true);
 
-                        this.fieldAmnt4.setEnabled(false);
-                        this.fieldAmnt4.setVisible(false);
-                        this.fieldAmnt5.setEnabled(false);
-                        this.fieldAmnt5.setVisible(false);
+                        fieldAmnt4.setEnabled(false);
+                        fieldAmnt4.setVisible(false);
+                        fieldAmnt5.setEnabled(false);
+                        fieldAmnt5.setVisible(false);
 
                         break;
                     case 2:
                         fontRenderer.drawStringWithShadow(I18n.format("x"), 245, 68, Color.lightGray.getRGB());
-                        this.fieldAmnt2.setEnabled(true);
-                        this.fieldAmnt2.setVisible(true);
+                        fieldAmnt2.setEnabled(true);
+                        fieldAmnt2.setVisible(true);
 
-                        this.fieldAmnt3.setEnabled(false);
-                        this.fieldAmnt3.setVisible(false);
-                        this.fieldAmnt4.setEnabled(false);
-                        this.fieldAmnt4.setVisible(false);
-                        this.fieldAmnt5.setEnabled(false);
-                        this.fieldAmnt5.setVisible(false);
+                        fieldAmnt3.setEnabled(false);
+                        fieldAmnt3.setVisible(false);
+                        fieldAmnt4.setEnabled(false);
+                        fieldAmnt4.setVisible(false);
+                        fieldAmnt5.setEnabled(false);
+                        fieldAmnt5.setVisible(false);
                         break;
                 }
             }
+
+            //Finite Restock for Creative machine
+            if(te.getField(FIELD_CREATIVE) == 1) {
+                Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
+
+                //Changes 'Infinite' button position based on help tab
+                if (help) {
+                    if(te.getField(FIELD_INFINITE) == 0) drawTexturedModalRect(-18, + 35, 61, 1, 19, 17);
+                    buttonList.set(BUTTONINFINITE, new GuiButtonTextured("creative", BUTTONINFINITE, i + -19, j + 35, 0, 82, 19, 17, 0, "", ASSET_TEXTURE));
+                } else {
+                    if(te.getField(FIELD_INFINITE) == 0) drawTexturedModalRect(-18, -2, 61, 1, 19, 17);
+                    buttonList.set(BUTTONINFINITE, new GuiButtonTextured("creative", BUTTONINFINITE, i + -19, j + -2, 0, 82, 19, 17, 0, "", ASSET_TEXTURE));
+                }
+
+                //Adds extra 'Restock' screen if inventory is 'finite'
+                if(te.getField(FIELD_INFINITE) == 1){
+                    drawTexturedModalRect(181,29, 156, 190, 100, 61);
+                    fontRenderer.drawStringWithShadow(I18n.format("     items"), 205, 66, Color.lightGray.getRGB());
+                    fontRenderer.drawStringWithShadow(I18n.format("per       sec"), 205, 74, Color.lightGray.getRGB());
+                    fontRenderer.drawStringWithShadow(I18n.format("Restock"), 210, 57, Color.WHITE.getRGB());
+
+                    fieldTimeRestock.setEnabled(true);
+                    fieldTimeRestock.setVisible(true);
+                    fieldItemRestock.setEnabled(true);
+                    fieldItemRestock.setVisible(true);
+                }else{
+                    fieldTimeRestock.setEnabled(false);
+                    fieldTimeRestock.setVisible(false);
+                    fieldItemRestock.setEnabled(false);
+                    fieldItemRestock.setVisible(false);
+                }
+            }
         } else {
-            this.fieldPrice.setEnabled(false);
-            this.fieldPrice.setVisible(false);
+            fieldPrice.setEnabled(false);
+            fieldPrice.setVisible(false);
 
-            this.fieldAmnt.setEnabled(false);
-            this.fieldAmnt.setVisible(false);
+            fieldAmnt.setEnabled(false);
+            fieldAmnt.setVisible(false);
 
-            this.fieldAmnt2.setEnabled(false);
-            this.fieldAmnt2.setVisible(false);
+            fieldAmnt2.setEnabled(false);
+            fieldAmnt2.setVisible(false);
 
-            this.fieldAmnt3.setEnabled(false);
-            this.fieldAmnt3.setVisible(false);
+            fieldAmnt3.setEnabled(false);
+            fieldAmnt3.setVisible(false);
 
-            this.fieldAmnt4.setEnabled(false);
-            this.fieldAmnt4.setVisible(false);
+            fieldAmnt4.setEnabled(false);
+            fieldAmnt4.setVisible(false);
 
-            this.fieldAmnt5.setEnabled(false);
-            this.fieldAmnt5.setVisible(false);
+            fieldAmnt5.setEnabled(false);
+            fieldAmnt5.setVisible(false);
+
+            fieldTimeRestock.setEnabled(false);
+            fieldTimeRestock.setVisible(false);
+            fieldItemRestock.setEnabled(false);
+            fieldItemRestock.setVisible(false);
         }
     }
 
@@ -484,7 +520,7 @@ public class GuiVending extends GuiContainer {
             GL11.glDisable(GL11.GL_DEPTH_TEST);
             GL11.glPushMatrix();
             GL11.glScalef(0.7F, 0.7F, 0.8F);
-            if(te.getField(TileEconomyBase.FIELD_MODE) == 0) {
+            if(te.getField(FIELD_MODE) == 0) {
                 fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[0].getDisplayName()), -90, 0, Color.gray.getRGB());
                 fontRenderer.drawStringWithShadow(I18n.format("guivending.help.max"), -85, 10, Color.white.getRGB());
                 fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[1].getDisplayName()), -90, 25, Color.gray.getRGB());
@@ -506,7 +542,7 @@ public class GuiVending extends GuiContainer {
             int[] bundle = te.getBundle(slot);
             if (bundle[0] != -1) {
                 if (bundle[0] == slot) { //is the main slot
-                    int slotColumn = 0, slotRow = 0;
+                    int slotColumn = 0, slotRow;
 
                     if (slot <= 4) {
                         slotRow = slot;
@@ -529,7 +565,6 @@ public class GuiVending extends GuiContainer {
                     int endDirection = 0;
 
                     if (te.bundleMainSlot(slot - 1) == slot) {
-                        direction = 0;
                         endDirection = 1;
                     } else if (te.bundleMainSlot(slot + 1) == slot) {
                         direction = 1;
@@ -543,7 +578,7 @@ public class GuiVending extends GuiContainer {
                     }
 
                     int yChange = 0;
-                    if(te.getShort(TileVending.SHORT_SELECTED) == slot && te.getField(TileEconomyBase.FIELD_MODE) == 1){ //Selected is on a bundle
+                    if(te.getShort(TileVending.SHORT_SELECTED) == slot && te.getField(FIELD_MODE) == 1){ //Selected is on a bundle
                         yChange = 21;
                     }
 
@@ -570,7 +605,6 @@ public class GuiVending extends GuiContainer {
                         if (te.bundleMainSlot(slot2) == slot) {
 
                             if (slot2 >= 0 && slot2 <= 4) {
-                                slotColumn2 = 0;
                                 slotRow2 = slot2;
                             } else if (slot2 >= 5 && slot2 <= 9) {
                                 slotColumn2 = 1;
@@ -609,7 +643,6 @@ public class GuiVending extends GuiContainer {
             int slotColumn = 0, slotRow = 0;
 
             if (slotId >= 0 && slotId <= 4) {
-                slotColumn = 0;
                 slotRow = slotId;
             } else if (slotId >= 5 && slotId <= 9) {
                 slotColumn = 1;
@@ -635,7 +668,7 @@ public class GuiVending extends GuiContainer {
         FontRenderer fontRenderer = Minecraft.getMinecraft().ingameGUI.getFontRenderer();
         String message = te.getMessage();
 
-        if(message != ""){
+        if(!message.equals("")){
             //Draws beginning of back panel of message
             drawTexturedModalRect(70 - ((message.length()) *5 / 2),55, 0, 20, 21, 21);
 
@@ -709,8 +742,8 @@ public class GuiVending extends GuiContainer {
 
     @Override
     protected void renderToolTip(ItemStack stack, int x, int y) {
-        int i = (x - (this.width - this.xSize) / 2);
-        int j = (y - (this.height - this.ySize) / 2);
+        int i = (x - (width - xSize) / 2);
+        int j = (y - (height - ySize) / 2);
 
         if (j <= 58 && j >= -31 && i >= 43) {
             int startY = -31;
@@ -720,27 +753,25 @@ public class GuiVending extends GuiContainer {
             int slot = column + (row * 5);
 
             List<String> list = new ArrayList<>();
-            List<String> ogTooltip = stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
+            List<String> ogTooltip = stack.getTooltip(mc.player, mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
             int tooltipStart = 1;
 
             if(te.bundleMainSlot(slot) == -1) {
                 //Adding name and subname of item before price and such
                 if (ogTooltip.size() > 0) {
                     list.add(ogTooltip.get(0));
-                    list.set(0, stack.getRarity().rarityColor + (String) list.get(0));
+                    list.set(0, stack.getRarity().rarityColor + list.get(0));
                 }
-                if (ogTooltip.size() > 1) if (ogTooltip.get(1) != "") {
+                if (ogTooltip.size() > 1) if (!ogTooltip.get(1).equals("")) {
                     list.add(TextFormatting.GRAY + ogTooltip.get(1));
                     tooltipStart = 2;
                 }
 
                 //Adding Vending Strings
-                TextFormatting color = TextFormatting.YELLOW;
-                if (te.getField(TileEconomyBase.FIELD_MODE) == 0) {
+                TextFormatting color = TextFormatting.RED;
+                if (te.getField(FIELD_MODE) == 0) {
                     if (te.canAfford(slot, 1)) {
                         color = TextFormatting.GREEN;
-                    } else {
-                        color = TextFormatting.RED;
                     }
 
                     int cost = te.getItemCost(slot);
@@ -762,7 +793,7 @@ public class GuiVending extends GuiContainer {
                         list.add(TextFormatting.BLUE + Integer.toString(amount) + TextFormatting.RESET + " for " + color + "$" + UtilMethods.translateMoney(cost));
                     }
 
-                    if(te.getField(TileVending.FIELD_CREATIVE) == 0) {
+                    if(te.getField(FIELD_INFINITE) == 0) {
                         list.add("Stock: " + TextFormatting.BLUE + te.getItemSize(slot));
                     }else{
                         list.add("Stock: " + TextFormatting.BLUE + "Infinite");
@@ -770,25 +801,22 @@ public class GuiVending extends GuiContainer {
                 }
 
                 //adding original extra stuff AFTER price and such
-                for (; tooltipStart < stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL).size(); tooltipStart++) {
-                    list.add(TextFormatting.GRAY + stack.getTooltip(this.mc.player, this.mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL).get(tooltipStart));
+                for (; tooltipStart < stack.getTooltip(mc.player, mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL).size(); tooltipStart++) {
+                    list.add(TextFormatting.GRAY + stack.getTooltip(mc.player, mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL).get(tooltipStart));
                 }
 
             }else{ //Is a BUNDLE
                 list.add("Bundle");
 
                 //Adding Vending Strings
-                TextFormatting color = TextFormatting.YELLOW;
-                if (te.getField(TileEconomyBase.FIELD_MODE) == 0) {
+                TextFormatting color = TextFormatting.RED;
+                if (te.getField(FIELD_MODE) == 0) {
                     if (te.canAfford(slot, 1)) {
                         color = TextFormatting.GREEN;
-                    } else {
-                        color = TextFormatting.RED;
                     }
 
                     int mainSlot= te.bundleMainSlot(slot);
                     int cost = te.getItemCost(mainSlot);
-                    int amount = te.getItemAmnt(slot);
 
                     list.add(color + "$" + UtilMethods.translateMoney(cost));
 
@@ -797,7 +825,7 @@ public class GuiVending extends GuiContainer {
 
 
                     int[] bundle = te.getBundle(mainSlot);
-                    for(int k = 0; k < bundle.length; k++){
+                    for (int k:bundle){
                         list.add("x" + TextFormatting.BLUE + te.getItemAmnt(bundle[k]) + " " + TextFormatting.RESET + te.getInvItemStack(bundle[k]).getDisplayName());
                     }
                 }
@@ -809,7 +837,7 @@ public class GuiVending extends GuiContainer {
             }
             FontRenderer font = stack.getItem().getFontRenderer(stack);
             net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(stack);
-            this.drawHoveringText(list, x, y, (font == null ? fontRenderer : font));
+            drawHoveringText(list, x, y, (font == null ? fontRenderer : font));
             net.minecraftforge.fml.client.config.GuiUtils.postItemToolTip();
 
             te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
@@ -822,10 +850,10 @@ public class GuiVending extends GuiContainer {
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
 
         int numChar = Character.getNumericValue(typedChar);
-        if ((te.getField(TileEconomyBase.FIELD_MODE) == 1) && ((numChar >= 0 && numChar <= 9) || (keyCode == 14) || keyCode == 211 || (keyCode == 203) || (keyCode == 205) || (keyCode == 52))) { //Ensures keys input are only numbers or backspace type keys
+        if ((te.getField(FIELD_MODE) == 1) && ((numChar >= 0 && numChar <= 9) || (keyCode == 14) || keyCode == 211 || (keyCode == 203) || (keyCode == 205) || (keyCode == 52))) { //Ensures keys input are only numbers or backspace type keys
 
             if ((!fieldPrice.getText().contains(".")) || keyCode != 52) {
-                if (this.fieldPrice.textboxKeyTyped(typedChar, keyCode)) setCost();
+                if (fieldPrice.textboxKeyTyped(typedChar, keyCode)) setCost();
             }
 
             if (fieldPrice.getText().length() > 0)
@@ -833,21 +861,31 @@ public class GuiVending extends GuiContainer {
                     fieldPrice.setMaxStringLength(fieldPrice.getText().length() + 2);
             if (!fieldPrice.getText().contains(".")) fieldPrice.setMaxStringLength(7);
 
-            if (this.fieldAmnt.textboxKeyTyped(typedChar, keyCode)) setAmnt(te.getShort(TileVending.SHORT_SELECTED), this.fieldAmnt);
+            if (fieldAmnt.textboxKeyTyped(typedChar, keyCode)) setAmnt(te.getShort(TileVending.SHORT_SELECTED), fieldAmnt);
 
             if(te.bundleMainSlot(te.getShort(TileVending.SHORT_SELECTED)) == te.getShort(TileVending.SHORT_SELECTED)){
                 int[] bundle = te.getBundle(te.getShort(TileVending.SHORT_SELECTED));
 
                 switch(bundle.length){
                     case 5:
-                        if (this.fieldAmnt5.textboxKeyTyped(typedChar, keyCode)) setAmnt(bundle[4], this.fieldAmnt5);
+                        if (fieldAmnt5.textboxKeyTyped(typedChar, keyCode)) setAmnt(bundle[4], fieldAmnt5);
                     case 4:
-                        if (this.fieldAmnt4.textboxKeyTyped(typedChar, keyCode)) setAmnt(bundle[3], this.fieldAmnt4);
+                        if (fieldAmnt4.textboxKeyTyped(typedChar, keyCode)) setAmnt(bundle[3], fieldAmnt4);
                     case 3:
-                        if (this.fieldAmnt3.textboxKeyTyped(typedChar, keyCode)) setAmnt(bundle[2], this.fieldAmnt3);
+                        if (fieldAmnt3.textboxKeyTyped(typedChar, keyCode)) setAmnt(bundle[2], fieldAmnt3);
                     case 2:
-                        if (this.fieldAmnt2.textboxKeyTyped(typedChar, keyCode)) setAmnt(bundle[1], this.fieldAmnt2);
+                        if (fieldAmnt2.textboxKeyTyped(typedChar, keyCode)) setAmnt(bundle[1], fieldAmnt2);
                 }
+            }
+
+            if(te.getField(FIELD_CREATIVE) == 1 && te.getField(FIELD_INFINITE) == 1){
+                if (fieldItemRestock.textboxKeyTyped(typedChar, keyCode)) {}
+                        //TODO
+
+
+                if (fieldTimeRestock.textboxKeyTyped(typedChar, keyCode)) {}
+                        //TODO
+
             }
         } else {
             super.keyTyped(typedChar, keyCode);
@@ -864,6 +902,8 @@ public class GuiVending extends GuiContainer {
             fieldAmnt3.mouseClicked(mouseX, mouseY, mouseButton);
             fieldAmnt4.mouseClicked(mouseX, mouseY, mouseButton);
             fieldAmnt5.mouseClicked(mouseX, mouseY, mouseButton);
+            fieldItemRestock.mouseClicked(mouseX, mouseY, mouseButton);
+            fieldTimeRestock.mouseClicked(mouseX,mouseY, mouseButton);
 
             updateTextField();
         } else {
@@ -872,23 +912,23 @@ public class GuiVending extends GuiContainer {
     }
 
     private void setCost() {
-        if (this.fieldPrice.getText().length() > 0) {
+        if (fieldPrice.getText().length() > 0) {
             int newCost = 0;
 
             if (fieldPrice.getText().contains(".")) {
                 if (fieldPrice.getText().lastIndexOf(".") + 1 != fieldPrice.getText().length()) {
                     if (fieldPrice.getText().lastIndexOf(".") + 2 == fieldPrice.getText().length()) {
-                        newCost = Integer.valueOf(this.fieldPrice.getText().substring(fieldPrice.getText().lastIndexOf(".") + 1) + "0");
+                        newCost = Integer.valueOf(fieldPrice.getText().substring(fieldPrice.getText().lastIndexOf(".") + 1) + "0");
                     } else {
-                        newCost = Integer.valueOf(this.fieldPrice.getText().substring(fieldPrice.getText().lastIndexOf(".") + 1));
+                        newCost = Integer.valueOf(fieldPrice.getText().substring(fieldPrice.getText().lastIndexOf(".") + 1));
                     }
                 }
 
                 if (fieldPrice.getText().lastIndexOf(".") != 0)
-                    newCost += Integer.valueOf(this.fieldPrice.getText().substring(0, fieldPrice.getText().lastIndexOf("."))) * 100;
+                    newCost += Integer.valueOf(fieldPrice.getText().substring(0, fieldPrice.getText().lastIndexOf("."))) * 100;
 
             } else {
-                newCost = Integer.valueOf(this.fieldPrice.getText()) * 100;
+                newCost = Integer.valueOf(fieldPrice.getText()) * 100;
             }
 
             te.setItemCost(newCost);
@@ -923,6 +963,8 @@ public class GuiVending extends GuiContainer {
     private void updateTextField() {
         fieldPrice.setText(UtilMethods.translateMoney(te.getItemCost()));
         fieldAmnt.setText(Integer.toString(te.getItemAmnt()));
+        fieldItemRestock.setText(Integer.toString(te.getRestockAmount()));
+        fieldTimeRestock.setText(Integer.toString(te.getRestockTime()));
 
         if(te.bundleMainSlot(te.getShort(TileVending.SHORT_SELECTED)) == te.getShort(TileVending.SHORT_SELECTED)) {
             int[] bundle = te.getBundle(te.getShort(TileVending.SHORT_SELECTED));
@@ -943,9 +985,9 @@ public class GuiVending extends GuiContainer {
     @Override
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
         super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
-        if (te.getField(TileEconomyBase.FIELD_MODE) == 1 && Keyboard.isKeyDown(keyBindings[0].getKeyCode())) {
-            int i = (mouseX - (this.width - this.xSize) / 2);
-            int j = (mouseY - (this.height - this.ySize) / 2);
+        if (te.getField(FIELD_MODE) == 1 && Keyboard.isKeyDown(keyBindings[0].getKeyCode())) {
+            int i = (mouseX - (width - xSize) / 2);
+            int j = (mouseY - (height - ySize) / 2);
 
             int startY = -31;
             int startX = 43;
@@ -994,11 +1036,10 @@ public class GuiVending extends GuiContainer {
                     }
 
                     boolean possibleValue = false;
-                    Loop:
                     for (int element : movementArray) {
                         if (element == displacement) {
                             possibleValue = true;
-                            break Loop;
+                            break;
                         }
                     }
 
@@ -1037,9 +1078,9 @@ public class GuiVending extends GuiContainer {
                             if (te.bundleMainSlot(previousSlot) == selectedSlot) {
                                 int[] oldBundle = te.getBundle(selectedSlot).clone();
                                 int[] newBundle = new int[oldBundle.length + 1];
-                                for (int k = 0; k < oldBundle.length; k++) {
-                                    newBundle[k] = oldBundle[k];
-                                }
+
+                                System.arraycopy(oldBundle, 0, newBundle, 0, oldBundle.length);
+                       
                                 newBundle[newBundle.length - 1] = slot;
                                 te.setBundle(selectedSlot, newBundle);
                                 PacketSetItemBundleToServer pack0 = new PacketSetItemBundleToServer();
@@ -1057,4 +1098,38 @@ public class GuiVending extends GuiContainer {
             }
         }
     }
+
+    @Override
+    protected void actionPerformed(GuiButton button){
+        switch (button.id) {
+            case BUTTONADMIN:
+                PacketSetFieldToServer pack = new PacketSetFieldToServer();
+                pack.setData((te.getField(FIELD_MODE) == 1) ? 0 : 1, FIELD_MODE, te.getPos());
+                PacketHandler.INSTANCE.sendToServer(pack);
+                
+                buttonList.get(BUTTONADMIN).displayString = (te.getField(FIELD_MODE) == 0) ? "STOCK" : "TRADE";
+
+                te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
+                break;
+            case BUTTONCHANGE:
+                PacketOutChangeToServer pack0 = new PacketOutChangeToServer();
+                pack0.setData(te.getPos(), false);
+                PacketHandler.INSTANCE.sendToServer(pack0);
+                te.outChange(false);
+                break;
+            case BUTTONHELP:
+                help = !help;
+                break;
+            case BUTTONINFINITE:
+                PacketSetFieldToServer pack1 = new PacketSetFieldToServer();
+                pack1.setData((te.getField(FIELD_INFINITE) == 1) ? 0 : 1, FIELD_INFINITE, te.getPos());
+                PacketHandler.INSTANCE.sendToServer(pack1);
+
+                te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + button.id);
+        }
+    }
+
 }
