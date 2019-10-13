@@ -38,7 +38,7 @@ public class ItemCoin extends Item{
 
     @Override
     public void getSubItems(CreativeTabs itemIn, NonNullList<ItemStack> tab) {
-        if(itemIn == ModCurrency.tabCurrency){
+        if(isInCreativeTab(itemIn)){
             for (int i = 0; i < coinLength; i++) {
                 ItemStack stack = new ItemStack(this, 1, i);
                 tab.add(stack);
