@@ -84,8 +84,9 @@ public class GuiVending extends GuiContainer {
         String mode = (te.getField(FIELD_MODE) == 1) ? "STOCK" : "TRADE";
         buttonList.add(new GuiButton(BUTTONADMIN, i + 137, j - 42, 32, 20, mode));
 
-        buttonList.add(new GuiButtonTextured("help", BUTTONHELP, i + -19, j + -20, 0, 64, 19, 17, 0, "", ASSET_TEXTURE));
-        buttonList.add(new GuiButtonTextured("infinite", BUTTONINFINITE, i + 176, j + 55, 0, 82, 21, 17, 0, "", ASSET_TEXTURE));
+        buttonList.add(new GuiButtonTextured("help", BUTTONHELP, i + -19, j + -40, 0, 64, 19, 17, 0, "", ASSET_TEXTURE));
+
+        buttonList.add(new GuiButtonTextured("infinite", BUTTONINFINITE, i -21, j + 55, 0, 82, 21, 17, 0, "", ASSET_TEXTURE));
         buttonList.get(BUTTONINFINITE).visible = false;
 
         fieldPrice = new GuiTextField(FIELDPRICE, fontRenderer, i + 213, j + 30, 90, 8);        //Setting Costs
@@ -137,7 +138,7 @@ public class GuiVending extends GuiContainer {
         fieldAmnt5.setVisible(false);
         fieldAmnt5.setText("1");
 
-        fieldItemRestock = new GuiTextField(FIELDITEMRESTOCK, fontRenderer, i + 205, j + 67, 90, 8);
+        fieldItemRestock = new GuiTextField(FIELDTIMERESTOCK, fontRenderer, i - 63, j + 75, 90, 8);
         fieldItemRestock.setTextColor(Integer.parseInt("BEA63D", 16));
         fieldItemRestock.setEnableBackgroundDrawing(false);
         fieldItemRestock.setMaxStringLength(3);
@@ -145,7 +146,7 @@ public class GuiVending extends GuiContainer {
         fieldItemRestock.setVisible(false);
         fieldItemRestock.setText("1");
 
-        fieldTimeRestock = new GuiTextField(FIELDTIMERESTOCK, fontRenderer, i + 225, j + 75, 90, 8);
+        fieldTimeRestock = new GuiTextField(FIELDITEMRESTOCK, fontRenderer, i - 66, j + 85, 90, 8);
         fieldTimeRestock.setTextColor(Integer.parseInt("BEA63D", 16));
         fieldTimeRestock.setEnableBackgroundDrawing(false);
         fieldTimeRestock.setMaxStringLength(4);
@@ -191,11 +192,11 @@ public class GuiVending extends GuiContainer {
 
         //Admin Tag
         if(te.getField(FIELD_MODE) == 1) {
-            drawTexturedModalRect(guiLeft + 177, guiTop + 5, 150, 135, 106, 48);
+            drawTexturedModalRect(guiLeft -107, guiTop + 5, 150, 135, 106, 48);
             if (te.getField(FIELD_INFINITE) == 1) {
                 //Infinite Tag
-                drawTexturedModalRect(guiLeft + 181, guiTop + 62, 156, 184, 100, 36);
-                drawTexturedModalRect(guiLeft + 182, guiTop + 26, 144, 182, 11, 57);
+                drawTexturedModalRect(guiLeft - 101, guiTop + 62, 156, 184, 100, 36);
+                drawTexturedModalRect(guiLeft - 14, guiTop + 27, 146, 184, 9, 56);
             }
         }
     }
@@ -344,23 +345,23 @@ public class GuiVending extends GuiContainer {
             if (te.bundleMainSlot(te.getShort(TileVending.SHORT_SELECTED)) != te.getShort(TileVending.SHORT_SELECTED)) {
                 Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
 
-                fontRenderer.drawStringWithShadow(I18n.format("guivending.slotsettings"), 216, 10, Integer.parseInt("ffffff", 16));
+                fontRenderer.drawStringWithShadow(I18n.format("guivending.slotsettings"), -74, 10, Integer.parseInt("ffffff", 16));
 
                 String itemName = "[" + te.getSelectedName() + "]";
                 GL11.glPushMatrix();
                 GL11.glScaled(0.7, 0.7, 0.7);
-                fontRenderer.drawString(I18n.format(itemName), 322 - (itemName.length() * 2), 28, Integer.parseInt("7B232D", 16));
+                fontRenderer.drawString(I18n.format(itemName), -90 - (itemName.length() * 2), 28, Integer.parseInt("7B232D", 16));
                 GL11.glPopMatrix();
 
-                fontRenderer.drawStringWithShadow(I18n.format("$"), 206, 30, Color.lightGray.getRGB());
+                fontRenderer.drawStringWithShadow(I18n.format("$"), -90, 30, Color.lightGray.getRGB());
 
-                fieldPrice.x = i + 213;
+                fieldPrice.x = i - 82;
                 fieldPrice.y = j + 30;
                 fieldPrice.setEnabled(true);
                 fieldPrice.setVisible(true);
 
-                fontRenderer.drawStringWithShadow(I18n.format("guivending.amnt"), 206, 40, Color.lightGray.getRGB());
-                fieldAmnt.x = i + 233;
+                fontRenderer.drawStringWithShadow(I18n.format("guivending.amnt"), -90, 40, Color.lightGray.getRGB());
+                fieldAmnt.x = i - 65;
                 fieldAmnt.y = j + 40;
                 fieldAmnt.setEnabled(true);
                 fieldAmnt.setVisible(true);
@@ -473,15 +474,15 @@ public class GuiVending extends GuiContainer {
                 Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
 
                 //'Infinite' button slashed if 0
-                if (te.getField(FIELD_INFINITE) == 0) drawTexturedModalRect(-18, +35, 61, 1, 19, 17);
+                if (te.getField(FIELD_INFINITE) == 0) drawTexturedModalRect(-20, +55, 61, 1, 19, 17);
                 buttonList.get(BUTTONINFINITE).visible = true;
 
 
                 //Adds extra 'Restock' screen if inventory is 'finite'
                 if (te.getField(FIELD_INFINITE) == 1) {
-                    fontRenderer.drawStringWithShadow(I18n.format("     items"), 205, 66, Color.lightGray.getRGB());
-                    fontRenderer.drawStringWithShadow(I18n.format("per       sec"), 205, 74, Color.lightGray.getRGB());
-                    fontRenderer.drawStringWithShadow(I18n.format("Restock"), 210, 57, Color.WHITE.getRGB());
+                    fontRenderer.drawStringWithShadow(I18n.format("Restock"), -80, 65, Color.WHITE.getRGB());
+                    fontRenderer.drawStringWithShadow(I18n.format("every      secs"), -95, 74, Color.WHITE.getRGB());
+                    fontRenderer.drawStringWithShadow(I18n.format("up to        items"), -95, 84, Color.WHITE.getRGB());
 
                     fieldTimeRestock.setEnabled(true);
                     fieldTimeRestock.setVisible(true);
@@ -524,23 +525,23 @@ public class GuiVending extends GuiContainer {
         //If Help Open - Help Closed
         if (help) {
             Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
-            drawTexturedModalRect(-68, -20, 23, 20, 68, 54);
+            drawTexturedModalRect(-68, -40, 23, 20, 68, 54);
 
-            fontRenderer.drawStringWithShadow(I18n.format("guivending.help"), -60, -13, Color.yellow.getRGB());
+            fontRenderer.drawStringWithShadow(I18n.format("guivending.help"), -60, -33, Color.yellow.getRGB());
 
             GL11.glDisable(GL11.GL_DEPTH_TEST);
             GL11.glPushMatrix();
             GL11.glScalef(0.7F, 0.7F, 0.8F);
             if (te.getField(FIELD_MODE) == 0) {
-                fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[0].getDisplayName()), -90, 0, Color.gray.getRGB());
-                fontRenderer.drawStringWithShadow(I18n.format("guivending.help.max"), -85, 10, Color.white.getRGB());
-                fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[1].getDisplayName()), -90, 25, Color.gray.getRGB());
-                fontRenderer.drawStringWithShadow(I18n.format("guivending.help.half"), -85, 35, Color.white.getRGB());
+                fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[0].getDisplayName()), -90, -30, Color.gray.getRGB());
+                fontRenderer.drawStringWithShadow(I18n.format("guivending.help.max"), -85, -20, Color.white.getRGB());
+                fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[1].getDisplayName()), -90, -5, Color.gray.getRGB());
+                fontRenderer.drawStringWithShadow(I18n.format("guivending.help.half"), -85, 5, Color.white.getRGB());
             } else {
-                fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[0].getDisplayName()), -90, 0, Color.gray.getRGB());
-                fontRenderer.drawStringWithShadow(I18n.format("guivending.help.create"), -85, 10, Color.white.getRGB());
-                fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[1].getDisplayName()), -90, 25, Color.gray.getRGB());
-                fontRenderer.drawStringWithShadow(I18n.format("guivending.help.delete"), -85, 35, Color.white.getRGB());
+                fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[0].getDisplayName()), -90, -30, Color.gray.getRGB());
+                fontRenderer.drawStringWithShadow(I18n.format("guivending.help.create"), -85, -20, Color.white.getRGB());
+                fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[1].getDisplayName()), -90, -5, Color.gray.getRGB());
+                fontRenderer.drawStringWithShadow(I18n.format("guivending.help.delete"), -85, 5, Color.white.getRGB());
             }
             GL11.glPopMatrix();
             GL11.glDisable(GL11.GL_DEPTH_TEST);

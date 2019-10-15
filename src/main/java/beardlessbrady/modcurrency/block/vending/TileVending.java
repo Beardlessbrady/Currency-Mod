@@ -493,7 +493,6 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     public ItemStack setInvItemAndSize(ItemStack stack, int index, int amount){
         ItemStack userCopy = stack.copy();
         ItemStack machineCopy2 = stack.copy();
-
         if(!isSlotEmpty(index)) {
             if(UtilMethods.equalStacks(stack, inventoryStackHandler.getStackInSlot(index))) {
                 machineCopy2.setCount(amount + getItemSize(index));
@@ -501,6 +500,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
                 return stack;
         }else
             machineCopy2.setCount(amount);
+
 
         userCopy.shrink(amount);
 

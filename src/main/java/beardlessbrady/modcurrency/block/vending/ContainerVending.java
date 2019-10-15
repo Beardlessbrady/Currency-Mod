@@ -210,6 +210,7 @@ public class ContainerVending extends Container {
                                 player.inventory.setItemStack(te.growInvItemSize(copyPlayerStack, index));
                             }
                         }else{
+                            te.setInvItem(ItemStack.EMPTY, index, 0);
                             te.setInvItemAndSize(copyPlayerStack, index, 1);
                         }
                     }
