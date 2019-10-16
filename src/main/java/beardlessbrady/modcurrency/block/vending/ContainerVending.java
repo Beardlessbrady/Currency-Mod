@@ -267,36 +267,38 @@ public class ContainerVending extends Container {
 
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotId) {
-        ItemStack itemStack = this.inventorySlots.get(slotId).getStack();
-        ItemStack copyStack = itemStack.copy();
+        if(te.getField(TileEconomyBase.FIELD_MODE) == 1) {
+            ItemStack itemStack = this.inventorySlots.get(slotId).getStack();
+            ItemStack copyStack = itemStack.copy();
 
-        if (!itemStack.isEmpty()) {
-            if (slotId >= 0 && slotId < PLAYER_TOTAL_COUNT) {
-                if (te.getField(TileEconomyBase.FIELD_MODE) == 0) {
-                    if (itemStack.getItem().equals(ModItems.itemCurrency)) {
-                        playerIn.world.playSound(playerIn.posX, playerIn.posY, playerIn.posZ, SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.BLOCKS, 1.0F, 30.0F, false);
+            if (!itemStack.isEmpty()) {
+                if (slotId >= 0 && slotId < PLAYER_TOTAL_COUNT) {
+                    if (te.getField(TileEconomyBase.FIELD_MODE) == 0) {
+                        if (itemStack.getItem().equals(ModItems.itemCurrency)) {
+                            playerIn.world.playSound(playerIn.posX, playerIn.posY, playerIn.posZ, SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.BLOCKS, 1.0F, 30.0F, false);
 
-                        if (!this.mergeItemStack(itemStack, PLAYER_TOTAL_COUNT + TE_INPUT_SLOT_INDEX, PLAYER_TOTAL_COUNT + TE_INPUT_SLOT_INDEX + 1, false)) {
-                            return ItemStack.EMPTY;
-                        }
-                    }
-                } else {
-                    for (int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) {
-                        if (UtilMethods.equalStacks(itemStack, inventorySlots.get(GUI_INVENTORY_FIRST_INDEX + i).getStack())) {
-                            int count = 0;
-                            if (te.getItemSize(i) + itemStack.getCount() <= te.getField(TileVending.FIELD_INVLIMIT)) {
-                                count = itemStack.getCount();
-                            } else {
-                                count = te.getField(TileVending.FIELD_INVLIMIT) - te.getItemSize(i);
+                            if (!this.mergeItemStack(itemStack, PLAYER_TOTAL_COUNT + TE_INPUT_SLOT_INDEX, PLAYER_TOTAL_COUNT + TE_INPUT_SLOT_INDEX + 1, false)) {
+                                return ItemStack.EMPTY;
                             }
-                            copyStack.setCount(count);
-                            te.growInvItemSize(copyStack, i);
-                            itemStack.shrink(count);
-                            if (itemStack.getCount() == 0) this.inventorySlots.get(slotId).putStack(ItemStack.EMPTY);
+                        }
+                    } else {
+                        for (int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) {
+                            if (UtilMethods.equalStacks(itemStack, inventorySlots.get(GUI_INVENTORY_FIRST_INDEX + i).getStack())) {
+                                int count = 0;
+                                if (te.getItemSize(i) + itemStack.getCount() <= te.getField(TileVending.FIELD_INVLIMIT)) {
+                                    count = itemStack.getCount();
+                                } else {
+                                    count = te.getField(TileVending.FIELD_INVLIMIT) - te.getItemSize(i);
+                                }
+                                copyStack.setCount(count);
+                                te.growInvItemSize(copyStack, i);
+                                itemStack.shrink(count);
+                                if (itemStack.getCount() == 0)
+                                    this.inventorySlots.get(slotId).putStack(ItemStack.EMPTY);
+                            }
                         }
                     }
-                }
-            } else if (slotId >= GUI_INVENTORY_FIRST_INDEX && slotId < GUI_OUTPUT_FIRST_INDEX) {
+                } else if (slotId >= GUI_INVENTORY_FIRST_INDEX && slotId < GUI_OUTPUT_FIRST_INDEX) {
               /*
                if(te.getField(TileEconomyBase.FIELD_MODE) == 0){
                    int count = te.getItemSize(slotId - PLAYER_TOTAL_COUNT);
@@ -308,7 +310,9 @@ public class ContainerVending extends Container {
                        return ItemStack.EMPTY;
                    }
                }*/
+                }
             }
+            return ItemStack.EMPTY;
         }
         return ItemStack.EMPTY;
     }
@@ -381,9 +385,8 @@ public class ContainerVending extends Container {
         }
     }
 
-
     public ItemStack buyItem(int index, int count) {
-        boolean creative = te.getField(TileVending.FIELD_CREATIVE) == 1;
+        boolean infinite = te.getField(TileVending.FIELD_FINITE) == 0;
         int amount = te.getItemAmnt(index);
 
         //If Sneak button held down, show a full stack (or as close to it)
@@ -397,7 +400,7 @@ public class ContainerVending extends Container {
         count = count * amount;
 
         if (!te.getInvItemStack(index).isEmpty() && te.getItemSize(index) != 0) {
-            if (te.canAfford(index, count) && (amount <= te.getItemSize(index) || creative)) {
+            if (te.canAfford(index, count) && (amount <= te.getItemSize(index) || infinite)) {
                 ItemStack outputStack = te.getInvItemStack(index).copy();
 
                 outputStack.setCount(count);
@@ -418,7 +421,7 @@ public class ContainerVending extends Container {
                         int newCashRegister = te.getField(TileEconomyBase.FIELD_CASHREGISTER) + (te.getItemCost(index) * (count / te.getItemAmnt(index)));
                         te.setField(TileEconomyBase.FIELD_CASHRESERVE, newCashReserve);
                         te.setField(TileEconomyBase.FIELD_CASHREGISTER, newCashRegister);
-                        if(!creative)
+                        if(!infinite)
                             te.shrinkInvItemSize(count, index);
                     }
                     return ItemStack.EMPTY;
@@ -434,15 +437,21 @@ public class ContainerVending extends Container {
     }
 
     public ItemStack buyBundle(int mainIndex) {
+        boolean infinite = te.getField(TileVending.FIELD_FINITE) == 0;
+
         int[] bundle = te.getBundle(mainIndex);
 
-        boolean notEmpty = true;
+        boolean empty = true;
         for (int i = 0; i < bundle.length; i++) {
-            if (te.getInvItemStack(bundle[i]).isEmpty() || te.getItemSize(bundle[i]) < te.getItemAmnt(bundle[i]))
-                notEmpty = false;
+
+            System.out.println(te.getInvItemStack(bundle[i]));
+            if (te.getInvItemStack(bundle[i]).isEmpty() || ((te.getItemSize(bundle[i]) < te.getItemAmnt(bundle[i])) && !infinite))
+                empty = false;
         }
 
-        if (notEmpty && te.canAfford(mainIndex, te.getItemAmnt(mainIndex))) {
+        System.out.println(empty);
+
+        if (empty && te.canAfford(mainIndex, te.getItemAmnt(mainIndex))) {
             boolean canOutput = te.bundleOutSlotCheck(te.getBundle(mainIndex));
             if (canOutput) {
                 for (int i = 0; i < bundle.length; i++) {
@@ -450,7 +459,7 @@ public class ContainerVending extends Container {
                     outputStack.setCount(te.getItemAmnt(bundle[i]));
                     int outSlot = te.outputSlotCheck(outputStack, te.getItemAmnt(bundle[i]));
 
-                    if (te.growOutItemSize(outputStack, outSlot).equals(ItemStack.EMPTY)) {
+                    if (te.growOutItemSize(outputStack, outSlot).equals(ItemStack.EMPTY) && !infinite) {
                         te.shrinkInvItemSize(te.getItemAmnt(bundle[i]), bundle[i]);
                     }
                 }

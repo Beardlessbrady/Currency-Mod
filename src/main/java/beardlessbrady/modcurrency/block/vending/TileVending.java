@@ -79,12 +79,12 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
     //Used for Creative auto refill of item slots
     private long serverTime;
-    private int[] itemRaise = new int[TE_INVENTORY_SLOT_COUNT];
+    private int[] itemMax = new int[TE_INVENTORY_SLOT_COUNT];
     private int[] timeRaise = new int[TE_INVENTORY_SLOT_COUNT];
     private int[] timeElapsed = new int[TE_INVENTORY_SLOT_COUNT];
 
     private String selectedName;
-    private boolean creative, infinite;
+    private boolean creative, finite;
     private int inventoryLimit;
     private short selectedSlot;
 
@@ -98,7 +98,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             inventoryAmnt[i] = 1;
             inventoryBundle[i] = new int[]{-1};
 
-            itemRaise[i] = 0;
+            itemMax[i] = 0;
             timeRaise[i] = 0;
             timeElapsed[i] = 0;
         }
@@ -107,7 +107,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         selectedName = "No Item Selected";
         color = EnumDyeColor.GRAY;
         creative = false;
-        infinite = false;
+        finite = true;
     }
 
     @Override
@@ -164,7 +164,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         compound.setTag("output", outputStackHandler.serializeNBT());
 
         compound.setBoolean("creative", creative);
-        compound.setBoolean("infinite", infinite);
+        compound.setBoolean("finite", finite);
 
         compound.setString("selectedName", selectedName);
         compound.setInteger("color", color.getDyeDamage());
@@ -175,7 +175,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         NBTTagCompound inventoryCostNBT = new NBTTagCompound();
         NBTTagCompound inventoryAmntNBT = new NBTTagCompound();
         NBTTagCompound inventoryBundleNBT = new NBTTagCompound();
-        NBTTagCompound itemRaiseNBT = new NBTTagCompound();
+        NBTTagCompound itemMaxNBT = new NBTTagCompound();
         NBTTagCompound timeRaiseNBT = new NBTTagCompound();
         NBTTagCompound timeElapsedNBT = new NBTTagCompound();
         for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++){
@@ -184,7 +184,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             inventoryAmntNBT.setInteger("amnt" + i, inventoryAmnt[i]);
             inventoryBundleNBT.setIntArray("bundle" + i, inventoryBundle[i]);
 
-            itemRaiseNBT.setInteger("itemRaise" + i, itemRaise[i]);
+            itemMaxNBT.setInteger("itemMax" + i, itemMax[i]);
             timeRaiseNBT.setInteger("timeRaise" + i, timeRaise[i]);
             timeElapsedNBT.setInteger("timeElapsed" + i, timeElapsed[i]);
         }
@@ -193,7 +193,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         compound.setTag("inventoryAmntNBT", inventoryAmntNBT);
         compound.setTag("inventoryBundleNBT", inventoryBundleNBT);
 
-        compound.setTag("itemRaiseNBT", itemRaiseNBT);
+        compound.setTag("itemMaxNBT", itemMaxNBT);
         compound.setTag("timeRaiseNBT", timeRaiseNBT);
         compound.setTag("timeElapsedNBT", timeElapsedNBT);
 
@@ -210,7 +210,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
         if(compound.hasKey("serverTime")) serverTime = compound.getLong("serverTime");
         if(compound.hasKey("creative")) creative = compound.getBoolean("creative");
-        if(compound.hasKey("infinite")) infinite = compound.getBoolean("infinite");
+        if(compound.hasKey("finite")) finite = compound.getBoolean("finite");
 
         if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
         if(compound.hasKey("color")) color = EnumDyeColor.byDyeDamage(compound.getInteger("color"));
@@ -237,9 +237,9 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) inventoryBundle[i] = inventoryBundleNBT.getIntArray("bundle" + i);
         }
 
-        if(compound.hasKey("itemRaiseNBT")){
-            NBTTagCompound itemRaiseNBT = compound.getCompoundTag("itemRaiseNBT");
-            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) itemRaise[i] = itemRaiseNBT.getInteger("itemRaise" + i);
+        if(compound.hasKey("itemMaxNBT")){
+            NBTTagCompound itemMaxNBT = compound.getCompoundTag("itemMaxNBT");
+            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) itemMax[i] = itemMaxNBT.getInteger("itemMax" + i);
         }
 
         if(compound.hasKey("timeRaiseNBT")){
@@ -266,7 +266,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
         compound.setLong("serverTime", serverTime);
         compound.setBoolean("creative", creative);
-        compound.setBoolean("infinite", infinite);
+        compound.setBoolean("finite", finite);
 
         compound.setString("selectedName", selectedName);
         compound.setInteger("color", color.getDyeDamage());
@@ -277,7 +277,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         NBTTagCompound inventoryCostNBT = new NBTTagCompound();
         NBTTagCompound inventoryAmntNBT = new NBTTagCompound();
         NBTTagCompound inventoryBundleNBT = new NBTTagCompound();
-        NBTTagCompound itemRaiseNBT = new NBTTagCompound();
+        NBTTagCompound itemMaxNBT = new NBTTagCompound();
         NBTTagCompound timeRaiseNBT = new NBTTagCompound();
         NBTTagCompound timeElapsedNBT = new NBTTagCompound();
         for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++){
@@ -286,7 +286,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             inventoryAmntNBT.setInteger("amnt" + i, inventoryAmnt[i]);
             inventoryBundleNBT.setIntArray("bundle" + i, inventoryBundle[i]);
 
-            itemRaiseNBT.setInteger("itemRaise" + i, itemRaise[i]);
+            itemMaxNBT.setInteger("itemMax" + i, itemMax[i]);
             timeRaiseNBT.setInteger("timeRaise" + i, timeRaise[i]);
             timeElapsedNBT.setInteger("timeElapsed" + i, timeElapsed[i]);
         }
@@ -295,7 +295,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         compound.setTag("inventoryAmntNBT", inventoryAmntNBT);
         compound.setTag("inventoryBundleNBT", inventoryBundleNBT);
 
-        compound.setTag("itemRaiseNBT", itemRaiseNBT);
+        compound.setTag("itemMaxNBT", itemMaxNBT);
         compound.setTag("timeRaiseNBT", timeRaiseNBT);
         compound.setTag("timeElapsedNBT", timeElapsedNBT);
         return new SPacketUpdateTileEntity(pos, 1, compound);
@@ -308,7 +308,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
         if(compound.hasKey("serverTime")) serverTime = compound.getLong("serverTime");
         if(compound.hasKey("creative")) creative = compound.getBoolean("creative");
-        if(compound.hasKey("infinite")) infinite = compound.getBoolean("infinite");
+        if(compound.hasKey("finite")) finite = compound.getBoolean("finite");
 
         if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
         if(compound.hasKey("color")) color = EnumDyeColor.byDyeDamage(compound.getInteger("color"));
@@ -335,9 +335,9 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) inventoryBundle[i] = inventoryBundleNBT.getIntArray("bundle" + i);
         }
 
-        if(compound.hasKey("itemRaiseNBT")){
-            NBTTagCompound itemRaiseNBT = compound.getCompoundTag("itemRaiseNBT");
-            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) itemRaise[i] = itemRaiseNBT.getInteger("itemRaise" + i);
+        if(compound.hasKey("itemMaxNBT")){
+            NBTTagCompound itemMaxNBT = compound.getCompoundTag("itemMaxNBT");
+            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) itemMax[i] = itemMaxNBT.getInteger("itemMax" + i);
         }
 
         if(compound.hasKey("timeRaiseNBT")){
@@ -375,6 +375,8 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     public static final int FIELD_INVLIMIT = 3;
     public static final int FIELD_CREATIVE = 4;
     public static final int FIELD_FINITE = 5;
+    public static final int FIELD_RESTOCKMAX = 6;
+    public static final int FIELD_RESTOCKTIME = 7;
 
     public static final int SHORT_SELECTED = 0;
 
@@ -396,7 +398,13 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
                 creative = (value == 1);
                 break;
             case FIELD_FINITE:
-                infinite = (value == 1);
+                finite = (value == 1);
+                break;
+            case FIELD_RESTOCKMAX:
+                itemMax[selectedSlot] = value;
+                break;
+            case FIELD_RESTOCKTIME:
+                timeRaise[selectedSlot] = value;
                 break;
             default:
                 super.setField(id, value);
@@ -417,7 +425,11 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             case FIELD_CREATIVE:
                 return (creative)? 1 : 0;
             case FIELD_FINITE:
-                return (infinite)? 1 : 0;
+                return (finite)? 1 : 0;
+            case FIELD_RESTOCKMAX:
+                return itemMax[selectedSlot];
+            case FIELD_RESTOCKTIME:
+                return timeRaise[selectedSlot];
             default:
                 return super.getField(id);
         }
@@ -619,7 +631,9 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     }
 
     public boolean canAfford(int slot, int amount){
-        if(getItemCost(slot) * (amount / getItemAmnt(slot)) <= getField(TileEconomyBase.FIELD_CASHRESERVE)) return true;
+        if(getItemCost(slot) * (amount / getItemAmnt(slot)) <= getField(TileEconomyBase.FIELD_CASHRESERVE))
+            return true;
+
         return false;
     }
 
@@ -751,7 +765,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     //If Sneak button held down, show a full stack (or as close to it)
     public int sneakFullStack(int index, int num) {
         int newNum = num;
-        if(!infinite) {
+        if(finite) {
             if (getItemSize(index) < getInvItemStack(index).getMaxStackSize()) {
                 newNum = getItemSize(index);
             } else newNum = getInvItemStack(index).getMaxStackSize();
@@ -768,7 +782,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     //If Jump button held down, show half a stack (or as close to it)
     public int jumpHalfStack(int index, int num) {
         int newNum = num;
-        if(!infinite) {
+        if(finite) {
             if (getItemSize(index) < getInvItemStack(index).getMaxStackSize() / 2) {
                 newNum = getItemSize(index);
             } else newNum = getInvItemStack(index).getMaxStackSize() / 2;
@@ -781,6 +795,8 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             newNum = getInvItemStack(index).getMaxStackSize() / 2;
         }
 
+        if(newNum == 0) newNum = 1;
+
         return newNum;
     }
 
@@ -791,21 +807,5 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
     public String getMessage(){
         return message;
-    }
-
-    public int getRestockAmount(){
-        return itemRaise[selectedSlot];
-    }
-
-    public void setRestockAmount(int amount){
-        itemRaise[selectedSlot] = amount;
-    }
-
-    public int getRestockTime(){
-        return timeRaise[selectedSlot];
-    }
-
-    public void setRestockTime(int time){
-        timeRaise[selectedSlot] = time;
     }
 }

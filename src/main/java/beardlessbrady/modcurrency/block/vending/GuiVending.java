@@ -28,8 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static beardlessbrady.modcurrency.block.TileEconomyBase.FIELD_MODE;
-import static beardlessbrady.modcurrency.block.vending.TileVending.FIELD_CREATIVE;
-import static beardlessbrady.modcurrency.block.vending.TileVending.FIELD_FINITE;
+import static beardlessbrady.modcurrency.block.vending.TileVending.*;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
@@ -44,7 +43,7 @@ public class GuiVending extends GuiContainer {
     private static final ResourceLocation ASSET_TEXTURE = new ResourceLocation(ModCurrency.MODID, "textures/gui/guiassets.png");
     private static final ResourceLocation BACK_TEXTURE = new ResourceLocation(ModCurrency.MODID, "textures/gui/vendinggui.png");
 
-    private GuiTextField fieldPrice, fieldAmnt, fieldAmnt2, fieldAmnt3, fieldAmnt4, fieldAmnt5, fieldItemRestock, fieldTimeRestock;
+    private GuiTextField fieldPrice, fieldAmnt, fieldAmnt2, fieldAmnt3, fieldAmnt4, fieldAmnt5, fieldItemMax, fieldTimeRestock;
     private TileVending te;
 
     private final KeyBinding[] keyBindings = ClientProxy.keyBindings.clone();
@@ -63,7 +62,7 @@ public class GuiVending extends GuiContainer {
     private static final int FIELDAMNT3 = 3;
     private static final int FIELDAMNT4 = 4;
     private static final int FIELDAMNT5 = 5;
-    private static final int FIELDITEMRESTOCK = 6;
+    private static final int FIELDITEMMAX = 6;
     private static final int FIELDTIMERESTOCK = 7;
 
     public GuiVending(EntityPlayer entityPlayer, TileVending te) {
@@ -137,15 +136,15 @@ public class GuiVending extends GuiContainer {
         fieldAmnt5.setVisible(false);
         fieldAmnt5.setText("1");
 
-        fieldItemRestock = new GuiTextField(FIELDTIMERESTOCK, fontRenderer, i - 63, j + 75, 90, 8);
-        fieldItemRestock.setTextColor(Integer.parseInt("BEA63D", 16));
-        fieldItemRestock.setEnableBackgroundDrawing(false);
-        fieldItemRestock.setMaxStringLength(3);
-        fieldItemRestock.setEnabled(false);
-        fieldItemRestock.setVisible(false);
-        fieldItemRestock.setText("1");
+        fieldItemMax = new GuiTextField(FIELDITEMMAX, fontRenderer, i - 63, j + 75, 90, 8);
+        fieldItemMax.setTextColor(Integer.parseInt("BEA63D", 16));
+        fieldItemMax.setEnableBackgroundDrawing(false);
+        fieldItemMax.setMaxStringLength(3);
+        fieldItemMax.setEnabled(false);
+        fieldItemMax.setVisible(false);
+        fieldItemMax.setText("1");
 
-        fieldTimeRestock = new GuiTextField(FIELDITEMRESTOCK, fontRenderer, i - 66, j + 85, 90, 8);
+        fieldTimeRestock = new GuiTextField(FIELDTIMERESTOCK, fontRenderer, i - 66, j + 85, 90, 8);
         fieldTimeRestock.setTextColor(Integer.parseInt("BEA63D", 16));
         fieldTimeRestock.setEnableBackgroundDrawing(false);
         fieldTimeRestock.setMaxStringLength(4);
@@ -169,7 +168,7 @@ public class GuiVending extends GuiContainer {
         fieldAmnt3.drawTextBox();
         fieldAmnt4.drawTextBox();
         fieldAmnt5.drawTextBox();
-        fieldItemRestock.drawTextBox();
+        fieldItemMax.drawTextBox();
         fieldTimeRestock.drawTextBox();
 
     }
@@ -460,10 +459,10 @@ public class GuiVending extends GuiContainer {
                 if (te.bundleMainSlot(te.getShort(TileVending.SHORT_SELECTED)) == te.getShort(TileVending.SHORT_SELECTED)) {
                     bundleMod = 72;
 
-                    fieldItemRestock.y = j + 147;
+                    fieldItemMax.y = j + 147;
                     fieldTimeRestock.y = j + 157;
                 }else{
-                    fieldItemRestock.y = j + 75;
+                    fieldItemMax.y = j + 75;
                     fieldTimeRestock.y = j + 85;
                 }
 
@@ -483,13 +482,13 @@ public class GuiVending extends GuiContainer {
 
                     fieldTimeRestock.setEnabled(true);
                     fieldTimeRestock.setVisible(true);
-                    fieldItemRestock.setEnabled(true);
-                    fieldItemRestock.setVisible(true);
+                    fieldItemMax.setEnabled(true);
+                    fieldItemMax.setVisible(true);
                 } else {
                     fieldTimeRestock.setEnabled(false);
                     fieldTimeRestock.setVisible(false);
-                    fieldItemRestock.setEnabled(false);
-                    fieldItemRestock.setVisible(false);
+                    fieldItemMax.setEnabled(false);
+                    fieldItemMax.setVisible(false);
                 }
             }
         } else {
@@ -513,8 +512,8 @@ public class GuiVending extends GuiContainer {
 
             fieldTimeRestock.setEnabled(false);
             fieldTimeRestock.setVisible(false);
-            fieldItemRestock.setEnabled(false);
-            fieldItemRestock.setVisible(false);
+            fieldItemMax.setEnabled(false);
+            fieldItemMax.setVisible(false);
         }
     }
 
@@ -890,15 +889,11 @@ public class GuiVending extends GuiContainer {
             }
 
             if (te.getField(FIELD_CREATIVE) == 1 && te.getField(FIELD_FINITE) == 1) {
-                if (fieldItemRestock.textboxKeyTyped(typedChar, keyCode)) {
-                }
-                //TODO
+                if (fieldItemMax.textboxKeyTyped(typedChar, keyCode))
+                    setItemMax(fieldItemMax);
 
-
-                if (fieldTimeRestock.textboxKeyTyped(typedChar, keyCode)) {
-                }
-                //TODO
-
+                if (fieldTimeRestock.textboxKeyTyped(typedChar, keyCode))
+                    setTimeRestock(fieldTimeRestock);
             }
         } else {
             super.keyTyped(typedChar, keyCode);
@@ -915,7 +910,7 @@ public class GuiVending extends GuiContainer {
             fieldAmnt3.mouseClicked(mouseX, mouseY, mouseButton);
             fieldAmnt4.mouseClicked(mouseX, mouseY, mouseButton);
             fieldAmnt5.mouseClicked(mouseX, mouseY, mouseButton);
-            fieldItemRestock.mouseClicked(mouseX, mouseY, mouseButton);
+            fieldItemMax.mouseClicked(mouseX, mouseY, mouseButton);
             fieldTimeRestock.mouseClicked(mouseX, mouseY, mouseButton);
 
             updateTextField();
@@ -973,11 +968,37 @@ public class GuiVending extends GuiContainer {
         }
     }
 
+    private void setItemMax(GuiTextField guiTextField){
+        if (guiTextField.getText().length() > 0) {
+            int amount = Integer.parseInt(guiTextField.getText());
+
+            te.setField(FIELD_RESTOCKMAX, amount);
+            PacketSetFieldToServer pack = new PacketSetFieldToServer();
+            pack.setData(amount, FIELD_RESTOCKMAX, te.getPos());
+            PacketHandler.INSTANCE.sendToServer(pack);
+
+            te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
+        }
+    }
+
+    private void setTimeRestock(GuiTextField guiTextField){
+        if (guiTextField.getText().length() > 0) {
+            int amount = Integer.parseInt(guiTextField.getText());
+
+            te.setField(FIELD_RESTOCKTIME, amount);
+            PacketSetFieldToServer pack = new PacketSetFieldToServer();
+            pack.setData(amount, FIELD_RESTOCKTIME, te.getPos());
+            PacketHandler.INSTANCE.sendToServer(pack);
+
+            te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
+        }
+    }
+
     private void updateTextField() {
         fieldPrice.setText(UtilMethods.translateMoney(te.getItemCost()));
         fieldAmnt.setText(Integer.toString(te.getItemAmnt()));
-        fieldItemRestock.setText(Integer.toString(te.getRestockAmount()));
-        fieldTimeRestock.setText(Integer.toString(te.getRestockTime()));
+        fieldItemMax.setText(Integer.toString(te.getField(FIELD_RESTOCKMAX)));
+        fieldTimeRestock.setText(Integer.toString(te.getField(FIELD_RESTOCKTIME)));
 
         if (te.bundleMainSlot(te.getShort(TileVending.SHORT_SELECTED)) == te.getShort(TileVending.SHORT_SELECTED)) {
             int[] bundle = te.getBundle(te.getShort(TileVending.SHORT_SELECTED));
