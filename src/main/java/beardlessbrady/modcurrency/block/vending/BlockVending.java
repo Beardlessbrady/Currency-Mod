@@ -93,7 +93,6 @@ public class BlockVending extends EconomyBlockBase implements IBlockColor {
         worldIn.setBlockState(pos.up(), state.withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.TWOTOP)
                 .withProperty(StateHandler.FACING, placer.getHorizontalFacing().getOpposite()));
 
-        System.out.println(stack.getMetadata());
         if(stack.getMetadata() == 1)
             getTile(worldIn, pos).setField(TileVending.FIELD_CREATIVE, 1);
 

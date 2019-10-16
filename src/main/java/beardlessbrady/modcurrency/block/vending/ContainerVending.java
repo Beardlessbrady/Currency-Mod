@@ -444,7 +444,6 @@ public class ContainerVending extends Container {
 
         if (notEmpty && te.canAfford(mainIndex, te.getItemAmnt(mainIndex))) {
             boolean canOutput = te.bundleOutSlotCheck(te.getBundle(mainIndex));
-            System.out.println("OUT" + canOutput);
             if (canOutput) {
                 for (int i = 0; i < bundle.length; i++) {
                     ItemStack outputStack = te.getInvItemStack(bundle[i]).copy();

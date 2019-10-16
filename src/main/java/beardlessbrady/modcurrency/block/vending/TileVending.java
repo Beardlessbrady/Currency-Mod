@@ -149,7 +149,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             player.openGui(ModCurrency.instance, 30, world, pos.getX(), pos.getY(), pos.getZ());
         }
 
-        System.out.println((world.getTotalWorldTime() - serverTime) /20);
+      //  System.out.println((world.getTotalWorldTime() - serverTime) /20);
         serverTime = world.getTotalWorldTime();
     }
 
@@ -374,7 +374,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     //<editor-fold desc="fields">
     public static final int FIELD_INVLIMIT = 3;
     public static final int FIELD_CREATIVE = 4;
-    public static final int FIELD_INFINITE = 5;
+    public static final int FIELD_FINITE = 5;
 
     public static final int SHORT_SELECTED = 0;
 
@@ -395,7 +395,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             case FIELD_CREATIVE:
                 creative = (value == 1);
                 break;
-            case FIELD_INFINITE:
+            case FIELD_FINITE:
                 infinite = (value == 1);
                 break;
             default:
@@ -416,7 +416,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
                 return inventoryLimit;
             case FIELD_CREATIVE:
                 return (creative)? 1 : 0;
-            case FIELD_INFINITE:
+            case FIELD_FINITE:
                 return (infinite)? 1 : 0;
             default:
                 return super.getField(id);
@@ -659,8 +659,6 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         for(int i = 0; i < outputStackHandler.getSlots(); i++)
             if(outputStackHandler.getStackInSlot(i).isEmpty())
                 emptySlots++;
-
-            System.out.println(bundleSlots.length - ignoreSlots);
         if(bundleSlots.length - ignoreSlots <= emptySlots)
             return true;
 
