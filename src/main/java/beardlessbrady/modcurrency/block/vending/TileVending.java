@@ -112,8 +112,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
     @Override
     public void update() {
-        if(playerUsing != null) {
-
+        if(playerUsing != EMPTYID) {
             //If item in INPUT slot is currency then calculate its worth and add to money total in machine.
             if (!inputStackHandler.getStackInSlot(0).isEmpty()) {
                 if (inputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemCurrency)) {
@@ -148,9 +147,6 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         }else {
             player.openGui(ModCurrency.instance, 30, world, pos.getX(), pos.getY(), pos.getZ());
         }
-
-      //  System.out.println((world.getTotalWorldTime() - serverTime) /20);
-        serverTime = world.getTotalWorldTime();
     }
 
     //<editor-fold desc="NBT Stuff">
@@ -807,5 +803,34 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
     public String getMessage(){
         return message;
+    }
+
+    public void restock(){
+        //If Creative vending machine and finite, restock items
+        if(creative && finite) {
+            //Time since last opened in seconds
+            long deltaTime = ((world.getTotalWorldTime() - serverTime) / 20);
+
+            //Traverses through inventory Size to restock
+            for (int i = 0; i < inventorySize.length; i++) {
+                if (itemMax[i] != 0 && timeRaise[i] != 0 && !inventoryStackHandler.getStackInSlot(i).isEmpty()) {
+                    if (inventorySize[i] < itemMax[i]) {
+                        if ((timeRaise[i]) < deltaTime+timeElapsed[i]) {
+                            int restock = Math.toIntExact((deltaTime + timeElapsed[i]) / timeRaise[i]);
+                            timeElapsed[i] = Math.toIntExact((deltaTime + timeElapsed[i]) % timeRaise[i]);
+
+                            if (restock + inventorySize[i] > itemMax[i]) {
+                                inventorySize[i] = itemMax[i];
+                            } else {
+                                inventorySize[i] += restock;
+                            }
+                        }else{
+                            timeElapsed[i] += deltaTime;
+                        }
+                    }
+                }
+            }
+            serverTime = world.getTotalWorldTime();
+        }
     }
 }

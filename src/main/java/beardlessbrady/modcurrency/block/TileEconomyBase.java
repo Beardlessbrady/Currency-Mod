@@ -33,7 +33,7 @@ public class TileEconomyBase extends TileEntity {
         color = EnumDyeColor.GRAY;
 
         owner = new UUID(0L, 0L);
-        playerUsing = new UUID(0L, 0L);
+        playerUsing = EMPTYID;
     }
 
     //<editor-fold desc="NBT Stuff">

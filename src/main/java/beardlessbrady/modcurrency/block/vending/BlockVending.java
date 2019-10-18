@@ -65,6 +65,9 @@ public class BlockVending extends EconomyBlockBase implements IBlockColor {
                 worldIn.scheduleBlockUpdate(pos, this,0,0);
                 tile.markDirty();
             }else {
+
+                tile.restock();
+
                 //If Sneaking and the player is the owner of the machine it will auto open the machine into STOCK MODE
                 if (playerIn.isSneaking() && tile.getOwner().equals(playerIn.getUniqueID())) {
                     tile.setField(TileEconomyBase.FIELD_MODE, 1);

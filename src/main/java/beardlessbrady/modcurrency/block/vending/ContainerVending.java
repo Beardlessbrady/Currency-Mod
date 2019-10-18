@@ -267,38 +267,38 @@ public class ContainerVending extends Container {
 
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotId) {
-        if(te.getField(TileEconomyBase.FIELD_MODE) == 1) {
-            ItemStack itemStack = this.inventorySlots.get(slotId).getStack();
-            ItemStack copyStack = itemStack.copy();
+        ItemStack itemStack = this.inventorySlots.get(slotId).getStack();
+        ItemStack copyStack = itemStack.copy();
 
-            if (!itemStack.isEmpty()) {
-                if (slotId >= 0 && slotId < PLAYER_TOTAL_COUNT) {
-                    if (te.getField(TileEconomyBase.FIELD_MODE) == 0) {
-                        if (itemStack.getItem().equals(ModItems.itemCurrency)) {
-                            playerIn.world.playSound(playerIn.posX, playerIn.posY, playerIn.posZ, SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.BLOCKS, 1.0F, 30.0F, false);
+        if (!itemStack.isEmpty()) {
+            if (slotId < PLAYER_TOTAL_COUNT) {
+                if (te.getField(TileEconomyBase.FIELD_MODE) == 0) {
 
-                            if (!this.mergeItemStack(itemStack, PLAYER_TOTAL_COUNT + TE_INPUT_SLOT_INDEX, PLAYER_TOTAL_COUNT + TE_INPUT_SLOT_INDEX + 1, false)) {
-                                return ItemStack.EMPTY;
-                            }
-                        }
-                    } else {
-                        for (int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) {
-                            if (UtilMethods.equalStacks(itemStack, inventorySlots.get(GUI_INVENTORY_FIRST_INDEX + i).getStack())) {
-                                int count = 0;
-                                if (te.getItemSize(i) + itemStack.getCount() <= te.getField(TileVending.FIELD_INVLIMIT)) {
-                                    count = itemStack.getCount();
-                                } else {
-                                    count = te.getField(TileVending.FIELD_INVLIMIT) - te.getItemSize(i);
-                                }
-                                copyStack.setCount(count);
-                                te.growInvItemSize(copyStack, i);
-                                itemStack.shrink(count);
-                                if (itemStack.getCount() == 0)
-                                    this.inventorySlots.get(slotId).putStack(ItemStack.EMPTY);
-                            }
+                    if (itemStack.getItem().equals(ModItems.itemCurrency)) {
+                        playerIn.world.playSound(playerIn.posX, playerIn.posY, playerIn.posZ, SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.BLOCKS, 1.0F, 30.0F, false);
+
+                        if (!this.mergeItemStack(itemStack, PLAYER_TOTAL_COUNT + TE_INPUT_SLOT_INDEX, PLAYER_TOTAL_COUNT + TE_INPUT_SLOT_INDEX + 1, false)) {
+                            return ItemStack.EMPTY;
                         }
                     }
-                } else if (slotId >= GUI_INVENTORY_FIRST_INDEX && slotId < GUI_OUTPUT_FIRST_INDEX) {
+                } else {
+                    for (int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) {
+                        if (UtilMethods.equalStacks(itemStack, inventorySlots.get(GUI_INVENTORY_FIRST_INDEX + i).getStack())) {
+                            int count = 0;
+                            if (te.getItemSize(i) + itemStack.getCount() <= te.getField(TileVending.FIELD_INVLIMIT)) {
+                                count = itemStack.getCount();
+                            } else {
+                                count = te.getField(TileVending.FIELD_INVLIMIT) - te.getItemSize(i);
+                            }
+                            copyStack.setCount(count);
+                            te.growInvItemSize(copyStack, i);
+                            itemStack.shrink(count);
+                            if (itemStack.getCount() == 0)
+                                this.inventorySlots.get(slotId).putStack(ItemStack.EMPTY);
+                        }
+                    }
+                }
+            } else if (slotId >= GUI_INVENTORY_FIRST_INDEX && slotId < GUI_OUTPUT_FIRST_INDEX) {
               /*
                if(te.getField(TileEconomyBase.FIELD_MODE) == 0){
                    int count = te.getItemSize(slotId - PLAYER_TOTAL_COUNT);
@@ -310,9 +310,7 @@ public class ContainerVending extends Container {
                        return ItemStack.EMPTY;
                    }
                }*/
-                }
             }
-            return ItemStack.EMPTY;
         }
         return ItemStack.EMPTY;
     }
@@ -412,6 +410,7 @@ public class ContainerVending extends Container {
                         player.world.playSound(player.posX, player.posY, player.posZ, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 3.0F, false);
 
                     }
+
                     return ItemStack.EMPTY;
                 } else {
                     if (te.growOutItemSize(outputStack, outSlot).equals(ItemStack.EMPTY)) {
@@ -424,11 +423,10 @@ public class ContainerVending extends Container {
                         if(!infinite)
                             te.shrinkInvItemSize(count, index);
                     }
+
                     return ItemStack.EMPTY;
                 }
             }
-
-
             te.setMessage("NOT ENOUGH FUNDS!", (byte) 40);
             player.world.playSound(player.posX, player.posY, player.posZ, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 3.0F, false);
 
@@ -443,13 +441,9 @@ public class ContainerVending extends Container {
 
         boolean empty = true;
         for (int i = 0; i < bundle.length; i++) {
-
-            System.out.println(te.getInvItemStack(bundle[i]));
             if (te.getInvItemStack(bundle[i]).isEmpty() || ((te.getItemSize(bundle[i]) < te.getItemAmnt(bundle[i])) && !infinite))
                 empty = false;
         }
-
-        System.out.println(empty);
 
         if (empty && te.canAfford(mainIndex, te.getItemAmnt(mainIndex))) {
             boolean canOutput = te.bundleOutSlotCheck(te.getBundle(mainIndex));
@@ -472,6 +466,8 @@ public class ContainerVending extends Container {
         }
         return ItemStack.EMPTY;
     }
+
+
 
 
 }

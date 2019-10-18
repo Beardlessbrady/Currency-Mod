@@ -136,7 +136,7 @@ public class GuiVending extends GuiContainer {
         fieldAmnt5.setVisible(false);
         fieldAmnt5.setText("1");
 
-        fieldItemMax = new GuiTextField(FIELDITEMMAX, fontRenderer, i - 63, j + 75, 90, 8);
+        fieldItemMax = new GuiTextField(FIELDITEMMAX, fontRenderer, i - 66, j + 85, 90, 8);
         fieldItemMax.setTextColor(Integer.parseInt("BEA63D", 16));
         fieldItemMax.setEnableBackgroundDrawing(false);
         fieldItemMax.setMaxStringLength(3);
@@ -144,7 +144,7 @@ public class GuiVending extends GuiContainer {
         fieldItemMax.setVisible(false);
         fieldItemMax.setText("1");
 
-        fieldTimeRestock = new GuiTextField(FIELDTIMERESTOCK, fontRenderer, i - 66, j + 85, 90, 8);
+        fieldTimeRestock = new GuiTextField(FIELDTIMERESTOCK, fontRenderer, i - 63, j + 75, 90, 8);
         fieldTimeRestock.setTextColor(Integer.parseInt("BEA63D", 16));
         fieldTimeRestock.setEnableBackgroundDrawing(false);
         fieldTimeRestock.setMaxStringLength(4);
@@ -284,7 +284,7 @@ public class GuiVending extends GuiContainer {
     }
 
     private void drawItemStackSize() {
-        if(te.getField(FIELD_FINITE) == 0) {
+        if(te.getField(FIELD_FINITE) == 1) {
             GL11.glDisable(GL11.GL_DEPTH_TEST);
             GL11.glPushMatrix();
             GL11.glScalef(0.7F, 0.7F, 0.8F);
@@ -313,7 +313,6 @@ public class GuiVending extends GuiContainer {
                             fontRenderer.drawStringWithShadow(num, 66 + (i * 26), startY + (j * 26), -1);
                     } else {
                         int startAmount = te.getItemAmnt(index);
-
 
                         if (te.bundleMainSlot(index) == -1) {
                             //If Sneak button held down, show a full stack (or as close to it)
@@ -459,11 +458,11 @@ public class GuiVending extends GuiContainer {
                 if (te.bundleMainSlot(te.getShort(TileVending.SHORT_SELECTED)) == te.getShort(TileVending.SHORT_SELECTED)) {
                     bundleMod = 72;
 
-                    fieldItemMax.y = j + 147;
-                    fieldTimeRestock.y = j + 157;
+                    fieldItemMax.y = j + 157;
+                    fieldTimeRestock.y = j + 147;
                 }else{
-                    fieldItemMax.y = j + 75;
-                    fieldTimeRestock.y = j + 85;
+                    fieldItemMax.y = j + 85;
+                    fieldTimeRestock.y = j + 75;
                 }
 
 
@@ -477,8 +476,8 @@ public class GuiVending extends GuiContainer {
                     //Adds extra 'Restock' screen if inventory is 'finite'
                 if (te.getField(FIELD_FINITE) == 1) {
                     fontRenderer.drawStringWithShadow(I18n.format("Restock"), -80, 65 + bundleMod, Color.WHITE.getRGB());
-                    fontRenderer.drawStringWithShadow(I18n.format("every      secs"), -95, 74 + bundleMod, Color.WHITE.getRGB());
-                    fontRenderer.drawStringWithShadow(I18n.format("up to        items"), -95, 84 + bundleMod, Color.WHITE.getRGB());
+                    fontRenderer.drawStringWithShadow(I18n.format("every       secs"), -95, 74 + bundleMod, Color.WHITE.getRGB());
+                    fontRenderer.drawStringWithShadow(I18n.format("up to      items"), -95, 84 + bundleMod, Color.WHITE.getRGB());
 
                     fieldTimeRestock.setEnabled(true);
                     fieldTimeRestock.setVisible(true);
@@ -789,6 +788,7 @@ public class GuiVending extends GuiContainer {
                     int cost = te.getItemCost(slot);
                     int amount = te.getItemAmnt(slot);
 
+
                     //If Sneak button held down, show a full stack (or as close to it)
                     //If Jump button held down, show half a stack (or as close to it)
                     if (Keyboard.isKeyDown(keyBindings[0].getKeyCode())) {
@@ -805,7 +805,7 @@ public class GuiVending extends GuiContainer {
                         list.add(TextFormatting.BLUE + Integer.toString(amount) + TextFormatting.RESET + " for " + color + "$" + UtilMethods.translateMoney(cost));
                     }
 
-                    if (te.getField(FIELD_FINITE) == 0) {
+                    if (te.getField(FIELD_FINITE) == 1) {
                         list.add("Stock: " + TextFormatting.BLUE + te.getItemSize(slot));
                     } else {
                         list.add("Stock: " + TextFormatting.BLUE + "Infinite");
