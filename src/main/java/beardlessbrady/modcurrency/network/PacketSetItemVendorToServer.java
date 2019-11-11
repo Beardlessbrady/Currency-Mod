@@ -1,10 +1,9 @@
 package beardlessbrady.modcurrency.network;
 
-import beardlessbrady.modcurrency.block.vending.ItemVendor;
+import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.block.vending.TileVending;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -18,27 +17,31 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
  * https://github.com/BeardlessBrady/Currency-Mod
  * -
  * Copyright (C) All Rights Reserved
- * File Created 2019-05-07
+ * File Created 2019-02-22
  */
 
-public class PacketSetItemAmntToServer implements IMessage {
-    //Vendor: Uses player input anf sets cost of item, sends to server
+public class PacketSetItemVendorToServer implements IMessage {
     private BlockPos blockPos;
-    private int data, slot;
+    private int data, field, element;
 
-    public PacketSetItemAmntToServer(){}
+    public static final int FIELD_ITEMMAX = 0;
+    public static final int FIELD_TIMERAISE = 1;
 
-    public void setData(int data, int slot, BlockPos pos) {
+    public PacketSetItemVendorToServer(){}
+
+    public void setData(int element, int data, int field, BlockPos pos) {
         this.blockPos = pos;
         this.data = data;
-        this.slot = slot;
+        this.element = element;
+        this.field = field;
     }
 
     @Override
     public void fromBytes(ByteBuf buf) {
         blockPos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
         data = buf.readInt();
-        slot = buf.readInt();
+        field = buf.readInt();
+        element = buf.readInt();
     }
 
     @Override
@@ -47,26 +50,32 @@ public class PacketSetItemAmntToServer implements IMessage {
         buf.writeInt(blockPos.getY());
         buf.writeInt(blockPos.getZ());
         buf.writeInt(data);
-        buf.writeInt(slot);
+        buf.writeInt(field);
+        buf.writeInt(element);
     }
 
-    public static class Handler implements IMessageHandler<PacketSetItemAmntToServer, IMessage> {
+    public static class Handler implements IMessageHandler<PacketSetItemVendorToServer, IMessage> {
 
         @Override
-        public IMessage onMessage(final PacketSetItemAmntToServer message, MessageContext ctx) {
+        public IMessage onMessage(final PacketSetItemVendorToServer message, MessageContext ctx) {
             FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message,ctx));
             return null;
         }
 
-        private void handle(PacketSetItemAmntToServer message, MessageContext ctx){
+        private void handle(PacketSetItemVendorToServer message, MessageContext ctx){
             EntityPlayerMP playerEntity = ctx.getServerHandler().player;
             World world = playerEntity.world;
-            TileEntity tile = world.getTileEntity(message.blockPos);
 
-            if(tile instanceof TileVending){
-                ItemVendor item = ((TileVending) tile).getItemVendor(message.slot);
-                item.setAmount(message.data);
-                ((TileVending) tile).setItemVendor(message.slot, item);
+            if(world.getTileEntity(message.blockPos) instanceof TileVending){
+                TileVending tile = (TileVending) world.getTileEntity(message.blockPos);
+                switch(message.field){
+                    case FIELD_ITEMMAX: //Restock
+                        tile.setItemVendor(message.element, tile.getItemVendor(message.element).setItemMax(message.data));
+                        break;
+                    case FIELD_TIMERAISE:
+                        tile.setItemVendor(message.element, tile.getItemVendor(message.element).setTimeRaise(message.data));
+                        break;
+                }
             }
         }
     }

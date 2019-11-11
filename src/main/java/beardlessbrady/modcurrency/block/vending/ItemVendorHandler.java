@@ -37,6 +37,10 @@ public class ItemVendorHandler implements IItemHandler, IItemHandlerModifiable, 
         itemArray[i] = item;
     }
 
+    public void voidSlot(int i){
+        itemArray[i] = null;
+    }
+
     public NBTTagCompound serializeNBT() {
         NBTTagCompound compound = new NBTTagCompound();
         for (int i = 0; i < itemArray.length; i++) {
@@ -77,15 +81,22 @@ public class ItemVendorHandler implements IItemHandler, IItemHandlerModifiable, 
     @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-       //TODO
-        return null;
+        if(itemArray[slot] == null){
+            setItemVendor(slot, new ItemVendor(stack));
+            return ItemStack.EMPTY;
+        }else{
+           return itemArray[slot].growSizeWithStack(stack);
+        }
     }
 
     @Nonnull
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
-        //TODO
-        return null;
+        if(itemArray[slot] == null){
+            return ItemStack.EMPTY;
+        }else{
+          return itemArray[slot].shrinkSizeWithStackOutput(amount);
+        }
     }
 
     @Override

@@ -49,13 +49,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             markDirty();
         }
     };
-    private ItemStackHandler inventoryStackHandler = new ItemStackHandler(TE_INVENTORY_SLOT_COUNT) {
-        @Override
-        protected void onContentsChanged(int slot) {
-            super.onContentsChanged(slot);
-            markDirty();
-        }
-    };
+    private ItemVendorHandler inventoryStackHandler = new ItemVendorHandler(TE_INVENTORY_SLOT_COUNT);
     private ItemStackHandler outputStackHandler = new ItemStackHandler(TE_OUTPUT_SLOT_COUNT) {
         @Override
         protected void onContentsChanged(int slot) {
@@ -64,46 +58,22 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         }
     };
 
-    //inventorySize- The size of the stack in the slot (Since we made our own stackCount system for this machine)
-    //inventoryCost- Cost of the specified slot
-    //inventoryAmnt- Amount of the item sold for the specified cost
-    //inventory Bundle- Determines which items are bundled together.
-    private int[] inventorySize = new int[TE_INVENTORY_SLOT_COUNT];
-    private int[] inventoryCost = new int[TE_INVENTORY_SLOT_COUNT];
-    private int[] inventoryAmnt = new int[TE_INVENTORY_SLOT_COUNT];
-    private int[][] inventoryBundle = new int[TE_INVENTORY_SLOT_COUNT][];
-
     //Used for Warning messages
     private String message= "";
     private byte messageTime = 0;
 
     //Used for Creative auto refill of item slots
     private long serverTime;
-    private int[] itemMax = new int[TE_INVENTORY_SLOT_COUNT];
-    private int[] timeRaise = new int[TE_INVENTORY_SLOT_COUNT];
-    private int[] timeElapsed = new int[TE_INVENTORY_SLOT_COUNT];
 
     private String selectedName;
     private boolean creative, finite;
-    private int inventoryLimit;
     private short selectedSlot;
 
     //Color of machine
     private EnumDyeColor color;
 
     public TileVending(){
-        for(int i = 0; i < inventorySize.length; i++){
-            inventorySize[i] = 0;
-            inventoryCost[i] = 0;
-            inventoryAmnt[i] = 1;
-            inventoryBundle[i] = new int[]{-1};
-
-            itemMax[i] = 0;
-            timeRaise[i] = 0;
-            timeElapsed[i] = 0;
-        }
         serverTime = 0;
-        inventoryLimit = 256;
         selectedName = "No Item Selected";
         color = EnumDyeColor.GRAY;
         creative = false;
@@ -153,45 +123,20 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
-
         compound.setLong("serverTime", serverTime);
         compound.setTag("inventory", inventoryStackHandler.serializeNBT());
         compound.setTag("input", inputStackHandler.serializeNBT());
         compound.setTag("output", outputStackHandler.serializeNBT());
+
+
+
 
         compound.setBoolean("creative", creative);
         compound.setBoolean("finite", finite);
 
         compound.setString("selectedName", selectedName);
         compound.setInteger("color", color.getDyeDamage());
-        compound.setInteger("inventoryLimit", inventoryLimit);
         compound.setShort("selectedSlot", selectedSlot);
-
-        NBTTagCompound inventorySizeNBT = new NBTTagCompound();
-        NBTTagCompound inventoryCostNBT = new NBTTagCompound();
-        NBTTagCompound inventoryAmntNBT = new NBTTagCompound();
-        NBTTagCompound inventoryBundleNBT = new NBTTagCompound();
-        NBTTagCompound itemMaxNBT = new NBTTagCompound();
-        NBTTagCompound timeRaiseNBT = new NBTTagCompound();
-        NBTTagCompound timeElapsedNBT = new NBTTagCompound();
-        for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++){
-            inventorySizeNBT.setInteger("size" + i, inventorySize[i]);
-            inventoryCostNBT.setInteger("cost" + i, inventoryCost[i]);
-            inventoryAmntNBT.setInteger("amnt" + i, inventoryAmnt[i]);
-            inventoryBundleNBT.setIntArray("bundle" + i, inventoryBundle[i]);
-
-            itemMaxNBT.setInteger("itemMax" + i, itemMax[i]);
-            timeRaiseNBT.setInteger("timeRaise" + i, timeRaise[i]);
-            timeElapsedNBT.setInteger("timeElapsed" + i, timeElapsed[i]);
-        }
-        compound.setTag("inventorySizeNBT", inventorySizeNBT);
-        compound.setTag("inventoryCostNBT", inventoryCostNBT);
-        compound.setTag("inventoryAmntNBT", inventoryAmntNBT);
-        compound.setTag("inventoryBundleNBT", inventoryBundleNBT);
-
-        compound.setTag("itemMaxNBT", itemMaxNBT);
-        compound.setTag("timeRaiseNBT", timeRaiseNBT);
-        compound.setTag("timeElapsedNBT", timeElapsedNBT);
 
         return compound;
     }
@@ -210,43 +155,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
         if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
         if(compound.hasKey("color")) color = EnumDyeColor.byDyeDamage(compound.getInteger("color"));
-        if(compound.hasKey("inventoryLimit")) inventoryLimit = compound.getInteger("inventoryLimit");
         if(compound.hasKey("selectedSlot")) selectedSlot = compound.getShort("selectedSlot");
-
-        if(compound.hasKey("inventorySizeNBT")){
-            NBTTagCompound inventorySizeNBT = compound.getCompoundTag("inventorySizeNBT");
-            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) inventorySize[i] = inventorySizeNBT.getInteger("size" + i);
-        }
-
-        if(compound.hasKey("inventoryCostNBT")){
-            NBTTagCompound inventoryCostNBT = compound.getCompoundTag("inventoryCostNBT");
-            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) inventoryCost[i] = inventoryCostNBT.getInteger("cost" + i);
-        }
-
-        if(compound.hasKey("inventoryAmntNBT")){
-            NBTTagCompound inventoryAmntNBT = compound.getCompoundTag("inventoryAmntNBT");
-            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) inventoryAmnt[i] = inventoryAmntNBT.getInteger("amnt" + i);
-        }
-
-        if(compound.hasKey("inventoryBundleNBT")){
-            NBTTagCompound inventoryBundleNBT = compound.getCompoundTag("inventoryBundleNBT");
-            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) inventoryBundle[i] = inventoryBundleNBT.getIntArray("bundle" + i);
-        }
-
-        if(compound.hasKey("itemMaxNBT")){
-            NBTTagCompound itemMaxNBT = compound.getCompoundTag("itemMaxNBT");
-            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) itemMax[i] = itemMaxNBT.getInteger("itemMax" + i);
-        }
-
-        if(compound.hasKey("timeRaiseNBT")){
-            NBTTagCompound timeRaiseNBT = compound.getCompoundTag("timeRaiseNBT");
-            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) timeRaise[i] = timeRaiseNBT.getInteger("timeRaise" + i);
-        }
-
-        if(compound.hasKey("timeElapsedNBT")){
-            NBTTagCompound timeElapsedNBT = compound.getCompoundTag("timeElapsedNBT");
-            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) timeElapsed[i] = timeElapsedNBT.getInteger("timeElapsed" + i);
-        }
     }
 
     @Override
@@ -261,39 +170,17 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         NBTTagCompound compound = new NBTTagCompound();
 
         compound.setLong("serverTime", serverTime);
+      //  compound.setTag("inventory", inventoryStackHandler.serializeNBT());
+       // compound.setTag("input", inputStackHandler.serializeNBT());
+        //compound.setTag("output", outputStackHandler.serializeNBT());
+
         compound.setBoolean("creative", creative);
         compound.setBoolean("finite", finite);
 
         compound.setString("selectedName", selectedName);
         compound.setInteger("color", color.getDyeDamage());
-        compound.setInteger("inventoryLimit", inventoryLimit);
         compound.setShort("selectedSlot", selectedSlot);
 
-        NBTTagCompound inventorySizeNBT = new NBTTagCompound();
-        NBTTagCompound inventoryCostNBT = new NBTTagCompound();
-        NBTTagCompound inventoryAmntNBT = new NBTTagCompound();
-        NBTTagCompound inventoryBundleNBT = new NBTTagCompound();
-        NBTTagCompound itemMaxNBT = new NBTTagCompound();
-        NBTTagCompound timeRaiseNBT = new NBTTagCompound();
-        NBTTagCompound timeElapsedNBT = new NBTTagCompound();
-        for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++){
-            inventorySizeNBT.setInteger("size" + i, inventorySize[i]);
-            inventoryCostNBT.setInteger("cost" + i, inventoryCost[i]);
-            inventoryAmntNBT.setInteger("amnt" + i, inventoryAmnt[i]);
-            inventoryBundleNBT.setIntArray("bundle" + i, inventoryBundle[i]);
-
-            itemMaxNBT.setInteger("itemMax" + i, itemMax[i]);
-            timeRaiseNBT.setInteger("timeRaise" + i, timeRaise[i]);
-            timeElapsedNBT.setInteger("timeElapsed" + i, timeElapsed[i]);
-        }
-        compound.setTag("inventorySizeNBT", inventorySizeNBT);
-        compound.setTag("inventoryCostNBT", inventoryCostNBT);
-        compound.setTag("inventoryAmntNBT", inventoryAmntNBT);
-        compound.setTag("inventoryBundleNBT", inventoryBundleNBT);
-
-        compound.setTag("itemMaxNBT", itemMaxNBT);
-        compound.setTag("timeRaiseNBT", timeRaiseNBT);
-        compound.setTag("timeElapsedNBT", timeElapsedNBT);
         return new SPacketUpdateTileEntity(pos, 1, compound);
     }
 
@@ -302,49 +189,17 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         super.onDataPacket(net, pkt);
         NBTTagCompound compound = pkt.getNbtCompound();
 
+      //  if(compound.hasKey("inventory")) inventoryStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("inventory"));
+      //  if(compound.hasKey("input")) inputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("input"));
+      //  if(compound.hasKey("output")) outputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("output"));
+
         if(compound.hasKey("serverTime")) serverTime = compound.getLong("serverTime");
         if(compound.hasKey("creative")) creative = compound.getBoolean("creative");
         if(compound.hasKey("finite")) finite = compound.getBoolean("finite");
 
         if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
         if(compound.hasKey("color")) color = EnumDyeColor.byDyeDamage(compound.getInteger("color"));
-        if(compound.hasKey("inventoryLimit")) inventoryLimit = compound.getInteger("inventoryLimit");
         if(compound.hasKey("selectedSlot")) selectedSlot = compound.getShort("selectedSlot");
-
-        if(compound.hasKey("inventorySizeNBT")){
-            NBTTagCompound inventorySizeNBT = compound.getCompoundTag("inventorySizeNBT");
-            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) inventorySize[i] = inventorySizeNBT.getInteger("size" + i);
-        }
-
-        if(compound.hasKey("inventoryCostNBT")){
-            NBTTagCompound inventoryCostNBT = compound.getCompoundTag("inventoryCostNBT");
-            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) inventoryCost[i] = inventoryCostNBT.getInteger("cost" + i);
-        }
-
-        if(compound.hasKey("inventoryAmntNBT")){
-            NBTTagCompound inventoryAmntNBT = compound.getCompoundTag("inventoryAmntNBT");
-            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) inventoryAmnt[i] = inventoryAmntNBT.getInteger("amnt" + i);
-        }
-
-        if(compound.hasKey("inventoryBundleNBT")){
-            NBTTagCompound inventoryBundleNBT = compound.getCompoundTag("inventoryBundleNBT");
-            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) inventoryBundle[i] = inventoryBundleNBT.getIntArray("bundle" + i);
-        }
-
-        if(compound.hasKey("itemMaxNBT")){
-            NBTTagCompound itemMaxNBT = compound.getCompoundTag("itemMaxNBT");
-            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) itemMax[i] = itemMaxNBT.getInteger("itemMax" + i);
-        }
-
-        if(compound.hasKey("timeRaiseNBT")){
-            NBTTagCompound timeRaiseNBT = compound.getCompoundTag("timeRaiseNBT");
-            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) timeRaise[i] = timeRaiseNBT.getInteger("timeRaise" + i);
-        }
-
-        if(compound.hasKey("timeElapsedNBT")){
-            NBTTagCompound timeElapsedNBT = compound.getCompoundTag("timeElapsedNBT");
-            for(int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) timeElapsed[i] = timeElapsedNBT.getInteger("timeElapsed" + i);
-        }
     }
 
     //</editor-fold>
@@ -368,11 +223,8 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     //</editor-fold>
 
     //<editor-fold desc="fields">
-    public static final int FIELD_INVLIMIT = 3;
     public static final int FIELD_CREATIVE = 4;
     public static final int FIELD_FINITE = 5;
-    public static final int FIELD_RESTOCKMAX = 6;
-    public static final int FIELD_RESTOCKTIME = 7;
 
     public static final int SHORT_SELECTED = 0;
 
@@ -387,20 +239,11 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             case FIELD_MODE:
                 mode = (value == 1);
                 break;
-            case FIELD_INVLIMIT:
-                inventoryLimit = value;
-                break;
             case FIELD_CREATIVE:
                 creative = (value == 1);
                 break;
             case FIELD_FINITE:
                 finite = (value == 1);
-                break;
-            case FIELD_RESTOCKMAX:
-                itemMax[selectedSlot] = value;
-                break;
-            case FIELD_RESTOCKTIME:
-                timeRaise[selectedSlot] = value;
                 break;
             default:
                 super.setField(id, value);
@@ -416,16 +259,10 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
                 return cashReserve;
             case FIELD_CASHREGISTER:
                 return cashRegister;
-            case FIELD_INVLIMIT:
-                return inventoryLimit;
             case FIELD_CREATIVE:
                 return (creative)? 1 : 0;
             case FIELD_FINITE:
                 return (finite)? 1 : 0;
-            case FIELD_RESTOCKMAX:
-                return itemMax[selectedSlot];
-            case FIELD_RESTOCKTIME:
-                return timeRaise[selectedSlot];
             default:
                 return super.getField(id);
         }
@@ -449,142 +286,6 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     }
     //</editor-fold>
 
-    public boolean isSlotEmpty(int index){
-        return inventoryStackHandler.getStackInSlot(index).isEmpty();
-    }
-
-    public boolean isSlotEmpty(){
-        return isSlotEmpty(selectedSlot);
-    }
-
-    public int getItemSize(int index){
-        return inventorySize[index];
-    }
-
-    public ItemStack getInvItemStack(int index){
-        return inventoryStackHandler.getStackInSlot(index);
-    }
-
-    public ItemStack getInvItemStack(){
-        return inventoryStackHandler.getStackInSlot(selectedSlot);
-    }
-
-    public ItemStack setInvItem(ItemStack stack, int index, int addonSize){
-        if(stack == ItemStack.EMPTY) {
-            inventoryStackHandler.setStackInSlot(index, ItemStack.EMPTY);
-            return ItemStack.EMPTY;
-        }
-
-        ItemStack copyStack = stack.copy();
-        int output;
-
-        stack.setCount(1);
-        inventoryStackHandler.setStackInSlot(index, stack);
-
-        if(addonSize == 0) {
-            output = copyStack.getCount() - inventoryLimit;
-        }else{
-            output = (inventorySize[index] + addonSize) - inventoryLimit;
-        }
-
-        if(output > 0){
-            copyStack.setCount(output);
-            inventorySize[index] = inventoryLimit;
-        }else {
-            copyStack= ItemStack.EMPTY;
-            inventorySize[index] = inventoryLimit + output;
-        }
-
-        return copyStack;
-    }
-
-    public ItemStack setInvItemAndSize(ItemStack stack, int index, int amount){
-        ItemStack userCopy = stack.copy();
-        ItemStack machineCopy2 = stack.copy();
-        if(!isSlotEmpty(index)) {
-            if(UtilMethods.equalStacks(stack, inventoryStackHandler.getStackInSlot(index))) {
-                machineCopy2.setCount(amount + getItemSize(index));
-            }else
-                return stack;
-        }else
-            machineCopy2.setCount(amount);
-
-
-        userCopy.shrink(amount);
-
-        int leftovers = setInvItem(machineCopy2, index, 0).getCount();
-        if (leftovers > 0) userCopy.grow(leftovers);
-
-        return userCopy;
-    }
-
-    public ItemStack growInvItemSize(ItemStack stack, int index) {
-            if (UtilMethods.equalStacks(stack, inventoryStackHandler.getStackInSlot(index))) {
-                return setInvItemAndSize(stack, index, stack.getCount());
-            }
-            return stack;
-    }
-
-    public ItemStack shrinkInvItemSize(int num, int index){
-        ItemStack outputStack = inventoryStackHandler.getStackInSlot(index).copy();
-        int output = inventorySize[index] - num;
-
-        if(output > 0){
-            inventorySize[index] = inventorySize[index] - num;
-            outputStack.setCount(num);
-        }else {
-            inventorySize[index] = 0;
-            outputStack.setCount(num + output);
-        }
-
-        return outputStack;
-    }
-
-    public void voidSlot(int index){
-        inventorySize[index] = 0;
-        inventoryCost[index] = 0;
-        inventoryAmnt[index] = 1;
-        inventoryStackHandler.setStackInSlot(index, ItemStack.EMPTY);
-        removeBundle(index);
-    }
-
-    public ItemStack growOutItemSize(ItemStack stack, int index){
-        if (UtilMethods.equalStacks(stack, outputStackHandler.getStackInSlot(index))) {
-            if(outputStackHandler.getStackInSlot(index).getCount() + stack.getCount() <= outputStackHandler.getStackInSlot(index).getMaxStackSize()){
-                outputStackHandler.getStackInSlot(index).grow(stack.getCount());
-                return ItemStack.EMPTY;
-            }
-        }else if(outputStackHandler.getStackInSlot(index).isEmpty()){
-            outputStackHandler.setStackInSlot(index, stack);
-            return ItemStack.EMPTY;
-        }
-        return stack;
-    }
-
-    public int bundleMainSlot(int index){
-        if(index >= 0 && index < TE_INVENTORY_SLOT_COUNT)
-            return inventoryBundle[index][0];
-
-        return -1;
-    }
-
-    public void setBundle(int index, int[] bundleArray){
-        inventoryBundle[index] = bundleArray.clone();
-    }
-
-    public int[] getBundle(int index){
-        return inventoryBundle[index];
-    }
-
-    public void removeBundle(int index){
-        if(bundleMainSlot(index) != -1) {
-            int[] copy = inventoryBundle[bundleMainSlot(index)].clone();
-            for (int i = 0; i < copy.length; i++) {
-                inventoryBundle[copy[i]] = new int[]{-1};
-            }
-        }
-    }
-
     public String getSelectedName(){
         if(selectedName.equals("Air")) return "No Item";
         return selectedName;
@@ -594,40 +295,8 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         selectedName = name;
     }
 
-    public void setItemCost(int cost){
-        inventoryCost[selectedSlot] = cost;
-    }
-
-    public void setItemCost(int cost, int index){
-        inventoryCost[index] = cost;
-    }
-
-    public int getItemCost(){
-        return inventoryCost[selectedSlot];
-    }
-
-    public int getItemCost(int i){
-        return inventoryCost[i];
-    }
-
-    public void setItemAmnt(int amnt){
-        inventoryAmnt[selectedSlot] = amnt;
-    }
-
-    public void setItemAmnt(int amnt, int index){
-        inventoryAmnt[index] = amnt;
-    }
-
-    public int getItemAmnt(){
-        return inventoryAmnt[selectedSlot];
-    }
-
-    public int getItemAmnt(int i){
-        return inventoryAmnt[i];
-    }
-
     public boolean canAfford(int slot, int amount){
-        if(getItemCost(slot) * (amount / getItemAmnt(slot)) <= getField(TileEconomyBase.FIELD_CASHRESERVE))
+        if(inventoryStackHandler.getItemVendor(slot).getCost() * (amount / inventoryStackHandler.getItemVendor(slot).getAmount()) <= getField(TileEconomyBase.FIELD_CASHRESERVE))
             return true;
 
         return false;
@@ -657,8 +326,8 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
         for(int i = 0; i < bundleSlots.length; i++){
             for(int j = 0; j < outputStackHandler.getSlots(); j++) {
-                if (UtilMethods.equalStacks(getInvItemStack(bundleSlots[i]), outputStackHandler.getStackInSlot(j))) {
-                    if (outputStackHandler.getStackInSlot(j).getCount() + getItemAmnt(bundleSlots[i]) <= outputStackHandler.getStackInSlot(j).getMaxStackSize()) {
+                if (UtilMethods.equalStacks(inventoryStackHandler.getItemVendor(bundleSlots[i]).getStack(), outputStackHandler.getStackInSlot(j))) {
+                    if (outputStackHandler.getStackInSlot(j).getCount() + inventoryStackHandler.getItemVendor(bundleSlots[i]).getAmount() <= outputStackHandler.getStackInSlot(j).getMaxStackSize()) {
                         ignoreSlots++;
                     }
                 }
@@ -685,8 +354,8 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             }
 
             boolean repeat = false;
-            if((bank / (Float.valueOf(ConfigCurrency.currencyValues[i])) * 100) > 0){ //Divisible by currency value
-                int amount = (bank /((int)((Float.valueOf(ConfigCurrency.currencyValues[i])) * 100)));
+            if((bank / (Float.parseFloat(ConfigCurrency.currencyValues[i])) * 100) > 0){ //Divisible by currency value
+                int amount = (bank /((int)((Float.parseFloat(ConfigCurrency.currencyValues[i])) * 100)));
 
                 if(amount > 64){
                     amount = 64;
@@ -698,19 +367,19 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
                 if(blockBreak){ //If Block Breaking spawn item
                     world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), outChange));
-                    if (mode == true) {
-                        cashRegister -= ((Float.valueOf(ConfigCurrency.currencyValues[i]) * 100) * amount);
+                    if (mode) {
+                        cashRegister -= ((Float.parseFloat(ConfigCurrency.currencyValues[i]) * 100) * amount);
                     } else {
-                        cashReserve -= ((Float.valueOf(ConfigCurrency.currencyValues[i]) * 100) * amount);
+                        cashReserve -= ((Float.parseFloat(ConfigCurrency.currencyValues[i]) * 100) * amount);
                     }
                 }else {
                     int outputSlot = outputSlotCheck(outChange, amount);
                     if (outputSlot != -1) {
                         if (growOutItemSize(outChange, outputSlot).equals(ItemStack.EMPTY)) {
-                            if (mode == true) {
-                                cashRegister -= ((Float.valueOf(ConfigCurrency.currencyValues[i]) * 100) * amount);
+                            if (mode) {
+                                cashRegister -= ((Float.parseFloat(ConfigCurrency.currencyValues[i]) * 100) * amount);
                             } else {
-                                cashReserve -= ((Float.valueOf(ConfigCurrency.currencyValues[i]) * 100) * amount);
+                                cashReserve -= ((Float.parseFloat(ConfigCurrency.currencyValues[i]) * 100) * amount);
                             }
                         }
                     } else {
@@ -728,7 +397,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         for (int i = 0; i < inventoryStackHandler.getSlots(); i++) {
             ItemStack item = inventoryStackHandler.getStackInSlot(i);
             if (!item.isEmpty()) {
-                item.setCount(getItemSize(i));
+                item.setCount(inventoryStackHandler.getItemVendor(i).getSize());
                 world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), item));
                 inventoryStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
             }
@@ -762,15 +431,15 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     public int sneakFullStack(int index, int num) {
         int newNum = num;
         if(finite) {
-            if (getItemSize(index) < getInvItemStack(index).getMaxStackSize()) {
-                newNum = getItemSize(index);
-            } else newNum = getInvItemStack(index).getMaxStackSize();
+            if (inventoryStackHandler.getItemVendor(index).getSize() < inventoryStackHandler.getItemVendor(index).getStack().getMaxStackSize()) {
+                newNum = inventoryStackHandler.getItemVendor(index).getSize();
+            } else newNum = inventoryStackHandler.getItemVendor(index).getStack().getMaxStackSize();
 
-            while (newNum % getItemAmnt(index) != 0)
+            while (newNum % inventoryStackHandler.getItemVendor(index).getAmount() != 0)
                 newNum--;
 
         }else{
-            newNum = getInvItemStack(index).getMaxStackSize();
+            newNum = inventoryStackHandler.getItemVendor(index).getStack().getMaxStackSize();
         }
         return newNum;
     }
@@ -779,16 +448,16 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     public int jumpHalfStack(int index, int num) {
         int newNum = num;
         if(finite) {
-            if (getItemSize(index) < getInvItemStack(index).getMaxStackSize() / 2) {
-                newNum = getItemSize(index);
-            } else newNum = getInvItemStack(index).getMaxStackSize() / 2;
+            if (inventoryStackHandler.getItemVendor(index).getSize() < inventoryStackHandler.getItemVendor(index).getStack().getMaxStackSize() / 2) {
+                newNum = inventoryStackHandler.getItemVendor(index).getSize();
+            } else newNum = inventoryStackHandler.getItemVendor(index).getStack().getMaxStackSize() / 2;
 
             if (newNum < 1) newNum = 1;
 
-            while (newNum % getItemAmnt(index) != 0)
+            while (newNum % inventoryStackHandler.getItemVendor(index).getAmount() != 0)
                 newNum--;
         }else{
-            newNum = getInvItemStack(index).getMaxStackSize() / 2;
+            newNum = inventoryStackHandler.getItemVendor(index).getStack().getMaxStackSize() / 2;
         }
 
         if(newNum == 0) newNum = 1;
@@ -812,25 +481,53 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             long deltaTime = ((world.getTotalWorldTime() - serverTime) / 20);
 
             //Traverses through inventory Size to restock
-            for (int i = 0; i < inventorySize.length; i++) {
-                if (itemMax[i] != 0 && timeRaise[i] != 0 && !inventoryStackHandler.getStackInSlot(i).isEmpty()) {
-                    if (inventorySize[i] < itemMax[i]) {
-                        if ((timeRaise[i]) < deltaTime+timeElapsed[i]) {
-                            int restock = Math.toIntExact((deltaTime + timeElapsed[i]) / timeRaise[i]);
-                            timeElapsed[i] = Math.toIntExact((deltaTime + timeElapsed[i]) % timeRaise[i]);
+            for (int i = 0; i < inventoryStackHandler.getSlots(); i++) {
+                ItemVendor item = inventoryStackHandler.getItemVendor(i);
+                if (item.getItemMax() != 0 && item.getTimeRaise() != 0 && !inventoryStackHandler.getStackInSlot(i).isEmpty()) {
+                    if (item.getSize() < item.getItemMax()) {
+                        if (item.getTimeRaise() < deltaTime + item.getTimeElapsed()) {
+                            int restock = Math.toIntExact((deltaTime + item.getTimeElapsed()) / item.getTimeRaise());
+                            item.setTimeElapsed(Math.toIntExact((deltaTime + item.getTimeElapsed()) % item.getTimeRaise()));
 
-                            if (restock + inventorySize[i] > itemMax[i]) {
-                                inventorySize[i] = itemMax[i];
+                            if (restock + item.getSize() > item.getItemMax()) {
+                                item.setSize(item.getItemMax());
                             } else {
-                                inventorySize[i] += restock;
+                                item.setSize(item.getSize() + restock);
                             }
                         }else{
-                            timeElapsed[i] += deltaTime;
+                            item.setTimeElapsed(item.getTimeElapsed() + (int)deltaTime);
                         }
                     }
                 }
+
+                inventoryStackHandler.setItemVendor(i, item);
             }
             serverTime = world.getTotalWorldTime();
         }
+    }
+
+    public ItemStack growOutItemSize(ItemStack stack, int index){
+        if (UtilMethods.equalStacks(stack, outputStackHandler.getStackInSlot(index))) {
+            if(outputStackHandler.getStackInSlot(index).getCount() + stack.getCount() <= outputStackHandler.getStackInSlot(index).getMaxStackSize()){
+                outputStackHandler.getStackInSlot(index).grow(stack.getCount());
+                return ItemStack.EMPTY;
+            }
+        }else if(outputStackHandler.getStackInSlot(index).isEmpty()){
+            outputStackHandler.setStackInSlot(index, stack);
+            return ItemStack.EMPTY;
+        }
+        return stack;
+    }
+
+    public ItemVendor getItemVendor(int i){
+        return inventoryStackHandler.getItemVendor(i);
+    }
+
+    public void setItemVendor(int i, ItemVendor item){
+        inventoryStackHandler.setItemVendor(i, item);
+    }
+
+    public void voidItem(int i){
+        inventoryStackHandler.voidSlot(i);
     }
 }

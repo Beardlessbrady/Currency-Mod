@@ -59,7 +59,10 @@ public class PacketSetItemCostToServer implements IMessage {
             World world = playerEntity.world;
             TileEntity tile = world.getTileEntity(message.blockPos);
 
-            if(tile instanceof TileVending) ((TileVending) tile).setItemCost(message.data);
+            if(tile instanceof TileVending){
+                TileVending te = ((TileVending) tile);
+                te.setItemVendor(te.getShort(TileVending.SHORT_SELECTED), te.getItemVendor(te.getShort(TileVending.SHORT_SELECTED)).setCost(message.data));
+            }
         }
     }
 }

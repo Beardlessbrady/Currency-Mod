@@ -193,22 +193,24 @@ public class GuiVending extends GuiContainer {
         if(te.getField(FIELD_MODE) == 1) {
 
             //If not bundles price normal tag background, IF bundles print bundle tag
-            if(te.bundleMainSlot(te.getShort(TileVending.SHORT_SELECTED)) != te.getShort(TileVending.SHORT_SELECTED)){
+            if(te.getItemVendor(te.getShort(TileVending.SHORT_SELECTED)).getBundleMainSlot() != te.getShort(TileVending.SHORT_SELECTED)){
                 drawTexturedModalRect(guiLeft - 107, guiTop + 5, 150, 135, 106, 48);
             }else
                 drawTexturedModalRect(guiLeft - 91, guiTop - 10, 166, 0, 90, 134);
 
-            if (te.getField(FIELD_FINITE) == 1) {
-                //If bundled tag is open move everything down by y=bundleMod
-                int bundleMod = 0;
-                if (te.bundleMainSlot(te.getShort(TileVending.SHORT_SELECTED)) == te.getShort(TileVending.SHORT_SELECTED)) {
-                    bundleMod = 72;
-                }else
-                    //Do not draw string on bundled tag mode
-                    drawTexturedModalRect(guiLeft - 14, guiTop + 27, 146, 184, 9, 56);
+            if(te.getField(FIELD_CREATIVE) == 1) {
+                if (te.getField(FIELD_FINITE) == 1) {
+                    //If bundled tag is open move everything down by y=bundleMod
+                    int bundleMod = 0;
+                    if (te.getItemVendor(te.getShort(TileVending.SHORT_SELECTED)).getBundleMainSlot() == te.getShort(TileVending.SHORT_SELECTED)) {
+                        bundleMod = 72;
+                    } else
+                        //Do not draw string on bundled tag mode
+                        drawTexturedModalRect(guiLeft - 14, guiTop + 27, 146, 184, 9, 56);
 
-                //finite Tag
-                drawTexturedModalRect(guiLeft - 101, guiTop + 62 + bundleMod, 156, 184, 100, 36);
+                    //finite Tag
+                    drawTexturedModalRect(guiLeft - 101, guiTop + 62 + bundleMod, 156, 184, 100, 36);
+                }
             }
         }
     }
@@ -297,9 +299,9 @@ public class GuiVending extends GuiContainer {
                 for (int i = 0; i < 5; i++) {
                     int index = (i + (5 * j));
 
-                    if (te.getItemSize(i + (5 * j)) != 0 && te.getItemSize(i + (5 * j)) > 0) {
-                        num = Integer.toString(te.getItemSize(i + (5 * j)));
-                    } else if (!te.getInvItemStack(index).isEmpty()) {
+                    if (te.getItemVendor(i + (5 * j)).getSize() != 0 && te.getItemVendor(i + (5 * j)).getSize() > 0) {
+                        num = Integer.toString(te.getItemVendor(i + (5 * j)).getSize());
+                    } else if (!te.getItemVendor(index).getStack().isEmpty()) {
                         num = TextFormatting.RED + "Out";
                     } else {
                         num = " ";
@@ -309,12 +311,12 @@ public class GuiVending extends GuiContainer {
                     if (num.length() == 2) num = " " + num;
 
                     if (te.getField(FIELD_MODE) == 1) {
-                        if (te.getItemSize(i + (5 * j)) != 1)
+                        if (te.getItemVendor(i + (5 * j)).getSize() != 1)
                             fontRenderer.drawStringWithShadow(num, 66 + (i * 26), startY + (j * 26), -1);
                     } else {
-                        int startAmount = te.getItemAmnt(index);
+                        int startAmount = te.getItemVendor(index).getAmount();
 
-                        if (te.bundleMainSlot(index) == -1) {
+                        if (te.getItemVendor(index).getBundleMainSlot() == -1) {
                             //If Sneak button held down, show a full stack (or as close to it)
                             //If Jump button held down, show half a stack (or as close to it)
                             if (Keyboard.isKeyDown(keyBindings[0].getKeyCode())) {
@@ -329,13 +331,13 @@ public class GuiVending extends GuiContainer {
                         if (amount.length() == 1) amount = "  " + amount;
                         if (amount.length() == 2) amount = " " + amount;
 
-                        if (te.getItemSize(index) >= 1 && te.getItemSize(index) < te.getItemAmnt(index))
+                        if (te.getItemVendor(index).getSize() >= 1 && te.getItemVendor(index).getSize() < te.getItemVendor(index).getAmount())
                             num = TextFormatting.RED + "Out";
 
                         if (num.equals(TextFormatting.RED + "Out")) {
                             fontRenderer.drawStringWithShadow(num, 66 + (i * 26), startY + (j * 26), -1);
                         } else {
-                            if (startAmount != 1 && !te.getInvItemStack(index).isEmpty())
+                            if (startAmount != 1 && !te.getItemVendor(index).getStack().isEmpty())
                                 fontRenderer.drawStringWithShadow(amount, 66 + (i * 26), startY + (j * 26), -1);
                         }
                     }
@@ -355,7 +357,7 @@ public class GuiVending extends GuiContainer {
 
             //NON BUNDLE PANEL
             Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
-            if (te.bundleMainSlot(te.getShort(TileVending.SHORT_SELECTED)) != te.getShort(TileVending.SHORT_SELECTED)) {
+            if (te.getItemVendor(te.getShort(TileVending.SHORT_SELECTED)).getBundleMainSlot() != te.getShort(TileVending.SHORT_SELECTED)) {
 
                 fontRenderer.drawStringWithShadow(I18n.format("guivending.slotsettings"), -74, 10, Integer.parseInt("ffffff", 16));
 
@@ -402,11 +404,11 @@ public class GuiVending extends GuiContainer {
                 fieldAmnt.setEnabled(true);
                 fieldAmnt.setVisible(true);
 
-                int[] bundleSlots = te.getBundle(te.getShort(TileVending.SHORT_SELECTED));
+                int[] bundleSlots = te.getItemVendor(te.getShort(TileVending.SHORT_SELECTED)).getBundle();
                 StringBuilder bundleName = new StringBuilder();
                 for (int bundleSlot : bundleSlots) {
-                    bundleName.append("\n•").append(te.getInvItemStack(bundleSlot).getDisplayName()).append("\n");
-                    if(te.getInvItemStack(bundleSlot).getDisplayName().length() < 13)
+                    bundleName.append("\n•").append(te.getItemVendor(bundleSlot).getStack().getDisplayName()).append("\n");
+                    if(te.getItemVendor(bundleSlot).getStack().getDisplayName().length() < 13)
                         bundleName.append("\n");
                 }
 
@@ -455,7 +457,7 @@ public class GuiVending extends GuiContainer {
 
                 //If bundled tag is open move everything down by y=bundleMod
                 int bundleMod = 0;
-                if (te.bundleMainSlot(te.getShort(TileVending.SHORT_SELECTED)) == te.getShort(TileVending.SHORT_SELECTED)) {
+                if (te.getItemVendor(te.getShort(TileVending.SHORT_SELECTED)).getBundleMainSlot() == te.getShort(TileVending.SHORT_SELECTED)) {
                     bundleMod = 72;
 
                     fieldItemMax.y = j + 157;
@@ -547,8 +549,8 @@ public class GuiVending extends GuiContainer {
     private void drawBundles() {
         Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
         for (int slot = 0; slot < te.TE_INVENTORY_SLOT_COUNT; slot++) {
-            int[] bundle = te.getBundle(slot);
-            if (bundle[0] != -1) {
+            if (te.getItemVendor(slot).hasBundle()) {
+                int[] bundle = te.getItemVendor(slot).getBundle();
                 if (bundle[0] == slot) { //is the main slot
                     int slotColumn = 0, slotRow;
 
@@ -572,15 +574,15 @@ public class GuiVending extends GuiContainer {
                     int direction = 0; //0=Left, 1=Right, 2=Down, 3=Up
                     int endDirection = 0;
 
-                    if (te.bundleMainSlot(slot - 1) == slot) {
+                    if (te.getItemVendor(slot - 1).getBundleMainSlot() == slot) {
                         endDirection = 1;
-                    } else if (te.bundleMainSlot(slot + 1) == slot) {
+                    } else if (te.getItemVendor(slot + 1).getBundleMainSlot() == slot) {
                         direction = 1;
                         endDirection = 0;
-                    } else if (te.bundleMainSlot(slot + 5) == slot) {
+                    } else if (te.getItemVendor(slot + 5).getBundleMainSlot() == slot) {
                         direction = 2;
                         endDirection = 3;
-                    } else if (te.bundleMainSlot(slot - 5) == slot) {
+                    } else if (te.getItemVendor(slot - 5).getBundleMainSlot() == slot) {
                         direction = 3;
                         endDirection = 2;
                     }
@@ -610,7 +612,7 @@ public class GuiVending extends GuiContainer {
                         int slotColumn2 = 0;
                         int slotRow2 = 0;
                         int slot2 = slot + (forIncrement * i);
-                        if (te.bundleMainSlot(slot2) == slot) {
+                        if (te.getItemVendor(slot2).getBundleMainSlot() == slot) {
 
                             if (slot2 >= 0 && slot2 <= 4) {
                                 slotRow2 = slot2;
@@ -628,7 +630,7 @@ public class GuiVending extends GuiContainer {
                                 slotRow2 = (slot2) - 20;
                             }
 
-                            if (te.bundleMainSlot(slot2 + (forIncrement)) == slot) { //This slot is NOT the end of the bundle
+                            if (te.getItemVendor(slot2 + (forIncrement)).getBundleMainSlot() == slot) { //This slot is NOT the end of the bundle
                                 if (direction == 0 || direction == 1) {
                                     drawTexturedModalRect(42 + (18 * slotRow2), -32 + (18 * slotColumn2), 84, 130 + yChange, 20, 20);
                                 } else {
@@ -667,7 +669,7 @@ public class GuiVending extends GuiContainer {
                 slotRow = (slotId) - 20;
             }
 
-            if (te.bundleMainSlot(slotId) != slotId)
+            if (te.getItemVendor(slotId).getBundleMainSlot() != slotId)
                 drawTexturedModalRect(42 + (18 * slotRow), -32 + (18 * slotColumn), 0, 172, 20, 20);
             drawTexturedModalRect(42 + (18 * slotRow) + 14, -32 + (18 * slotColumn) + 15, 3, 3, 16, 14);
         }
@@ -767,7 +769,7 @@ public class GuiVending extends GuiContainer {
             List<String> ogTooltip = stack.getTooltip(mc.player, mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
             int tooltipStart = 1;
 
-            if (te.bundleMainSlot(slot) == -1) {
+            if (te.getItemVendor(slot).getBundleMainSlot() == -1) {
                 //Adding name and subname of item before price and such
                 if (ogTooltip.size() > 0) {
                     list.add(ogTooltip.get(0));
@@ -785,28 +787,28 @@ public class GuiVending extends GuiContainer {
                         color = TextFormatting.GREEN;
                     }
 
-                    int cost = te.getItemCost(slot);
-                    int amount = te.getItemAmnt(slot);
+                    int cost = te.getItemVendor(slot).getCost();
+                    int amount = te.getItemVendor(slot).getAmount();
 
 
                     //If Sneak button held down, show a full stack (or as close to it)
                     //If Jump button held down, show half a stack (or as close to it)
                     if (Keyboard.isKeyDown(keyBindings[0].getKeyCode())) {
                         amount = te.sneakFullStack(slot, amount);
-                        cost = cost * (amount / te.getItemAmnt(slot));
+                        cost = cost * (amount / te.getItemVendor(slot).getAmount());
                     } else if (Keyboard.isKeyDown(keyBindings[1].getKeyCode())) {
                         amount = te.jumpHalfStack(slot, amount);
-                        cost = cost * (amount / te.getItemAmnt(slot));
+                        cost = cost * (amount / te.getItemVendor(slot).getAmount());
                     }
 
-                    if (te.getItemAmnt(slot) == 1) {
+                    if (te.getItemVendor(slot).getAmount() == 1) {
                         list.add(color + "$" + UtilMethods.translateMoney(cost));
                     } else {
                         list.add(TextFormatting.BLUE + Integer.toString(amount) + TextFormatting.RESET + " for " + color + "$" + UtilMethods.translateMoney(cost));
                     }
 
                     if (te.getField(FIELD_FINITE) == 1) {
-                        list.add("Stock: " + TextFormatting.BLUE + te.getItemSize(slot));
+                        list.add("Stock: " + TextFormatting.BLUE + te.getItemVendor(slot).getSize());
                     } else {
                         list.add("Stock: " + TextFormatting.BLUE + "Infinite");
                     }
@@ -827,8 +829,8 @@ public class GuiVending extends GuiContainer {
                         color = TextFormatting.GREEN;
                     }
 
-                    int mainSlot = te.bundleMainSlot(slot);
-                    int cost = te.getItemCost(mainSlot);
+                    int mainSlot = te.getItemVendor(slot).getBundleMainSlot();
+                    int cost = te.getItemVendor(mainSlot).getCost();
 
                     list.add(color + "$" + UtilMethods.translateMoney(cost));
 
@@ -836,9 +838,9 @@ public class GuiVending extends GuiContainer {
                     list.add("Includes:");
 
 
-                    int[] bundle = te.getBundle(mainSlot);
+                    int[] bundle = te.getItemVendor(mainSlot).getBundle();
                     for (int k : bundle) {
-                        list.add("x" + TextFormatting.BLUE + te.getItemAmnt(k) + " " + TextFormatting.RESET + te.getInvItemStack(k).getDisplayName());
+                        list.add("x" + TextFormatting.BLUE + te.getItemVendor(k).getAmount() + " " + TextFormatting.RESET + te.getItemVendor(k).getStack().getDisplayName());
                     }
                 }
 
@@ -873,8 +875,8 @@ public class GuiVending extends GuiContainer {
             if (fieldAmnt.textboxKeyTyped(typedChar, keyCode))
                 setAmnt(te.getShort(TileVending.SHORT_SELECTED), fieldAmnt);
 
-            if (te.bundleMainSlot(te.getShort(TileVending.SHORT_SELECTED)) == te.getShort(TileVending.SHORT_SELECTED)) {
-                int[] bundle = te.getBundle(te.getShort(TileVending.SHORT_SELECTED));
+            if (te.getItemVendor(te.getShort(TileVending.SHORT_SELECTED)).getBundleMainSlot() == te.getShort(TileVending.SHORT_SELECTED)) {
+                int[] bundle = te.getItemVendor(te.getShort(TileVending.SHORT_SELECTED)).getBundle();
 
                 switch (bundle.length) {
                     case 5:
@@ -939,7 +941,7 @@ public class GuiVending extends GuiContainer {
                 newCost = Integer.valueOf(fieldPrice.getText()) * 100;
             }
 
-            te.setItemCost(newCost);
+            te.setItemVendor(te.getShort(TileVending.SHORT_SELECTED), te.getItemVendor(te.getShort(TileVending.SHORT_SELECTED)).setCost(newCost));
             PacketSetItemCostToServer pack = new PacketSetItemCostToServer();
             pack.setData(newCost, te.getPos());
             PacketHandler.INSTANCE.sendToServer(pack);
@@ -950,16 +952,16 @@ public class GuiVending extends GuiContainer {
 
     private void setAmnt(int slot, GuiTextField guiTextField) {
         if (guiTextField.getText().length() > 0) {
-            int amount = Integer.valueOf(guiTextField.getText());
+            int amount = Integer.parseInt(guiTextField.getText());
 
-            if (te.isSlotEmpty(slot)) {
+            if (te.getItemVendor(slot).getStack().isEmpty()) {
                 amount = 1;
-            } else if (Integer.valueOf(guiTextField.getText()) > te.getInvItemStack(slot).getMaxStackSize())
-                amount = te.getInvItemStack(slot).getMaxStackSize();
+            } else if (Integer.valueOf(guiTextField.getText()) > te.getItemVendor(slot).getStack().getMaxStackSize())
+                amount = te.getItemVendor(slot).getStack().getMaxStackSize();
 
             if (amount == 0) amount = 1;
 
-            te.setItemAmnt(amount, slot);
+            te.setItemVendor(slot, te.getItemVendor(slot).setAmount(amount));
             PacketSetItemAmntToServer pack = new PacketSetItemAmntToServer();
             pack.setData(amount, slot, te.getPos());
             PacketHandler.INSTANCE.sendToServer(pack);
@@ -972,9 +974,9 @@ public class GuiVending extends GuiContainer {
         if (guiTextField.getText().length() > 0) {
             int amount = Integer.parseInt(guiTextField.getText());
 
-            te.setField(FIELD_RESTOCKMAX, amount);
-            PacketSetFieldToServer pack = new PacketSetFieldToServer();
-            pack.setData(amount, FIELD_RESTOCKMAX, te.getPos());
+            te.setItemVendor(te.getShort(SHORT_SELECTED), te.getItemVendor(te.getShort(SHORT_SELECTED)).setItemMax(amount));
+            PacketSetItemVendorToServer pack = new PacketSetItemVendorToServer();
+            pack.setData(te.getShort(SHORT_SELECTED), amount, PacketSetItemVendorToServer.FIELD_ITEMMAX, te.getPos());
             PacketHandler.INSTANCE.sendToServer(pack);
 
             te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
@@ -985,9 +987,9 @@ public class GuiVending extends GuiContainer {
         if (guiTextField.getText().length() > 0) {
             int amount = Integer.parseInt(guiTextField.getText());
 
-            te.setField(FIELD_RESTOCKTIME, amount);
-            PacketSetFieldToServer pack = new PacketSetFieldToServer();
-            pack.setData(amount, FIELD_RESTOCKTIME, te.getPos());
+            te.setItemVendor(te.getShort(SHORT_SELECTED), te.getItemVendor(te.getShort(SHORT_SELECTED)).setTimeRaise(amount));
+            PacketSetItemVendorToServer pack = new PacketSetItemVendorToServer();
+            pack.setData(te.getShort(SHORT_SELECTED), amount, PacketSetItemVendorToServer.FIELD_TIMERAISE, te.getPos());
             PacketHandler.INSTANCE.sendToServer(pack);
 
             te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
@@ -995,23 +997,23 @@ public class GuiVending extends GuiContainer {
     }
 
     private void updateTextField() {
-        fieldPrice.setText(UtilMethods.translateMoney(te.getItemCost()));
-        fieldAmnt.setText(Integer.toString(te.getItemAmnt()));
-        fieldItemMax.setText(Integer.toString(te.getField(FIELD_RESTOCKMAX)));
-        fieldTimeRestock.setText(Integer.toString(te.getField(FIELD_RESTOCKTIME)));
+        fieldPrice.setText(UtilMethods.translateMoney(te.getItemVendor(te.getShort(SHORT_SELECTED)).getCost()));
+        fieldAmnt.setText(Integer.toString(te.getItemVendor(te.getShort(SHORT_SELECTED)).getAmount()));
+        fieldItemMax.setText(Integer.toString(te.getItemVendor(te.getShort(SHORT_SELECTED)).getItemMax()));
+        fieldTimeRestock.setText(Integer.toString(te.getItemVendor(te.getShort(SHORT_SELECTED)).getTimeRaise()));
 
-        if (te.bundleMainSlot(te.getShort(TileVending.SHORT_SELECTED)) == te.getShort(TileVending.SHORT_SELECTED)) {
-            int[] bundle = te.getBundle(te.getShort(TileVending.SHORT_SELECTED));
+        if (te.getItemVendor(te.getShort(SHORT_SELECTED)).getBundleMainSlot() == te.getShort(TileVending.SHORT_SELECTED)) {
+            int[] bundle = te.getItemVendor(te.getShort(SHORT_SELECTED)).getBundle();
 
             switch (bundle.length) {
                 case 5:
-                    fieldAmnt5.setText(Integer.toString(te.getItemAmnt(bundle[4])));
+                    fieldAmnt5.setText(Integer.toString(te.getItemVendor(bundle[4]).getAmount()));
                 case 4:
-                    fieldAmnt4.setText(Integer.toString(te.getItemAmnt(bundle[3])));
+                    fieldAmnt4.setText(Integer.toString(te.getItemVendor(bundle[3]).getAmount()));
                 case 3:
-                    fieldAmnt3.setText(Integer.toString(te.getItemAmnt(bundle[2])));
+                    fieldAmnt3.setText(Integer.toString(te.getItemVendor(bundle[2]).getAmount()));
                 case 2:
-                    fieldAmnt2.setText(Integer.toString(te.getItemAmnt(bundle[1])));
+                    fieldAmnt2.setText(Integer.toString(te.getItemVendor(bundle[1]).getAmount()));
             }
         }
     }
@@ -1032,7 +1034,7 @@ public class GuiVending extends GuiContainer {
 
             if (slot >= 0 && slot < 25) {
 
-                if (te.bundleMainSlot(slot) == -1 && !te.getInvItemStack(slot).isEmpty() && !te.getInvItemStack(selectedSlot).isEmpty()) {
+                if (te.getItemVendor(slot).getBundleMainSlot() == -1 && !te.getItemVendor(slot).getStack().isEmpty() && !te.getItemVendor(selectedSlot).getStack().isEmpty()) {
 
                     int displacement = selectedSlot - slot;
                     int[] movementArray = {-1, -2, -3, -4, 1, 2, 3, 4, -5, -10, -15, -20, 5, 10, 15, 20};
@@ -1079,14 +1081,14 @@ public class GuiVending extends GuiContainer {
 
                     if (possibleValue) {
                         if (Math.abs(displacement) == 1 || Math.abs(displacement) == 5) {
-                            if (te.bundleMainSlot(selectedSlot) != selectedSlot) {
+                            if (te.getItemVendor(selectedSlot).getBundleMainSlot() != selectedSlot) {
                                 int[] bundle = {selectedSlot, slot};
-                                te.setBundle(selectedSlot, bundle);
+                                te.setItemVendor(selectedSlot, te.getItemVendor(selectedSlot).setBundle(bundle));
                                 PacketSetItemBundleToServer pack0 = new PacketSetItemBundleToServer();
                                 pack0.setData(selectedSlot, bundle, te.getPos());
                                 PacketHandler.INSTANCE.sendToServer(pack0);
 
-                                te.setBundle(slot, new int[]{selectedSlot});
+                                te.setItemVendor(slot, te.getItemVendor(slot).setBundle(new int[]{selectedSlot}));
                                 PacketSetItemBundleToServer pack = new PacketSetItemBundleToServer();
                                 pack.setData(slot, new int[]{selectedSlot}, te.getPos());
                                 PacketHandler.INSTANCE.sendToServer(pack);
@@ -1109,19 +1111,19 @@ public class GuiVending extends GuiContainer {
                                     break;
                             }
 
-                            if (te.bundleMainSlot(previousSlot) == selectedSlot) {
-                                int[] oldBundle = te.getBundle(selectedSlot).clone();
+                            if (te.getItemVendor(previousSlot).getBundleMainSlot() == selectedSlot) {
+                                int[] oldBundle = te.getItemVendor(selectedSlot).getBundle().clone();
                                 int[] newBundle = new int[oldBundle.length + 1];
 
                                 System.arraycopy(oldBundle, 0, newBundle, 0, oldBundle.length);
 
                                 newBundle[newBundle.length - 1] = slot;
-                                te.setBundle(selectedSlot, newBundle);
+                                te.setItemVendor(selectedSlot, te.getItemVendor(selectedSlot).setBundle(newBundle));
                                 PacketSetItemBundleToServer pack0 = new PacketSetItemBundleToServer();
                                 pack0.setData(selectedSlot, newBundle, te.getPos());
                                 PacketHandler.INSTANCE.sendToServer(pack0);
 
-                                te.setBundle(slot, new int[]{selectedSlot});
+                                te.setItemVendor(slot, te.getItemVendor(slot).setBundle(new int[]{selectedSlot}));
                                 PacketSetItemBundleToServer pack = new PacketSetItemBundleToServer();
                                 pack.setData(slot, new int[]{selectedSlot}, te.getPos());
                                 PacketHandler.INSTANCE.sendToServer(pack);

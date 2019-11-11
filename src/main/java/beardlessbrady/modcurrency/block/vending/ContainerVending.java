@@ -165,14 +165,14 @@ public class ContainerVending extends Container {
             } else if (slotId >= GUI_INVENTORY_FIRST_INDEX && slotId < GUI_OUTPUT_FIRST_INDEX) {
                 Loop:
                 for (int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) {
-                    if (UtilMethods.equalStacks(playerStack, te.getInvItemStack(i))) {
-                        if (playerStack.getCount() + te.getItemSize(i) <= playerStack.getMaxStackSize()) {
-                            playerStack.grow(te.getItemSize(i));
-                            te.voidSlot(i);
+                    if (UtilMethods.equalStacks(playerStack, te.getItemVendor(i).getStack())) {
+                        if (playerStack.getCount() + te.getItemVendor(i).getSize() <= playerStack.getMaxStackSize()) {
+                            playerStack.grow(te.getItemVendor(i).getSize());
+                            te.voidItem(i);
                         } else {
                             int teSize = playerStack.getMaxStackSize() - playerStack.getCount();
                             playerStack.setCount(playerStack.getMaxStackSize());
-                            te.shrinkInvItemSize(teSize, i);
+                            te.setItemVendor(i, te.getItemVendor(i).shrinkSize(teSize));
                         }
                         if (playerStack.getCount() == playerStack.getMaxStackSize())
                             break Loop;
@@ -192,65 +192,73 @@ public class ContainerVending extends Container {
         }
         if (slotId >= 37 && slotId <= 61) {  //te Inventory
             if (te.getField(TileVending.FIELD_MODE) == 1) {            //ADMIN MODE
-                if (te.getItemSize(index) == 0) {
-                    te.setInvItem(ItemStack.EMPTY, index, 0);
+                if (te.getItemVendor(index).getSize() == 0) {
+                    te.voidItem(index);
                 }
                 if (dragType == 0 || (dragType == 1 && clickTypeIn == ClickType.QUICK_CRAFT)) { //Left Click
                     if (playerStack.isEmpty()) {
                         if(!creative) {
-                            player.inventory.setItemStack(te.shrinkInvItemSize(64, index));
+                            player.inventory.setItemStack(te.getItemVendor(index).shrinkSizeWithStackOutput(64));
+                            te.setItemVendor(index, te.getItemVendor(index).shrinkSize(64));
                         }else{
-                            te.shrinkInvItemSize(64, index);
+                            te.setItemVendor(index, te.getItemVendor(index).shrinkSize(64));
                         }
                     } else {
                         if(!creative) {
-                            if (te.getInvItemStack(index).isEmpty()) {
-                                player.inventory.setItemStack(te.setInvItem(copyPlayerStack, index, 0));
+                            if (te.getItemVendor(index).getStack().isEmpty()) {
+                                te.setItemVendor(index, new ItemVendor(copyPlayerStack));
+                                player.inventory.setItemStack(ItemStack.EMPTY);
                             } else {
-                                player.inventory.setItemStack(te.growInvItemSize(copyPlayerStack, index));
+                                if (UtilMethods.equalStacks(playerStack, te.getItemVendor(index).getStack())) {
+                                    int playStackSize = copyPlayerStack.getCount();
+                                    player.inventory.setItemStack(te.getItemVendor(index).growSizeWithStack(copyPlayerStack));
+                                    te.setItemVendor(index, te.getItemVendor(index).growSize(playStackSize));
+                                }
                             }
                         }else{
-                            te.setInvItem(ItemStack.EMPTY, index, 0);
-                            te.setInvItemAndSize(copyPlayerStack, index, 1);
+                            te.voidItem(index);
+                            te.setItemVendor(index, new ItemVendor(copyPlayerStack, 1));
                         }
                     }
-                    if (te.getItemSize(index) == 0) {
-                        te.voidSlot(index);
+                    if (te.getItemVendor(index).getSize() == 0) {
+                        te.voidItem(index);
                     }
                 } else if (dragType == 1) { //Right Click
                     if (Keyboard.isKeyDown(keyBindings[1].getKeyCode())) {
-                        te.removeBundle(index);
+                        te.setItemVendor(index, te.getItemVendor(index).setBundle(new int[0]));
                     } else {
                         //Moves Selected Slot
                         if (!(te.getShort(TileVending.SHORT_SELECTED) == slotId)) {
                             short toSelect = (short)index;
-                            if (te.bundleMainSlot(index) != -1) {
-                                toSelect = (short) te.bundleMainSlot(index);
+                            if (te.getItemVendor(index).getBundleMainSlot() != -1) {
+                                toSelect = (short) te.getItemVendor(index).getBundleMainSlot();
                                 te.setSelectedName("bundle");
                             } else {
-                                te.setSelectedName(te.getInvItemStack(index).getDisplayName());
+                                te.setSelectedName(te.getItemVendor(index).getStack().getDisplayName());
                             }
 
                             te.setShort(TileVending.SHORT_SELECTED, toSelect);
                         }
 
-                        if (te.getInvItemStack(index).isEmpty()) { //Place 1
-                            player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, 1));
-                        } else {
-                            player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, 1));
+                        if (te.getItemVendor(index).getStack().isEmpty()) { //Place 1
+                            te.setItemVendor(index, new ItemVendor(copyPlayerStack, 1));
+                            copyPlayerStack.shrink(1);
                         }
                     }
                 } else if (dragType == 5) { //Quick Craft Right
-                    player.inventory.setItemStack(te.setInvItemAndSize(copyPlayerStack, index, 1));
+                    if (te.getItemVendor(index).getStack().isEmpty()) { //Place 1
+                        te.setItemVendor(index, new ItemVendor(copyPlayerStack, 1));
+                        copyPlayerStack.shrink(1);
+                    }
                 }
                 return ItemStack.EMPTY;
             } else { //SELL MODE
                 if (dragType == 0) { //LEFT CLICK
                     //If not in a bundle buy normally
-                    if (te.bundleMainSlot(index) == -1) {
+                    if (te.getItemVendor(index).getBundleMainSlot() == -1) {
                         buyItem(index, 1);
                     } else {
-                        buyBundle(te.bundleMainSlot(index));
+                        buyBundle(te.getItemVendor(index).getBundleMainSlot());
                     }
                 } else if (dragType == 1) { //RIGHT CLICK
                 }
@@ -285,13 +293,13 @@ public class ContainerVending extends Container {
                     for (int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) {
                         if (UtilMethods.equalStacks(itemStack, inventorySlots.get(GUI_INVENTORY_FIRST_INDEX + i).getStack())) {
                             int count = 0;
-                            if (te.getItemSize(i) + itemStack.getCount() <= te.getField(TileVending.FIELD_INVLIMIT)) {
+                            if (te.getItemVendor(i).getSize() + itemStack.getCount() <= te.getItemVendor(i).getSizeLimit()) {
                                 count = itemStack.getCount();
                             } else {
-                                count = te.getField(TileVending.FIELD_INVLIMIT) - te.getItemSize(i);
+                                count = te.getItemVendor(i).getSizeLimit() - te.getItemVendor(i).getSize();
                             }
                             copyStack.setCount(count);
-                            te.growInvItemSize(copyStack, i);
+                            te.setItemVendor(i, te.getItemVendor(i).growSize(copyStack.getCount()));
                             itemStack.shrink(count);
                             if (itemStack.getCount() == 0)
                                 this.inventorySlots.get(slotId).putStack(ItemStack.EMPTY);
@@ -385,7 +393,7 @@ public class ContainerVending extends Container {
 
     public ItemStack buyItem(int index, int count) {
         boolean infinite = te.getField(TileVending.FIELD_FINITE) == 0;
-        int amount = te.getItemAmnt(index);
+        int amount = te.getItemVendor(index).getAmount();
 
         //If Sneak button held down, show a full stack (or as close to it)
         //If Jump button held down, show half a stack (or as close to it)
@@ -397,9 +405,9 @@ public class ContainerVending extends Container {
 
         count = count * amount;
 
-        if (!te.getInvItemStack(index).isEmpty() && te.getItemSize(index) != 0) {
-            if (te.canAfford(index, count) && (amount <= te.getItemSize(index) || infinite)) {
-                ItemStack outputStack = te.getInvItemStack(index).copy();
+        if (!te.getItemVendor(index).getStack().isEmpty() && te.getItemVendor(index).getSize() != 0) {
+            if (te.canAfford(index, count) && (amount <= te.getItemVendor(index).getSize() || infinite)) {
+                ItemStack outputStack = te.getItemVendor(index).getStack().copy();
 
                 outputStack.setCount(count);
                 int outSlot = te.outputSlotCheck(outputStack, amount);
@@ -416,12 +424,12 @@ public class ContainerVending extends Container {
                     if (te.growOutItemSize(outputStack, outSlot).equals(ItemStack.EMPTY)) {
                         player.world.playSound(player.posX, player.posY, player.posZ, SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.BLOCKS, 0.05F, 5.0F, false);
 
-                        int newCashReserve = te.getField(TileEconomyBase.FIELD_CASHRESERVE) - (te.getItemCost(index) * (count / te.getItemAmnt(index)));
-                        int newCashRegister = te.getField(TileEconomyBase.FIELD_CASHREGISTER) + (te.getItemCost(index) * (count / te.getItemAmnt(index)));
+                        int newCashReserve = te.getField(TileEconomyBase.FIELD_CASHRESERVE) - (te.getItemVendor(index).getCost() * (count / te.getItemVendor(index).getAmount()));
+                        int newCashRegister = te.getField(TileEconomyBase.FIELD_CASHREGISTER) + (te.getItemVendor(index).getCost() * (count / te.getItemVendor(index).getAmount()));
                         te.setField(TileEconomyBase.FIELD_CASHRESERVE, newCashReserve);
                         te.setField(TileEconomyBase.FIELD_CASHREGISTER, newCashRegister);
                         if(!infinite)
-                            te.shrinkInvItemSize(count, index);
+                            te.setItemVendor(index, te.getItemVendor(index).shrinkSize(count));
                     }
 
                     return ItemStack.EMPTY;
@@ -437,29 +445,29 @@ public class ContainerVending extends Container {
     public ItemStack buyBundle(int mainIndex) {
         boolean infinite = te.getField(TileVending.FIELD_FINITE) == 0;
 
-        int[] bundle = te.getBundle(mainIndex);
+        int[] bundle = te.getItemVendor(mainIndex).getBundle();
 
         boolean empty = true;
         for (int i = 0; i < bundle.length; i++) {
-            if (te.getInvItemStack(bundle[i]).isEmpty() || ((te.getItemSize(bundle[i]) < te.getItemAmnt(bundle[i])) && !infinite))
+            if (te.getItemVendor(bundle[i]).getStack().isEmpty() || ((te.getItemVendor(bundle[i]).getSize() < te.getItemVendor(bundle[i]).getAmount()) && !infinite))
                 empty = false;
         }
 
-        if (empty && te.canAfford(mainIndex, te.getItemAmnt(mainIndex))) {
-            boolean canOutput = te.bundleOutSlotCheck(te.getBundle(mainIndex));
+        if (empty && te.canAfford(mainIndex, te.getItemVendor(mainIndex).getAmount())) {
+            boolean canOutput = te.bundleOutSlotCheck(te.getItemVendor(mainIndex).getBundle());
             if (canOutput) {
                 for (int i = 0; i < bundle.length; i++) {
-                    ItemStack outputStack = te.getInvItemStack(bundle[i]).copy();
-                    outputStack.setCount(te.getItemAmnt(bundle[i]));
-                    int outSlot = te.outputSlotCheck(outputStack, te.getItemAmnt(bundle[i]));
+                    ItemStack outputStack = te.getItemVendor(bundle[i]).getStack().copy();
+                    outputStack.setCount(te.getItemVendor(bundle[i]).getAmount());
+                    int outSlot = te.outputSlotCheck(outputStack, te.getItemVendor(bundle[i]).getAmount());
 
                     if (te.growOutItemSize(outputStack, outSlot).equals(ItemStack.EMPTY) && !infinite) {
-                        te.shrinkInvItemSize(te.getItemAmnt(bundle[i]), bundle[i]);
+                        te.setItemVendor(bundle[i], te.getItemVendor(bundle[i]).shrinkSize(te.getItemVendor(bundle[i]).getAmount()));
                     }
                 }
 
-                int newCashReserve = te.getField(TileEconomyBase.FIELD_CASHRESERVE) - (te.getItemCost(mainIndex));
-                int newCashRegister = te.getField(TileEconomyBase.FIELD_CASHREGISTER) + (te.getItemCost(mainIndex));
+                int newCashReserve = te.getField(TileEconomyBase.FIELD_CASHRESERVE) - (te.getItemVendor(mainIndex).getCost());
+                int newCashRegister = te.getField(TileEconomyBase.FIELD_CASHREGISTER) + (te.getItemVendor(mainIndex).getCost());
                 te.setField(TileEconomyBase.FIELD_CASHRESERVE, newCashReserve);
                 te.setField(TileEconomyBase.FIELD_CASHREGISTER, newCashRegister);
             }

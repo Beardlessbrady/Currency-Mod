@@ -64,7 +64,7 @@ public class RenderVending extends TileEntitySpecialRenderer<TileVending> {
                  ItemStack itemStack;
                  for (int i = 0; i < 5; i++) {
                      for (int j = 0; j < 5; j++) {
-                        itemStack = te.getInvItemStack((j + (i*5)));
+                        itemStack = te.getItemVendor((j + (i*5))).getStack();
 
                         GlStateManager.translate(-0.7, 0, 0);
                         if(!itemStack.isEmpty()) itemRenderer.renderItem(itemStack, ItemCameraTransforms.TransformType.FIXED);
