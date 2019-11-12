@@ -151,6 +151,7 @@ public class ItemVendor {
         compound.setTag("stack", itemStack.serializeNBT());
         if(size != 0) compound.setInteger("size", size);
         if(cost != 0) compound.setInteger("cost", cost);
+
         if(amount != 0) compound.setInteger("amount", amount);
         if(bundled != null) compound.setIntArray("bundled", bundled);
         if(itemMax != 0) compound.setInteger("itemMax", itemMax);
@@ -170,7 +171,9 @@ public class ItemVendor {
 
             if(nbt.hasKey("cost")){
                 cost = nbt.getInteger("cost");
-            }else cost = 0;
+            }else{
+                cost = 0;
+            }
 
             if(nbt.hasKey("amount")){
                 amount = nbt.getInteger("amount");

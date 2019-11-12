@@ -124,8 +124,8 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
         compound.setLong("serverTime", serverTime);
-        compound.setTag("inventory", inventoryStackHandler.serializeNBT());
 
+        compound.setTag("inventory", inventoryStackHandler.serializeNBT());
         compound.setTag("input", inputStackHandler.serializeNBT());
         compound.setTag("output", outputStackHandler.serializeNBT());
         compound.setBoolean("creative", creative);
