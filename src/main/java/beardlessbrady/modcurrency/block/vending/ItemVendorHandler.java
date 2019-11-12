@@ -48,7 +48,7 @@ public class ItemVendorHandler implements IItemHandler, IItemHandlerModifiable, 
                 compound.setTag(Integer.toString(i), itemArray[i].toNBT());
             }
         }
-        return new NBTTagCompound();
+        return compound;
     }
 
     public void deserializeNBT(NBTTagCompound nbt) {
@@ -106,6 +106,6 @@ public class ItemVendorHandler implements IItemHandler, IItemHandlerModifiable, 
 
     @Override
     public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
-        itemArray[slot] = new ItemVendor(stack);
+       //Breaks things, not sure what its for
     }
 }

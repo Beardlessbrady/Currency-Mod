@@ -125,12 +125,9 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         super.writeToNBT(compound);
         compound.setLong("serverTime", serverTime);
         compound.setTag("inventory", inventoryStackHandler.serializeNBT());
+
         compound.setTag("input", inputStackHandler.serializeNBT());
         compound.setTag("output", outputStackHandler.serializeNBT());
-
-
-
-
         compound.setBoolean("creative", creative);
         compound.setBoolean("finite", finite);
 
@@ -167,12 +164,13 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
         super.getUpdatePacket();
+
         NBTTagCompound compound = new NBTTagCompound();
 
         compound.setLong("serverTime", serverTime);
-      //  compound.setTag("inventory", inventoryStackHandler.serializeNBT());
-       // compound.setTag("input", inputStackHandler.serializeNBT());
-        //compound.setTag("output", outputStackHandler.serializeNBT());
+        compound.setTag("inventory", inventoryStackHandler.serializeNBT());
+        compound.setTag("input", inputStackHandler.serializeNBT());
+        compound.setTag("output", outputStackHandler.serializeNBT());
 
         compound.setBoolean("creative", creative);
         compound.setBoolean("finite", finite);
@@ -189,9 +187,9 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         super.onDataPacket(net, pkt);
         NBTTagCompound compound = pkt.getNbtCompound();
 
-      //  if(compound.hasKey("inventory")) inventoryStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("inventory"));
-      //  if(compound.hasKey("input")) inputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("input"));
-      //  if(compound.hasKey("output")) outputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("output"));
+       if(compound.hasKey("inventory")) inventoryStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("inventory"));
+       if(compound.hasKey("input")) inputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("input"));
+       if(compound.hasKey("output")) outputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("output"));
 
         if(compound.hasKey("serverTime")) serverTime = compound.getLong("serverTime");
         if(compound.hasKey("creative")) creative = compound.getBoolean("creative");

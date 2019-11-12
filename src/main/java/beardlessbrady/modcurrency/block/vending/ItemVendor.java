@@ -38,11 +38,11 @@ public class ItemVendor {
 
     public ItemVendor(ItemStack itemStack){
         this.itemStack = itemStack;
-        this.size = itemStack.getCount();
+
+        size = itemStack.getCount();
         itemStack.setCount(1);
 
-        this.cost = 0;
-
+        cost = 0;
         amount = 1;
         itemMax = 0;
         timeRaise = 0;
@@ -162,34 +162,34 @@ public class ItemVendor {
 
     public void fromNBT(NBTTagCompound nbt){
         if(nbt.hasKey("stack")){
-            itemStack.deserializeNBT(nbt.getCompoundTag("stack"));
-        }else itemStack = ItemStack.EMPTY;
+            itemStack = new ItemStack(nbt.getCompoundTag("stack"));
 
-        if(nbt.hasKey("size")) {
-            size = nbt.getInteger("size");
-        }else size = 0;
+            if(nbt.hasKey("size")) {
+                size = nbt.getInteger("size");
+            }else size = 0;
 
-        if(nbt.hasKey("cost")){
-            cost = nbt.getInteger("cost");
-        }else cost = 0;
+            if(nbt.hasKey("cost")){
+                cost = nbt.getInteger("cost");
+            }else cost = 0;
 
-        if(nbt.hasKey("amount")){
-            amount = nbt.getInteger("amount");
-        }else amount = 0;
+            if(nbt.hasKey("amount")){
+                amount = nbt.getInteger("amount");
+            }else amount = 0;
 
-        if(nbt.hasKey("bundled")) bundled = nbt.getIntArray("bundled");
+            if(nbt.hasKey("bundled")) bundled = nbt.getIntArray("bundled");
 
-        if(nbt.hasKey("itemMax")){
-            itemMax = nbt.getInteger("itemMax");
-        }else itemMax = 0;
+            if(nbt.hasKey("itemMax")){
+                itemMax = nbt.getInteger("itemMax");
+            }else itemMax = 0;
 
-        if(nbt.hasKey("timeRaise")){
-            timeRaise = nbt.getInteger("timeRaise");
-        }else timeRaise = 0;
+            if(nbt.hasKey("timeRaise")){
+                timeRaise = nbt.getInteger("timeRaise");
+            }else timeRaise = 0;
 
-        if(nbt.hasKey("timeElapsed")){
-            timeElapsed = nbt.getInteger("timeElapsed");
-        }else timeElapsed = 0;
+            if(nbt.hasKey("timeElapsed")){
+                timeElapsed = nbt.getInteger("timeElapsed");
+            }else timeElapsed = 0;
+        }
     }
 
     public ItemVendor shrinkSize(int amount){
