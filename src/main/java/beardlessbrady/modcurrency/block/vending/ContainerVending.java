@@ -172,7 +172,7 @@ public class ContainerVending extends Container {
                         } else {
                             int teSize = playerStack.getMaxStackSize() - playerStack.getCount();
                             playerStack.setCount(playerStack.getMaxStackSize());
-                            te.setItemVendor(i, te.getItemVendor(i).shrinkSize(teSize));
+                            te.getItemVendor(i).shrinkSize(teSize);
                         }
                         if (playerStack.getCount() == playerStack.getMaxStackSize())
                             break Loop;
@@ -197,25 +197,21 @@ public class ContainerVending extends Container {
                 }
                 if (dragType == 0 || (dragType == 1 && clickTypeIn == ClickType.QUICK_CRAFT)) { //Left Click
                     if (playerStack.isEmpty()) {
-                        if(!creative) {
+                        if (!creative) {
                             player.inventory.setItemStack(te.getItemVendor(index).shrinkSizeWithStackOutput(64));
-                            te.setItemVendor(index, te.getItemVendor(index).shrinkSize(64));
-                        }else{
-                            te.setItemVendor(index, te.getItemVendor(index).shrinkSize(64));
+                        } else {
+                            te.getItemVendor(index).shrinkSize(64);
                         }
                     } else {
-                        if(!creative) {
-                            if (te.getItemVendor(index).getStack().isEmpty()) {
-                                te.setItemVendor(index, new ItemVendor(copyPlayerStack));
+                        if (!creative) {
+                            if (te.getItemVendor(index).isEmpty()) {
                                 player.inventory.setItemStack(ItemStack.EMPTY);
+                                te.setItemVendor(index, new ItemVendor(copyPlayerStack));
+
                             } else {
-                                if (UtilMethods.equalStacks(playerStack, te.getItemVendor(index).getStack())) {
-                                    int playStackSize = copyPlayerStack.getCount();
-                                    player.inventory.setItemStack(te.getItemVendor(index).growSizeWithStack(copyPlayerStack));
-                                    te.setItemVendor(index, te.getItemVendor(index).growSize(playStackSize));
-                                }
+                                player.inventory.setItemStack(te.getItemVendor(index).growSizeWithStack(copyPlayerStack));
                             }
-                        }else{
+                        } else {
                             te.voidItem(index);
                             te.setItemVendor(index, new ItemVendor(copyPlayerStack, 1));
                         }
@@ -225,7 +221,7 @@ public class ContainerVending extends Container {
                     }
                 } else if (dragType == 1) { //Right Click
                     if (Keyboard.isKeyDown(keyBindings[1].getKeyCode())) {
-                        te.setItemVendor(index, te.getItemVendor(index).setBundle(new int[0]));
+                        te.getItemVendor(index).setBundle(new int[0]);
                     } else {
                         //Moves Selected Slot
                         if (!(te.getShort(TileVending.SHORT_SELECTED) == slotId)) {
@@ -299,7 +295,7 @@ public class ContainerVending extends Container {
                                 count = te.getItemVendor(i).getSizeLimit() - te.getItemVendor(i).getSize();
                             }
                             copyStack.setCount(count);
-                            te.setItemVendor(i, te.getItemVendor(i).growSize(copyStack.getCount()));
+                            te.getItemVendor(i).growSize(copyStack.getCount());
                             itemStack.shrink(count);
                             if (itemStack.getCount() == 0)
                                 this.inventorySlots.get(slotId).putStack(ItemStack.EMPTY);
@@ -430,7 +426,7 @@ public class ContainerVending extends Container {
                         te.setField(TileEconomyBase.FIELD_CASHRESERVE, newCashReserve);
                         te.setField(TileEconomyBase.FIELD_CASHREGISTER, newCashRegister);
                         if(!infinite)
-                            te.setItemVendor(index, te.getItemVendor(index).shrinkSize(count));
+                            te.getItemVendor(index).shrinkSize(count);
                     }
 
                     return ItemStack.EMPTY;
@@ -463,7 +459,7 @@ public class ContainerVending extends Container {
                     int outSlot = te.outputSlotCheck(outputStack, te.getItemVendor(bundle[i]).getAmount());
 
                     if (te.growOutItemSize(outputStack, outSlot).equals(ItemStack.EMPTY) && !infinite) {
-                        te.setItemVendor(bundle[i], te.getItemVendor(bundle[i]).shrinkSize(te.getItemVendor(bundle[i]).getAmount()));
+                        te.getItemVendor(bundle[i]).shrinkSize(te.getItemVendor(bundle[i]).getAmount());
                     }
                 }
 

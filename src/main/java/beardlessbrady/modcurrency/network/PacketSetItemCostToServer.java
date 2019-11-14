@@ -61,7 +61,7 @@ public class PacketSetItemCostToServer implements IMessage {
 
             if(tile instanceof TileVending){
                 TileVending te = ((TileVending) tile);
-                te.setItemVendor(te.getShort(TileVending.SHORT_SELECTED), te.getItemVendor(te.getShort(TileVending.SHORT_SELECTED)).setCost(message.data));
+                te.getItemVendor(te.getShort(TileVending.SHORT_SELECTED)).setCost(message.data);
             }
         }
     }

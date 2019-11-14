@@ -70,10 +70,10 @@ public class PacketSetItemVendorToServer implements IMessage {
                 TileVending tile = (TileVending) world.getTileEntity(message.blockPos);
                 switch(message.field){
                     case FIELD_ITEMMAX: //Restock
-                        tile.setItemVendor(message.element, tile.getItemVendor(message.element).setItemMax(message.data));
+                        tile.getItemVendor(message.element).setItemMax(message.data);
                         break;
                     case FIELD_TIMERAISE:
-                        tile.setItemVendor(message.element, tile.getItemVendor(message.element).setTimeRaise(message.data));
+                        tile.getItemVendor(message.element).setTimeRaise(message.data);
                         break;
                 }
             }

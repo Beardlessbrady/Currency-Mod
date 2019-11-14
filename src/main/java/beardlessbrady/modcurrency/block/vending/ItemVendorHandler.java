@@ -81,22 +81,26 @@ public class ItemVendorHandler implements IItemHandler, IItemHandlerModifiable, 
     @Nonnull
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
-        if(itemArray[slot] == null){
-            setItemVendor(slot, new ItemVendor(stack));
-            return ItemStack.EMPTY;
-        }else{
-           return itemArray[slot].growSizeWithStack(stack);
-        }
+      //  if(itemArray[slot] == null){
+       //     setItemVendor(slot, new ItemVendor(stack));
+        //    return ItemStack.EMPTY;
+      //  }else{
+       //    return itemArray[slot].growSizeWithStack(stack);
+     //   }
+
+        return ItemStack.EMPTY;
     }
 
     @Nonnull
     @Override
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
-        if(itemArray[slot] == null){
-            return ItemStack.EMPTY;
-        }else{
-          return itemArray[slot].shrinkSizeWithStackOutput(amount);
-        }
+      //  if(itemArray[slot] == null){
+     //       return ItemStack.EMPTY;
+     //   }else{
+       //   return itemArray[slot].shrinkSizeWithStackOutput(amount);
+      //  }
+
+        return ItemStack.EMPTY;
     }
 
     @Override

@@ -62,30 +62,24 @@ public class ItemVendor {
         return size;
     }
 
-    public ItemVendor setSize(int i){
+    public void setSize(int i){
         size = i;
-
-        return this;
     }
 
     public int getCost(){
         return cost;
     }
 
-    public ItemVendor setCost(int i){
+    public void setCost(int i){
         cost = i;
-
-        return this;
     }
 
     public int getAmount(){
         return amount;
     }
 
-    public ItemVendor setAmount(int i){
+    public void setAmount(int i){
         amount = i;
-
-        return this;
     }
 
     public boolean hasBundle(){
@@ -103,10 +97,8 @@ public class ItemVendor {
      * @param i = Array of bundle slots
      * main slot is 0
      */
-    public ItemVendor setBundle(int[] i){
+    public void setBundle(int[] i){
         bundled = i.clone();
-
-        return this;
     }
 
     public int getBundleMainSlot(){
@@ -120,30 +112,24 @@ public class ItemVendor {
         return itemMax;
     }
 
-    public ItemVendor setItemMax(int i){
+    public void setItemMax(int i){
         itemMax = i;
-
-        return this;
     }
 
     public int getTimeRaise(){
         return timeRaise;
     }
 
-    public ItemVendor setTimeRaise(int i){
+    public void setTimeRaise(int i){
         timeRaise = i;
-
-        return this;
     }
 
     public int getTimeElapsed(){
         return timeElapsed;
     }
 
-    public ItemVendor setTimeElapsed(int i){
+    public void setTimeElapsed(int i){
         timeElapsed = i;
-
-        return this;
     }
 
     public NBTTagCompound toNBT(){
@@ -195,20 +181,20 @@ public class ItemVendor {
         }
     }
 
-    public ItemVendor shrinkSize(int amount){
+    public void shrinkSize(int amount){
 
+        System.out.println("BEFORE " + size);
         size = size - amount;
+        System.out.println(size);
 
         if(size < 0) size = 0;
-
-        return this;
     }
 
     public ItemStack shrinkSizeWithStackOutput(int amount){
             ItemStack outputStack = this.getStack().copy();
             int output = this.size - amount;
 
-            if (size < 0) {
+            if (output < 0) {
                 size = 0;
                 outputStack.setCount(amount + output);
             } else {
@@ -221,20 +207,18 @@ public class ItemVendor {
 
     }
 
-    public ItemVendor growSize(int amount){
+    public void growSize(int amount){
         int maxCheck = sizeLimit - size - amount;
-
         if(maxCheck >= 0){
             size = size + amount;
-            return this;
         }else{
             size = size + (amount+maxCheck);
-            return this;
         }
     }
 
     public ItemStack growSizeWithStack(ItemStack stack){
         if(UtilMethods.equalStacks(this.getStack(), stack)) {
+            int amount = stack.getCount();
             int maxCheck = sizeLimit - size - amount;
 
             if (maxCheck >= 0) {
@@ -255,5 +239,9 @@ public class ItemVendor {
 
     public int getSizeLimit(){
         return sizeLimit;
+    }
+
+    public boolean isEmpty(){
+        return itemStack == ItemStack.EMPTY;
     }
 }

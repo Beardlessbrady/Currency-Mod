@@ -941,7 +941,7 @@ public class GuiVending extends GuiContainer {
                 newCost = Integer.valueOf(fieldPrice.getText()) * 100;
             }
 
-            te.setItemVendor(te.getShort(TileVending.SHORT_SELECTED), te.getItemVendor(te.getShort(TileVending.SHORT_SELECTED)).setCost(newCost));
+            te.getItemVendor(te.getShort(TileVending.SHORT_SELECTED)).setCost(newCost);
             PacketSetItemCostToServer pack = new PacketSetItemCostToServer();
             pack.setData(newCost, te.getPos());
             PacketHandler.INSTANCE.sendToServer(pack);
@@ -961,7 +961,7 @@ public class GuiVending extends GuiContainer {
 
             if (amount == 0) amount = 1;
 
-            te.setItemVendor(slot, te.getItemVendor(slot).setAmount(amount));
+            te.getItemVendor(slot).setAmount(amount);
             PacketSetItemAmntToServer pack = new PacketSetItemAmntToServer();
             pack.setData(amount, slot, te.getPos());
             PacketHandler.INSTANCE.sendToServer(pack);
@@ -974,7 +974,7 @@ public class GuiVending extends GuiContainer {
         if (guiTextField.getText().length() > 0) {
             int amount = Integer.parseInt(guiTextField.getText());
 
-            te.setItemVendor(te.getShort(SHORT_SELECTED), te.getItemVendor(te.getShort(SHORT_SELECTED)).setItemMax(amount));
+            te.getItemVendor(te.getShort(SHORT_SELECTED)).setItemMax(amount);
             PacketSetItemVendorToServer pack = new PacketSetItemVendorToServer();
             pack.setData(te.getShort(SHORT_SELECTED), amount, PacketSetItemVendorToServer.FIELD_ITEMMAX, te.getPos());
             PacketHandler.INSTANCE.sendToServer(pack);
@@ -987,7 +987,7 @@ public class GuiVending extends GuiContainer {
         if (guiTextField.getText().length() > 0) {
             int amount = Integer.parseInt(guiTextField.getText());
 
-            te.setItemVendor(te.getShort(SHORT_SELECTED), te.getItemVendor(te.getShort(SHORT_SELECTED)).setTimeRaise(amount));
+            te.getItemVendor(te.getShort(SHORT_SELECTED)).setTimeRaise(amount);
             PacketSetItemVendorToServer pack = new PacketSetItemVendorToServer();
             pack.setData(te.getShort(SHORT_SELECTED), amount, PacketSetItemVendorToServer.FIELD_TIMERAISE, te.getPos());
             PacketHandler.INSTANCE.sendToServer(pack);
@@ -1083,12 +1083,12 @@ public class GuiVending extends GuiContainer {
                         if (Math.abs(displacement) == 1 || Math.abs(displacement) == 5) {
                             if (te.getItemVendor(selectedSlot).getBundleMainSlot() != selectedSlot) {
                                 int[] bundle = {selectedSlot, slot};
-                                te.setItemVendor(selectedSlot, te.getItemVendor(selectedSlot).setBundle(bundle));
+                                te.getItemVendor(selectedSlot).setBundle(bundle);
                                 PacketSetItemBundleToServer pack0 = new PacketSetItemBundleToServer();
                                 pack0.setData(selectedSlot, bundle, te.getPos());
                                 PacketHandler.INSTANCE.sendToServer(pack0);
 
-                                te.setItemVendor(slot, te.getItemVendor(slot).setBundle(new int[]{selectedSlot}));
+                                te.getItemVendor(slot).setBundle(new int[]{selectedSlot});
                                 PacketSetItemBundleToServer pack = new PacketSetItemBundleToServer();
                                 pack.setData(slot, new int[]{selectedSlot}, te.getPos());
                                 PacketHandler.INSTANCE.sendToServer(pack);
@@ -1118,12 +1118,12 @@ public class GuiVending extends GuiContainer {
                                 System.arraycopy(oldBundle, 0, newBundle, 0, oldBundle.length);
 
                                 newBundle[newBundle.length - 1] = slot;
-                                te.setItemVendor(selectedSlot, te.getItemVendor(selectedSlot).setBundle(newBundle));
+                                te.getItemVendor(selectedSlot).setBundle(newBundle);
                                 PacketSetItemBundleToServer pack0 = new PacketSetItemBundleToServer();
                                 pack0.setData(selectedSlot, newBundle, te.getPos());
                                 PacketHandler.INSTANCE.sendToServer(pack0);
 
-                                te.setItemVendor(slot, te.getItemVendor(slot).setBundle(new int[]{selectedSlot}));
+                                te.getItemVendor(slot).setBundle(new int[]{selectedSlot});
                                 PacketSetItemBundleToServer pack = new PacketSetItemBundleToServer();
                                 pack.setData(slot, new int[]{selectedSlot}, te.getPos());
                                 PacketHandler.INSTANCE.sendToServer(pack);
