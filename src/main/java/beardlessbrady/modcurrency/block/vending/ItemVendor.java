@@ -4,8 +4,6 @@ import beardlessbrady.modcurrency.utilities.UtilMethods;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
-import javax.rmi.CORBA.Util;
-
 /**
  * This class was created by BeardlessBrady. It is distributed as
  * part of The Currency-Mod. Source Code located on github:

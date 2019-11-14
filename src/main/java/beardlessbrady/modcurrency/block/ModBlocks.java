@@ -21,11 +21,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
  */
 
 public class ModBlocks {
-    public static final BlockVending blockVending = new BlockVending();
-    public static final BlockTradein blockTradein = new BlockTradein();
+    public static BlockVending blockVending = new BlockVending();
+    public static BlockTradein blockTradein = new BlockTradein();
 
-
-    EconomyBlockBase[] blocks = {blockVending, blockTradein};
+    private EconomyBlockBase[] blocks = {blockVending, blockTradein};
 
     @SubscribeEvent
     public void registerBlocks(RegistryEvent.Register<Block> event){
