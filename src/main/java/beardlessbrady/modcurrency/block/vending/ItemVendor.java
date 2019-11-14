@@ -182,10 +182,7 @@ public class ItemVendor {
     }
 
     public void shrinkSize(int amount){
-
-        System.out.println("BEFORE " + size);
         size = size - amount;
-        System.out.println(size);
 
         if(size < 0) size = 0;
     }

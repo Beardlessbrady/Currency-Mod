@@ -26,6 +26,8 @@ import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import javax.annotation.Nullable;
 
+import static beardlessbrady.modcurrency.block.vending.TileVending.*;
+
 /**
  * This class was created by BeardlessBrady. It is distributed as
  * part of The Currency-Mod. Source Code located on github:
@@ -67,7 +69,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
     private String selectedName;
     private boolean creative, finite;
-    private short selectedSlot;
+    private int selectedSlot;
 
     //Color of machine
     private EnumDyeColor color;
@@ -133,7 +135,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
         compound.setString("selectedName", selectedName);
         compound.setInteger("color", color.getDyeDamage());
-        compound.setShort("selectedSlot", selectedSlot);
+        compound.setInteger("selectedSlot", selectedSlot);
 
         return compound;
     }
@@ -152,7 +154,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
         if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
         if(compound.hasKey("color")) color = EnumDyeColor.byDyeDamage(compound.getInteger("color"));
-        if(compound.hasKey("selectedSlot")) selectedSlot = compound.getShort("selectedSlot");
+        if(compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
     }
 
     @Override
@@ -177,7 +179,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
         compound.setString("selectedName", selectedName);
         compound.setInteger("color", color.getDyeDamage());
-        compound.setShort("selectedSlot", selectedSlot);
+        compound.setInteger("selectedSlot", selectedSlot);
 
         return new SPacketUpdateTileEntity(pos, 1, compound);
     }
@@ -197,7 +199,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
         if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
         if(compound.hasKey("color")) color = EnumDyeColor.byDyeDamage(compound.getInteger("color"));
-        if(compound.hasKey("selectedSlot")) selectedSlot = compound.getShort("selectedSlot");
+        if(compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
     }
 
     //</editor-fold>
@@ -221,10 +223,9 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     //</editor-fold>
 
     //<editor-fold desc="fields">
-    public static final int FIELD_CREATIVE = 4;
-    public static final int FIELD_FINITE = 5;
-
-    public static final int SHORT_SELECTED = 0;
+    public static final byte FIELD_CREATIVE = 4;
+    public static final byte FIELD_FINITE = 5;
+    public static final byte FIELD_SELECTED = 6;
 
     @Override
     public int getFieldCount(){
@@ -243,6 +244,10 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             case FIELD_FINITE:
                 finite = (value == 1);
                 break;
+            case FIELD_SELECTED:
+                selectedSlot = value;
+                break;
+
             default:
                 super.setField(id, value);
         }
@@ -261,26 +266,11 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
                 return (creative)? 1 : 0;
             case FIELD_FINITE:
                 return (finite)? 1 : 0;
+            case FIELD_SELECTED:
+                return selectedSlot;
             default:
                 return super.getField(id);
         }
-    }
-
-    public void setShort(int id, short value){
-        switch(id) {
-            case SHORT_SELECTED:
-                selectedSlot = value;
-                break;
-        }
-    }
-
-    public short getShort(int id){
-        switch(id) {
-            case SHORT_SELECTED:
-                return selectedSlot;
-        }
-
-        return 0;
     }
     //</editor-fold>
 

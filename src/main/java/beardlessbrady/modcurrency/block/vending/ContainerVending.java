@@ -20,6 +20,8 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 import org.lwjgl.input.Keyboard;
 
+import static beardlessbrady.modcurrency.block.vending.TileVending.*;
+
 /**
  * This class was created by BeardlessBrady. It is distributed as
  * part of The Currency-Mod. Source Code located on github:
@@ -224,7 +226,7 @@ public class ContainerVending extends Container {
                         te.getItemVendor(index).setBundle(new int[0]);
                     } else {
                         //Moves Selected Slot
-                        if (!(te.getShort(TileVending.SHORT_SELECTED) == slotId)) {
+                        if (!(te.getField(FIELD_SELECTED) == slotId)) {
                             short toSelect = (short)index;
                             if (te.getItemVendor(index).getBundleMainSlot() != -1) {
                                 toSelect = (short) te.getItemVendor(index).getBundleMainSlot();
@@ -233,7 +235,7 @@ public class ContainerVending extends Container {
                                 te.setSelectedName(te.getItemVendor(index).getStack().getDisplayName());
                             }
 
-                            te.setShort(TileVending.SHORT_SELECTED, toSelect);
+                            te.setField(FIELD_SELECTED, toSelect);
                         }
 
                         if (te.getItemVendor(index).getStack().isEmpty()) { //Place 1

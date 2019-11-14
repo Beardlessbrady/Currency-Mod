@@ -11,6 +11,8 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
+import static beardlessbrady.modcurrency.block.vending.TileVending.FIELD_SELECTED;
+
 /**
  * This class was created by BeardlessBrady. It is distributed as
  * part of The Currency-Mod. Source Code located on github:
@@ -26,6 +28,8 @@ public class PacketSetItemVendorToServer implements IMessage {
 
     public static final int FIELD_ITEMMAX = 0;
     public static final int FIELD_TIMERAISE = 1;
+    public static final int FIELD_COST = 2;
+    public static final int FIELD_AMOUNT = 3;
 
     public PacketSetItemVendorToServer(){}
 
@@ -75,6 +79,10 @@ public class PacketSetItemVendorToServer implements IMessage {
                     case FIELD_TIMERAISE:
                         tile.getItemVendor(message.element).setTimeRaise(message.data);
                         break;
+                    case FIELD_COST:
+                        tile.getItemVendor(tile.getField(FIELD_SELECTED)).setCost(message.data);
+                    case FIELD_AMOUNT:
+                        tile.getItemVendor(message.element).setAmount(message.data);
                 }
             }
         }
