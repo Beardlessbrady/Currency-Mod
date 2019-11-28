@@ -5,6 +5,9 @@ import beardlessbrady.modcurrency.ModCurrency;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.handler.StateHandler;
 import beardlessbrady.modcurrency.item.ModItems;
+import beardlessbrady.modcurrency.network.PacketHandler;
+import beardlessbrady.modcurrency.network.PacketSetItemVendorToServer;
+import beardlessbrady.modcurrency.proxy.ClientProxy;
 import beardlessbrady.modcurrency.utilities.UtilMethods;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,6 +27,8 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
+import org.lwjgl.input.Keyboard;
+
 import javax.annotation.Nullable;
 
 import static beardlessbrady.modcurrency.block.vending.TileVending.*;
@@ -71,6 +76,9 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     private boolean creative, finite;
     private int selectedSlot;
 
+    //KeyBinding
+    private boolean shift, control;
+
     //Color of machine
     private EnumDyeColor color;
 
@@ -80,6 +88,9 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         color = EnumDyeColor.GRAY;
         creative = false;
         finite = true;
+
+        shift = false;
+        control = false;
     }
 
     @Override
@@ -517,5 +528,28 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
     public void voidItem(int i){
         inventoryStackHandler.voidSlot(i);
+    }
+
+    public static final byte KEY_SHIFT = 0;
+    public static final byte KEY_CONTROL = 1;
+
+    public void setKey(int key, boolean bool){
+        switch(key){
+            case KEY_CONTROL:
+                control = bool;
+                break;
+            case KEY_SHIFT:
+                shift = bool;
+                break;
+        }
+    }
+
+    public boolean getKey(int key){
+        switch(key){
+            case KEY_CONTROL: return control;
+            case KEY_SHIFT: return shift;
+        }
+
+        return false;
     }
 }

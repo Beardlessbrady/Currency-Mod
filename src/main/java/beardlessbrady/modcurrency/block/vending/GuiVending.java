@@ -321,8 +321,42 @@ public class GuiVending extends GuiContainer {
                             //If Jump button held down, show half a stack (or as close to it)
                             if (Keyboard.isKeyDown(keyBindings[0].getKeyCode())) {
                                 startAmount = te.sneakFullStack(index, startAmount);
-                            } else if (Keyboard.isKeyDown(keyBindings[1].getKeyCode())) {
+
+                                if(!te.getKey(KEY_SHIFT)){
+                                    te.setKey(KEY_SHIFT, true);
+
+                                    PacketSendKeyToServer pack = new PacketSendKeyToServer();
+                                    pack.setData(te.getPos(), KEY_SHIFT, true);
+                                    PacketHandler.INSTANCE.sendToServer(pack);
+                                }
+                            }else{
+                                if(te.getKey(KEY_SHIFT)) {
+                                    te.setKey(KEY_SHIFT, false);
+
+                                    PacketSendKeyToServer pack = new PacketSendKeyToServer();
+                                    pack.setData(te.getPos(), KEY_SHIFT, false);
+                                    PacketHandler.INSTANCE.sendToServer(pack);
+                                }
+                            }
+
+                            if (Keyboard.isKeyDown(keyBindings[1].getKeyCode())) {
                                 startAmount = te.jumpHalfStack(index, startAmount);
+
+                                if (!te.getKey(KEY_CONTROL)) {
+                                    te.setKey(KEY_CONTROL, true);
+
+                                    PacketSendKeyToServer pack = new PacketSendKeyToServer();
+                                    pack.setData(te.getPos(), KEY_CONTROL, true);
+                                    PacketHandler.INSTANCE.sendToServer(pack);
+                                }
+                            }else{
+                                if(te.getKey(KEY_CONTROL)){
+                                    te.setKey(KEY_CONTROL, false);
+
+                                    PacketSendKeyToServer pack = new PacketSendKeyToServer();
+                                    pack.setData(te.getPos(), KEY_CONTROL, false);
+                                    PacketHandler.INSTANCE.sendToServer(pack);
+                                }
                             }
                         }
 
@@ -550,95 +584,97 @@ public class GuiVending extends GuiContainer {
         Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
         for (int slot = 0; slot < te.TE_INVENTORY_SLOT_COUNT; slot++) {
             if (te.getItemVendor(slot).hasBundle()) {
-                int[] bundle = te.getItemVendor(slot).getBundle();
-                if (bundle[0] == slot) { //is the main slot
-                    int slotColumn = 0, slotRow;
+                if(te.getItemVendor(slot).hasBundle()) {
+                    int[] bundle = te.getItemVendor(slot).getBundle();
+                    if (bundle[0] == slot) { //is the main slot
+                        int slotColumn = 0, slotRow;
 
-                    if (slot <= 4) {
-                        slotRow = slot;
-                    } else if (slot <= 9) {
-                        slotColumn = 1;
-                        slotRow = (slot) - 5;
-                    } else if (slot <= 14) {
-                        slotColumn = 2;
-                        slotRow = (slot) - 10;
-                    } else if (slot <= 19) {
-                        slotColumn = 3;
-                        slotRow = (slot) - 15;
-                    } else {
-                        slotColumn = 4;
-                        slotRow = (slot) - 20;
-                    }
+                        if (slot <= 4) {
+                            slotRow = slot;
+                        } else if (slot <= 9) {
+                            slotColumn = 1;
+                            slotRow = (slot) - 5;
+                        } else if (slot <= 14) {
+                            slotColumn = 2;
+                            slotRow = (slot) - 10;
+                        } else if (slot <= 19) {
+                            slotColumn = 3;
+                            slotRow = (slot) - 15;
+                        } else {
+                            slotColumn = 4;
+                            slotRow = (slot) - 20;
+                        }
 
-                    //Check which direction bundle is going
-                    int direction = 0; //0=Left, 1=Right, 2=Down, 3=Up
-                    int endDirection = 0;
+                        //Check which direction bundle is going
+                        int direction = 0; //0=Left, 1=Right, 2=Down, 3=Up
+                        int endDirection = 0;
 
-                    if (te.getItemVendor(slot - 1).getBundleMainSlot() == slot) {
-                        endDirection = 1;
-                    } else if (te.getItemVendor(slot + 1).getBundleMainSlot() == slot) {
-                        direction = 1;
-                        endDirection = 0;
-                    } else if (te.getItemVendor(slot + 5).getBundleMainSlot() == slot) {
-                        direction = 2;
-                        endDirection = 3;
-                    } else if (te.getItemVendor(slot - 5).getBundleMainSlot() == slot) {
-                        direction = 3;
-                        endDirection = 2;
-                    }
+                        if (te.getItemVendor(slot - 1).getBundleMainSlot() == slot) {
+                            endDirection = 1;
+                        } else if (te.getItemVendor(slot + 1).getBundleMainSlot() == slot) {
+                            direction = 1;
+                            endDirection = 0;
+                        } else if (te.getItemVendor(slot + 5).getBundleMainSlot() == slot) {
+                            direction = 2;
+                            endDirection = 3;
+                        } else if (te.getItemVendor(slot - 5).getBundleMainSlot() == slot) {
+                            direction = 3;
+                            endDirection = 2;
+                        }
 
-                    int yChange = 0;
-                    if (te.getField(FIELD_SELECTED) == slot && te.getField(FIELD_MODE) == 1) { //Selected is on a bundle
-                        yChange = 21;
-                    }
+                        int yChange = 0;
+                        if (te.getField(FIELD_SELECTED) == slot && te.getField(FIELD_MODE) == 1) { //Selected is on a bundle
+                            yChange = 21;
+                        }
 
-                    //Starting
-                    drawTexturedModalRect(42 + (18 * slotRow), -32 + (18 * slotColumn), 21 * direction, 130 + yChange, 20, 20);
+                        //Starting
+                        drawTexturedModalRect(42 + (18 * slotRow), -32 + (18 * slotColumn), 21 * direction, 130 + yChange, 20, 20);
 
-                    int forIncrement = 1;
-                    switch (direction) {
-                        case 0:
-                            forIncrement = -1;
-                            break;
-                        case 2:
-                            forIncrement = 5;
-                            break;
-                        case 3:
-                            forIncrement = -5;
-                            break;
-                    }
+                        int forIncrement = 1;
+                        switch (direction) {
+                            case 0:
+                                forIncrement = -1;
+                                break;
+                            case 2:
+                                forIncrement = 5;
+                                break;
+                            case 3:
+                                forIncrement = -5;
+                                break;
+                        }
 
-                    for (int i = 1; i < bundle.length; i++) {
-                        int slotColumn2 = 0;
-                        int slotRow2 = 0;
-                        int slot2 = slot + (forIncrement * i);
-                        if (te.getItemVendor(slot2).getBundleMainSlot() == slot) {
+                        for (int i = 1; i < bundle.length; i++) {
+                            int slotColumn2 = 0;
+                            int slotRow2 = 0;
+                            int slot2 = slot + (forIncrement * i);
+                            if (te.getItemVendor(slot2).getBundleMainSlot() == slot) {
 
-                            if (slot2 >= 0 && slot2 <= 4) {
-                                slotRow2 = slot2;
-                            } else if (slot2 >= 5 && slot2 <= 9) {
-                                slotColumn2 = 1;
-                                slotRow2 = (slot2) - 5;
-                            } else if (slot2 >= 10 && slot2 <= 14) {
-                                slotColumn2 = 2;
-                                slotRow2 = (slot2) - 10;
-                            } else if (slot2 >= 15 && slot2 <= 19) {
-                                slotColumn2 = 3;
-                                slotRow2 = (slot2) - 15;
-                            } else if (slot2 >= 20 && slot2 <= 24) {
-                                slotColumn2 = 4;
-                                slotRow2 = (slot2) - 20;
-                            }
-
-                            if (te.getItemVendor(slot2 + (forIncrement)).getBundleMainSlot() == slot) { //This slot is NOT the end of the bundle
-                                if (direction == 0 || direction == 1) {
-                                    drawTexturedModalRect(42 + (18 * slotRow2), -32 + (18 * slotColumn2), 84, 130 + yChange, 20, 20);
-                                } else {
-                                    drawTexturedModalRect(42 + (18 * slotRow2), -32 + (18 * slotColumn2), 105, 130 + yChange, 20, 20);
-
+                                if (slot2 >= 0 && slot2 <= 4) {
+                                    slotRow2 = slot2;
+                                } else if (slot2 >= 5 && slot2 <= 9) {
+                                    slotColumn2 = 1;
+                                    slotRow2 = (slot2) - 5;
+                                } else if (slot2 >= 10 && slot2 <= 14) {
+                                    slotColumn2 = 2;
+                                    slotRow2 = (slot2) - 10;
+                                } else if (slot2 >= 15 && slot2 <= 19) {
+                                    slotColumn2 = 3;
+                                    slotRow2 = (slot2) - 15;
+                                } else if (slot2 >= 20 && slot2 <= 24) {
+                                    slotColumn2 = 4;
+                                    slotRow2 = (slot2) - 20;
                                 }
-                            } else { //This slot IS the end of the bundle
-                                drawTexturedModalRect(42 + (18 * slotRow2), -32 + (18 * slotColumn2), 21 * endDirection, 130 + yChange, 20, 20);
+
+                                if (te.getItemVendor(slot2 + (forIncrement)).getBundleMainSlot() == slot) { //This slot is NOT the end of the bundle
+                                    if (direction == 0 || direction == 1) {
+                                        drawTexturedModalRect(42 + (18 * slotRow2), -32 + (18 * slotColumn2), 84, 130 + yChange, 20, 20);
+                                    } else {
+                                        drawTexturedModalRect(42 + (18 * slotRow2), -32 + (18 * slotColumn2), 105, 130 + yChange, 20, 20);
+
+                                    }
+                                } else { //This slot IS the end of the bundle
+                                    drawTexturedModalRect(42 + (18 * slotRow2), -32 + (18 * slotColumn2), 21 * endDirection, 130 + yChange, 20, 20);
+                                }
                             }
                         }
                     }

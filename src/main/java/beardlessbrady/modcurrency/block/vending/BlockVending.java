@@ -41,7 +41,7 @@ import javax.annotation.Nullable;
  * File Created 2019-02-10
  */
 
-public class BlockVending extends EconomyBlockBase implements IBlockColor {
+public class BlockVending extends EconomyBlockBase {
 
     public BlockVending() {
         super("blockvending", TileVending.class);
@@ -234,11 +234,5 @@ public class BlockVending extends EconomyBlockBase implements IBlockColor {
     public boolean canRenderInLayer(IBlockState state, BlockRenderLayer layer) {
         return layer == BlockRenderLayer.TRANSLUCENT || layer == BlockRenderLayer.SOLID;
     }
-
-    @Override
-    public int colorMultiplier(IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int tintIndex) {
-        return 0;
-    }
-
     //</editor-fold>
 }

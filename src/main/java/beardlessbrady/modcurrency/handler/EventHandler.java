@@ -3,10 +3,15 @@ package beardlessbrady.modcurrency.handler;
 import beardlessbrady.modcurrency.block.ModBlocks;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.block.vending.BlockVending;
+import beardlessbrady.modcurrency.proxy.ClientProxy;
 import net.minecraft.block.Block;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.InputEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
@@ -31,8 +36,6 @@ public class EventHandler {
             if (!((e.getEntityPlayer().getUniqueID().equals(tile.getOwner())) || e.getEntityPlayer().isCreative())) {     //If not Owner (and not in creative) Can't Break
                 e.setCanceled(true);
             }
-
-
         }
     }
 }

@@ -31,6 +31,7 @@ public class PacketHandler {
         INSTANCE.registerMessage(PacketSetItemVendorToServer.Handler.class, PacketSetItemVendorToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketSetItemBundleToServer.Handler.class, PacketSetItemBundleToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketOutChangeToServer.Handler.class, PacketOutChangeToServer.class, index++, Side.SERVER);
+        INSTANCE.registerMessage(PacketSendKeyToServer.Handler.class, PacketSendKeyToServer.class, index++, Side.SERVER);
         return index;
     }
 

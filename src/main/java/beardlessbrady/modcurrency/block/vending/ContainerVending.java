@@ -52,8 +52,6 @@ public class ContainerVending extends Container {
     public final int GUI_INVENTORY_FIRST_INDEX = GUI_INPUT_INDEX + TE_INPUT_SLOT_COUNT;
     public final int GUI_OUTPUT_FIRST_INDEX = GUI_INVENTORY_FIRST_INDEX + TE_INVENTORY_SLOT_COUNT;
 
-    private final KeyBinding[] keyBindings = ClientProxy.keyBindings.clone();
-
     final int TE_INV_COLUMN_COUNT = 5;
     final int TE_INV_ROW_COUNT = 5;
 
@@ -129,6 +127,9 @@ public class ContainerVending extends Container {
         ItemStack playerStack = player.inventory.getItemStack();
         ItemStack copyPlayerStack = playerStack.copy();
 
+        System.out.println(clickTypeIn);
+
+
         //Ensures Pickup_All works without pulling from the wrong slots
         //<editor-fold desc="PICKUP ALL">
         if (clickTypeIn == ClickType.PICKUP_ALL) {
@@ -198,6 +199,7 @@ public class ContainerVending extends Container {
                     te.voidItem(index);
                 }
                 if (dragType == 0 || (dragType == 1 && clickTypeIn == ClickType.QUICK_CRAFT)) { //Left Click
+                    System.out.println(dragType);
                     if (playerStack.isEmpty()) {
                         if (!creative) {
                             player.inventory.setItemStack(te.getItemVendor(index).shrinkSizeWithStackOutput(64));
@@ -222,7 +224,7 @@ public class ContainerVending extends Container {
                         te.voidItem(index);
                     }
                 } else if (dragType == 1) { //Right Click
-                    if (Keyboard.isKeyDown(keyBindings[1].getKeyCode())) {
+                    if (te.getKey(KEY_SHIFT)) {
                         te.getItemVendor(index).setBundle(new int[0]);
                     } else {
                         //Moves Selected Slot
@@ -234,19 +236,17 @@ public class ContainerVending extends Container {
                             } else {
                                 te.setSelectedName(te.getItemVendor(index).getStack().getDisplayName());
                             }
-
                             te.setField(FIELD_SELECTED, toSelect);
                         }
-
                         if (te.getItemVendor(index).getStack().isEmpty()) { //Place 1
                             te.setItemVendor(index, new ItemVendor(copyPlayerStack, 1));
-                            copyPlayerStack.shrink(1);
+                            playerStack.shrink(1);
                         }
                     }
                 } else if (dragType == 5) { //Quick Craft Right
                     if (te.getItemVendor(index).getStack().isEmpty()) { //Place 1
                         te.setItemVendor(index, new ItemVendor(copyPlayerStack, 1));
-                        copyPlayerStack.shrink(1);
+                        playerStack.shrink(1);
                     }
                 }
                 return ItemStack.EMPTY;
@@ -396,12 +396,11 @@ public class ContainerVending extends Container {
 
         //If Sneak button held down, show a full stack (or as close to it)
         //If Jump button held down, show half a stack (or as close to it)
-        if (Keyboard.isKeyDown(keyBindings[0].getKeyCode())) {
+        if (te.getKey(KEY_SHIFT)) {
             amount = te.sneakFullStack(index, amount);
-        } else if (Keyboard.isKeyDown(keyBindings[1].getKeyCode())) {
+        } else if (te.getKey(KEY_CONTROL)) {
             amount = te.jumpHalfStack(index, amount);
         }
-
         count = count * amount;
 
         if (!te.getItemVendor(index).getStack().isEmpty() && te.getItemVendor(index).getSize() != 0) {
