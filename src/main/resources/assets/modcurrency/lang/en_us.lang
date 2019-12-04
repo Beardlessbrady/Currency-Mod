@@ -1,6 +1,6 @@
-//Vending Machine
+//Block Names
 tile.modcurrency:blockvending.name=Vending Machine
-
+tile.modcurrency:blocktradein.name=Trade-in Machine
 
 guivending.in=IN
 guivending.out=OUT
@@ -18,6 +18,8 @@ guivending.help.max=Buy max stack
 guivending.help.half=Buy half stack
 guivending.help.create=Create Bundles
 guivending.help.delete=Delete Bundles
+
+guitradein.
 
 key.goodolcurrency.category=Good Ol' Currency
 key.shift.desc=GOC Key 1

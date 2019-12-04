@@ -8,6 +8,9 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -36,12 +39,41 @@ public class BlockTradein extends EconomyBlockBase {
 
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        //Opens GUI if CLIENT SIDE
-        if (!worldIn.isRemote) {
-            ((TileTradein) getTile(worldIn, pos)).openGui(playerIn, worldIn, pos);
-            return true;
-        }
+        TileTradein tile = (TileTradein) getTile(worldIn, pos);
 
+        //Checks if no other player is using the block, if not then allows access to GUI
+        if (TileEconomyBase.EMPTYID.equals(getTile(worldIn, pos).getPlayerUsing())) {
+            if(playerIn.getHeldItemMainhand().getItem() == Items.DYE){
+
+                if(!playerIn.isCreative())
+                    playerIn.getHeldItemMainhand().shrink(1);
+
+                tile.setColor(EnumDyeColor.byDyeDamage(playerIn.getHeldItemMainhand().getItemDamage()));
+
+                worldIn.markBlockRangeForRenderUpdate(pos, pos);
+                worldIn.notifyBlockUpdate(pos, worldIn.getBlockState(pos), worldIn.getBlockState(pos), 3);
+                worldIn.scheduleBlockUpdate(pos, this,0,0);
+                tile.markDirty();
+            }else {
+
+               // tile.restock();
+
+                //If Sneaking and the player is the owner of the machine it will auto open the machine into STOCK MODE
+                if (playerIn.isSneaking() && tile.getOwner().equals(playerIn.getUniqueID())) {
+                    tile.setField(TileEconomyBase.FIELD_MODE, 1);
+                } else {
+                    tile.setField(TileEconomyBase.FIELD_MODE, 0);
+                }
+
+                playerIn.playSound(SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN,0.2F, -100.0F);
+
+                //Opens GUI if CLIENT SIDE
+                if (!worldIn.isRemote) {
+                    ((TileTradein) getTile(worldIn, pos)).openGui(playerIn, worldIn, pos);
+                    return true;
+                }
+            }
+        }
         return true;
     }
 
@@ -130,16 +162,6 @@ public class BlockTradein extends EconomyBlockBase {
     public void registerModel() {
         super.registerModel();
         ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
-    }
-
-    @Override
-    public boolean isFullCube(IBlockState state) {
-        return false;
-    }
-
-    @Override
-    public boolean isOpaqueCube(IBlockState state) {
-        return false;
     }
     //</editor-fold>
 

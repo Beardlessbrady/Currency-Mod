@@ -1,12 +1,15 @@
 package beardlessbrady.modcurrency.block.tradein;
 
+import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.proxy.ClientProxy;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -149,5 +152,14 @@ public class ContainerTradein extends Container {
     @Override
     public void onContainerClosed(EntityPlayer playerIn) {
         super.onContainerClosed(playerIn);
+        te.getWorld().scheduleBlockUpdate(te.getPos(), te.getBlockType(), 1,1);
+
+        playerIn.playSound(SoundEvents.BLOCK_IRON_TRAPDOOR_CLOSE,0.2F, -100.0F);
+
+        te.voidPlayerUsing();
+        te.setField(TileEconomyBase.FIELD_MODE, 0);
+
+        boolean success = false;
+        boolean items = false;
     }
 }
