@@ -3,7 +3,7 @@
   "defaults": {
     "model": "modcurrency:tradeinbottom",
     "textures": {
-      "texture": "modcurrency:blocks/tradein",
+      "texture": "modcurrency:blocks/blocktradein",
       "particle": "blocks/coal_block"
     },
     "transform": "forge:default-block"
