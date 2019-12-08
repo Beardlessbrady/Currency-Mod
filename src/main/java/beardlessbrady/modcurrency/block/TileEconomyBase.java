@@ -19,10 +19,11 @@ import java.util.UUID;
  */
 
 public class TileEconomyBase extends TileEntity {
-    protected int cashReserve, cashRegister;
+    protected int cashReserve, cashRegister, selectedSlot;
     protected EnumDyeColor color;
     protected boolean mode;
     protected UUID owner, playerUsing;
+    protected String selectedName;
 
     public static UUID EMPTYID = new UUID(0L, 0L);
 
@@ -31,6 +32,8 @@ public class TileEconomyBase extends TileEntity {
         cashRegister = 0;
         mode = false;
         color = EnumDyeColor.GRAY;
+
+        selectedName = "No Item Selected";
 
         owner = new UUID(0L, 0L);
         playerUsing = EMPTYID;
@@ -46,6 +49,8 @@ public class TileEconomyBase extends TileEntity {
         compound.setBoolean("mode", mode);
         compound.setUniqueId("playerUsing", playerUsing);
         compound.setUniqueId("owner", owner);
+        compound.setInteger("selectedSlot", selectedSlot);
+        compound.setString("selectedName", selectedName);
 
         return compound;
     }
@@ -59,6 +64,8 @@ public class TileEconomyBase extends TileEntity {
         if (compound.hasKey("mode")) mode = compound.getBoolean("mode");
         if (compound.hasKey("playerUsing")) playerUsing = compound.getUniqueId("playerUsing");
         if (compound.hasUniqueId("owner")) owner = compound.getUniqueId("owner");
+        if(compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
+        if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
 
     }
 
@@ -77,6 +84,9 @@ public class TileEconomyBase extends TileEntity {
         compound.setBoolean("mode", mode);
         compound.setUniqueId("playerUsing", playerUsing);
         compound.setUniqueId("owner", owner);
+        compound.setInteger("selectedSlot", selectedSlot);
+        compound.setString("selectedName", selectedName);
+
 
         return new SPacketUpdateTileEntity(pos, 1, compound);
     }
@@ -92,6 +102,8 @@ public class TileEconomyBase extends TileEntity {
         if(compound.hasKey("cashRegister")) cashRegister = compound.getInteger("cashRegister");
         if(compound.hasKey("playerUsing")) playerUsing = compound.getUniqueId("playerUsing");
         if(compound.hasUniqueId("owner")) owner = compound.getUniqueId("owner");
+        if(compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
+        if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
 
     }
     //</editor-fold>
@@ -100,9 +112,10 @@ public class TileEconomyBase extends TileEntity {
     public static final int FIELD_MODE = 0;
     public static final int FIELD_CASHRESERVE = 1;
     public static final int FIELD_CASHREGISTER = 2;
+    public static final byte FIELD_SELECTED = 6;
 
     public int getFieldCount(){
-        return 3;
+        return 4;
     }
 
     public void setField(int id, int value){
@@ -116,6 +129,9 @@ public class TileEconomyBase extends TileEntity {
             case FIELD_CASHREGISTER:
                 cashRegister = value;
                 break;
+            case FIELD_SELECTED:
+                selectedSlot = value;
+                break;
         }
     }
 
@@ -127,6 +143,8 @@ public class TileEconomyBase extends TileEntity {
                 return cashReserve;
             case FIELD_CASHREGISTER:
                 return cashRegister;
+            case FIELD_SELECTED:
+                return selectedSlot;
         }
         return 0;
     }
@@ -161,6 +179,15 @@ public class TileEconomyBase extends TileEntity {
 
     public void setColor(EnumDyeColor newColor){
         color = newColor;
+    }
+
+    public String getSelectedName(){
+        if(selectedName.equals("Air")) return "No Item";
+        return selectedName;
+    }
+
+    public void setSelectedName(String name){
+        selectedName = name;
     }
 
 

@@ -71,10 +71,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
     //Used for Creative auto refill of item slots
     private long serverTime;
-
-    private String selectedName;
     private boolean creative, finite;
-    private int selectedSlot;
 
     //KeyBinding
     private boolean shift, control;
@@ -84,7 +81,6 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
     public TileVending(){
         serverTime = 0;
-        selectedName = "No Item Selected";
         color = EnumDyeColor.GRAY;
         creative = false;
         finite = true;
@@ -143,10 +139,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         compound.setTag("output", outputStackHandler.serializeNBT());
         compound.setBoolean("creative", creative);
         compound.setBoolean("finite", finite);
-
-        compound.setString("selectedName", selectedName);
         compound.setInteger("color", color.getDyeDamage());
-        compound.setInteger("selectedSlot", selectedSlot);
 
         return compound;
     }
@@ -163,9 +156,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         if(compound.hasKey("creative")) creative = compound.getBoolean("creative");
         if(compound.hasKey("finite")) finite = compound.getBoolean("finite");
 
-        if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
         if(compound.hasKey("color")) color = EnumDyeColor.byDyeDamage(compound.getInteger("color"));
-        if(compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
     }
 
     @Override
@@ -188,9 +179,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         compound.setBoolean("creative", creative);
         compound.setBoolean("finite", finite);
 
-        compound.setString("selectedName", selectedName);
         compound.setInteger("color", color.getDyeDamage());
-        compound.setInteger("selectedSlot", selectedSlot);
 
         return new SPacketUpdateTileEntity(pos, 1, compound);
     }
@@ -207,10 +196,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         if(compound.hasKey("serverTime")) serverTime = compound.getLong("serverTime");
         if(compound.hasKey("creative")) creative = compound.getBoolean("creative");
         if(compound.hasKey("finite")) finite = compound.getBoolean("finite");
-
-        if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
         if(compound.hasKey("color")) color = EnumDyeColor.byDyeDamage(compound.getInteger("color"));
-        if(compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
     }
 
     //</editor-fold>
@@ -236,11 +222,10 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     //<editor-fold desc="fields">
     public static final byte FIELD_CREATIVE = 4;
     public static final byte FIELD_FINITE = 5;
-    public static final byte FIELD_SELECTED = 6;
 
     @Override
     public int getFieldCount(){
-        return super.getFieldCount() + 3;
+        return super.getFieldCount() + 2;
     }
 
     @Override
@@ -254,9 +239,6 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
                 break;
             case FIELD_FINITE:
                 finite = (value == 1);
-                break;
-            case FIELD_SELECTED:
-                selectedSlot = value;
                 break;
 
             default:
@@ -277,22 +259,12 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
                 return (creative)? 1 : 0;
             case FIELD_FINITE:
                 return (finite)? 1 : 0;
-            case FIELD_SELECTED:
-                return selectedSlot;
             default:
                 return super.getField(id);
         }
     }
     //</editor-fold>
 
-    public String getSelectedName(){
-        if(selectedName.equals("Air")) return "No Item";
-        return selectedName;
-    }
-
-    public void setSelectedName(String name){
-        selectedName = name;
-    }
 
     public boolean canAfford(int slot, int amount){
         if(inventoryStackHandler.getItemVendor(slot).getCost() * (amount / inventoryStackHandler.getItemVendor(slot).getAmount()) <= getField(TileEconomyBase.FIELD_CASHRESERVE))

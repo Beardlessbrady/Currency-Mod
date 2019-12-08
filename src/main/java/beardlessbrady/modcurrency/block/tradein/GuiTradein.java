@@ -15,6 +15,7 @@ import java.awt.*;
 import java.io.IOException;
 
 import static beardlessbrady.modcurrency.block.TileEconomyBase.FIELD_MODE;
+import static beardlessbrady.modcurrency.block.TileEconomyBase.FIELD_SELECTED;
 import static beardlessbrady.modcurrency.block.vending.TileVending.FIELD_FINITE;
 
 /**
@@ -28,6 +29,7 @@ import static beardlessbrady.modcurrency.block.vending.TileVending.FIELD_FINITE;
 
 public class GuiTradein extends GuiContainer {
     private static final ResourceLocation BACK_TEXTURE = new ResourceLocation(ModCurrency.MODID, "textures/gui/tradeingui.png");
+    private static final ResourceLocation ASSET_TEXTURE = new ResourceLocation(ModCurrency.MODID, "textures/gui/guiassets.png");
 
     private TileTradein te;
 
@@ -73,6 +75,36 @@ public class GuiTradein extends GuiContainer {
         fontRenderer.drawString(I18n.format("container.inventory"), 8, 87, Color.darkGray.getRGB());
         fontRenderer.drawString(I18n.format("guivending.in"), 18, 3, Color.lightGray.getRGB());
         fontRenderer.drawString(I18n.format("guivending.out"), 145, 3, Color.lightGray.getRGB());
+
+        if (te.getField(FIELD_MODE) == 1) {
+            //Draws the red selection overlay when determining which slot is selected
+            drawSelectionOverlay();
+        }
+    }
+
+    private void drawSelectionOverlay() {
+        Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
+        if (te.getField(TileTradein.FIELD_MODE) == 1) {
+            int slotId = te.getField(FIELD_SELECTED);
+            int slotColumn = 0, slotRow = 0;
+
+            if (slotId >= 0 && slotId <= 4) {
+                slotRow = slotId;
+            } else if (slotId >= 5 && slotId <= 9) {
+                slotColumn = 1;
+                slotRow = (slotId) - 5;
+            } else if (slotId >= 10 && slotId <= 14) {
+                slotColumn = 2;
+                slotRow = (slotId) - 10;
+            } else if (slotId >= 15 && slotId <= 19) {
+                slotColumn = 3;
+                slotRow = (slotId) - 15;
+            } else if (slotId >= 20 && slotId <= 24) {
+                slotColumn = 4;
+                slotRow = (slotId) - 20;
+            }
+            drawTexturedModalRect(42 + (18 * slotRow) + 14, -32 + (18 * slotColumn) + 15, 3, 3, 16, 14);
+        }
     }
 
     @Override

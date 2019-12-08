@@ -209,18 +209,13 @@ public class ContainerTradein extends Container {
                         te.voidItem(index);
                     }
                 } else if (dragType == 1) { //Right Click
-                    //Moves Selected Slot TODO
-                   /* if (!(te.getField(FIELD_SELECTED) == slotId)) {
+                    if (!(te.getField(TileEconomyBase.FIELD_SELECTED) == slotId)) {
                         short toSelect = (short) index;
-                        if (te.getItemVendor(index).getBundleMainSlot() != -1) {
-                            toSelect = (short) te.getItemVendor(index).getBundleMainSlot();
-                            te.setSelectedName("bundle");
-                        } else {
-                            te.setSelectedName(te.getItemVendor(index).getStack().getDisplayName());
-                        }
-                        te.setField(FIELD_SELECTED, toSelect);
+                        te.setSelectedName(te.getItemTradein(index).getStack().getDisplayName());
+
+                        te.setField(TileEconomyBase.FIELD_SELECTED, toSelect);
                     }
-                    */if (te.getItemTradein(index).getStack().isEmpty()) { //Place 1
+                    if (te.getItemTradein(index).getStack().isEmpty()) { //Place 1
                         te.setItemVendor(index, new ItemTradein(copyPlayerStack, 1));
                         playerStack.shrink(1);
                     }
