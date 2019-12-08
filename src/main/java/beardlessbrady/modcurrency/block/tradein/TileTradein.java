@@ -41,13 +41,7 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider,
             markDirty();
         }
     };
-    private ItemStackHandler inventoryStackHandler = new ItemStackHandler(TE_INVENTORY_SLOT_COUNT) {
-        @Override
-        protected void onContentsChanged(int slot) {
-            super.onContentsChanged(slot);
-            markDirty();
-        }
-    };
+    private ItemTradeinHandler inventoryStackHandler = new ItemTradeinHandler(TE_INVENTORY_SLOT_COUNT);
     private ItemStackHandler outputStackHandler = new ItemStackHandler(TE_OUTPUT_SLOT_COUNT) {
         @Override
         protected void onContentsChanged(int slot) {
@@ -163,4 +157,16 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider,
         return super.getCapability(capability, facing);
     }
     //</editor-fold>
+
+    public ItemTradein getItemTradein(int i){
+        return inventoryStackHandler.getItemTradein(i);
+    }
+
+    public void setItemVendor(int i, ItemTradein item){
+        inventoryStackHandler.setItemTradein(i, item);
+    }
+
+    public void voidItem(int i){
+        inventoryStackHandler.voidSlot(i);
+    }
 }

@@ -2,14 +2,16 @@ package beardlessbrady.modcurrency.block.tradein;
 
 import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.proxy.ClientProxy;
+import beardlessbrady.modcurrency.utilities.UtilMethods;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
-import net.minecraft.util.text.TextComponentString;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -112,6 +114,136 @@ public class ContainerTradein extends Container {
         //Output Slots
         addSlotToContainer(new SlotItemHandler(iItemHandler, TE_OUTPUT_FIRST_SLOT_INDEX, 145, 14));
 
+    }
+
+    @Override
+    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
+     //   boolean creative = te.getField(TileTradein.FIELD_CREATIVE) == 1; TODO
+        int index = slotId - 37;
+        ItemStack playerStack = player.inventory.getItemStack();
+        ItemStack copyPlayerStack = playerStack.copy();
+
+        //Ensures Pickup_All works without pulling from the wrong slots
+        //<editor-fold desc="PICKUP ALL">
+        if (clickTypeIn == ClickType.PICKUP_ALL) {
+            if (slotId >= 0 && slotId <= PLAYER_TOTAL_COUNT) {
+                Slot slot = this.inventorySlots.get(slotId);
+                ItemStack itemstack1 = player.inventory.getItemStack();
+
+                if (!itemstack1.isEmpty() && (slot == null || !slot.getHasStack() || !slot.canTakeStack(player))) {
+                    int i = dragType == 0 ? 0 : this.inventorySlots.size() - 1;
+                    int j = dragType == 0 ? 1 : -1;
+
+                    for (int k = 0; k < 2; ++k) {
+                        for (int l = i; l >= 0 && l <= PLAYER_TOTAL_COUNT && itemstack1.getCount() < itemstack1.getMaxStackSize(); l += j) {
+                            Slot slot1 = this.inventorySlots.get(l);
+
+                            if (slot1.getHasStack() && canAddItemToSlot(slot1, itemstack1, true) && slot1.canTakeStack(player) && this.canMergeSlot(itemstack1, slot1)) {
+                                ItemStack itemstack2 = slot1.getStack();
+
+                                if (k != 0 || itemstack2.getCount() != itemstack2.getMaxStackSize()) {
+                                    int i1 = Math.min(itemstack1.getMaxStackSize() - itemstack1.getCount(), itemstack2.getCount());
+                                    ItemStack itemstack3 = slot1.decrStackSize(i1);
+                                    itemstack1.grow(i1);
+
+                                    if (itemstack3.isEmpty()) {
+                                        slot1.putStack(ItemStack.EMPTY);
+                                    }
+
+                                    slot1.onTake(player, itemstack3);
+                                }
+                            }
+                        }
+                    }
+                }
+                this.detectAndSendChanges();
+                return ItemStack.EMPTY;
+            } else if (slotId >= GUI_INVENTORY_FIRST_INDEX && slotId < GUI_OUTPUT_FIRST_INDEX) {
+                Loop:
+                for (int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) {
+                    if (UtilMethods.equalStacks(playerStack, te.getItemTradein(i).getStack())) {
+                        if (playerStack.getCount() + te.getItemTradein(i).getSize() <= playerStack.getMaxStackSize()) {
+                            playerStack.grow(te.getItemTradein(i).getSize());
+                            te.voidItem(i);
+                        } else {
+                            int teSize = playerStack.getMaxStackSize() - playerStack.getCount();
+                            playerStack.setCount(playerStack.getMaxStackSize());
+                            te.getItemTradein(i).shrinkSize(teSize);
+                        }
+                        if (playerStack.getCount() == playerStack.getMaxStackSize())
+                            break Loop;
+                    }
+                }
+                return ItemStack.EMPTY;
+            }
+        }
+        //</editor-fold>
+
+        if (slotId >= 37 && slotId <= 61) {  //te Inventory
+            if (te.getField(TileTradein.FIELD_MODE) == 1) { //ADMIN MODE
+                if (te.getItemTradein(index).getSize() == 0) {
+                    te.voidItem(index);
+                }
+                if (dragType == 0 || (dragType == 1 && clickTypeIn == ClickType.QUICK_CRAFT)) { //Left Click
+                    if (playerStack.isEmpty()) {
+                        //TODO CREATIVE
+                       // if (!creative) {
+                            player.inventory.setItemStack(te.getItemTradein(index).shrinkSizeWithStackOutput(64));
+                      //  } else {
+                      //      te.getItemVendor(index).shrinkSize(64);
+                        //}
+                    } else {
+                      //  if (!creative) {
+                            if (te.getItemTradein(index).isEmpty()) {
+                                player.inventory.setItemStack(ItemStack.EMPTY);
+                                te.setItemVendor(index, new ItemTradein(copyPlayerStack));
+                            } else {
+                                player.inventory.setItemStack(te.getItemTradein(index).growSizeWithStack(copyPlayerStack));
+                            }
+                        //} else {
+                        //    te.voidItem(index);
+                       //     te.setItemVendor(index, new ItemVendor(copyPlayerStack, 1));
+                       // }
+                    }
+                    if (te.getItemTradein(index).getSize() == 0) {
+                        te.voidItem(index);
+                    }
+                } else if (dragType == 1) { //Right Click
+                    //Moves Selected Slot TODO
+                   /* if (!(te.getField(FIELD_SELECTED) == slotId)) {
+                        short toSelect = (short) index;
+                        if (te.getItemVendor(index).getBundleMainSlot() != -1) {
+                            toSelect = (short) te.getItemVendor(index).getBundleMainSlot();
+                            te.setSelectedName("bundle");
+                        } else {
+                            te.setSelectedName(te.getItemVendor(index).getStack().getDisplayName());
+                        }
+                        te.setField(FIELD_SELECTED, toSelect);
+                    }
+                    */if (te.getItemTradein(index).getStack().isEmpty()) { //Place 1
+                        te.setItemVendor(index, new ItemTradein(copyPlayerStack, 1));
+                        playerStack.shrink(1);
+                    }
+
+                } else if (dragType == 5) { //Quick Craft Right
+                    if (te.getItemTradein(index).getStack().isEmpty()) { //Place 1
+                        te.setItemVendor(index, new ItemTradein(copyPlayerStack, 1));
+                        playerStack.shrink(1);
+                    }
+                }
+                return ItemStack.EMPTY;
+            }else{ //TRADE MODE
+                return ItemStack.EMPTY;
+            }
+        } else if (slotId == 62) { //OUTPUT
+            return ItemStack.EMPTY;
+        }
+        return super.slotClick(slotId, dragType, clickTypeIn, player);
+    }
+
+    @Override
+    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
+        return super.transferStackInSlot(playerIn, index);
     }
 
     @Override

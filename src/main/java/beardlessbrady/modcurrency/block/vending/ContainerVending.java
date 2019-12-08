@@ -127,9 +127,6 @@ public class ContainerVending extends Container {
         ItemStack playerStack = player.inventory.getItemStack();
         ItemStack copyPlayerStack = playerStack.copy();
 
-        System.out.println(clickTypeIn);
-
-
         //Ensures Pickup_All works without pulling from the wrong slots
         //<editor-fold desc="PICKUP ALL">
         if (clickTypeIn == ClickType.PICKUP_ALL) {
@@ -199,7 +196,6 @@ public class ContainerVending extends Container {
                     te.voidItem(index);
                 }
                 if (dragType == 0 || (dragType == 1 && clickTypeIn == ClickType.QUICK_CRAFT)) { //Left Click
-                    System.out.println(dragType);
                     if (playerStack.isEmpty()) {
                         if (!creative) {
                             player.inventory.setItemStack(te.getItemVendor(index).shrinkSizeWithStackOutput(64));
