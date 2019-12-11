@@ -978,8 +978,8 @@ public class GuiVending extends GuiContainer {
             }
 
             te.getItemVendor(te.getField(FIELD_SELECTED)).setCost(newCost);
-            PacketSetItemVendorToServer pack = new PacketSetItemVendorToServer();
-            pack.setData(te.getField(FIELD_SELECTED), newCost, PacketSetItemVendorToServer.FIELD_COST, te.getPos());
+            PacketSetItemToServer pack = new PacketSetItemToServer();
+            pack.setData(te.getField(FIELD_SELECTED), newCost, PacketSetItemToServer.FIELD_COST, te.getPos());
             PacketHandler.INSTANCE.sendToServer(pack);
 
             te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
@@ -998,8 +998,8 @@ public class GuiVending extends GuiContainer {
             if (amount == 0) amount = 1;
 
             te.getItemVendor(slot).setAmount(amount);
-            PacketSetItemVendorToServer pack = new PacketSetItemVendorToServer();
-            pack.setData(te.getField(FIELD_SELECTED), amount, PacketSetItemVendorToServer.FIELD_AMOUNT, te.getPos());
+            PacketSetItemToServer pack = new PacketSetItemToServer();
+            pack.setData(te.getField(FIELD_SELECTED), amount, PacketSetItemToServer.FIELD_AMOUNT, te.getPos());
             PacketHandler.INSTANCE.sendToServer(pack);
 
             te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
@@ -1011,8 +1011,8 @@ public class GuiVending extends GuiContainer {
             int amount = Integer.parseInt(guiTextField.getText());
 
             te.getItemVendor(te.getField(FIELD_SELECTED)).setItemMax(amount);
-            PacketSetItemVendorToServer pack = new PacketSetItemVendorToServer();
-            pack.setData(te.getField(FIELD_SELECTED), amount, PacketSetItemVendorToServer.FIELD_ITEMMAX, te.getPos());
+            PacketSetItemToServer pack = new PacketSetItemToServer();
+            pack.setData(te.getField(FIELD_SELECTED), amount, PacketSetItemToServer.FIELD_ITEMMAX, te.getPos());
             PacketHandler.INSTANCE.sendToServer(pack);
 
             te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
@@ -1024,8 +1024,8 @@ public class GuiVending extends GuiContainer {
             int amount = Integer.parseInt(guiTextField.getText());
 
             te.getItemVendor(te.getField(FIELD_SELECTED)).setTimeRaise(amount);
-            PacketSetItemVendorToServer pack = new PacketSetItemVendorToServer();
-            pack.setData(te.getField(FIELD_SELECTED), amount, PacketSetItemVendorToServer.FIELD_TIMERAISE, te.getPos());
+            PacketSetItemToServer pack = new PacketSetItemToServer();
+            pack.setData(te.getField(FIELD_SELECTED), amount, PacketSetItemToServer.FIELD_TIMERAISE, te.getPos());
             PacketHandler.INSTANCE.sendToServer(pack);
 
             te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);

@@ -28,7 +28,7 @@ public class PacketHandler {
 
     public static int registerCommonMessages(int index){
         INSTANCE.registerMessage(PacketSetFieldToServer.Handler.class, PacketSetFieldToServer.class, index++, Side.SERVER);
-        INSTANCE.registerMessage(PacketSetItemVendorToServer.Handler.class, PacketSetItemVendorToServer.class, index++, Side.SERVER);
+        INSTANCE.registerMessage(PacketSetItemToServer.Handler.class, PacketSetItemToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketSetItemBundleToServer.Handler.class, PacketSetItemBundleToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketOutChangeToServer.Handler.class, PacketOutChangeToServer.class, index++, Side.SERVER);
         INSTANCE.registerMessage(PacketSendKeyToServer.Handler.class, PacketSendKeyToServer.class, index++, Side.SERVER);

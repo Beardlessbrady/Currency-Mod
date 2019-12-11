@@ -5,9 +5,6 @@ import beardlessbrady.modcurrency.ModCurrency;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.handler.StateHandler;
 import beardlessbrady.modcurrency.item.ModItems;
-import beardlessbrady.modcurrency.network.PacketHandler;
-import beardlessbrady.modcurrency.network.PacketSetItemVendorToServer;
-import beardlessbrady.modcurrency.proxy.ClientProxy;
 import beardlessbrady.modcurrency.utilities.UtilMethods;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -27,11 +24,8 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
-import org.lwjgl.input.Keyboard;
 
 import javax.annotation.Nullable;
-
-import static beardlessbrady.modcurrency.block.vending.TileVending.*;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as

@@ -1,6 +1,7 @@
 package beardlessbrady.modcurrency.block.tradein;
 
 import beardlessbrady.modcurrency.block.TileEconomyBase;
+import beardlessbrady.modcurrency.item.ModItems;
 import beardlessbrady.modcurrency.proxy.ClientProxy;
 import beardlessbrady.modcurrency.utilities.UtilMethods;
 import net.minecraft.client.settings.KeyBinding;
@@ -12,6 +13,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundCategory;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -118,7 +120,6 @@ public class ContainerTradein extends Container {
 
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-     //   boolean creative = te.getField(TileTradein.FIELD_CREATIVE) == 1; TODO
         int index = slotId - 37;
         ItemStack playerStack = player.inventory.getItemStack();
         ItemStack copyPlayerStack = playerStack.copy();
@@ -159,21 +160,6 @@ public class ContainerTradein extends Container {
                 this.detectAndSendChanges();
                 return ItemStack.EMPTY;
             } else if (slotId >= GUI_INVENTORY_FIRST_INDEX && slotId < GUI_OUTPUT_FIRST_INDEX) {
-                Loop:
-                for (int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) {
-                    if (UtilMethods.equalStacks(playerStack, te.getItemTradein(i).getStack())) {
-                        if (playerStack.getCount() + te.getItemTradein(i).getSize() <= playerStack.getMaxStackSize()) {
-                            playerStack.grow(te.getItemTradein(i).getSize());
-                            te.voidItem(i);
-                        } else {
-                            int teSize = playerStack.getMaxStackSize() - playerStack.getCount();
-                            playerStack.setCount(playerStack.getMaxStackSize());
-                            te.getItemTradein(i).shrinkSize(teSize);
-                        }
-                        if (playerStack.getCount() == playerStack.getMaxStackSize())
-                            break Loop;
-                    }
-                }
                 return ItemStack.EMPTY;
             }
         }
@@ -181,33 +167,13 @@ public class ContainerTradein extends Container {
 
         if (slotId >= 37 && slotId <= 61) {  //te Inventory
             if (te.getField(TileTradein.FIELD_MODE) == 1) { //ADMIN MODE
-                if (te.getItemTradein(index).getSize() == 0) {
-                    te.voidItem(index);
-                }
                 if (dragType == 0 || (dragType == 1 && clickTypeIn == ClickType.QUICK_CRAFT)) { //Left Click
                     if (playerStack.isEmpty()) {
-                        //TODO CREATIVE
-                       // if (!creative) {
-                            player.inventory.setItemStack(te.getItemTradein(index).shrinkSizeWithStackOutput(64));
-                      //  } else {
-                      //      te.getItemVendor(index).shrinkSize(64);
-                        //}
-                    } else {
-                      //  if (!creative) {
-                            if (te.getItemTradein(index).isEmpty()) {
-                                player.inventory.setItemStack(ItemStack.EMPTY);
-                                te.setItemVendor(index, new ItemTradein(copyPlayerStack));
-                            } else {
-                                player.inventory.setItemStack(te.getItemTradein(index).growSizeWithStack(copyPlayerStack));
-                            }
-                        //} else {
-                        //    te.voidItem(index);
-                       //     te.setItemVendor(index, new ItemVendor(copyPlayerStack, 1));
-                       // }
-                    }
-                    if (te.getItemTradein(index).getSize() == 0) {
                         te.voidItem(index);
+                    } else {
+                        te.setItemVendor(index, new ItemTradein(copyPlayerStack));
                     }
+
                 } else if (dragType == 1) { //Right Click
                     if (!(te.getField(TileEconomyBase.FIELD_SELECTED) == slotId)) {
                         short toSelect = (short) index;
@@ -216,14 +182,12 @@ public class ContainerTradein extends Container {
                         te.setField(TileEconomyBase.FIELD_SELECTED, toSelect);
                     }
                     if (te.getItemTradein(index).getStack().isEmpty()) { //Place 1
-                        te.setItemVendor(index, new ItemTradein(copyPlayerStack, 1));
-                        playerStack.shrink(1);
+                        te.setItemVendor(index, new ItemTradein(copyPlayerStack));
                     }
 
                 } else if (dragType == 5) { //Quick Craft Right
                     if (te.getItemTradein(index).getStack().isEmpty()) { //Place 1
-                        te.setItemVendor(index, new ItemTradein(copyPlayerStack, 1));
-                        playerStack.shrink(1);
+                        te.setItemVendor(index, new ItemTradein(copyPlayerStack));
                     }
                 }
                 return ItemStack.EMPTY;
@@ -238,7 +202,7 @@ public class ContainerTradein extends Container {
 
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
-        return super.transferStackInSlot(playerIn, index);
+        return ItemStack.EMPTY;
     }
 
     @Override

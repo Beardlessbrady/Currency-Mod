@@ -155,9 +155,8 @@ public class ItemVendor {
 
             if(nbt.hasKey("cost")){
                 cost = nbt.getInteger("cost");
-            }else{
-                cost = 0;
-            }
+            }else cost = 0;
+
 
             if(nbt.hasKey("amount")){
                 amount = nbt.getInteger("amount");

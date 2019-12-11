@@ -25,12 +25,9 @@ public class ItemTradeinHandler implements IItemHandler, IItemHandlerModifiable,
     }
 
     public ItemTradein getItemTradein(int i) {
-        if (i >= 0 && i < itemArray.length) {
-            if (itemArray[i] == null)
-                return new ItemTradein(ItemStack.EMPTY);
-            return itemArray[i];
-        } else
-            return new ItemTradein(ItemStack.EMPTY, -1);
+        if (itemArray[i] == null)
+            return new ItemTradein(ItemStack.EMPTY);
+        return itemArray[i];
     }
 
     public void setItemTradein(int i, ItemTradein item) {

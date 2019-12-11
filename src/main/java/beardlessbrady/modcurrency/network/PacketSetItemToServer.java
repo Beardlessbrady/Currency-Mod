@@ -1,6 +1,6 @@
 package beardlessbrady.modcurrency.network;
 
-import beardlessbrady.modcurrency.block.TileEconomyBase;
+import beardlessbrady.modcurrency.block.tradein.TileTradein;
 import beardlessbrady.modcurrency.block.vending.TileVending;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -22,7 +22,7 @@ import static beardlessbrady.modcurrency.block.vending.TileVending.FIELD_SELECTE
  * File Created 2019-02-22
  */
 
-public class PacketSetItemVendorToServer implements IMessage {
+public class PacketSetItemToServer implements IMessage {
     private BlockPos blockPos;
     private int data, field, element;
 
@@ -31,7 +31,7 @@ public class PacketSetItemVendorToServer implements IMessage {
     public static final int FIELD_COST = 2;
     public static final int FIELD_AMOUNT = 3;
 
-    public PacketSetItemVendorToServer(){}
+    public PacketSetItemToServer(){}
 
     public void setData(int element, int data, int field, BlockPos pos) {
         this.blockPos = pos;
@@ -58,15 +58,15 @@ public class PacketSetItemVendorToServer implements IMessage {
         buf.writeInt(element);
     }
 
-    public static class Handler implements IMessageHandler<PacketSetItemVendorToServer, IMessage> {
+    public static class Handler implements IMessageHandler<PacketSetItemToServer, IMessage> {
 
         @Override
-        public IMessage onMessage(final PacketSetItemVendorToServer message, MessageContext ctx) {
+        public IMessage onMessage(final PacketSetItemToServer message, MessageContext ctx) {
             FMLCommonHandler.instance().getWorldThread(ctx.netHandler).addScheduledTask(() -> handle(message,ctx));
             return null;
         }
 
-        private void handle(PacketSetItemVendorToServer message, MessageContext ctx){
+        private void handle(PacketSetItemToServer message, MessageContext ctx){
             EntityPlayerMP playerEntity = ctx.getServerHandler().player;
             World world = playerEntity.world;
 
@@ -83,6 +83,20 @@ public class PacketSetItemVendorToServer implements IMessage {
                         tile.getItemVendor(tile.getField(FIELD_SELECTED)).setCost(message.data);
                     case FIELD_AMOUNT:
                         tile.getItemVendor(message.element).setAmount(message.data);
+                }
+            }else if (world.getTileEntity(message.blockPos) instanceof TileTradein) {
+                TileTradein tile = (TileTradein) world.getTileEntity(message.blockPos);
+                switch (message.field) {
+                    case FIELD_ITEMMAX: //Restock
+                        tile.getItemTradein(message.element).setItemMax(message.data);
+                        break;
+                    case FIELD_TIMERAISE:
+                        tile.getItemTradein(message.element).setTimeRaise(message.data);
+                        break;
+                    case FIELD_COST:
+                        tile.getItemTradein(tile.getField(FIELD_SELECTED)).setCost(message.data);
+                    case FIELD_AMOUNT:
+                        tile.getItemTradein(message.element).setAmount(message.data);
                 }
             }
         }
