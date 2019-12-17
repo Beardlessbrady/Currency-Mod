@@ -7,21 +7,28 @@ import beardlessbrady.modcurrency.network.PacketSetFieldToServer;
 import beardlessbrady.modcurrency.network.PacketSetItemToServer;
 import beardlessbrady.modcurrency.utilities.UtilMethods;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextFormatting;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import static beardlessbrady.modcurrency.block.TileEconomyBase.FIELD_MODE;
 import static beardlessbrady.modcurrency.block.TileEconomyBase.FIELD_SELECTED;
-import static beardlessbrady.modcurrency.block.vending.TileVending.*;
+import static beardlessbrady.modcurrency.block.vending.TileVending.FIELD_FINITE;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
@@ -59,7 +66,7 @@ public class GuiTradein extends GuiContainer {
         int i = (width - xSize) / 2;
         int j = (height - ySize) / 2;
 
-        buttonList.add(new GuiButton(BUTTONCHANGE, i + 143, j + 39, 20, 20, "$"));
+        buttonList.add(new GuiButton(BUTTONCHANGE, i + 143, j - 5, 20, 20, "$"));
 
         String mode = (te.getField(FIELD_MODE) == 1) ? "STOCK" : "TRADE";
         buttonList.add(new GuiButton(BUTTONADMIN, i + 137, j - 42, 32, 20, mode));
@@ -133,15 +140,40 @@ public class GuiTradein extends GuiContainer {
         //Basics GUI labels
         fontRenderer.drawString(I18n.format("tile.modcurrency:blocktradein.name"), 8, -42, Integer.parseInt("ffffff", 16));
         fontRenderer.drawString(I18n.format("container.inventory"), 8, 87, Color.darkGray.getRGB());
-        fontRenderer.drawString(I18n.format("guivending.in"), 18, 3, Color.lightGray.getRGB());
-        fontRenderer.drawString(I18n.format("guivending.out"), 145, 3, Color.lightGray.getRGB());
+        fontRenderer.drawString(I18n.format("guivending.in"), 18, 20, Color.lightGray.getRGB());
+        fontRenderer.drawString(I18n.format("guivending.out"), 145, 20, Color.lightGray.getRGB());
         GlStateManager.color(0xFF, 0xFF, 0xFF);
 
         //Admin 'Price Tag' rendering
         drawAdminPanel();
 
-        //Draws the red selection overlay when determining which slot is selected
+        //Draws the selection overlay which determining which slot is selected
         drawSelectionOverlay();
+
+
+        //Money total and cashout button labels
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GL11.glPushMatrix();
+        GL11.glScalef(0.7F, 0.7F, 0.8F);
+        fontRenderer.drawStringWithShadow(I18n.format("guivending.cash"), 7, -40, Integer.parseInt("2DB22F", 16));
+        fontRenderer.drawStringWithShadow(I18n.format("guivending.moneysign"), 7, -30, Integer.parseInt("ffffff", 16));
+
+        //draws players cash in machine
+        fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getField(TileVending.FIELD_CASHRESERVE))), 15, -30, Integer.parseInt("ffffff", 16));
+        GL11.glPopMatrix();
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+
+        if (te.getField(TileVending.FIELD_MODE) == 1) {
+            //Draws machines cash total and its labels
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+            GL11.glPushMatrix();
+            GL11.glScalef(0.7F, 0.7F, 0.8F);
+            fontRenderer.drawStringWithShadow(I18n.format("guivending.profit"), 7, -10, Integer.parseInt("3D78E0", 16));
+            fontRenderer.drawStringWithShadow(I18n.format("guivending.moneysign"), 7, 0, Integer.parseInt("ffffff", 16));
+            fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getField(TileVending.FIELD_CASHREGISTER))), 15, 0, Integer.parseInt("ffffff", 16));
+            GL11.glPopMatrix();
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+        }
         
     }
 
@@ -220,6 +252,62 @@ public class GuiTradein extends GuiContainer {
             fieldAmnt.setText(Integer.toString(te.getItemTradein(te.getField(FIELD_SELECTED)).getAmount()));
             fieldItemMax.setText(Integer.toString(te.getItemTradein(te.getField(FIELD_SELECTED)).getItemMax()));
             fieldTimeRestock.setText(Integer.toString(te.getItemTradein(te.getField(FIELD_SELECTED)).getTimeRaise()));
+    }
+
+    @Override
+    protected void renderToolTip(ItemStack stack, int x, int y) {
+        int i = (x - (width - xSize) / 2);
+        int j = (y - (height - ySize) / 2);
+
+        System.out.println(j);
+
+        if (j <= 66 && j >= -23 && i >= 43) {
+            int startY = -23;
+            int startX = 43;
+            int row = ((j - startY) / 18);
+            int column = ((i - startX) / 18);
+            int slot = column + (row * 5);
+
+            java.util.List<String> list = new ArrayList<>();
+            List<String> ogTooltip = stack.getTooltip(mc.player, mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
+            int tooltipStart = 1;
+
+            //Adding name and subname of item before price and such
+            if (ogTooltip.size() > 0) {
+                list.add(ogTooltip.get(0));
+                list.set(0, stack.getRarity().rarityColor + list.get(0));
+            }
+            if (ogTooltip.size() > 1) if (!ogTooltip.get(1).equals("")) {
+                list.add(TextFormatting.GRAY + ogTooltip.get(1));
+                tooltipStart = 2;
+            }
+
+            int cost = te.getItemTradein(slot).getCost();
+
+            //Adding Vending Strings
+            if (te.getField(FIELD_MODE) == 0) {
+                if (te.canMachineAfford(slot)) {
+                    list.add(TextFormatting.GREEN + "Payout of $" + UtilMethods.translateMoney(cost));
+                }else{
+                    list.add(TextFormatting.RED + "Machine cannot afford $" + UtilMethods.translateMoney(cost));
+                }
+            }
+
+            //adding original extra stuff AFTER price and such
+            for (; tooltipStart < stack.getTooltip(mc.player, mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL).size(); tooltipStart++) {
+                list.add(TextFormatting.GRAY + stack.getTooltip(mc.player, mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL).get(tooltipStart));
+            }
+
+
+            FontRenderer font = stack.getItem().getFontRenderer(stack);
+            net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(stack);
+            drawHoveringText(list, x, y, (font == null ? fontRenderer : font));
+            net.minecraftforge.fml.client.config.GuiUtils.postItemToolTip();
+
+            te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
+        } else {
+            super.renderToolTip(stack, x, y);
+        }
     }
 
     @Override

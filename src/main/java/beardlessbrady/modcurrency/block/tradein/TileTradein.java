@@ -169,4 +169,8 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider,
     public void voidItem(int i){
         inventoryStackHandler.voidSlot(i);
     }
+
+    public boolean canMachineAfford(int slot){
+        return inventoryStackHandler.getItemTradein(slot).getCost() <= getField(TileEconomyBase.FIELD_CASHREGISTER);
+    }
 }

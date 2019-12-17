@@ -96,7 +96,7 @@ public class ContainerTradein extends Container {
         IItemHandler iItemHandler = this.te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 
         //Input Slot
-        addSlotToContainer(new SlotItemHandler(iItemHandler, TE_INPUT_SLOT_INDEX, 15, 14));
+        addSlotToContainer(new SlotItemHandler(iItemHandler, TE_INPUT_SLOT_INDEX, 15, 32));
 
         //Inventory Slots
         final int SLOT_X_SPACING = 18;
@@ -114,7 +114,7 @@ public class ContainerTradein extends Container {
         }
 
         //Output Slots
-        addSlotToContainer(new SlotItemHandler(iItemHandler, TE_OUTPUT_FIRST_SLOT_INDEX, 145, 14));
+        addSlotToContainer(new SlotItemHandler(iItemHandler, TE_OUTPUT_FIRST_SLOT_INDEX, 145, 32));
 
     }
 
