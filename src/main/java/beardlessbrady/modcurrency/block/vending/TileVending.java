@@ -490,6 +490,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
     public void setItemVendor(int i, ItemVendor item){
         inventoryStackHandler.setItemVendor(i, item);
+        markDirty();
     }
 
     public void voidItem(int i){

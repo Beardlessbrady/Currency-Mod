@@ -66,13 +66,13 @@ public class PacketSetItemToServer implements IMessage {
             return null;
         }
 
-        private void handle(PacketSetItemToServer message, MessageContext ctx){
+        private void handle(PacketSetItemToServer message, MessageContext ctx) {
             EntityPlayerMP playerEntity = ctx.getServerHandler().player;
             World world = playerEntity.world;
 
-            if(world.getTileEntity(message.blockPos) instanceof TileVending){
+            if (world.getTileEntity(message.blockPos) instanceof TileVending) {
                 TileVending tile = (TileVending) world.getTileEntity(message.blockPos);
-                switch(message.field){
+                switch (message.field) {
                     case FIELD_ITEMMAX: //Restock
                         tile.getItemVendor(message.element).setItemMax(message.data);
                         break;
@@ -81,10 +81,12 @@ public class PacketSetItemToServer implements IMessage {
                         break;
                     case FIELD_COST:
                         tile.getItemVendor(tile.getField(FIELD_SELECTED)).setCost(message.data);
+                        break;
                     case FIELD_AMOUNT:
                         tile.getItemVendor(message.element).setAmount(message.data);
                 }
-            }else if (world.getTileEntity(message.blockPos) instanceof TileTradein) {
+                tile.markDirty();
+            } else if (world.getTileEntity(message.blockPos) instanceof TileTradein) {
                 TileTradein tile = (TileTradein) world.getTileEntity(message.blockPos);
                 switch (message.field) {
                     case FIELD_ITEMMAX: //Restock
@@ -95,9 +97,11 @@ public class PacketSetItemToServer implements IMessage {
                         break;
                     case FIELD_COST:
                         tile.getItemTradein(tile.getField(FIELD_SELECTED)).setCost(message.data);
+                        break;
                     case FIELD_AMOUNT:
                         tile.getItemTradein(message.element).setAmount(message.data);
                 }
+                tile.markDirty();
             }
         }
     }
