@@ -91,7 +91,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
                 if (inputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemCurrency)) {
                     ItemStack itemStack = inputStackHandler.getStackInSlot(0);
 
-                    float tempAmount = Float.valueOf(ConfigCurrency.currencyValues[itemStack.getItemDamage()]) * 100;
+                    float tempAmount = Float.parseFloat(ConfigCurrency.currencyValues[itemStack.getItemDamage()]) * 100;
                     int amount = (int) tempAmount;
                     amount = amount * inputStackHandler.getStackInSlot(0).getCount();
 

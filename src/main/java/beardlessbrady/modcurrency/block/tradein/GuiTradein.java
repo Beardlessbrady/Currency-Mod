@@ -147,10 +147,6 @@ public class GuiTradein extends GuiContainer {
         //Admin 'Price Tag' rendering
         drawAdminPanel();
 
-        //Draws the selection overlay which determining which slot is selected
-        drawSelectionOverlay();
-
-
         //Money total and cashout button labels
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glPushMatrix();
@@ -163,6 +159,9 @@ public class GuiTradein extends GuiContainer {
         GL11.glPopMatrix();
         GL11.glDisable(GL11.GL_DEPTH_TEST);
 
+        //Draws the selection overlay which determining which slot is selected
+        drawSelectionOverlay();
+
         if (te.getField(TileVending.FIELD_MODE) == 1) {
             //Draws machines cash total and its labels
             GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -174,7 +173,7 @@ public class GuiTradein extends GuiContainer {
             GL11.glPopMatrix();
             GL11.glDisable(GL11.GL_DEPTH_TEST);
         }
-        
+
     }
 
     private void drawAdminPanel() {
@@ -258,8 +257,6 @@ public class GuiTradein extends GuiContainer {
     protected void renderToolTip(ItemStack stack, int x, int y) {
         int i = (x - (width - xSize) / 2);
         int j = (y - (height - ySize) / 2);
-
-        System.out.println(j);
 
         if (j <= 66 && j >= -23 && i >= 43) {
             int startY = -23;

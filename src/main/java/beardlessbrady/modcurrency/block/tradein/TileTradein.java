@@ -1,15 +1,21 @@
 package beardlessbrady.modcurrency.block.tradein;
 
+import beardlessbrady.modcurrency.ConfigCurrency;
 import beardlessbrady.modcurrency.ModCurrency;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
+import beardlessbrady.modcurrency.block.vending.TileVending;
 import beardlessbrady.modcurrency.handler.StateHandler;
+import beardlessbrady.modcurrency.item.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumDyeColor;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -65,6 +71,32 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider,
 
     @Override
     public void update() {
+        if(playerUsing != EMPTYID) {
+            //If item in INPUT slot is currency && EDIT MODE then calculate its worth and add to money total in machine.
+            if(mode) {
+                if (!inputStackHandler.getStackInSlot(0).isEmpty()) {
+                    if (inputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemCurrency)) {
+                        ItemStack itemStack = inputStackHandler.getStackInSlot(0);
+
+                        float tempAmount = Float.parseFloat(ConfigCurrency.currencyValues[itemStack.getItemDamage()]) * 100;
+                        int amount = (int) tempAmount;
+                        amount = amount * inputStackHandler.getStackInSlot(0).getCount();
+
+                        if (amount + cashReserve <= 999999999) {
+                            inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
+                            cashReserve += amount;
+                        } else {
+                            //TODO ERROR MESSAGES:  setMessage("CAN'T FIT ANYMORE CURRENCY!", (byte) 40);
+                            //  world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 3.0F, false);
+                        }
+                    }
+                }
+            }else{ //IF SELL MODE
+                if(!inputStackHandler.getStackInSlot(0).isEmpty()){
+                    //todo
+                }
+            }
+        }
     }
 
     public void openGui(EntityPlayer player, World world, BlockPos pos){

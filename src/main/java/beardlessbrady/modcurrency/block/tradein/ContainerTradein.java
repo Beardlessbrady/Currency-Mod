@@ -1,6 +1,7 @@
 package beardlessbrady.modcurrency.block.tradein;
 
 import beardlessbrady.modcurrency.block.TileEconomyBase;
+import beardlessbrady.modcurrency.block.vending.TileVending;
 import beardlessbrady.modcurrency.item.ModItems;
 import beardlessbrady.modcurrency.proxy.ClientProxy;
 import beardlessbrady.modcurrency.utilities.UtilMethods;
@@ -17,6 +18,9 @@ import net.minecraft.util.SoundCategory;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
+
+import static beardlessbrady.modcurrency.block.vending.TileVending.KEY_CONTROL;
+import static beardlessbrady.modcurrency.block.vending.TileVending.KEY_SHIFT;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
