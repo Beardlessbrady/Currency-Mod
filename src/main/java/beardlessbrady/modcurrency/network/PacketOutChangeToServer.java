@@ -1,5 +1,6 @@
 package beardlessbrady.modcurrency.network;
 
+import beardlessbrady.modcurrency.block.tradein.TileTradein;
 import beardlessbrady.modcurrency.block.vending.TileVending;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -60,6 +61,7 @@ public class PacketOutChangeToServer implements IMessage {
             World world = playerEntity.world;
             TileEntity te = world.getTileEntity(message.blockPos);
             if(te instanceof TileVending) ((TileVending) te).outChange(message.breakBlock);
+            if(te instanceof TileTradein) ((TileTradein) te).outChange(message.breakBlock);
         }
     }
 }

@@ -2,6 +2,7 @@ package beardlessbrady.modcurrency.block.tradein;
 
 import beardlessbrady.modcurrency.block.EconomyBlockBase;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
+import beardlessbrady.modcurrency.block.vending.TileVending;
 import beardlessbrady.modcurrency.handler.StateHandler;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -93,6 +94,17 @@ public class BlockTradein extends EconomyBlockBase {
                 worldIn.setBlockToAir(pos.down());
 
             } else if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOBOTTOM) { /* If block activated is 2 high & block broken is 'bottom' break block above it as well */
+                TileTradein te = (TileTradein) getTile(worldIn, pos, state);
+
+                //Outputs the change in STOCK then SELL MODE
+                te.setField(TileEconomyBase.FIELD_MODE, 0);
+                te.outChange(true);
+
+                te.setField(TileEconomyBase.FIELD_MODE, 1);
+                te.outChange(true);
+
+                te.dropInventory();
+
                 worldIn.setBlockToAir(pos.up());
             }
 
@@ -107,6 +119,18 @@ public class BlockTradein extends EconomyBlockBase {
             if (world.getTileEntity(pos.down()) instanceof TileTradein)
                 return (TileTradein) world.getTileEntity(pos.down());
         }else{ /* If 'bottom' part of block open tile normally since the tile is stored in the bottom block*/
+            if (world.getTileEntity(pos) instanceof TileTradein)
+                return (TileTradein) world.getTileEntity(pos);
+        }
+        return null;
+    }
+
+    /** Getter method for the blocks tile**/
+    public TileEconomyBase getTile(World world, BlockPos pos, IBlockState state) {
+        if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP){ /* If 'top' part of block open tile from bottom under it since the tile is stored in the bottom block*/
+            if (world.getTileEntity(pos.down()) instanceof TileTradein)
+                return (TileTradein) world.getTileEntity(pos.down());
+        } else { /* If 'bottom' part of block open tile normally since the tile is stored in the bottom block*/
             if (world.getTileEntity(pos) instanceof TileTradein)
                 return (TileTradein) world.getTileEntity(pos);
         }

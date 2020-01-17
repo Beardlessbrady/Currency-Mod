@@ -107,20 +107,20 @@ public class BlockVending extends EconomyBlockBase {
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
         if(!worldIn.isRemote) {
-            TileVending tile = (TileVending) getTile(worldIn, pos, state);
-
-            //Outputs the change in STOCK then SELL MODE
-            tile.setField(TileEconomyBase.FIELD_MODE, 0);
-            tile.outChange(true);
-
-            tile.setField(TileEconomyBase.FIELD_MODE, 1);
-            tile.outChange(true);
-
-            tile.dropInventory();
-
             if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP) {     //TOP BLOCK
                 worldIn.setBlockToAir(pos.down());
             } else if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOBOTTOM) { //BOTTOM BLOCK
+                TileVending tile = (TileVending) getTile(worldIn, pos, state);
+
+                //Outputs the change in STOCK then SELL MODE
+                tile.setField(TileEconomyBase.FIELD_MODE, 0);
+                tile.outChange(true);
+
+                tile.setField(TileEconomyBase.FIELD_MODE, 1);
+                tile.outChange(true);
+
+                tile.dropInventory();
+
                 worldIn.setBlockToAir(pos.up());
             }
             super.breakBlock(worldIn, pos, state);

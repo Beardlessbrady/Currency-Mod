@@ -3,6 +3,7 @@ package beardlessbrady.modcurrency.block.tradein;
 import beardlessbrady.modcurrency.ModCurrency;
 import beardlessbrady.modcurrency.block.vending.TileVending;
 import beardlessbrady.modcurrency.network.PacketHandler;
+import beardlessbrady.modcurrency.network.PacketOutChangeToServer;
 import beardlessbrady.modcurrency.network.PacketSetFieldToServer;
 import beardlessbrady.modcurrency.network.PacketSetItemToServer;
 import beardlessbrady.modcurrency.utilities.UtilMethods;
@@ -403,10 +404,10 @@ public class GuiTradein extends GuiContainer {
                 te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
                 break;
             case BUTTONCHANGE:
-             ///   PacketOutChangeToServer pack0 = new PacketOutChangeToServer();
-             //   pack0.setData(te.getPos(), false);
-             //   PacketHandler.INSTANCE.sendToServer(pack0);
-              //  te.outChange(false);
+                PacketOutChangeToServer pack0 = new PacketOutChangeToServer();
+                pack0.setData(te.getPos(), false);
+                PacketHandler.INSTANCE.sendToServer(pack0);
+               // te.outChange(false);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + button.id);

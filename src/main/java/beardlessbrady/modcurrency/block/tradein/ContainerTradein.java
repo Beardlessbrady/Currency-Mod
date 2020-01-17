@@ -213,6 +213,7 @@ public class ContainerTradein extends Container {
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
         return ItemStack.EMPTY; /* No shift clicking allowed in machine as it would break things */
+        //TODO allow cash Shift Click in STOCK MODE
     }
 
     @Override
