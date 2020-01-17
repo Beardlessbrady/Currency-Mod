@@ -167,6 +167,8 @@ public class GuiTradein extends GuiContainer {
         }
         GL11.glPopMatrix();
         GL11.glDisable(GL11.GL_DEPTH_TEST);
+
+        message(); /* Warning Message Rendering */
     }
 
     /** Custom Item Stack size Rendering **/
@@ -477,5 +479,27 @@ public class GuiTradein extends GuiContainer {
 
             te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
         }
+    }
+
+    /** Error Message Rendering **/
+    private void message() {
+        Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
+        FontRenderer fontRenderer = Minecraft.getMinecraft().ingameGUI.getFontRenderer();
+        String message = te.getMessage();
+
+        if (!message.equals("")) { /* If message is not empty */
+            drawTexturedModalRect(70 - ((message.length()) * 5 / 2), 55, 0, 20, 21, 21); /* Draws Back panel */
+
+            /* Extends the Back panel to fit message */
+            int panelAmounts = (message.length() * 5) / 17;
+            for (int i = 0; i < panelAmounts; i++)
+                drawTexturedModalRect(91 - (message.length() * 5 / 2) + (i * 17), 55, 4, 20, 17, 21);
+
+            drawTexturedModalRect(91 - (message.length() * 5 / 2) + (panelAmounts * 17), 55, 0, 42, 21, 21); /* Ends Back panel of message */
+
+            drawTexturedModalRect(74 - (message.length() * 5 / 2), 58, 41, 1, 19, 17); /* Warning Symbol */
+        }
+        fontRenderer.drawStringWithShadow(message, 94 - (message.length() * 5) / 2, 62, 0xDE3131); /* Message Text */
+        GlStateManager.color(0xFF, 0xFF, 0xFF); /* Reset GL color to prevent visual bugs */
     }
 }

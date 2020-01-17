@@ -1,7 +1,9 @@
 package beardlessbrady.modcurrency.block.tradein;
 
 import beardlessbrady.modcurrency.block.TileEconomyBase;
+import beardlessbrady.modcurrency.item.ModItems;
 import beardlessbrady.modcurrency.proxy.ClientProxy;
+import beardlessbrady.modcurrency.utilities.UtilMethods;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -11,6 +13,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IContainerListener;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundCategory;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -211,9 +214,27 @@ public class ContainerTradein extends Container {
 
     /** Method activates when player shift + clicks a slot **/
     @Override
-    public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
-        return ItemStack.EMPTY; /* No shift clicking allowed in machine as it would break things */
-        //TODO allow cash Shift Click in STOCK MODE
+    public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotId) {
+        ItemStack itemStack = this.inventorySlots.get(slotId).getStack();
+        ItemStack copyStack = itemStack.copy();
+
+        /* If Item being SHIFTED is not empty and in Player Inventory */
+        if (!itemStack.isEmpty()) {
+            if (slotId < PLAYER_TOTAL_COUNT) {
+                if (te.getField(TileEconomyBase.FIELD_MODE) == 1) {
+
+                    /* If Item is Currency then shift it into INPUT */
+                    if (itemStack.getItem().equals(ModItems.itemCurrency)) {
+                        playerIn.world.playSound(playerIn.posX, playerIn.posY, playerIn.posZ, SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.BLOCKS, 1.0F, 30.0F, false);
+
+                        if (!this.mergeItemStack(itemStack, PLAYER_TOTAL_COUNT + TE_INPUT_SLOT_INDEX, PLAYER_TOTAL_COUNT + TE_INPUT_SLOT_INDEX + 1, false)) {
+                            return ItemStack.EMPTY;
+                        }
+                    }
+                }
+            }
+        }
+        return ItemStack.EMPTY;
     }
 
     @Override

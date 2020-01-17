@@ -8,6 +8,7 @@ import beardlessbrady.modcurrency.item.ModItems;
 import beardlessbrady.modcurrency.utilities.UtilMethods;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -15,6 +16,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
@@ -39,6 +41,7 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider,
     public final int TE_INVENTORY_SLOT_COUNT = 25;
     public final int TE_OUTPUT_SLOT_COUNT = 1;
 
+    /* Inventory handlers */
     private ItemStackHandler inputStackHandler = new ItemStackHandler(TE_INPUT_SLOT_COUNT) {
         @Override
         protected void onContentsChanged(int slot) {
@@ -61,6 +64,10 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider,
 
     private EnumDyeColor color;
 
+    //Used for Warning messages
+    private String message= "";
+    private byte messageTime = 0;
+
     public TileTradein(){
         inventoryLimit = 256;
         selectedName = "No Item Selected";
@@ -68,29 +75,28 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider,
         creative = false;;
     }
 
+    /** Runs every tick**/
     @Override
     public void update() {
-        if (playerUsing != EMPTYID) {
-            //If item in INPUT slot is currency && EDIT MODE then calculate its worth and add to money total in machine.
-            if (mode) {
-                if (!inputStackHandler.getStackInSlot(0).isEmpty()) {
-                    if (inputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemCurrency)) {
-                        ItemStack itemStack = inputStackHandler.getStackInSlot(0);
+        if (playerUsing != EMPTYID) { /* If a player is NOT using the machine */
+            if (mode) { /* STOCK MODE & INPUT SLOT has currency in it*/
+                if (inputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemCurrency)) {
+                    ItemStack itemStack = inputStackHandler.getStackInSlot(0); /* Input slot Item */
 
-                        float tempAmount = Float.parseFloat(ConfigCurrency.currencyValues[itemStack.getItemDamage()]) * 100;
-                        int amount = (int) tempAmount;
-                        amount = amount * inputStackHandler.getStackInSlot(0).getCount();
+                    int amount = (int) (Float.parseFloat(ConfigCurrency.currencyValues[itemStack.getItemDamage()]) * 100); /* Converts currency Value to float then multiples by 100 to covert to money system */
+                    amount = amount * inputStackHandler.getStackInSlot(0).getCount(); /* Multiply currency value by amount of items */
 
-                        if (amount + cashReserve <= 999999999) {
-                            inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
-                            cashRegister += amount;
-                        } else {
-                            //TODO ERROR MESSAGES:  setMessage("CAN'T FIT ANYMORE CURRENCY!", (byte) 40);
-                            //  world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 3.0F, false);
-                        }
+                    /* If cash is not an obscene amount delete items in INPUT and add value to cashRegister */
+                    if (amount + cashRegister <= 999999999) {
+                        inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
+                        cashRegister += amount;
+                    } else { /* Error message if player tries to put more than $9,999,999.99 in the machine */
+                        setMessage("CAN'T FIT ANYMORE CURRENCY!", (byte) 40);
+                        world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 3.0F, false);
                     }
                 }
-            } else { //IF SELL MODE
+
+            } else { /* TRADE MODE & INPUT is not empty*/
                 if (!inputStackHandler.getStackInSlot(0).isEmpty()) {
                     searchLoop:
                     for (int i = 0; i < inventoryStackHandler.getSlots(); i++) {
@@ -101,21 +107,37 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider,
                                 int cost = inventoryStackHandler.getItemTradein(i).getCost();
                                 int inputAmount = inputStackHandler.getStackInSlot(0).getCount();
 
-                                System.out.println(cost * inputAmount);
-                                if(cashRegister >= cost * inputAmount) { //TODO fix where if not enough money sell up to what it can
+                                if (cashRegister < cost * inputAmount)
+                                    inputAmount = cashRegister / cost;
 
+                                if((inputAmount + inventoryStackHandler.getItemTradein(i).getSize()) > inventoryStackHandler.getSlotLimit(i))
+                                    inputAmount = inputAmount - (inventoryStackHandler.getItemTradein(i).getSize() + inputAmount - inventoryStackHandler.getSlotLimit(i));
+
+                                if (cashRegister >= cost * inputAmount && (inputAmount + inventoryStackHandler.getItemTradein(i).getSize()) <= inventoryStackHandler.getSlotLimit(i)) {
                                     cashReserve = cashReserve + cost * inputAmount;
                                     cashRegister = cashRegister - cost * inputAmount;
 
                                     inputStackHandler.getStackInSlot(0).shrink(inputAmount);
                                     inventoryStackHandler.getItemTradein(i).growSize(inputAmount);
-                                    //TODO take limit into account
                                 }
+
+                                if(inputAmount == 0){
+                                    setMessage("SLOT FULL", (byte) 40);
+                                    world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 3.0F, false);
+                                }
+
                                 break searchLoop;
                             }
                         }
                     }
                 }
+            }
+
+            //Timer for warning messages
+            if (messageTime > 0) {
+                messageTime--;
+            } else {
+                message = "";
             }
         }
     }
@@ -287,5 +309,14 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider,
                 inputStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
             }
         }
+    }
+
+    public void setMessage(String newMessage, byte time){
+        message = newMessage;
+        messageTime = time;
+    }
+
+    public String getMessage(){
+        return message;
     }
 }

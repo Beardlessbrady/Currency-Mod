@@ -85,30 +85,29 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
 
     @Override
     public void update() {
-        if(playerUsing != EMPTYID) {
+        if (playerUsing != EMPTYID) {
             //If item in INPUT slot is currency then calculate its worth and add to money total in machine.
-            if (!inputStackHandler.getStackInSlot(0).isEmpty()) {
-                if (inputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemCurrency)) {
-                    ItemStack itemStack = inputStackHandler.getStackInSlot(0);
 
-                    float tempAmount = Float.parseFloat(ConfigCurrency.currencyValues[itemStack.getItemDamage()]) * 100;
-                    int amount = (int) tempAmount;
-                    amount = amount * inputStackHandler.getStackInSlot(0).getCount();
+            if (inputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemCurrency)) {
+                ItemStack itemStack = inputStackHandler.getStackInSlot(0);
 
-                    if(amount + cashReserve <= 999999999) {
-                        inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
-                        cashReserve += amount;
-                    }else{
-                        setMessage("CAN'T FIT ANYMORE CURRENCY!", (byte) 40);
-                        world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 3.0F, false);
-                    }
+                float tempAmount = Float.parseFloat(ConfigCurrency.currencyValues[itemStack.getItemDamage()]) * 100;
+                int amount = (int) tempAmount;
+                amount = amount * inputStackHandler.getStackInSlot(0).getCount();
+
+                if (amount + cashReserve <= 999999999) {
+                    inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
+                    cashReserve += amount;
+                } else {
+                    setMessage("CAN'T FIT ANYMORE CURRENCY!", (byte) 40);
+                    world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 3.0F, false);
                 }
             }
 
             //Timer for warning messages
-            if(messageTime > 0) {
+            if (messageTime > 0) {
                 messageTime--;
-            }else{
+            } else {
                 message = "";
             }
         }
