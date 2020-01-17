@@ -57,7 +57,7 @@ public class BlockTradein extends EconomyBlockBase {
             } else { /* If player not holding dye, activate as normal */
                 if (playerIn.isSneaking() && (te.getOwner().equals(playerIn.getUniqueID()) || playerIn.isCreative())) {  /* Owning/Creative & Sneaking machine will open in STOCK MODE */
                     te.setField(TileEconomyBase.FIELD_MODE, 1);
-                } else {  /* Opens machine in SELL MODE */
+                } else {  /* Opens machine in TRADE MODE */
                     te.setField(TileEconomyBase.FIELD_MODE, 0);
                 }
 
@@ -96,7 +96,7 @@ public class BlockTradein extends EconomyBlockBase {
             } else if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOBOTTOM) { /* If block activated is 2 high & block broken is 'bottom' break block above it as well */
                 TileTradein te = (TileTradein) getTile(worldIn, pos, state);
 
-                //Outputs the change in STOCK then SELL MODE
+                //Outputs the change in STOCK then TRADE MODE
                 te.setField(TileEconomyBase.FIELD_MODE, 0);
                 te.outChange(true);
 

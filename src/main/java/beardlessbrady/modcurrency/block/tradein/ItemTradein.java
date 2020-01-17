@@ -1,6 +1,5 @@
 package beardlessbrady.modcurrency.block.tradein;
 
-import beardlessbrady.modcurrency.utilities.UtilMethods;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -21,23 +20,24 @@ public class ItemTradein {
 
     public ItemTradein(ItemStack itemStack){
         this.itemStack = itemStack;
-        itemStack.setCount(1);
+        itemStack.setCount(1); /* Set itemStack count to 1 as this custom Item handles its own size */
 
-        this.size = size;
-
+        size = 0;
         cost = 0;
         amount = 1;
         itemMax = 0;
         timeRaise = 0;
         timeElapsed = 0;
-        sizeLimit = 256;
+        sizeLimit = 256; //TODO CONFIG
     }
 
     public ItemTradein(NBTTagCompound compound){
         fromNBT(compound);
-        sizeLimit = 256;
+        sizeLimit = 256; //TODO CONFIG
     }
 
+    /** Setters & Getter Methods **/
+    //<editor-fold desc="Setters & Getters">
     public ItemStack getStack(){
         return itemStack;
     }
@@ -89,7 +89,10 @@ public class ItemTradein {
     public void setTimeElapsed(int i){
         timeElapsed = i;
     }
+    //</editor-fold>
 
+    /** NBT Methods **/
+    //<editor-fold desc="NBT Stuff">
     public NBTTagCompound toNBT(){
         NBTTagCompound compound = new NBTTagCompound();
         compound.setTag("stack", itemStack.serializeNBT());
@@ -133,57 +136,36 @@ public class ItemTradein {
             }else timeElapsed = 0;
         }
     }
+    //</editor-fold>
 
+    /** Shrink size of Item by amount **/
     public void shrinkSize(int amount){
         size = size - amount;
-
         if(size < 0) size = 0;
     }
 
+    /** Shrink size of Item by amount AND output an itemStack of the shrunken amount **/
     public ItemStack shrinkSizeWithStackOutput(int amount){
         ItemStack outputStack = this.getStack().copy();
-        int output = this.size - amount;
+        int output = size - amount; /* Calculate output stack size */
 
-        if (output < 0) {
-            size = 0;
-            outputStack.setCount(amount + output);
-        } else {
-            size = size - amount;
-            outputStack.setCount(amount);
+        if (output < 0) { /* If output is < 0 and therefore the stack can't be shrunken by the amount specified */
+            size = 0; //Empty Stack
+            outputStack.setCount(amount + output); /* Set Output stack size to amount + output (which is the original size of the itemStack) */
+        } else { /* If output is >= 0*/
+            size = size - amount; /* Shrink size of itemStack by amount */
+            outputStack.setCount(amount); /* set Output stack to amount */
         }
-
-        //returns shrunk amount in a stack
-        return outputStack;
-
+        return outputStack; /* Return output stack with shrunken amount */
     }
 
+    /** Grow size of item by amount **/
     public void growSize(int amount){
-        int maxCheck = sizeLimit - size - amount;
-        if(maxCheck >= 0){
-            size = size + amount;
-        }else{
-            size = size + (amount+maxCheck);
+        int maxCheck = sizeLimit - size - amount; /* Ensures itemStack size can't grow past size limit */
+        if(maxCheck >= 0){ /* If maxCheck is >= 0 it is within the size limit */
+            size = size + amount; /* Add amount to size */
+        }else{ /* Trying to grow past size limit */
+            size = size + (amount+maxCheck); /* Add amount + maxCheck(will be negative) to only grow the item up to the size limit */
         }
-    }
-
-    public ItemStack growSizeWithStack(ItemStack stack){
-        if(UtilMethods.equalStacks(this.getStack(), stack)) {
-            int amount = stack.getCount();
-            int maxCheck = sizeLimit - size - amount;
-
-            if (maxCheck >= 0) {
-                size = size + amount;
-                return ItemStack.EMPTY;
-            } else {
-                size = size + (amount + maxCheck);
-
-                ItemStack itemStack = getStack();
-                itemStack.setCount(-maxCheck);
-
-                //returns leftover if there is any
-                return itemStack;
-            }
-        }else
-            return stack;
     }
 }

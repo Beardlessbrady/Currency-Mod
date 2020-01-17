@@ -28,7 +28,6 @@ import java.util.List;
 
 import static beardlessbrady.modcurrency.block.TileEconomyBase.FIELD_MODE;
 import static beardlessbrady.modcurrency.block.TileEconomyBase.FIELD_SELECTED;
-import static beardlessbrady.modcurrency.block.vending.TileVending.*;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
@@ -46,6 +45,7 @@ public class GuiTradein extends GuiContainer {
     private TileTradein te;
     private GuiTextField fieldPrice, fieldAmnt, fieldItemMax, fieldTimeRestock;
 
+    //Field ID's
     private static final int FIELDPRICE = 0;
     private static final int FIELDAMNT = 1;
     private static final int FIELDITEMMAX = 2;
@@ -60,6 +60,7 @@ public class GuiTradein extends GuiContainer {
         this.te = te;
     }
 
+    /** Method runs when GUI is first initialized **/
     @Override
     public void initGui() {
         super.initGui();
@@ -103,11 +104,12 @@ public class GuiTradein extends GuiContainer {
         fieldTimeRestock.setVisible(false);
         fieldTimeRestock.setText("1");
 
-        GlStateManager.color(0xFF, 0xFF, 0xFF);
+        GlStateManager.color(0xFF, 0xFF, 0xFF); /* Resets colors in GL so there are no colouring issues */
 
         updateTextField();
     }
 
+    /** Draws the screen and all the components in it **/
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
@@ -119,153 +121,143 @@ public class GuiTradein extends GuiContainer {
         fieldTimeRestock.drawTextBox();
     }
 
+    /** Draws background **/
     @Override
     protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         Minecraft.getMinecraft().getTextureManager().bindTexture(BACK_TEXTURE);
-        drawTexturedModalRect(guiLeft, guiTop - 47, 0, 0, 176, 254);
+        drawTexturedModalRect(guiLeft, guiTop - 47, 0, 0, 176, 254); /* Background texture */
 
-        //Admin Tag
-        if(te.getField(FIELD_MODE) == 1) {
-
-            //Tag
+        if(te.getField(FIELD_MODE) == 1) { /* STOCK MODE */
             Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
-            drawTexturedModalRect(guiLeft - 107, guiTop + 5, 0, 208, 106, 48);
+            drawTexturedModalRect(guiLeft - 107, guiTop + 5, 0, 208, 106, 48); /* Info Tag background */
         }
     }
-    
+
+    /** Draws foreground **/
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
 
-        //Basics GUI labels
+        /* Barebone GUI text */
         fontRenderer.drawString(I18n.format("tile.modcurrency:blocktradein.name"), 8, -42, Integer.parseInt("ffffff", 16));
         fontRenderer.drawString(I18n.format("container.inventory"), 8, 87, Color.darkGray.getRGB());
         fontRenderer.drawString(I18n.format("guivending.in"), 18, 20, Color.lightGray.getRGB());
         fontRenderer.drawString(I18n.format("guivending.out"), 145, 20, Color.lightGray.getRGB());
-        GlStateManager.color(0xFF, 0xFF, 0xFF);
+        GlStateManager.color(0xFF, 0xFF, 0xFF); /* Resets colors in GL to prevent visual glitches */
 
-        //Admin 'Price Tag' rendering
-        drawAdminPanel();
+        drawAdminPanel(); /* STOCK 'Info Tag' Rendering */
 
-        //Draws custom stack sizes
-        drawItemStackSize();
+        drawItemStackSize(); /* Custom Stack size Rendering */
 
-        //Money total and cashout button labels
+        drawSelectionOverlay(); /* 'Selection Tag' Rendering */
+
+        /* Draws the money labels and amounts and shrinks the text size */
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glPushMatrix();
         GL11.glScalef(0.7F, 0.7F, 0.8F);
+        /* Players Money text rendering */
         fontRenderer.drawStringWithShadow(I18n.format("guivending.cash"), 7, -40, Integer.parseInt("2DB22F", 16));
         fontRenderer.drawStringWithShadow(I18n.format("guivending.moneysign"), 7, -30, Integer.parseInt("ffffff", 16));
-
-        //draws players cash in machine
         fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getField(TileVending.FIELD_CASHRESERVE))), 15, -30, Integer.parseInt("ffffff", 16));
-        GL11.glPopMatrix();
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-
-        //Draws the selection overlay which determining which slot is selected
-        drawSelectionOverlay();
-
+        /* Machines Money text rendering in STOCK MODE*/
         if (te.getField(TileVending.FIELD_MODE) == 1) {
-            //Draws machines cash total and its labels
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
-            GL11.glPushMatrix();
-            GL11.glScalef(0.7F, 0.7F, 0.8F);
             fontRenderer.drawStringWithShadow(I18n.format("guivending.profit"), 7, -10, Integer.parseInt("3D78E0", 16));
             fontRenderer.drawStringWithShadow(I18n.format("guivending.moneysign"), 7, 0, Integer.parseInt("ffffff", 16));
             fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getField(TileVending.FIELD_CASHREGISTER))), 15, 0, Integer.parseInt("ffffff", 16));
-            GL11.glPopMatrix();
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
         }
-
+        GL11.glPopMatrix();
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
     }
 
+    /** Custom Item Stack size Rendering **/
     private void drawItemStackSize() {
-        if(te.getField(FIELD_FINITE) == 0) {
+        //TODO Dont render if creative and infinite and don't want items collected
+        if (te.getField(FIELD_MODE) == 1) { /* STOCK MODE */
+
+            /* Shrink text size so it fits with 3 digit numbers */
             GL11.glDisable(GL11.GL_DEPTH_TEST);
             GL11.glPushMatrix();
             GL11.glScalef(0.7F, 0.7F, 0.8F);
 
-            String num;
-            int startY = -19;
+            String num; /* Used to calculate the size of each itemStack */
+            int startY = -19; /* Starting Y value */
             int columnCount = 5;
 
+            /* Loops through each slot to calculate and render its stack size */
             for (int j = 0; j < columnCount; j++) {
                 for (int i = 0; i < 5; i++) {
                     int index = (i + (5 * j));
 
-                    if (te.getItemTradein(i + (5 * j)).getSize() != 0 && te.getItemTradein(i + (5 * j)).getSize() > 0) {
+                    num = " ";
+                    if (!te.getItemTradein(index).getStack().isEmpty()) /* If ItemStack is Empty don't render a number, otherwise render itemStack size*/
                         num = Integer.toString(te.getItemTradein(i + (5 * j)).getSize());
-                    } else if (!te.getItemTradein(index).getStack().isEmpty()) {
-                        num = TextFormatting.RED + "0";
-                    } else {
-                        num = " ";
-                    }
 
-                    if (num.length() == 1) num = "  " + num;
-                    if (num.length() == 2) num = " " + num;
+                    if (num.equals("0"))
+                        num = TextFormatting.RED + "  0"; /* If itemStack size is 0 then color is red */
+                    if (num.length() == 1) num = "  " + num; /* Spacing to center numbers correctly */
+                    if (num.length() == 2) num = " " + num; /* Spacing to center numbers correctly */
 
-                    if (te.getField(FIELD_MODE) == 1) {
-                       fontRenderer.drawStringWithShadow(num, 66 + (i * 26), startY + (j * 26), -1);
-                    }
-                    GlStateManager.color(0xFF, 0xFF, 0xFF);
+
+                    fontRenderer.drawStringWithShadow(num, 66 + (i * 26), startY + (j * 26), -1); /* Renders text */
+                    GlStateManager.color(0xFF, 0xFF, 0xFF); /* Resets color in GL to prevent visual glitches */
                 }
             }
 
+            /* Resets gl */
             GL11.glPopMatrix();
             GL11.glDisable(GL11.GL_DEPTH_TEST);
         }
     }
 
+    /** 'Info Tag' Rendering */
     private void drawAdminPanel() {
         int i = (width - xSize) / 2;
         int j = (height - ySize) / 2;
-        if (te.getField(TileVending.FIELD_MODE) == 1) {
-
-            //NON BUNDLE PANEL
+        if (te.getField(TileVending.FIELD_MODE) == 1) { /* STOCK MODE */
             Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
 
-            fontRenderer.drawStringWithShadow(I18n.format("guivending.slotsettings"), -74, 10, Integer.parseInt("ffffff", 16));
+            fontRenderer.drawStringWithShadow(I18n.format("guivending.slotsettings"), -74, 10, Integer.parseInt("ffffff", 16)); /* Title Text */
 
-            String itemName = "[" + te.getSelectedName() + "]";
+            /* Renders currently selected ItemStacks display name and shrinks it */
             GL11.glPushMatrix();
             GL11.glScaled(0.7, 0.7, 0.7);
+            String itemName = "[" + te.getSelectedName() + "]";
             fontRenderer.drawString(I18n.format(itemName), -90 - (itemName.length() * 2), 28, Integer.parseInt("08285e", 16));
             GL11.glPopMatrix();
 
+            /* Sets Price textfield's position and enables it */
             fontRenderer.drawStringWithShadow(I18n.format("$"), -90, 30, Color.lightGray.getRGB());
-
             fieldPrice.x = i - 82;
             fieldPrice.y = j + 30;
             fieldPrice.setEnabled(true);
             fieldPrice.setVisible(true);
 
+            /* Sets Amount textfield's position and enables it */
             fontRenderer.drawStringWithShadow(I18n.format("guivending.amnt"), -90, 40, Color.lightGray.getRGB());
             fieldAmnt.x = i - 65;
             fieldAmnt.y = j + 40;
             fieldAmnt.setEnabled(true);
             fieldAmnt.setVisible(true);
 
-            GlStateManager.color(0xFF, 0xFF, 0xFF);
-        } else {
+            GlStateManager.color(0xFF, 0xFF, 0xFF); /* Resets GL color to prevent visual bugs */
+        } else { /* TRADE MODE, disables anything that shouldn't enabled*/
             fieldPrice.setEnabled(false);
             fieldPrice.setVisible(false);
 
             fieldAmnt.setEnabled(false);
             fieldAmnt.setVisible(false);
-
-            fieldTimeRestock.setEnabled(false);
-            fieldTimeRestock.setVisible(false);
-            fieldItemMax.setEnabled(false);
-            fieldItemMax.setVisible(false);
         }
     }
 
+    /** 'Selection Tag' Rendering **/
     private void drawSelectionOverlay() {
         Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
-        if (te.getField(TileTradein.FIELD_MODE) == 1) {
+
+        if (te.getField(TileTradein.FIELD_MODE) == 1) { /* STOCK MODE */
             int slotId = te.getField(FIELD_SELECTED);
             int slotColumn = 0, slotRow = 0;
 
+            /* Calculating the right slot Row and Column positions*/
             if (slotId >= 0 && slotId <= 4) {
                 slotRow = slotId;
             } else if (slotId >= 5 && slotId <= 9) {
@@ -281,11 +273,14 @@ public class GuiTradein extends GuiContainer {
                 slotColumn = 4;
                 slotRow = (slotId) - 20;
             }
+
+            /* Drawing the selection tag and selection box */
             drawTexturedModalRect(42 + (18 * slotRow), -24 + (18 * slotColumn), 21, 172, 20, 20);
             drawTexturedModalRect(42 + (18 * slotRow) + 14, -24 + (18 * slotColumn) + 15, 83, 3, 16, 14);
         }
     }
 
+    /** Updated all Text fields**/
     private void updateTextField(){
             fieldPrice.setText(UtilMethods.translateMoney(te.getItemTradein(te.getField(FIELD_SELECTED)).getCost()));
             fieldAmnt.setText(Integer.toString(te.getItemTradein(te.getField(FIELD_SELECTED)).getAmount()));
@@ -293,36 +288,44 @@ public class GuiTradein extends GuiContainer {
             fieldTimeRestock.setText(Integer.toString(te.getItemTradein(te.getField(FIELD_SELECTED)).getTimeRaise()));
     }
 
+    /** Render Hover over tool tips **/
     @Override
     protected void renderToolTip(ItemStack stack, int x, int y) {
         int i = (x - (width - xSize) / 2);
         int j = (y - (height - ySize) / 2);
 
+        /* If mouse is hovering over a slot */
         if (j <= 66 && j >= -23 && i >= 43) {
+            /* Initial slot X and Y starting positions */
             int startY = -23;
             int startX = 43;
+
+            /* Calculating which row and column then through that which slot is being hovered over */
             int row = ((j - startY) / 18);
             int column = ((i - startX) / 18);
             int slot = column + (row * 5);
 
+
+            //Collects the vanilla tooltip for the item
             java.util.List<String> list = new ArrayList<>();
             List<String> ogTooltip = stack.getTooltip(mc.player, mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
             int tooltipStart = 1;
 
-            //Adding name and subname of item before price and such
-            if (ogTooltip.size() > 0) {
+            if (ogTooltip.size() > 0) { /* If the vanilla tooltip has anything in it add its 0 index (most likely item name) and set its rarity colour if it has any */
                 list.add(ogTooltip.get(0));
-                list.set(0, stack.getRarity().rarityColor + list.get(0));
+                list.set(0, stack.getItem().getForgeRarity(stack).getColor() + list.get(0));
             }
-            if (ogTooltip.size() > 1) if (!ogTooltip.get(1).equals("")) {
+
+            if (ogTooltip.size() > 1) /* If vanilla tooltip has any more information add it AFTER our added information */
+                if (!ogTooltip.get(1).equals("")) {
                 list.add(TextFormatting.GRAY + ogTooltip.get(1));
                 tooltipStart = 2;
             }
 
-            int cost = te.getItemTradein(slot).getCost();
+            int cost = te.getItemTradein(slot).getCost(); /* Get Items cost */
 
-            //Adding Vending Strings
-            if (te.getField(FIELD_MODE) == 0) {
+            /* Adding items price to tooltip: What is written depends on if machine has enough funds to buy the item */
+            if (te.getField(FIELD_MODE) == 0) { /* TRADE MODE */
                 if (te.canMachineAfford(slot)) {
                     list.add(TextFormatting.GREEN + "Payout of $" + UtilMethods.translateMoney(cost));
                 }else{
@@ -330,12 +333,12 @@ public class GuiTradein extends GuiContainer {
                 }
             }
 
-            //adding original extra stuff AFTER price and such
+            /* Actually adding the vanilla extra tooltip info back if there is any */
             for (; tooltipStart < stack.getTooltip(mc.player, mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL).size(); tooltipStart++) {
                 list.add(TextFormatting.GRAY + stack.getTooltip(mc.player, mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL).get(tooltipStart));
             }
 
-
+            /* Adding the tooltip info to the tooltip */
             FontRenderer font = stack.getItem().getFontRenderer(stack);
             net.minecraftforge.fml.client.config.GuiUtils.preItemToolTip(stack);
             drawHoveringText(list, x, y, (font == null ? fontRenderer : font));
@@ -347,10 +350,13 @@ public class GuiTradein extends GuiContainer {
         }
     }
 
+    /** Method activates if a key is typed **/
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        int numChar = Character.getNumericValue(typedChar);
-        if ((te.getField(FIELD_MODE) == 1) && ((numChar >= 0 && numChar <= 9) || (keyCode == 14) || keyCode == 211 || (keyCode == 203) || (keyCode == 205) || (keyCode == 52))) { //Ensures keys input are only numbers or backspace type keys
+        int numChar = Character.getNumericValue(typedChar); /* Collects keys input */
+
+        /* STOCK MODE: Ensures keys input are only numbers or backspace type keys */
+        if ((te.getField(FIELD_MODE) == 1) && ((numChar >= 0 && numChar <= 9) || (keyCode == 14) || keyCode == 211 || (keyCode == 203) || (keyCode == 205) || (keyCode == 52))) {
 
             if ((!fieldPrice.getText().contains(".")) || keyCode != 52) {
                 if (fieldPrice.textboxKeyTyped(typedChar, keyCode)) setPayout();
@@ -364,6 +370,7 @@ public class GuiTradein extends GuiContainer {
             if (fieldAmnt.textboxKeyTyped(typedChar, keyCode))
                 setAmnt(te.getField(FIELD_SELECTED), fieldAmnt);
 
+            //TODO when we implement this shit
             /*if (te.getField(FIELD_CREATIVE) == 1 && te.getField(FIELD_FINITE) == 1) {
                 if (fieldItemMax.textboxKeyTyped(typedChar, keyCode))
                     setItemMax(fieldItemMax);
@@ -376,21 +383,22 @@ public class GuiTradein extends GuiContainer {
         }
     }
 
+    /** Method activates if mouse is clicked **/
     @Override
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        if (te.getField(TileVending.FIELD_MODE) == 1) {
+        if (te.getField(TileVending.FIELD_MODE) == 1) { /* STOCK MODE */
             super.mouseClicked(mouseX, mouseY, mouseButton);
             fieldPrice.mouseClicked(mouseX, mouseY, mouseButton);
             fieldAmnt.mouseClicked(mouseX, mouseY, mouseButton);
             fieldItemMax.mouseClicked(mouseX, mouseY, mouseButton);
             fieldTimeRestock.mouseClicked(mouseX, mouseY, mouseButton);
-
             updateTextField();
         } else {
             super.mouseClicked(mouseX, mouseY, mouseButton);
         }
     }
 
+    /** Actions performed by various buttons **/
     @Override
     protected void actionPerformed(GuiButton button) throws IOException {
         switch (button.id) {
@@ -400,40 +408,45 @@ public class GuiTradein extends GuiContainer {
                 PacketHandler.INSTANCE.sendToServer(pack);
 
                 buttonList.get(BUTTONADMIN).displayString = (te.getField(FIELD_MODE) == 0) ? "STOCK" : "TRADE";
-
                 te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
                 break;
             case BUTTONCHANGE:
                 PacketOutChangeToServer pack0 = new PacketOutChangeToServer();
                 pack0.setData(te.getPos(), false);
                 PacketHandler.INSTANCE.sendToServer(pack0);
-               // te.outChange(false);
+                // te.outChange(false);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + button.id);
         }
     }
 
+    /** Sets the 'cost' of the selected item from the text field**/
     private void setPayout() {
         if (fieldPrice.getText().length() > 0) {
             int newCost = 0;
 
-            if (fieldPrice.getText().contains(".")) {
-                if (fieldPrice.getText().lastIndexOf(".") + 1 != fieldPrice.getText().length()) {
-                    if (fieldPrice.getText().lastIndexOf(".") + 2 == fieldPrice.getText().length()) {
+            /* Converts string to money system. EX: $5 = 500, $12.69 = 1269 */
+
+            /*If there is a '.' collect and convert the amount after the '.' to money system */
+            if (fieldPrice.getText().contains(".")) { /* lastIndexOf() outputs how many digits are before the specified string */
+                if (fieldPrice.getText().lastIndexOf(".") + 1 != fieldPrice.getText().length()) { /* If there are more digits past the '.' */
+                    if (fieldPrice.getText().lastIndexOf(".") + 2 == fieldPrice.getText().length()) { /* If there is only one digit after the '.' add a '0' to the end*/
                         newCost = Integer.parseInt(fieldPrice.getText().substring(fieldPrice.getText().lastIndexOf(".") + 1) + "0");
-                    } else {
+                    } else { /* If there are 2 digits after the '.' collect number*/
                         newCost = Integer.parseInt(fieldPrice.getText().substring(fieldPrice.getText().lastIndexOf(".") + 1));
                     }
                 }
 
+                /* If '.' collect first half of number, multiply it by 100 to convert it to money system and add to newCost*/
                 if (fieldPrice.getText().lastIndexOf(".") != 0)
                     newCost += Integer.parseInt(fieldPrice.getText().substring(0, fieldPrice.getText().lastIndexOf("."))) * 100;
 
-            } else {
+            } else { /* If no '.' just multiply number by 100 to convert it to number system */
                 newCost = Integer.parseInt(fieldPrice.getText()) * 100;
             }
 
+            /* Send new cost to itemTradeIn */
             te.getItemTradein(te.getField(FIELD_SELECTED)).setCost(newCost);
             PacketSetItemToServer pack = new PacketSetItemToServer();
             pack.setData(te.getField(FIELD_SELECTED), newCost, PacketSetItemToServer.FIELD_COST, te.getPos());
@@ -443,17 +456,20 @@ public class GuiTradein extends GuiContainer {
         }
     }
 
+    /** Sets the 'amount' of the selected item from the text field **/
     private void setAmnt(int slot, GuiTextField guiTextField) {
         if (guiTextField.getText().length() > 0) {
-            int amount = Integer.parseInt(guiTextField.getText());
+            int amount = Integer.parseInt(guiTextField.getText()); /* Set amount as per text field */
 
+            /* If slot is empty set amount textfield to 1, or if textfield is higher then maxStackSize set to maxStackSize */
             if (te.getItemTradein(slot).getStack().isEmpty()) {
                 amount = 1;
             } else if (Integer.parseInt(guiTextField.getText()) > te.getItemTradein(slot).getStack().getMaxStackSize())
                 amount = te.getItemTradein(slot).getStack().getMaxStackSize();
 
-            if (amount == 0) amount = 1;
+            if (amount == 0) amount = 1; /* If text field is 0 set to 1, 0 would break things */
 
+            /* Set new amount to ItemTradeIn */
             te.getItemTradein(slot).setAmount(amount);
             PacketSetItemToServer pack = new PacketSetItemToServer();
             pack.setData(te.getField(FIELD_SELECTED), amount, PacketSetItemToServer.FIELD_AMOUNT, te.getPos());

@@ -26,7 +26,7 @@ public class ItemTradeinHandler implements IItemHandler, IItemHandlerModifiable,
 
     public ItemTradein getItemTradein(int i) {
         if (itemArray[i] == null)
-            return new ItemTradein(ItemStack.EMPTY);
+            return new ItemTradein(ItemStack.EMPTY); /* If ItemStack is empty return an ItemTradeIn with an empty ItemStack */
         return itemArray[i];
     }
 
@@ -38,6 +38,11 @@ public class ItemTradeinHandler implements IItemHandler, IItemHandlerModifiable,
         itemArray[i] = null;
     }
 
+    public int length() {
+        return itemArray.length;
+    }
+
+    /** Serialize NBT of ItemTradeinHandler for saving **/
     public NBTTagCompound serializeNBT() {
         NBTTagCompound compound = new NBTTagCompound();
         for (int i = 0; i < itemArray.length; i++) {
@@ -48,6 +53,7 @@ public class ItemTradeinHandler implements IItemHandler, IItemHandlerModifiable,
         return compound;
     }
 
+    /** Deserialize NBT from save to be unpacked **/
     public void deserializeNBT(NBTTagCompound nbt) {
         for (int i = 0; i < itemArray.length; i++) {
             if (nbt.hasKey(Integer.toString(i))) {
@@ -56,11 +62,7 @@ public class ItemTradeinHandler implements IItemHandler, IItemHandlerModifiable,
         }
     }
 
-    public int length() {
-        return itemArray.length;
-    }
-
-    //------------#ItemStackHandler Overwritten fields----------
+    //#ItemStackHandler Overwritten fields
     @Override
     public int getSlots() {
         return itemArray.length;
@@ -102,7 +104,7 @@ public class ItemTradeinHandler implements IItemHandler, IItemHandlerModifiable,
 
     @Override
     public int getSlotLimit(int slot) {
-        return 256;
+        return 256; //TODO CONFIG
     }
 
     @Override
