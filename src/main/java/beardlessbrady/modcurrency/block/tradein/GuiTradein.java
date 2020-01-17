@@ -3,6 +3,7 @@ package beardlessbrady.modcurrency.block.tradein;
 import beardlessbrady.modcurrency.ModCurrency;
 import beardlessbrady.modcurrency.block.vending.TileVending;
 import beardlessbrady.modcurrency.network.PacketHandler;
+import beardlessbrady.modcurrency.network.PacketSendKeyToServer;
 import beardlessbrady.modcurrency.network.PacketSetFieldToServer;
 import beardlessbrady.modcurrency.network.PacketSetItemToServer;
 import beardlessbrady.modcurrency.utilities.UtilMethods;
@@ -28,7 +29,8 @@ import java.util.List;
 
 import static beardlessbrady.modcurrency.block.TileEconomyBase.FIELD_MODE;
 import static beardlessbrady.modcurrency.block.TileEconomyBase.FIELD_SELECTED;
-import static beardlessbrady.modcurrency.block.vending.TileVending.FIELD_FINITE;
+import static beardlessbrady.modcurrency.block.vending.TileVending.*;
+import static beardlessbrady.modcurrency.block.vending.TileVending.KEY_CONTROL;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
@@ -132,7 +134,7 @@ public class GuiTradein extends GuiContainer {
             drawTexturedModalRect(guiLeft - 107, guiTop + 5, 0, 208, 106, 48);
         }
     }
-
+    
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
@@ -146,6 +148,9 @@ public class GuiTradein extends GuiContainer {
 
         //Admin 'Price Tag' rendering
         drawAdminPanel();
+
+        //Draws custom stack sizes
+        drawItemStackSize();
 
         //Money total and cashout button labels
         GL11.glDisable(GL11.GL_DEPTH_TEST);
@@ -174,6 +179,61 @@ public class GuiTradein extends GuiContainer {
             GL11.glDisable(GL11.GL_DEPTH_TEST);
         }
 
+    }
+
+    private void drawItemStackSize() {
+        if(te.getField(FIELD_FINITE) == 1) {
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+            GL11.glPushMatrix();
+            GL11.glScalef(0.7F, 0.7F, 0.8F);
+
+            String num;
+            int startY = -29;
+            int columnCount = 5;
+
+            for (int j = 0; j < columnCount; j++) {
+                for (int i = 0; i < 5; i++) {
+                    int index = (i + (5 * j));
+
+                    if (te.getItemTradein(i + (5 * j)).getSize() != 0 && te.getItemTradein(i + (5 * j)).getSize() > 0) {
+                        num = Integer.toString(te.getItemTradein(i + (5 * j)).getSize());
+                    } else if (!te.getItemTradein(index).getStack().isEmpty()) {
+                        num = TextFormatting.RED + "Out";
+                    } else {
+                        num = " ";
+                    }
+
+                    if (num.length() == 1) num = "  " + num;
+                    if (num.length() == 2) num = " " + num;
+
+                    if (te.getField(FIELD_MODE) == 1) {
+                        if (te.getItemTradein(i + (5 * j)).getSize() != 1)
+                            fontRenderer.drawStringWithShadow(num, 66 + (i * 26), startY + (j * 26), -1);
+                    } else {
+                        int startAmount = te.getItemTradein(index).getAmount();
+
+                        String amount = Integer.toString(startAmount);
+
+                        if (amount.length() == 1) amount = "  " + amount;
+                        if (amount.length() == 2) amount = " " + amount;
+
+                        if (te.getItemTradein(index).getSize() >= 1 && te.getItemTradein(index).getSize() < te.getItemTradein(index).getAmount())
+                            num = TextFormatting.RED + "Out";
+
+                        if (num.equals(TextFormatting.RED + "Out")) {
+                            fontRenderer.drawStringWithShadow(num, 66 + (i * 26), startY + (j * 26), -1);
+                        } else {
+                            if (startAmount != 1 && !te.getItemTradein(index).getStack().isEmpty())
+                                fontRenderer.drawStringWithShadow(amount, 66 + (i * 26), startY + (j * 26), -1);
+                        }
+                    }
+                    GlStateManager.color(0xFF, 0xFF, 0xFF);
+                }
+            }
+
+            GL11.glPopMatrix();
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+        }
     }
 
     private void drawAdminPanel() {
