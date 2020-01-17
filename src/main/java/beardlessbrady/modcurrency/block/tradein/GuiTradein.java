@@ -182,13 +182,13 @@ public class GuiTradein extends GuiContainer {
     }
 
     private void drawItemStackSize() {
-        if(te.getField(FIELD_FINITE) == 1) {
+        if(te.getField(FIELD_FINITE) == 0) {
             GL11.glDisable(GL11.GL_DEPTH_TEST);
             GL11.glPushMatrix();
             GL11.glScalef(0.7F, 0.7F, 0.8F);
 
             String num;
-            int startY = -29;
+            int startY = -19;
             int columnCount = 5;
 
             for (int j = 0; j < columnCount; j++) {
@@ -198,7 +198,7 @@ public class GuiTradein extends GuiContainer {
                     if (te.getItemTradein(i + (5 * j)).getSize() != 0 && te.getItemTradein(i + (5 * j)).getSize() > 0) {
                         num = Integer.toString(te.getItemTradein(i + (5 * j)).getSize());
                     } else if (!te.getItemTradein(index).getStack().isEmpty()) {
-                        num = TextFormatting.RED + "Out";
+                        num = TextFormatting.RED + "0";
                     } else {
                         num = " ";
                     }
@@ -207,25 +207,7 @@ public class GuiTradein extends GuiContainer {
                     if (num.length() == 2) num = " " + num;
 
                     if (te.getField(FIELD_MODE) == 1) {
-                        if (te.getItemTradein(i + (5 * j)).getSize() != 1)
-                            fontRenderer.drawStringWithShadow(num, 66 + (i * 26), startY + (j * 26), -1);
-                    } else {
-                        int startAmount = te.getItemTradein(index).getAmount();
-
-                        String amount = Integer.toString(startAmount);
-
-                        if (amount.length() == 1) amount = "  " + amount;
-                        if (amount.length() == 2) amount = " " + amount;
-
-                        if (te.getItemTradein(index).getSize() >= 1 && te.getItemTradein(index).getSize() < te.getItemTradein(index).getAmount())
-                            num = TextFormatting.RED + "Out";
-
-                        if (num.equals(TextFormatting.RED + "Out")) {
-                            fontRenderer.drawStringWithShadow(num, 66 + (i * 26), startY + (j * 26), -1);
-                        } else {
-                            if (startAmount != 1 && !te.getItemTradein(index).getStack().isEmpty())
-                                fontRenderer.drawStringWithShadow(amount, 66 + (i * 26), startY + (j * 26), -1);
-                        }
+                       fontRenderer.drawStringWithShadow(num, 66 + (i * 26), startY + (j * 26), -1);
                     }
                     GlStateManager.color(0xFF, 0xFF, 0xFF);
                 }

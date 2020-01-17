@@ -100,9 +100,10 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider,
                                 int cost = inventoryStackHandler.getItemTradein(i).getCost();
                                 int inputAmount = inputStackHandler.getStackInSlot(0).getCount();
 
-                                cashReserve += cost * inputAmount;
+                                cashReserve = cashReserve + cost * inputAmount;
                                 inputStackHandler.getStackInSlot(0).shrink(inputAmount);
-                                inventoryStackHandler.getItemTradein(0).growSize(1);
+                                inventoryStackHandler.getItemTradein(i).growSize(inputAmount);
+                                //TODO take limit into account
                                 break searchLoop;
                             }
                         }
@@ -207,7 +208,7 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider,
         return inventoryStackHandler.getItemTradein(i);
     }
 
-    public void setItemVendor(int i, ItemTradein item){
+    public void setItemTradein(int i, ItemTradein item){
         inventoryStackHandler.setItemTradein(i, item);
     }
 

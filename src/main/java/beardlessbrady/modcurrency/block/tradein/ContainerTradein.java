@@ -172,12 +172,17 @@ public class ContainerTradein extends Container {
         if (slotId >= 37 && slotId <= 61) {  //te Inventory
             if (te.getField(TileTradein.FIELD_MODE) == 1) { //ADMIN MODE
                 if (dragType == 0 || (dragType == 1 && clickTypeIn == ClickType.QUICK_CRAFT)) { //Left Click
-                    if (playerStack.isEmpty()) {
-                        te.voidItem(index);
+                    if(te.getItemTradein(index).getSize() > 0){
+                        if(playerStack.isEmpty()){
+                            player.inventory.setItemStack(te.getItemTradein(index).shrinkSizeWithStackOutput(64));
+                        }
                     } else {
-                        te.setItemVendor(index, new ItemTradein(copyPlayerStack));
+                        if (playerStack.isEmpty()) {
+                            te.voidItem(index);
+                        } else {
+                            te.setItemTradein(index, new ItemTradein(copyPlayerStack));
+                        }
                     }
-
                 } else if (dragType == 1) { //Right Click
                     if (!(te.getField(TileEconomyBase.FIELD_SELECTED) == slotId)) {
                         short toSelect = (short) index;
@@ -186,18 +191,16 @@ public class ContainerTradein extends Container {
                         te.setField(TileEconomyBase.FIELD_SELECTED, toSelect);
                     }
                     if (te.getItemTradein(index).getStack().isEmpty()) { //Place 1
-                        te.setItemVendor(index, new ItemTradein(copyPlayerStack));
+                        te.setItemTradein(index, new ItemTradein(copyPlayerStack));
                     }
 
                 } else if (dragType == 5) { //Quick Craft Right
                     if (te.getItemTradein(index).getStack().isEmpty()) { //Place 1
-                        te.setItemVendor(index, new ItemTradein(copyPlayerStack));
+                        te.setItemTradein(index, new ItemTradein(copyPlayerStack));
                     }
                 }
-                return ItemStack.EMPTY;
-            }else{ //TRADE MODE
-                return ItemStack.EMPTY;
             }
+            return ItemStack.EMPTY;
         } else if (slotId == 62) { //OUTPUT
             return ItemStack.EMPTY;
         }

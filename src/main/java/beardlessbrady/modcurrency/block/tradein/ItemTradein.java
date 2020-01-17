@@ -160,7 +160,6 @@ public class ItemTradein {
     public void growSize(int amount){
         int maxCheck = sizeLimit - size - amount;
         if(maxCheck >= 0){
-            System.out.println("SIZE: " + size + " " + amount);
             size = size + amount;
         }else{
             size = size + (amount+maxCheck);
