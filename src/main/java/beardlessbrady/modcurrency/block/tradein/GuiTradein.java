@@ -3,7 +3,6 @@ package beardlessbrady.modcurrency.block.tradein;
 import beardlessbrady.modcurrency.ModCurrency;
 import beardlessbrady.modcurrency.block.vending.TileVending;
 import beardlessbrady.modcurrency.network.PacketHandler;
-import beardlessbrady.modcurrency.network.PacketSendKeyToServer;
 import beardlessbrady.modcurrency.network.PacketSetFieldToServer;
 import beardlessbrady.modcurrency.network.PacketSetItemToServer;
 import beardlessbrady.modcurrency.utilities.UtilMethods;
@@ -19,7 +18,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TextFormatting;
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -30,7 +28,6 @@ import java.util.List;
 import static beardlessbrady.modcurrency.block.TileEconomyBase.FIELD_MODE;
 import static beardlessbrady.modcurrency.block.TileEconomyBase.FIELD_SELECTED;
 import static beardlessbrady.modcurrency.block.vending.TileVending.*;
-import static beardlessbrady.modcurrency.block.vending.TileVending.KEY_CONTROL;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as

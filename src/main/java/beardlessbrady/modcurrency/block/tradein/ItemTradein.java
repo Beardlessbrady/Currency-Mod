@@ -186,8 +186,4 @@ public class ItemTradein {
         }else
             return stack;
     }
-
-    public boolean isEmpty(){
-        return itemStack == ItemStack.EMPTY;
-    }
 }
