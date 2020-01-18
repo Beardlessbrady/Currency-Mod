@@ -26,7 +26,7 @@ public class ItemTradeinHandler implements IItemHandler, IItemHandlerModifiable,
 
     public ItemTradein getItemTradein(int i) {
         if (itemArray[i] == null)
-            return new ItemTradein(ItemStack.EMPTY); /* If ItemStack is empty return an ItemTradeIn with an empty ItemStack */
+            return new ItemTradein(ItemStack.EMPTY); // If ItemStack is empty return an ItemTradeIn with an empty ItemStack */
         return itemArray[i];
     }
 

@@ -20,7 +20,7 @@ public class ItemTradein {
 
     public ItemTradein(ItemStack itemStack){
         this.itemStack = itemStack;
-        itemStack.setCount(1); /* Set itemStack count to 1 as this custom Item handles its own size */
+        itemStack.setCount(1); // Set itemStack count to 1 as this custom Item handles its own size */
 
         size = 0;
         cost = 0;
@@ -147,25 +147,25 @@ public class ItemTradein {
     /** Shrink size of Item by amount AND output an itemStack of the shrunken amount **/
     public ItemStack shrinkSizeWithStackOutput(int amount){
         ItemStack outputStack = this.getStack().copy();
-        int output = size - amount; /* Calculate output stack size */
+        int output = size - amount; // Calculate output stack size */
 
-        if (output < 0) { /* If output is < 0 and therefore the stack can't be shrunken by the amount specified */
+        if (output < 0) { // If output is < 0 and therefore the stack can't be shrunken by the amount specified */
             size = 0; //Empty Stack
-            outputStack.setCount(amount + output); /* Set Output stack size to amount + output (which is the original size of the itemStack) */
-        } else { /* If output is >= 0*/
-            size = size - amount; /* Shrink size of itemStack by amount */
-            outputStack.setCount(amount); /* set Output stack to amount */
+            outputStack.setCount(amount + output); // Set Output stack size to amount + output (which is the original size of the itemStack) */
+        } else { // If output is >= 0*/
+            size = size - amount; // Shrink size of itemStack by amount */
+            outputStack.setCount(amount); // set Output stack to amount */
         }
-        return outputStack; /* Return output stack with shrunken amount */
+        return outputStack; // Return output stack with shrunken amount */
     }
 
     /** Grow size of item by amount **/
     public void growSize(int amount){
-        int maxCheck = sizeLimit - size - amount; /* Ensures itemStack size can't grow past size limit */
-        if(maxCheck >= 0){ /* If maxCheck is >= 0 it is within the size limit */
-            size = size + amount; /* Add amount to size */
-        }else{ /* Trying to grow past size limit */
-            size = size + (amount+maxCheck); /* Add amount + maxCheck(will be negative) to only grow the item up to the size limit */
+        int maxCheck = sizeLimit - size - amount; // Ensures itemStack size can't grow past size limit */
+        if(maxCheck >= 0){ // If maxCheck is >= 0 it is within the size limit */
+            size = size + amount; // Add amount to size */
+        }else{ // Trying to grow past size limit */
+            size = size + (amount+maxCheck); // Add amount + maxCheck(will be negative) to only grow the item up to the size limit */
         }
     }
 }
