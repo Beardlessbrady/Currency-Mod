@@ -258,8 +258,10 @@ public class ContainerVending extends Container {
                 }
                 return ItemStack.EMPTY;
             }
-        } else if (slotId >= 62 && slotId <= 66) {
+        } else if (slotId >= 62 && slotId <= 66) { //OUTPUT Inventory
             if (!this.mergeItemStack(inventorySlots.get(slotId).getStack(), 0, PLAYER_TOTAL_COUNT, false)) {
+                te.setMessage("Not enough space in inventory!", (byte) 40);
+                player.playSound(SoundEvents.BLOCK_FIRE_EXTINGUISH, 1, 0.5F);
                 return ItemStack.EMPTY;
             }
             return ItemStack.EMPTY;

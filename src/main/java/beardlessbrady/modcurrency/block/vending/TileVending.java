@@ -4,6 +4,7 @@ import beardlessbrady.modcurrency.ConfigCurrency;
 import beardlessbrady.modcurrency.ModCurrency;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.handler.StateHandler;
+import beardlessbrady.modcurrency.item.ItemMoneyBag;
 import beardlessbrady.modcurrency.item.ModItems;
 import beardlessbrady.modcurrency.utilities.UtilMethods;
 import net.minecraft.entity.item.EntityItem;
@@ -309,55 +310,59 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     }
 
     public void outChange(boolean blockBreak){
-        int bank;
-        OUTER_LOOP: for(int i = ConfigCurrency.currencyValues.length-1; i >=0; i--){
-            if(mode == true){
-                bank = cashRegister;
-            }else{
-                bank = cashReserve;
-            }
+        // If Block  being broken spawn on ground */
+        if(blockBreak) {
+            int bank;
 
-            boolean repeat = false;
-            if((bank / (Float.parseFloat(ConfigCurrency.currencyValues[i])) * 100) > 0){ //Divisible by currency value
-                int amount = (bank /((int)((Float.parseFloat(ConfigCurrency.currencyValues[i])) * 100)));
-
-                if(amount > 64){
-                    amount = 64;
-                    repeat = true;
+            OUTER_LOOP: for (int i = ConfigCurrency.currencyValues.length - 1; i >= 0; i--) {
+                if (mode) {
+                    bank = cashRegister;
+                } else {
+                    bank = cashReserve;
                 }
 
+                boolean repeat = false;
+                if ((bank / (Float.parseFloat(ConfigCurrency.currencyValues[i])) * 100) > 0) { //Divisible by currency value
+                    int amount = (bank / ((int) ((Float.parseFloat(ConfigCurrency.currencyValues[i])) * 100)));
 
-                ItemStack outChange = new ItemStack(ModItems.itemCurrency, amount, i);
+                    if (amount > 64) {
+                        amount = 64;
+                        repeat = true;
+                    }
+                    ItemStack outChange = new ItemStack(ModItems.itemCurrency, amount, i);
 
-                if(blockBreak){ //If Block Breaking spawn item
                     world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), outChange));
                     if (mode) {
                         cashRegister -= ((Float.parseFloat(ConfigCurrency.currencyValues[i]) * 100) * amount);
                     } else {
                         cashReserve -= ((Float.parseFloat(ConfigCurrency.currencyValues[i]) * 100) * amount);
                     }
-                }else {
-                    int outputSlot = outputSlotCheck(outChange, amount);
-                    if (outputSlot != -1) {
-                        if (growOutItemSize(outChange, outputSlot).equals(ItemStack.EMPTY)) {
-                            if (mode) {
-                                cashRegister -= ((Float.parseFloat(ConfigCurrency.currencyValues[i]) * 100) * amount);
-                            } else {
-                                cashReserve -= ((Float.parseFloat(ConfigCurrency.currencyValues[i]) * 100) * amount);
-                            }
-                        }
-                    } else {
-                        break OUTER_LOOP;
-                    }
                 }
-            }
 
-            if (repeat) i++;
-            if(bank == 0) break OUTER_LOOP;
+                if (repeat) i++;
+                if (bank == 0) break OUTER_LOOP;
+            }
+        } else { // If machine not being broken place money into money bag item (if OUTPUT is empty)*/
+            ItemStack outChange = new ItemStack(ModItems.itemMoneyBag);
+            int outputSlot = outputSlotCheck(outChange, 1); //Finds an empty slot for bag
+
+            System.out.println(outputSlot);
+
+            if (outputSlot != -1) { //If there is an empty slot available in OUTPUT
+                if (mode && cashRegister != 0) { // STOCK MODE: CashRegister */
+                    ItemMoneyBag.CurrencyToNBT(outChange, cashRegister);
+                    cashRegister = 0;
+                } else if (!mode && cashReserve != 0) { // TRADE MODE: CashReserve */
+                    ItemMoneyBag.CurrencyToNBT(outChange, cashReserve);
+                    cashReserve = 0;
+                }
+
+                growOutItemSize(outChange, outputSlot).equals(ItemStack.EMPTY); //Finds an empty slot in OUTPUT and adds bag to it
+            }
         }
     }
 
-    public void dropInventory(){
+    public void dropInventory() {
         for (int i = 0; i < inventoryStackHandler.getSlots(); i++) {
             ItemStack item = inventoryStackHandler.getStackInSlot(i);
             if (!item.isEmpty()) {

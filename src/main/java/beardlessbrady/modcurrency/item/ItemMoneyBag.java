@@ -34,6 +34,7 @@ public class ItemMoneyBag extends Item {
     public ItemMoneyBag(){
         setUnlocalizedName("moneybag");
         setRegistryName("moneybag");
+        maxStackSize = 1;
     }
 
     /** Method activated on item right click **/
