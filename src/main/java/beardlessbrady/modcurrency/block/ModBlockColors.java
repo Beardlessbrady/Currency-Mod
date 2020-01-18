@@ -1,5 +1,6 @@
 package beardlessbrady.modcurrency.block;
 
+import beardlessbrady.modcurrency.block.tradein.BlockTradein;
 import beardlessbrady.modcurrency.block.vending.BlockVending;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
@@ -24,9 +25,40 @@ public class ModBlockColors implements IBlockColor {
 
     @Override
     public int colorMultiplier(IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int tintIndex) {
+
+        System.out.println(worldIn.getBlockState(pos).getBlock());
+
         if(state.getBlock() instanceof BlockVending) {
+
             if (((BlockVending) state.getBlock()).getTile(worldIn, pos, state) != null) {
                 EnumDyeColor dyeColor = ((BlockVending) state.getBlock()).getTile(worldIn, pos, state).getColor();
+
+                switch (dyeColor) {
+                    case RED: return 0xD2443F;
+                    case BLUE: return 0x1C53A8;
+                    case CYAN: return 0x3C8EB0;
+                    case GRAY: return 0x3A3A3A;
+                    case LIME: return 0x76C610;
+                    case PINK: return 0xF7B4D6;
+                    case BLACK: return 0x1E1E26;
+                    case BROWN: return 0x704425;
+                    case GREEN: return 0x4A6B18;
+                    case WHITE: return 0xEAEAEA;
+                    case ORANGE: return 0xE69E34;
+                    case PURPLE: return 0xA453CE;
+                    case SILVER: return 0xBABAC1;
+                    case YELLOW: return 0xE7E72A;
+                    case MAGENTA: return 0xCB69C5;
+                    case LIGHT_BLUE: return 0x8FB9F4;
+                }
+            }
+        }
+        if(state.getBlock() instanceof BlockTradein) {
+
+            if (((BlockTradein) state.getBlock()).getTile(worldIn, pos, state) != null) {
+                EnumDyeColor dyeColor = ((BlockTradein) state.getBlock()).getTile(worldIn, pos, state).getColor();
+
+
 
                 switch (dyeColor) {
                     case RED: return 0xD2443F;
@@ -53,6 +85,7 @@ public class ModBlockColors implements IBlockColor {
     }
 
     public static void registerBlockColors(){
-        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(INSTANCE, ModBlocks.blockVending);
+      //  Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(INSTANCE, ModBlocks.blockVending);
+        Minecraft.getMinecraft().getBlockColors().registerBlockColorHandler(INSTANCE, ModBlocks.blockTradein);
     }
 }

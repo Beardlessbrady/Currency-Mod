@@ -204,10 +204,12 @@ public class ContainerTradein extends Container {
             }
             return ItemStack.EMPTY;
         } else if (slotId == 62){ //OUTPUT slot, players can click item and it will go directly to inventory or wont move if no room
-            if (!this.mergeItemStack(inventorySlots.get(slotId).getStack(), 0, PLAYER_TOTAL_COUNT, false)) {
-                te.setMessage("Not enough space in inventory!", (byte) 40);
-                player.playSound(SoundEvents.BLOCK_FIRE_EXTINGUISH, 1, 0.5F);
-                return ItemStack.EMPTY;
+            if(!this.inventorySlots.get(slotId).getStack().isEmpty()) {
+                if (!this.mergeItemStack(inventorySlots.get(slotId).getStack(), 0, PLAYER_TOTAL_COUNT, false)) {
+                    te.setMessage("Not enough space in inventory!", (byte) 40);
+                    player.playSound(SoundEvents.BLOCK_FIRE_EXTINGUISH, 1, 0.5F);
+                    return ItemStack.EMPTY;
+                }
             }
             return ItemStack.EMPTY;
         }

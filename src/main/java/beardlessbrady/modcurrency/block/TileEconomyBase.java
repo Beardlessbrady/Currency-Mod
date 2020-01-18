@@ -5,6 +5,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ITickable;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
@@ -18,7 +19,7 @@ import java.util.UUID;
  * File Created 2019-02-10
  */
 
-public class TileEconomyBase extends TileEntity {
+public class TileEconomyBase extends TileEntity implements ITickable {
     protected int cashReserve, cashRegister, selectedSlot;
     protected EnumDyeColor color;
     protected boolean mode;
@@ -26,6 +27,10 @@ public class TileEconomyBase extends TileEntity {
     protected String selectedName;
 
     public static UUID EMPTYID = new UUID(0L, 0L);
+
+    //Used for Warning messages
+    private String message= "";
+    private byte messageTime = 0;
 
     public TileEconomyBase(){
         cashReserve = 0;
@@ -37,6 +42,17 @@ public class TileEconomyBase extends TileEntity {
 
         owner = new UUID(0L, 0L);
         playerUsing = EMPTYID;
+    }
+
+    @Override
+    public void update() {
+        if (playerUsing != EMPTYID) { // If a player is NOT using the machine */
+            if (messageTime > 0) { // Timer for warning messages */
+                messageTime--;
+            } else {
+                message = "";
+            }
+        }
     }
 
     //<editor-fold desc="NBT Stuff">
@@ -190,6 +206,14 @@ public class TileEconomyBase extends TileEntity {
         selectedName = name;
     }
 
+    /** Sets error message **/
+    public void setMessage(String newMessage, byte time){
+        message = newMessage;
+        messageTime = time;
+    }
 
-
+    /** Gets error message **/
+    public String getMessage(){
+        return message;
+    }
 }

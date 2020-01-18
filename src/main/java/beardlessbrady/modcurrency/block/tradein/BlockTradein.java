@@ -2,7 +2,6 @@ package beardlessbrady.modcurrency.block.tradein;
 
 import beardlessbrady.modcurrency.block.EconomyBlockBase;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
-import beardlessbrady.modcurrency.block.vending.TileVending;
 import beardlessbrady.modcurrency.handler.StateHandler;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -44,10 +43,11 @@ public class BlockTradein extends EconomyBlockBase {
 
         if (TileEconomyBase.EMPTYID.equals(getTile(worldIn, pos).getPlayerUsing())) { // Compares stored PLAYERUSING with an empty playerID to see if a player currently has the machine opened */
             if(playerIn.getHeldItemMainhand().getItem() == Items.DYE){ // Checks if player is holding dye, if so color machine instead of opening*/
+
                 if(!playerIn.isCreative())
                     playerIn.getHeldItemMainhand().shrink(1);
-                te.setColor(EnumDyeColor.byDyeDamage(playerIn.getHeldItemMainhand().getItemDamage()));
 
+                te.setColor(EnumDyeColor.byDyeDamage(playerIn.getHeldItemMainhand().getItemDamage()));
                 // Code below used to update the block to force it realize it needs to change colour */
                 worldIn.markBlockRangeForRenderUpdate(pos, pos);
                 worldIn.notifyBlockUpdate(pos, worldIn.getBlockState(pos), worldIn.getBlockState(pos), 3);
@@ -132,6 +132,20 @@ public class BlockTradein extends EconomyBlockBase {
         }
         return null;
     }
+
+    /** Getter method for the blocks tile**/
+    public TileEconomyBase getTile(IBlockAccess world, BlockPos pos, IBlockState state) {
+        if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP){
+            if (world.getTileEntity(pos.down()) instanceof TileTradein)
+                return (TileTradein) world.getTileEntity(pos.down());
+        }else{
+            if (world.getTileEntity(pos) instanceof TileTradein)
+                return (TileTradein) world.getTileEntity(pos);
+        }
+        return null;
+    }
+
+
 
     /** Block State Methods **/
     //<editor-fold desc="Block State Methods">

@@ -10,13 +10,11 @@ import beardlessbrady.modcurrency.utilities.UtilMethods;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.ITickable;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -37,7 +35,7 @@ import javax.annotation.Nullable;
  * File Created 2019-02-10
  */
 
-public class TileVending extends TileEconomyBase implements ICapabilityProvider, ITickable {
+public class TileVending extends TileEconomyBase implements ICapabilityProvider{
     //Variables that determine the slot group sizes for the machine.
     public final short TE_INPUT_SLOT_COUNT = 1;
     public final short TE_INVENTORY_SLOT_COUNT = 25;
@@ -71,12 +69,8 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
     //KeyBinding
     private boolean shift, control;
 
-    //Color of machine
-    private EnumDyeColor color;
-
     public TileVending(){
         serverTime = 0;
-        color = EnumDyeColor.GRAY;
         creative = false;
         finite = true;
 
@@ -111,6 +105,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             } else {
                 message = "";
             }
+            super.update();
         }
     }
 
@@ -133,7 +128,6 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         compound.setTag("output", outputStackHandler.serializeNBT());
         compound.setBoolean("creative", creative);
         compound.setBoolean("finite", finite);
-        compound.setInteger("color", color.getDyeDamage());
 
         return compound;
     }
@@ -149,8 +143,6 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         if(compound.hasKey("serverTime")) serverTime = compound.getLong("serverTime");
         if(compound.hasKey("creative")) creative = compound.getBoolean("creative");
         if(compound.hasKey("finite")) finite = compound.getBoolean("finite");
-
-        if(compound.hasKey("color")) color = EnumDyeColor.byDyeDamage(compound.getInteger("color"));
     }
 
     @Override
@@ -173,8 +165,6 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         compound.setBoolean("creative", creative);
         compound.setBoolean("finite", finite);
 
-        compound.setInteger("color", color.getDyeDamage());
-
         return new SPacketUpdateTileEntity(pos, 1, compound);
     }
 
@@ -190,7 +180,6 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         if(compound.hasKey("serverTime")) serverTime = compound.getLong("serverTime");
         if(compound.hasKey("creative")) creative = compound.getBoolean("creative");
         if(compound.hasKey("finite")) finite = compound.getBoolean("finite");
-        if(compound.hasKey("color")) color = EnumDyeColor.byDyeDamage(compound.getInteger("color"));
     }
 
     //</editor-fold>
@@ -346,18 +335,17 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             ItemStack outChange = new ItemStack(ModItems.itemMoneyBag);
             int outputSlot = outputSlotCheck(outChange, 1); //Finds an empty slot for bag
 
-            System.out.println(outputSlot);
-
             if (outputSlot != -1) { //If there is an empty slot available in OUTPUT
                 if (mode && cashRegister != 0) { // STOCK MODE: CashRegister */
                     ItemMoneyBag.CurrencyToNBT(outChange, cashRegister);
                     cashRegister = 0;
+                    growOutItemSize(outChange, outputSlot).equals(ItemStack.EMPTY); //Finds an empty slot in OUTPUT and adds bag to it
                 } else if (!mode && cashReserve != 0) { // TRADE MODE: CashReserve */
                     ItemMoneyBag.CurrencyToNBT(outChange, cashReserve);
                     cashReserve = 0;
+                    growOutItemSize(outChange, outputSlot).equals(ItemStack.EMPTY); //Finds an empty slot in OUTPUT and adds bag to it
                 }
 
-                growOutItemSize(outChange, outputSlot).equals(ItemStack.EMPTY); //Finds an empty slot in OUTPUT and adds bag to it
             }
         }
     }
@@ -386,14 +374,6 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
             }
         }
 
-    }
-
-    public EnumDyeColor getColor(){
-        return color;
-    }
-
-    public void setColor(EnumDyeColor color){
-        this.color = color;
     }
 
     //If Sneak button held down, show a full stack (or as close to it)
@@ -432,15 +412,6 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider,
         if(newNum == 0) newNum = 1;
 
         return newNum;
-    }
-
-    public void setMessage(String newMessage, byte time){
-        message = newMessage;
-        messageTime = time;
-    }
-
-    public String getMessage(){
-        return message;
     }
 
     public void restock(){

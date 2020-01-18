@@ -37,7 +37,7 @@ import javax.annotation.Nullable;
  * File Created 2019-07-09
  */
 
-public class TileTradein extends TileEconomyBase implements ICapabilityProvider, ITickable {
+public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
     public final int TE_INPUT_SLOT_COUNT = 1;
     public final int TE_INVENTORY_SLOT_COUNT = 25;
     public final int TE_OUTPUT_SLOT_COUNT = 1;
@@ -64,10 +64,6 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider,
     private int inventoryLimit, selectedSlot;
 
     private EnumDyeColor color;
-
-    //Used for Warning messages
-    private String message= "";
-    private byte messageTime = 0;
 
     public TileTradein(){
         inventoryLimit = 256;
@@ -151,12 +147,7 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider,
                     }
                 }
             }
-
-            if (messageTime > 0) { // Timer for warning messages */
-                messageTime--;
-            } else {
-                message = "";
-            }
+            super.update();
         }
     }
 
@@ -349,16 +340,5 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider,
                 inputStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
             }
         }
-    }
-
-    /** Sets error message **/
-    public void setMessage(String newMessage, byte time){
-        message = newMessage;
-        messageTime = time;
-    }
-
-    /** Gets error message **/
-    public String getMessage(){
-        return message;
     }
 }
