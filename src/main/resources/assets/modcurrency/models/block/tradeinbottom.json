@@ -10,21 +10,11 @@
 			"to": [ 16, 16, 16 ],
 			"faces": {
 				"down": { "tintindex": 0,"uv": [ 0, 8.25, 4, 11.75 ], "texture": "#texture", "cullface": "down" },
+				"up": { "tintindex": 0,"uv": [ 0, 8.25, 4, 11.75 ], "texture": "#texture", "cullface": "up" },
 				"north": { "tintindex": 0,"uv": [ 0, 4, 4, 8 ], "texture": "#texture" },
 				"south": { "tintindex": 0,"uv": [ 4.25, 4, 8.25, 8 ], "texture": "#texture", "cullface": "south" },
 				"west": { "tintindex": 0,"uv": [ 9, 4, 12.5, 8 ], "texture": "#texture", "cullface": "west" },
 				"east": { "tintindex": 0,"uv": [ 8.5, 4, 12, 8 ], "texture": "#texture", "cullface": "east" }
-			}
-		},
-		{
-			"__comment": "Box3",
-			"from": [ 6, 13, 0.3 ],
-			"to": [ 14, 16, 0.8 ],
-			"faces": {
-				"north": { "tintindex": 0,"uv": [ 4.25, 8.25, 4.5, 8.5 ], "texture": "#texture", "cullface": "up" },
-				"south": { "tintindex": 0,"uv": [ 4.25, 8.25, 4.5, 8.5 ], "texture": "#texture", "cullface": "up" },
-				"west": { "tintindex": 0,"uv": [ 2, 4, 2.25, 4.25 ], "texture": "#texture", "cullface": "up" },
-				"east": { "tintindex": 0,"uv": [ 2, 4, 2.25, 4.25 ], "texture": "#texture", "cullface": "up" }
 			}
 		},
 		{
@@ -44,6 +34,7 @@
 			"from": [ 0, 13, 0 ],
 			"to": [ 6, 16, 2 ],
 			"faces": {
+				"up": { "tintindex": 0,"uv": [ 0, 0, 5, 2 ], "texture": "#texture", "cullface": "up" },
 				"north": { "tintindex": 0,"uv": [ 2.5, 4, 4, 4.75 ], "texture": "#texture", "cullface": "north" },
 				"west": { "tintindex": 0,"uv": [ 12.5, 4, 12, 4.75 ], "texture": "#texture", "cullface": "west" },
 				"east": { "tintindex": 0,"uv": [ 1, 8.25, 1.5, 8.5 ], "texture": "#texture" }
@@ -54,6 +45,7 @@
 			"from": [ 14, 13, 0 ],
 			"to": [ 16, 16, 2 ],
 			"faces": {
+				"up": { "tintindex": 0,"uv": [ 0, 0, 5, 2.5 ], "texture": "#texture", "cullface": "up" },
 				"north": { "tintindex": 0,"uv": [ 0, 4, 0.5, 4.75 ], "texture": "#texture", "cullface": "north" },
 				"west": { "tintindex": 0,"uv": [ 1, 8.25, 1.5, 8.5 ], "texture": "#texture" },
 				"east": { "tintindex": 0,"uv": [ 9, 4.25, 8.5, 5 ], "texture": "#texture", "cullface": "east" }
