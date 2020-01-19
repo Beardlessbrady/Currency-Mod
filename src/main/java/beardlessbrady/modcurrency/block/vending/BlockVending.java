@@ -155,6 +155,7 @@ public class BlockVending extends EconomyBlockBase {
         return null;
     }
 
+    @Override
     public TileEconomyBase getTile(IBlockAccess world, BlockPos pos, IBlockState state) {
         if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP){
             if (world.getTileEntity(pos.down()) instanceof TileVending)

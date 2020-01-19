@@ -48,6 +48,7 @@ public class BlockTradein extends EconomyBlockBase {
                     playerIn.getHeldItemMainhand().shrink(1);
 
                 te.setColor(EnumDyeColor.byDyeDamage(playerIn.getHeldItemMainhand().getItemDamage()));
+
                 // Code below used to update the block to force it realize it needs to change colour */
                 worldIn.markBlockRangeForRenderUpdate(pos, pos);
                 worldIn.notifyBlockUpdate(pos, worldIn.getBlockState(pos), worldIn.getBlockState(pos), 3);
@@ -134,6 +135,7 @@ public class BlockTradein extends EconomyBlockBase {
     }
 
     /** Getter method for the blocks tile**/
+    @Override
     public TileEconomyBase getTile(IBlockAccess world, BlockPos pos, IBlockState state) {
         if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP){
             if (world.getTileEntity(pos.down()) instanceof TileTradein)

@@ -29,8 +29,8 @@ public class ClientProxy extends CommonProxy{
 
     public void Init(FMLInitializationEvent e) {
         super.Init(e);
-        ModBlockColors.registerBlockColors();
         registerKeyBindings();
+        ModBlockColors.registerBlockColors();
     }
 
     public void postInit(FMLPostInitializationEvent e){

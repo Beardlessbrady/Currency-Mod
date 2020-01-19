@@ -63,12 +63,9 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
     private boolean creative;
     private int inventoryLimit, selectedSlot;
 
-    private EnumDyeColor color;
-
     public TileTradein(){
         inventoryLimit = 256;
         selectedName = "No Item Selected";
-        color = EnumDyeColor.GRAY;
         creative = false;;
     }
 
@@ -172,7 +169,6 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
         compound.setTag("output", outputStackHandler.serializeNBT());
 
         compound.setString("selectedName", selectedName);
-        compound.setInteger("color", color.getDyeDamage());
         compound.setInteger("inventoryLimit", inventoryLimit);
         compound.setInteger("selectedSlot", selectedSlot);
 
@@ -188,7 +184,6 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
         if(compound.hasKey("output")) outputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("output"));
 
         if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
-        if(compound.hasKey("color")) color = EnumDyeColor.byDyeDamage(compound.getInteger("color"));
         if(compound.hasKey("inventoryLimit")) inventoryLimit = compound.getInteger("inventoryLimit");
         if(compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
     }
@@ -205,7 +200,6 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
         NBTTagCompound compound = new NBTTagCompound();
 
         compound.setString("selectedName", selectedName);
-        compound.setInteger("color", color.getDyeDamage());
         compound.setInteger("inventoryLimit", inventoryLimit);
         compound.setInteger("selectedSlot", selectedSlot);
 
@@ -218,7 +212,6 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
         NBTTagCompound compound = pkt.getNbtCompound();
 
         if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
-        if(compound.hasKey("color")) color = EnumDyeColor.byDyeDamage(compound.getInteger("color"));
         if(compound.hasKey("inventoryLimit")) inventoryLimit = compound.getInteger("inventoryLimit");
         if(compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
 

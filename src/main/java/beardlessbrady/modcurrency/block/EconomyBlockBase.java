@@ -1,6 +1,8 @@
 package beardlessbrady.modcurrency.block;
 
 import beardlessbrady.modcurrency.ModCurrency;
+import beardlessbrady.modcurrency.block.vending.TileVending;
+import beardlessbrady.modcurrency.handler.StateHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -10,6 +12,7 @@ import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.registry.GameRegistry;
@@ -65,7 +68,12 @@ public class EconomyBlockBase extends Block {
     public TileEconomyBase getTile(World world, BlockPos pos){
         if(world.getTileEntity(pos) instanceof TileEconomyBase)
             return (TileEconomyBase)world.getTileEntity(pos);
+        return null;
+    }
 
+    public TileEconomyBase getTile(IBlockAccess world, BlockPos pos, IBlockState state) {
+        if(world.getTileEntity(pos) instanceof TileEconomyBase)
+            return (TileEconomyBase)world.getTileEntity(pos);
         return null;
     }
 
