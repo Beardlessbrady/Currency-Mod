@@ -97,7 +97,11 @@ public class BlockTradein extends EconomyBlockBase {
             } else if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOBOTTOM) { // If block activated is 2 high & block broken is 'bottom' break block above it as well */
                 TileTradein te = (TileTradein) getTile(worldIn, pos, state);
 
-                //Outputs the change in STOCK then TRADE MODE
+                //Outputs the change in STOCK then SELL MODE
+                te.setField(TileEconomyBase.FIELD_MODE, 0);
+                te.outChange(true);
+
+                te.setField(TileEconomyBase.FIELD_MODE, 1);
                 te.outChange(true);
 
                 te.dropInventory();

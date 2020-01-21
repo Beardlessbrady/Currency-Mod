@@ -144,6 +144,8 @@ public class GuiTradein extends GuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+        int i = (width - xSize) / 2;
+        int j = (height - ySize) / 2;
 
         // Barebone GUI text */
         fontRenderer.drawString(I18n.format("tile.modcurrency:blocktradein.name"), 8, -42, Integer.parseInt("ffffff", 16));
@@ -163,14 +165,18 @@ public class GuiTradein extends GuiContainer {
         GL11.glPushMatrix();
         GL11.glScalef(0.7F, 0.7F, 0.8F);
         // Players Money text rendering */
-        fontRenderer.drawStringWithShadow(I18n.format("guivending.cash"), 7, -40, Integer.parseInt("2DB22F", 16));
+        fontRenderer.drawStringWithShadow(I18n.format("guivending.profit"), 7, -40, Integer.parseInt("2DB22F", 16));
         fontRenderer.drawStringWithShadow(I18n.format("guivending.moneysign"), 7, -30, Integer.parseInt("ffffff", 16));
         fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getField(TileVending.FIELD_CASHRESERVE))), 15, -30, Integer.parseInt("ffffff", 16));
         // Machines Money text rendering in STOCK MODE*/
         if (te.getField(TileVending.FIELD_MODE) == 1) {
-            fontRenderer.drawStringWithShadow(I18n.format("guivending.profit"), 7, -10, Integer.parseInt("3D78E0", 16));
+            fontRenderer.drawStringWithShadow(I18n.format("guivending.cash"), 7, -10, Integer.parseInt("3D78E0", 16));
             fontRenderer.drawStringWithShadow(I18n.format("guivending.moneysign"), 7, 0, Integer.parseInt("ffffff", 16));
             fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getField(TileVending.FIELD_CASHREGISTER))), 15, 0, Integer.parseInt("ffffff", 16));
+
+            buttonList.set(BUTTONCHANGE, new GuiButton(BUTTONCHANGE, i + 143, j - 5, 20, 20, TextFormatting.BLUE + "$"));  //Changes '$' to blue to signify clicking it cashes out Machines money
+        } else { //TRADE MODE
+            buttonList.set(BUTTONCHANGE, new GuiButton(BUTTONCHANGE, i + 143, j - 5, 20, 20, TextFormatting.GREEN + "$"));   //Changes '$' to green to signify clicking it cashes out Players money
         }
         GL11.glPopMatrix();
         GL11.glDisable(GL11.GL_DEPTH_TEST);

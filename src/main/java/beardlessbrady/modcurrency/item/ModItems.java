@@ -18,18 +18,18 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ModItems {
     public static ItemCurrency itemCurrency = new ItemCurrency();
-    public static ItemMoneyBag itemMoneyBag = new ItemMoneyBag();
+    //public static ItemMoneyBag itemMoneyBag = new ItemMoneyBag();  I didn't like the item, may come back as a player way to transport money
 
     @SubscribeEvent
     public void registerItems(RegistryEvent.Register<Item> event){
         event.getRegistry().register(itemCurrency);
-        event.getRegistry().register(itemMoneyBag);
+        //event.getRegistry().register(itemMoneyBag);
     }
 
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void registerModels(ModelRegistryEvent event){
         itemCurrency.initModel();
-        itemMoneyBag.initModel();
+        //itemMoneyBag.initModel();
     }
 }

@@ -112,6 +112,10 @@ public class BlockVending extends EconomyBlockBase {
                 TileVending tile = (TileVending) getTile(worldIn, pos, state);
 
                 //Outputs the change in STOCK then SELL MODE
+                tile.setField(TileEconomyBase.FIELD_MODE, 0);
+                tile.outChange(true);
+
+                tile.setField(TileEconomyBase.FIELD_MODE, 1);
                 tile.outChange(true);
 
 

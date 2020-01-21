@@ -4,7 +4,6 @@ import beardlessbrady.modcurrency.ConfigCurrency;
 import beardlessbrady.modcurrency.ModCurrency;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.handler.StateHandler;
-import beardlessbrady.modcurrency.item.ItemMoneyBag;
 import beardlessbrady.modcurrency.item.ModItems;
 import beardlessbrady.modcurrency.utilities.UtilMethods;
 import net.minecraft.entity.item.EntityItem;
@@ -17,6 +16,7 @@ import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -298,55 +298,60 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider{
         return false;
     }
 
-    public void outChange(boolean blockBreak){
-        // If Block  being broken spawn on ground */
-        if(blockBreak) {
-            int bank;
+    public void outChange(boolean blockBreak) {
+        int bank;
 
-            OUTER_LOOP: for (int i = ConfigCurrency.currencyValues.length - 1; i >= 0; i--) {
-                if (mode) {
-                    bank = cashRegister;
-                } else {
-                    bank = cashReserve;
+        OUTER_LOOP:
+        for (int i = ConfigCurrency.currencyValues.length - 1; i >= 0; i--) {
+            if (mode) {
+                bank = cashRegister;
+            } else {
+                bank = cashReserve;
+            }
+
+            boolean repeat = false;
+            if ((bank / (Float.parseFloat(ConfigCurrency.currencyValues[i])) * 100) > 0) { //Divisible by currency value
+                int amount = (bank / ((int) ((Float.parseFloat(ConfigCurrency.currencyValues[i])) * 100)));
+
+                if (amount > 64) {
+                    amount = 64;
+                    repeat = true;
                 }
 
-                boolean repeat = false;
-                if ((bank / (Float.parseFloat(ConfigCurrency.currencyValues[i])) * 100) > 0) { //Divisible by currency value
-                    int amount = (bank / ((int) ((Float.parseFloat(ConfigCurrency.currencyValues[i])) * 100)));
-
-                    if (amount > 64) {
-                        amount = 64;
-                        repeat = true;
-                    }
+                if(amount != 0) {
                     ItemStack outChange = new ItemStack(ModItems.itemCurrency, amount, i);
 
-                    world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), outChange));
-                    if (mode) {
-                        cashRegister -= ((Float.parseFloat(ConfigCurrency.currencyValues[i]) * 100) * amount);
-                    } else {
-                        cashReserve -= ((Float.parseFloat(ConfigCurrency.currencyValues[i]) * 100) * amount);
+                    if (blockBreak) { //If Block is being broken spit to the ground
+                        world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), outChange));
+                        if (mode) {
+                            cashRegister -= ((Float.parseFloat(ConfigCurrency.currencyValues[i]) * 100) * amount);
+                        } else {
+                            cashReserve -= ((Float.parseFloat(ConfigCurrency.currencyValues[i]) * 100) * amount);
+                        }
+                    } else { //If player is pulling cash from in GUI
+                        if (world.getPlayerEntityByUUID(playerUsing) != null) { //Checks if a player is using machine
+                            EntityPlayer player = world.getPlayerEntityByUUID(playerUsing);
+
+                            if (player.addItemStackToInventory(outChange)) { //If successful in putting stack in players inventory remove amount from machine
+                                if (mode) {
+                                    cashRegister -= ((Float.parseFloat(ConfigCurrency.currencyValues[i]) * 100) * amount);
+                                } else {
+                                    cashReserve -= ((Float.parseFloat(ConfigCurrency.currencyValues[i]) * 100) * amount);
+                                }
+                            } else { //If cant fit stack error message
+                                setMessage("CAN'T FIT IN INVENTORY!!", (byte) 40);
+                                world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 3.0F, false);
+                                break OUTER_LOOP;
+                            }
+                        } else { //If Player is Null somehow and using GUI then exit
+                            break OUTER_LOOP;
+                        }
                     }
                 }
-
-                if (repeat) i++;
-                if (bank == 0) break OUTER_LOOP;
             }
-        } else { // If machine not being broken place money into money bag item (if OUTPUT is empty)*/
-            ItemStack outChange = new ItemStack(ModItems.itemMoneyBag);
-            int outputSlot = outputSlotCheck(outChange, 1); //Finds an empty slot for bag
 
-            if (outputSlot != -1) { //If there is an empty slot available in OUTPUT
-                if (mode && cashRegister != 0) { // STOCK MODE: CashRegister */
-                    ItemMoneyBag.CurrencyToNBT(outChange, cashRegister);
-                    cashRegister = 0;
-                    growOutItemSize(outChange, outputSlot).equals(ItemStack.EMPTY); //Finds an empty slot in OUTPUT and adds bag to it
-                } else if (!mode && cashReserve != 0) { // TRADE MODE: CashReserve */
-                    ItemMoneyBag.CurrencyToNBT(outChange, cashReserve);
-                    cashReserve = 0;
-                    growOutItemSize(outChange, outputSlot).equals(ItemStack.EMPTY); //Finds an empty slot in OUTPUT and adds bag to it
-                }
-
-            }
+            if (repeat) i++;
+            if (bank == 0) break OUTER_LOOP;
         }
     }
 
