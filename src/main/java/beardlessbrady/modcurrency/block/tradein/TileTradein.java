@@ -48,13 +48,6 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
         }
     };
     private ItemTradeinHandler inventoryStackHandler = new ItemTradeinHandler(TE_INVENTORY_SLOT_COUNT);
-    private ItemStackHandler outputStackHandler = new ItemStackHandler(TE_OUTPUT_SLOT_COUNT) {
-        @Override
-        protected void onContentsChanged(int slot) {
-            super.onContentsChanged(slot);
-            markDirty();
-        }
-    };
 
     private String selectedName;
     private boolean creative;
@@ -167,7 +160,6 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
 
         compound.setTag("inventory", inventoryStackHandler.serializeNBT());
         compound.setTag("input", inputStackHandler.serializeNBT());
-        compound.setTag("output", outputStackHandler.serializeNBT());
 
         compound.setString("selectedName", selectedName);
         compound.setInteger("inventoryLimit", inventoryLimit);
@@ -182,7 +174,6 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
 
         if(compound.hasKey("inventory")) inventoryStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("inventory"));
         if(compound.hasKey("input")) inputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("input"));
-        if(compound.hasKey("output")) outputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("output"));
 
         if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
         if(compound.hasKey("inventoryLimit")) inventoryLimit = compound.getInteger("inventoryLimit");
@@ -233,7 +224,7 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
     @Override
     public <T> T getCapability(Capability<T> capability, @Nullable EnumFacing facing) {
         if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
-            if (facing == null) return (T) new CombinedInvWrapper(inputStackHandler, inventoryStackHandler, outputStackHandler);
+            if (facing == null) return (T) new CombinedInvWrapper(inputStackHandler, inventoryStackHandler);
         }
         return super.getCapability(capability, facing);
     }
@@ -321,15 +312,6 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
                 item.setCount(inventoryStackHandler.getItemTradein(i).getSize());
                 world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), item));
                 inventoryStackHandler.setStackInSlot(i, ItemStack.EMPTY);
-            }
-        }
-
-        // Looks at Output drops the inventory and deletes it from the machine just in case */
-        for (int i = 0; i < outputStackHandler.getSlots(); i++){
-            ItemStack item = outputStackHandler.getStackInSlot(i);
-            if (item != ItemStack.EMPTY) {
-                world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), item));
-                outputStackHandler.setStackInSlot(i, ItemStack.EMPTY);
             }
         }
 

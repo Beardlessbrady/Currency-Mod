@@ -7,6 +7,8 @@ item.moneybag.name=Money Bag
 
 guivending.in=IN
 guivending.out=OUT
+guivending.stock=STOCK
+guivending.trade=TRADE
 guivending.slotsettings=Price
 guivending.slotsettings_bundled=Bundled Price
 guivending.moneysign=$

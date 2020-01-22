@@ -80,7 +80,7 @@ public class GuiVending extends GuiContainer {
 
         buttonList.add(new GuiButton(BUTTONCHANGE, i + 143, j + 27, 20, 20, "$"));
 
-        String mode = (te.getField(FIELD_MODE) == 1) ? "STOCK" : "TRADE";
+        String mode = (te.getField(FIELD_MODE) == 1) ? I18n.format("guivending.stock") : I18n.format("guivending.trade");
         buttonList.add(new GuiButton(BUTTONADMIN, i + 137, j - 42, 32, 20, mode));
 
         buttonList.add(new GuiButtonTextured("help", BUTTONHELP, i + -19, j + -40, 0, 64, 19, 17, 0, "", ASSET_TEXTURE));
@@ -1179,7 +1179,7 @@ public class GuiVending extends GuiContainer {
                 pack.setData((te.getField(FIELD_MODE) == 1) ? 0 : 1, FIELD_MODE, te.getPos());
                 PacketHandler.INSTANCE.sendToServer(pack);
 
-                buttonList.get(BUTTONADMIN).displayString = (te.getField(FIELD_MODE) == 0) ? "STOCK" : "TRADE";
+                buttonList.get(BUTTONADMIN).displayString = (te.getField(FIELD_MODE) == 0) ? I18n.format("guivending.stock") : I18n.format("guivending.trade");
 
                 te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
                 break;
