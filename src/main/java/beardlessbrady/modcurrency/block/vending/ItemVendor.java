@@ -96,7 +96,11 @@ public class ItemVendor {
      * main slot is 0
      */
     public void setBundle(int[] i){
-        bundled = i.clone();
+        if(i == null){
+            bundled = null;
+        } else {
+            bundled = i.clone();
+        }
     }
 
     public int getBundleMainSlot(){

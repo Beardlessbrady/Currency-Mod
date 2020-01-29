@@ -1147,22 +1147,24 @@ public class GuiVending extends GuiContainer {
                                     break;
                             }
 
-                            if (te.getItemVendor(previousSlot).getBundleMainSlot() == selectedSlot) {
-                                int[] oldBundle = te.getItemVendor(selectedSlot).getBundle().clone();
-                                int[] newBundle = new int[oldBundle.length + 1];
+                            if(te.getItemVendor(previousSlot).hasBundle() && te.getItemVendor(selectedSlot).hasBundle() ) {
+                                if (te.getItemVendor(previousSlot).getBundleMainSlot() == selectedSlot) {
+                                    int[] oldBundle = te.getItemVendor(selectedSlot).getBundle().clone();
+                                    int[] newBundle = new int[oldBundle.length + 1];
 
-                                System.arraycopy(oldBundle, 0, newBundle, 0, oldBundle.length);
+                                    System.arraycopy(oldBundle, 0, newBundle, 0, oldBundle.length);
 
-                                newBundle[newBundle.length - 1] = slot;
-                                te.getItemVendor(selectedSlot).setBundle(newBundle);
-                                PacketSetItemBundleToServer pack0 = new PacketSetItemBundleToServer();
-                                pack0.setData(selectedSlot, newBundle, te.getPos());
-                                PacketHandler.INSTANCE.sendToServer(pack0);
+                                    newBundle[newBundle.length - 1] = slot;
+                                    te.getItemVendor(selectedSlot).setBundle(newBundle);
+                                    PacketSetItemBundleToServer pack0 = new PacketSetItemBundleToServer();
+                                    pack0.setData(selectedSlot, newBundle, te.getPos());
+                                    PacketHandler.INSTANCE.sendToServer(pack0);
 
-                                te.getItemVendor(slot).setBundle(new int[]{selectedSlot});
-                                PacketSetItemBundleToServer pack = new PacketSetItemBundleToServer();
-                                pack.setData(slot, new int[]{selectedSlot}, te.getPos());
-                                PacketHandler.INSTANCE.sendToServer(pack);
+                                    te.getItemVendor(slot).setBundle(new int[]{selectedSlot});
+                                    PacketSetItemBundleToServer pack = new PacketSetItemBundleToServer();
+                                    pack.setData(slot, new int[]{selectedSlot}, te.getPos());
+                                    PacketHandler.INSTANCE.sendToServer(pack);
+                                }
                             }
                         }
                     }

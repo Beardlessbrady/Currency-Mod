@@ -214,6 +214,12 @@ public class ContainerVending extends Container {
                         }
                     }
                     if (te.getItemVendor(index).getSize() == 0) {
+                        int[] bundle = te.getItemVendor(te.getItemVendor(index).getBundleMainSlot()).getBundle();
+                        if(bundle != null){
+                            for(int i = 0; i < bundle.length; i++)
+                                te.getItemVendor(bundle[i]).setBundle(null);
+                        }
+
                         te.voidItem(index);
                     }
                 } else if (dragType == 1) { //Right Click

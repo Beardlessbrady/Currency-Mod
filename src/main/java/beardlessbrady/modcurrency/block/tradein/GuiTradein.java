@@ -74,7 +74,7 @@ public class GuiTradein extends GuiContainer {
         buttonList.add(new GuiButton(BUTTONADMIN, i + 137, j - 42, 32, 20, mode));
 
         fieldPrice = new GuiTextField(FIELDPRICE, fontRenderer, 0, 0, 90, 8);        //Setting Costs
-        fieldPrice.setTextColor(Integer.parseInt("204c96", 16));
+        fieldPrice.setTextColor(Integer.parseInt("3359d4", 16));
         fieldPrice.setEnableBackgroundDrawing(false);
         fieldPrice.setMaxStringLength(7);
         fieldPrice.setEnabled(false);
@@ -82,7 +82,7 @@ public class GuiTradein extends GuiContainer {
         fieldPrice.setText("0.00");
 
         fieldAmnt = new GuiTextField(FIELDAMNT, fontRenderer, 0, 0, 90, 8);        //Setting Amount Sold in Bulk
-        fieldAmnt.setTextColor(Integer.parseInt("204c96", 16));
+        fieldAmnt.setTextColor(Integer.parseInt("3359d4", 16));
         fieldAmnt.setEnableBackgroundDrawing(false);
         fieldAmnt.setMaxStringLength(2);
         fieldAmnt.setEnabled(false);
@@ -90,7 +90,7 @@ public class GuiTradein extends GuiContainer {
         fieldAmnt.setText("1");
 
         fieldItemMax = new GuiTextField(FIELDITEMMAX, fontRenderer, i - 66, j + 85, 90, 8);
-        fieldItemMax.setTextColor(Integer.parseInt("BEA63D", 16));
+        fieldItemMax.setTextColor(Integer.parseInt("3359d4", 16));
         fieldItemMax.setEnableBackgroundDrawing(false);
         fieldItemMax.setMaxStringLength(3);
         fieldItemMax.setEnabled(false);
@@ -98,7 +98,7 @@ public class GuiTradein extends GuiContainer {
         fieldItemMax.setText("1");
 
         fieldTimeRestock = new GuiTextField(FIELDTIMERESTOCK, fontRenderer, i - 63, j + 75, 90, 8);
-        fieldTimeRestock.setTextColor(Integer.parseInt("BEA63D", 16));
+        fieldTimeRestock.setTextColor(Integer.parseInt("3359d4", 16));
         fieldTimeRestock.setEnableBackgroundDrawing(false);
         fieldTimeRestock.setMaxStringLength(4);
         fieldTimeRestock.setEnabled(false);
