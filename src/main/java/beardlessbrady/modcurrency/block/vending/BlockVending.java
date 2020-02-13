@@ -46,38 +46,36 @@ public class BlockVending extends EconomyBlockBase {
         super("blockvending", TileVending.class);
     }
 
+    /** Method activated when the block is RIGHT CLICKED */
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         TileVending tile = (TileVending) getTile(worldIn, pos);
 
-        //Checks if no other player is using the block, if not then allows access to GUI
-        if (TileEconomyBase.EMPTYID.equals(getTile(worldIn, pos).getPlayerUsing())) {
-            if(playerIn.getHeldItemMainhand().getItem() == Items.DYE){
+        if (TileEconomyBase.EMPTYID.equals(getTile(worldIn, pos).getPlayerUsing())) { // Compares stored PLAYERUSING with an empty playerID to see if a player currently has the machine opened */
+            if(playerIn.getHeldItemMainhand().getItem() == Items.DYE){ // Checks if player is holding dye, if so color machine instead of opening*/
 
                 if(!playerIn.isCreative())
                     playerIn.getHeldItemMainhand().shrink(1);
 
                 tile.setColor(EnumDyeColor.byDyeDamage(playerIn.getHeldItemMainhand().getItemDamage()));
 
+                // Code below used to update the block to force it realize it needs to change colour */
                 worldIn.markBlockRangeForRenderUpdate(pos, pos);
                 worldIn.notifyBlockUpdate(pos, worldIn.getBlockState(pos), worldIn.getBlockState(pos), 3);
                 worldIn.scheduleBlockUpdate(pos, this,0,0);
                 tile.markDirty();
-            }else {
+            }else { // If player not holding dye, activate as normal */
+                tile.restock(); // If machine is creative restock items
 
-                tile.restock();
-
-                //If Sneaking and the player is the owner of the machine it will auto open the machine into STOCK MODE
-                if (playerIn.isSneaking() && tile.getOwner().equals(playerIn.getUniqueID())) {
+                if (playerIn.isSneaking() && tile.getOwner().equals(playerIn.getUniqueID()) || playerIn.isCreative()) {   // Owning/Creative & Sneaking machine will open in STOCK MODE */
                     tile.setField(TileEconomyBase.FIELD_MODE, 1);
-                } else {
+                } else { // Opens machine in TRADE MODE */
                     tile.setField(TileEconomyBase.FIELD_MODE, 0);
                 }
 
                 playerIn.playSound(SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN,0.2F, -100.0F);
 
-                //Opens GUI if CLIENT SIDE
-                if (!worldIn.isRemote) {
+                if (!worldIn.isRemote) { // If CLIENT open GUI */
                     ((TileVending) getTile(worldIn, pos)).openGui(playerIn, worldIn, pos);
                     return true;
                 }
@@ -86,40 +84,39 @@ public class BlockVending extends EconomyBlockBase {
         return true;
     }
 
+    /** Method activated when block is placed **/
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
-        //Creates the top and bottom part of the block (since this block is 2 blocks on top of each other)
-        worldIn.setBlockState(pos, state.withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.TWOBOTTOM)
+        worldIn.setBlockState(pos, state.withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.TWOBOTTOM) // Places the 'bottom' part of the block since it is a 2 block high entity*/
                 .withProperty(StateHandler.FACING, placer.getHorizontalFacing().getOpposite()));
 
-        worldIn.setBlockState(pos.up(), state.withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.TWOTOP)
+        worldIn.setBlockState(pos.up(), state.withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.TWOTOP) // Places the 'top' part of the block */
                 .withProperty(StateHandler.FACING, placer.getHorizontalFacing().getOpposite()));
 
-        if(stack.getMetadata() == 1)
+        if(stack.getMetadata() == 1) // If the itemBlock is CREATIVE (metadata = 1) then set the block to creative
             getTile(worldIn, pos).setField(TileVending.FIELD_CREATIVE, 1);
 
-        //Sets owner to the placer
-        getTile(worldIn, pos).setOwner(placer.getUniqueID());
+        getTile(worldIn, pos).setOwner(placer.getUniqueID()); // Sets owner
         getTile(worldIn, pos).markDirty();
     }
 
+    /** Method activated when block is broken **/
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-        if(!worldIn.isRemote) {
-            if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP) {     //TOP BLOCK
+        if(!worldIn.isRemote) { // if CLIENT
+            if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP) { // If block activated is 2 high & block broken is 'top' break block under it as well
                 worldIn.setBlockToAir(pos.down());
-            } else if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOBOTTOM) { //BOTTOM BLOCK
-                TileVending tile = (TileVending) getTile(worldIn, pos, state);
+            } else if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOBOTTOM) { // If block activated is 2 high & block broken is 'bottom' break block above it as well
+                TileVending te = (TileVending) getTile(worldIn, pos, state);
 
                 //Outputs the change in STOCK then SELL MODE
-                tile.setField(TileEconomyBase.FIELD_MODE, 0);
-                tile.outChange(true);
+                te.setField(TileEconomyBase.FIELD_MODE, 0);
+                te.outChange(true);
 
-                tile.setField(TileEconomyBase.FIELD_MODE, 1);
-                tile.outChange(true);
+                te.setField(TileEconomyBase.FIELD_MODE, 1);
+                te.outChange(true);
 
-
-                tile.dropInventory();
+                te.dropInventory();
 
                 worldIn.setBlockToAir(pos.up());
             }
@@ -127,6 +124,7 @@ public class BlockVending extends EconomyBlockBase {
         }
     }
 
+    /** Create method for blocks tile**/
     @Nullable
     @Override
     public TileEntity createTileEntity(World world, IBlockState state) {
@@ -136,18 +134,20 @@ public class BlockVending extends EconomyBlockBase {
        return null;
     }
 
+    /** Getter method for the blocks tile**/
     @Override
     public TileEconomyBase getTile(World world, BlockPos pos) {
-            if (world.getBlockState(pos).getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP){
+            if (world.getBlockState(pos).getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP){ // If 'top' part of block open tile from bottom under it since the tile is stored in the bottom block*/
                 if (world.getTileEntity(pos.down()) instanceof TileVending)
                     return (TileVending) world.getTileEntity(pos.down());
-            }else{
+            }else{ // If 'bottom' part of block open tile normally since the tile is stored in the bottom block*/
                 if (world.getTileEntity(pos) instanceof TileVending)
                     return (TileVending) world.getTileEntity(pos);
             }
         return null;
     }
 
+    /** Getter method for the blocks tile**/
     public TileEconomyBase getTile(World world, BlockPos pos, IBlockState state) {
         if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP){
             if (world.getTileEntity(pos.down()) instanceof TileVending)
@@ -159,6 +159,7 @@ public class BlockVending extends EconomyBlockBase {
         return null;
     }
 
+    /** Getter method for the blocks tile**/
     @Override
     public TileEconomyBase getTile(IBlockAccess world, BlockPos pos, IBlockState state) {
         if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP){
@@ -171,6 +172,8 @@ public class BlockVending extends EconomyBlockBase {
         return null;
     }
 
+    /** Block State Methods **/
+    //<editor-fold desc="Block State Methods">
     @Override
     protected BlockStateContainer createBlockState() {
         return new BlockStateContainer(this, StateHandler.FACING, StateHandler.TWOTALL);
@@ -191,9 +194,9 @@ public class BlockVending extends EconomyBlockBase {
     public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos) {
         TileVending tile;
 
-        if(StateHandler.EnumTwoBlock.class.getEnumConstants()[getMetaFromState(state) / 4] == StateHandler.EnumTwoBlock.TWOTOP){
+        if (StateHandler.EnumTwoBlock.class.getEnumConstants()[getMetaFromState(state) / 4] == StateHandler.EnumTwoBlock.TWOTOP) {
             tile = (TileVending) worldIn.getTileEntity(pos.down());
-        }else{
+        } else {
             tile = (TileVending) worldIn.getTileEntity(pos);
         }
 
@@ -201,6 +204,7 @@ public class BlockVending extends EconomyBlockBase {
                 .withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.class.getEnumConstants()[getMetaFromState(state) / 4]);
     }
 
+    /** Sub blocks of an item**/
     @Override
     public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items) {
         if (tab == ModCurrency.tabCurrency) {
@@ -211,7 +215,9 @@ public class BlockVending extends EconomyBlockBase {
             items.add(creative);
         }
     }
+    //</editor-fold>
 
+    /** Rendering Methods **/
     //<editor-fold desc="Rendering-----------------------------------------------------------------------------------------------------------">
     @Override
     @SideOnly(Side.CLIENT)

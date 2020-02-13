@@ -70,7 +70,7 @@ public class ContainerTradein extends Container {
         final int SLOT_X_SPACING = 18;
         final int SLOT_Y_SPACING = 18;
 
-        // Starting positions of both the hotbar and the players inventory */
+        // Starting positions of both the hotbar and the players inventory
         final int HOTBAR_XPOS = 8;
         final int HOTBAR_YPOS = 157;
         final int PLAYER_INV_XPOS = 8;
@@ -164,7 +164,7 @@ public class ContainerTradein extends Container {
         }
         //</editor-fold>
 
-        if (slotId >= 37 && slotId <= 61) {  // TE Inventory Slots */
+        if (slotId >= 37 && slotId <= 61) { // TE Inventory Slots */
             if (te.getField(TileTradein.FIELD_MODE) == 1) { // Clicking in the TE inventory only does anything in STOCK MODE*/
                 if (dragType == 0 || (dragType == 1 && clickTypeIn == ClickType.QUICK_CRAFT)) { // Left Click */
 
@@ -220,7 +220,6 @@ public class ContainerTradein extends Container {
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotId) {
         ItemStack itemStack = this.inventorySlots.get(slotId).getStack();
-        ItemStack copyStack = itemStack.copy();
 
         // If Item being SHIFTED is not empty and in Player Inventory */
         if (!itemStack.isEmpty()) {

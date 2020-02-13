@@ -55,16 +55,16 @@ public class BlockTradein extends EconomyBlockBase {
                 worldIn.scheduleBlockUpdate(pos, this,0,0);
                 te.markDirty();
 
-            } else { // If player not holding dye, activate as normal */
-                if (playerIn.isSneaking() && (te.getOwner().equals(playerIn.getUniqueID()) || playerIn.isCreative())) {  // Owning/Creative & Sneaking machine will open in STOCK MODE */
+            } else { // If player not holding dye, activate as normal
+                if (playerIn.isSneaking() && (te.getOwner().equals(playerIn.getUniqueID()) || playerIn.isCreative())) {  // Owning/Creative & Sneaking machine will open in STOCK MODE
                     te.setField(TileEconomyBase.FIELD_MODE, 1);
-                } else {  // Opens machine in TRADE MODE */
+                } else { // Opens machine in TRADE MODE */
                     te.setField(TileEconomyBase.FIELD_MODE, 0);
                 }
 
                 playerIn.playSound(SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN,0.2F, -100.0F);
 
-                if (!worldIn.isRemote) { // If CLIENT open GUI */
+                if (!worldIn.isRemote) { // If CLIENT open GUI
                     ((TileTradein) getTile(worldIn, pos)).openGui(playerIn, worldIn, pos);
                     return true;
                 }
@@ -90,7 +90,7 @@ public class BlockTradein extends EconomyBlockBase {
     /** Method activated when block is broken **/
     @Override
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-        if(!worldIn.isRemote) { // if CLIENT */
+        if(!worldIn.isRemote) { // if CLIENT
             if (state.getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP) { // If block activated is 2 high & block broken is 'top' break block under it as well */
                 worldIn.setBlockToAir(pos.down());
 
@@ -108,7 +108,6 @@ public class BlockTradein extends EconomyBlockBase {
 
                 worldIn.setBlockToAir(pos.up());
             }
-
             super.breakBlock(worldIn, pos, state);
         }
     }
@@ -150,8 +149,6 @@ public class BlockTradein extends EconomyBlockBase {
         }
         return null;
     }
-
-
 
     /** Block State Methods **/
     //<editor-fold desc="Block State Methods">

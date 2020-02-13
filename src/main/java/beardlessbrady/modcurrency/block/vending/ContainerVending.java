@@ -29,7 +29,8 @@ import static beardlessbrady.modcurrency.block.vending.TileVending.*;
  */
 
 public class ContainerVending extends Container {
-    //Slot Index
+
+    /** Variables used to easily access slot counts and first slot indices **/
     //0-35 = Players Inv
     public final int HOTBAR_SLOT_COUNT = 9;
     public final int PLAYER_INV_ROW_COUNT = 3;
@@ -37,6 +38,9 @@ public class ContainerVending extends Container {
     public final int PLAYER_INV_TOTAL_COUNT = PLAYER_INV_COLUMN_COUNT * PLAYER_INV_ROW_COUNT;
     public final int PLAYER_TOTAL_COUNT = HOTBAR_SLOT_COUNT + PLAYER_INV_TOTAL_COUNT;
 
+    //36 = INPUT
+    //37-62 = TE INVENTORY
+    //38 = OUTPUT
     public final int TE_INPUT_SLOT_COUNT = 1;
     public final int TE_INVENTORY_SLOT_COUNT = 25;
     public final int TE_OUTPUT_SLOT_COUNT = 5;
@@ -49,6 +53,7 @@ public class ContainerVending extends Container {
     public final int GUI_INVENTORY_FIRST_INDEX = GUI_INPUT_INDEX + TE_INPUT_SLOT_COUNT;
     public final int GUI_OUTPUT_FIRST_INDEX = GUI_INVENTORY_FIRST_INDEX + TE_INVENTORY_SLOT_COUNT;
 
+    /** Size of TE Inventory */
     final int TE_INV_COLUMN_COUNT = 5;
     final int TE_INV_ROW_COUNT = 5;
 
@@ -61,28 +66,31 @@ public class ContainerVending extends Container {
         this.te = te;
         InventoryPlayer invPlayer = player.inventory;
 
-        te.setPlayerUsing(player.getUniqueID());
+        te.setPlayerUsing(player.getUniqueID()); // Set playerUsing so only one player can access machine at a time */
 
         setupPlayerInv(invPlayer);
         setupTeInv();
     }
 
+    /** Setup Player's inventory in the UI **/
     private void setupPlayerInv(InventoryPlayer invPlayer) {
+        // Size of SLOT box X and Y
         final int SLOT_X_SPACING = 18;
         final int SLOT_Y_SPACING = 18;
 
+        // Starting positions of both the hotbar and the players inventory
         final int HOTBAR_XPOS = 8;
         final int HOTBAR_YPOS = 184;
         final int PLAYER_INV_XPOS = 8;
         final int PLAYER_INV_YPOS = 126;
 
-        for (int x = 0; x < HOTBAR_SLOT_COUNT; x++)
+        for (int x = 0; x < HOTBAR_SLOT_COUNT; x++) // Loops through players HOTBAR and add it to UI */
             addSlotToContainer(new Slot(invPlayer, x, HOTBAR_XPOS + SLOT_X_SPACING * x, HOTBAR_YPOS));
 
 
-        for (int y = 0; y < PLAYER_INV_ROW_COUNT; y++) {
+        for (int y = 0; y < PLAYER_INV_ROW_COUNT; y++) { // Loops through players INVENTORY and add it to UI */
             for (int x = 0; x < PLAYER_INV_COLUMN_COUNT; x++) {
-                int slotNum = HOTBAR_SLOT_COUNT + y * PLAYER_INV_COLUMN_COUNT + x;
+                int slotNum = HOTBAR_SLOT_COUNT + y * PLAYER_INV_COLUMN_COUNT + x; // Determines the current Slot Number by math */
                 int xpos = PLAYER_INV_XPOS + x * SLOT_X_SPACING;
                 int ypos = PLAYER_INV_YPOS + y * SLOT_Y_SPACING;
                 addSlotToContainer(new Slot(invPlayer, slotNum, xpos, ypos));
@@ -90,19 +98,21 @@ public class ContainerVending extends Container {
         }
     }
 
+    /** Setup Tile's inventory in the UI **/
     private void setupTeInv() {
         IItemHandler iItemHandler = this.te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
 
-        //Input Slot
-        addSlotToContainer(new SlotItemHandler(iItemHandler, TE_INPUT_SLOT_INDEX, 145, 3));
+        addSlotToContainer(new SlotItemHandler(iItemHandler, TE_INPUT_SLOT_INDEX, 145, 3)); // Add INPUT slot */
 
-        //Inventory Slots
+        // Size of SLOT box X and Y */
         final int SLOT_X_SPACING = 18;
         final int SLOT_Y_SPACING = 18;
+
+        // Starting positions of tile inventory */
         final int TE_INV_XPOS = 44;
         int TE_INV_YPOS = -30;
 
-        for (int y = 0; y < TE_INV_COLUMN_COUNT; y++) {
+        for (int y = 0; y < TE_INV_COLUMN_COUNT; y++) { // Loops through tile INVENTORY and add it to UI */
             for (int x = 0; x < TE_INV_ROW_COUNT; x++) {
                 int slotNum = 1 + y * TE_INV_ROW_COUNT + x;
                 int xpos = TE_INV_XPOS + x * SLOT_X_SPACING;
@@ -113,19 +123,23 @@ public class ContainerVending extends Container {
 
         //Output Slots
         for (int i = 0; i < TE_OUTPUT_SLOT_COUNT; i++)
-            addSlotToContainer(new SlotItemHandler(iItemHandler, TE_OUTPUT_FIRST_SLOT_INDEX + i, 44 + (i * SLOT_X_SPACING), 77));
+            addSlotToContainer(new SlotItemHandler(iItemHandler, TE_OUTPUT_FIRST_SLOT_INDEX + i, 44 + (i * SLOT_X_SPACING), 77)); // Add OUTPUT slot */
 
     }
 
+    /** Method activates when player clicks a slot in the UI **/
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-        boolean creative = te.getField(TileVending.FIELD_CREATIVE) == 1;
-        int index = slotId - 37;
+        int index = slotId - 37; // All the UI's inventory is combined including the players. Therefore the TE's inventory starts at 37 */
+
+        boolean creative = te.getField(TileVending.FIELD_CREATIVE) == 1; // Machine is Creative or not
+
         ItemStack playerStack = player.inventory.getItemStack();
         ItemStack copyPlayerStack = playerStack.copy();
 
-        //Ensures Pickup_All works without pulling from the wrong slots
-        //<editor-fold desc="PICKUP ALL">
+        /* Special Case for Pickup_ALL clickType. I copied most of this block of code from the Container class. I modified it so Pickup_All only does
+         * anything with the player inventory NOT the TE inventory since it would break things. */
+        //<editor-fold desc="SPECIAL CASE: PICKUP_ALL">
         if (clickTypeIn == ClickType.PICKUP_ALL) {
             if (slotId >= 0 && slotId <= PLAYER_TOTAL_COUNT) {
                 Slot slot = this.inventorySlots.get(slotId);
@@ -180,90 +194,97 @@ public class ContainerVending extends Container {
         }
         //</editor-fold>
 
-        if (slotId == GUI_INPUT_INDEX) {
-            if (playerStack.getItem().equals(ModItems.itemCurrency) || playerStack.isEmpty()) {
+        if (slotId == GUI_INPUT_INDEX) {  // INPUT Slot */
+            if (playerStack.getItem().equals(ModItems.itemCurrency) || playerStack.isEmpty()) { // If player has an empty hand or is trying to put currency in the input slot success
                 player.world.playSound(player.posX, player.posY, player.posZ, SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.BLOCKS, 1.0F, 30.0F, false);
             } else {
                 return ItemStack.EMPTY;
             }
         }
-        if (slotId >= 37 && slotId <= 61) {  //te Inventory
-            if (te.getField(TileVending.FIELD_MODE) == 1) {            //ADMIN MODE
-                if (te.getItemVendor(index).getSize() == 0) {
+
+        if (slotId >= 37 && slotId <= 61) { // TE Inventory Slots
+            if (te.getField(TileVending.FIELD_MODE) == 1) { // Clicking in the TE inventory in STOCK MODE*/
+                if (te.getItemVendor(index).getSize() == 0) { // If the item being clicked has a size of 0 then delete the item as its empty
                     te.voidItem(index);
                 }
-                if (dragType == 0 || (dragType == 1 && clickTypeIn == ClickType.QUICK_CRAFT)) { //Left Click
+
+                if (dragType == 0 || (dragType == 1 && clickTypeIn == ClickType.QUICK_CRAFT)) { //Left Click or Right Click with QUICK_CRAFT
+                    // If player hand is empty then shrink the current slot by a stack and put in players hand (unless creative)
                     if (playerStack.isEmpty()) {
                         if (!creative) {
                             player.inventory.setItemStack(te.getItemVendor(index).shrinkSizeWithStackOutput(64));
                         } else {
                             te.getItemVendor(index).shrinkSize(64);
                         }
-                    } else {
+                    } else { // If player hand is NOT EMPTY
                         if (!creative) {
+                            // If the slot is empty (and players hand is not) place the stack into the slot and remove it from the players hand
                             if (te.getItemVendor(index).isEmpty()) {
                                 player.inventory.setItemStack(ItemStack.EMPTY);
                                 te.setItemVendor(index, new ItemVendor(copyPlayerStack));
-
-                            } else {
+                            } else { //If player hand and slot are not empty then try to add players stack to slot (if they are same item)
                                 player.inventory.setItemStack(te.getItemVendor(index).growSizeWithStack(copyPlayerStack));
                             }
-                        } else {
+                        } else { // If creative then void the slot being clicked and set it as players hand stack
                             te.voidItem(index);
                             te.setItemVendor(index, new ItemVendor(copyPlayerStack, 1));
                         }
                     }
+
+                    // If slot size is 0 then check if it has a bundle and if so, break up bundle then void the item
                     if (te.getItemVendor(index).getSize() == 0) {
                         int[] bundle = te.getItemVendor(te.getItemVendor(index).getBundleMainSlot()).getBundle();
                         if(bundle != null){
                             for(int i = 0; i < bundle.length; i++)
                                 te.getItemVendor(bundle[i]).setBundle(null);
                         }
-
                         te.voidItem(index);
                     }
-                } else if (dragType == 1) { //Right Click
-                    if (te.getKey(KEY_SHIFT)) {
+                } else if (dragType == 1) { // Right Click
+                    if (te.getKey(KEY_SHIFT)) { // If KEY_SHIFT is clicked then create a bundle
                         te.getItemVendor(index).setBundle(new int[0]);
                     } else {
-                        //Moves Selected Slot
-                        if (!(te.getField(FIELD_SELECTED) == slotId)) {
+                        // Right clicking moves the 'selection tag' to the clicked slot
+                        if (!(te.getField(FIELD_SELECTED) == slotId)) { // If 'selection tag' is not already on clicked slot */
                             short toSelect = (short)index;
-                            if (te.getItemVendor(index).getBundleMainSlot() != -1) {
-                                toSelect = (short) te.getItemVendor(index).getBundleMainSlot();
-                                te.setSelectedName("bundle");
-                            } else {
+                            if (te.getItemVendor(index).getBundleMainSlot() != -1) { // If the slot is part of a bundle (mainSlot not = -1)
+                                toSelect = (short) te.getItemVendor(index).getBundleMainSlot(); // Force selection to be the bundles main slot
+                                te.setSelectedName("bundle"); // Name Bundle
+                            } else { // If slot is NOT part of a bundle select as normal
                                 te.setSelectedName(te.getItemVendor(index).getStack().getDisplayName());
                             }
                             te.setField(FIELD_SELECTED, toSelect);
                         }
-                        if (te.getItemVendor(index).getStack().isEmpty()) { //Place 1
+
+                        // Right Click and slot is empty then place one of the players item stack
+                        if (te.getItemVendor(index).getStack().isEmpty()) {
                             te.setItemVendor(index, new ItemVendor(copyPlayerStack, 1));
                             playerStack.shrink(1);
                         }
                     }
-                } else if (dragType == 5) { //Quick Craft Right
-                    if (te.getItemVendor(index).getStack().isEmpty()) { //Place 1
+
+
+                } else if (dragType == 5) { // Quick_Craft and Right Click
+                    // Place one of the players item stack
+                    if (te.getItemVendor(index).getStack().isEmpty()) {
                         te.setItemVendor(index, new ItemVendor(copyPlayerStack, 1));
                         playerStack.shrink(1);
                     }
                 }
-                return ItemStack.EMPTY;
-            } else { //SELL MODE
-                if (dragType == 0) { //LEFT CLICK
-                    //If not in a bundle buy normally
-                    if (te.getItemVendor(index).getBundleMainSlot() == -1) {
+            } else { // Clicking in the TE inventory in SELL MODE*/
+                if (dragType == 0) { // Left Click
+                    if (te.getItemVendor(index).getBundleMainSlot() == -1) { // If not in a bundle (mainSlot = -1) then buy item as normally
                         buyItem(index, 1);
-                    } else {
+                    } else { // In a bundle buy as a bundle
                         buyBundle(te.getItemVendor(index).getBundleMainSlot());
                     }
-                } else if (dragType == 1) { //RIGHT CLICK
                 }
-                return ItemStack.EMPTY;
             }
-        } else if (slotId >= 62 && slotId <= 66) { //OUTPUT Inventory
-            if(!this.inventorySlots.get(slotId).getStack().isEmpty()) {
-                if (!this.mergeItemStack(inventorySlots.get(slotId).getStack(), 0, PLAYER_TOTAL_COUNT, false)) {
+            return ItemStack.EMPTY;
+
+        } else if (slotId >= 62 && slotId <= 66) { // Output Slots
+            if(!this.inventorySlots.get(slotId).getStack().isEmpty()) { // If slot is NOT empty
+                if (!this.mergeItemStack(inventorySlots.get(slotId).getStack(), 0, PLAYER_TOTAL_COUNT, false)) { // Try to merge with output slots otherwise error
                     te.setMessage("Not enough space in inventory!", (byte) 40);
                     player.playSound(SoundEvents.BLOCK_FIRE_EXTINGUISH, 1, 0.5F);
                     return ItemStack.EMPTY;
@@ -274,15 +295,18 @@ public class ContainerVending extends Container {
         return super.slotClick(slotId, dragType, clickTypeIn, player);
     }
 
+    /** Method activates when player shift + clicks a slot **/
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotId) {
         ItemStack itemStack = this.inventorySlots.get(slotId).getStack();
         ItemStack copyStack = itemStack.copy();
 
+        // If Item being SHIFTED is not empty and in Player Inventory */
         if (!itemStack.isEmpty()) {
             if (slotId < PLAYER_TOTAL_COUNT) {
-                if (te.getField(TileEconomyBase.FIELD_MODE) == 0) {
+                if (te.getField(TileEconomyBase.FIELD_MODE) == 0) { // STOCK MODE
 
+                    // If Item is Currency then shift it into INPUT */
                     if (itemStack.getItem().equals(ModItems.itemCurrency)) {
                         playerIn.world.playSound(playerIn.posX, playerIn.posY, playerIn.posZ, SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.BLOCKS, 1.0F, 30.0F, false);
 
@@ -290,7 +314,7 @@ public class ContainerVending extends Container {
                             return ItemStack.EMPTY;
                         }
                     }
-                } else {
+                } else { // SELL MODE
                     for (int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) {
                         if (UtilMethods.equalStacks(itemStack, inventorySlots.get(GUI_INVENTORY_FIRST_INDEX + i).getStack())) {
                             int count = 0;
@@ -307,18 +331,6 @@ public class ContainerVending extends Container {
                         }
                     }
                 }
-            } else if (slotId >= GUI_INVENTORY_FIRST_INDEX && slotId < GUI_OUTPUT_FIRST_INDEX) {
-              /*
-               if(te.getField(TileEconomyBase.FIELD_MODE) == 0){
-                   int count = te.getItemSize(slotId - PLAYER_TOTAL_COUNT);
-                   if(count > itemStack.getMaxStackSize()){
-                       count = itemStack.getMaxStackSize();
-                   }
-                   copyStack.setCount(count);
-                   if (!this.mergeItemStack(copyStack, 0, PLAYER_TOTAL_COUNT, false)) {
-                       return ItemStack.EMPTY;
-                   }
-               }*/
             }
         }
         return ItemStack.EMPTY;
@@ -359,6 +371,7 @@ public class ContainerVending extends Container {
     }
     //</editor-fold>
 
+    /** Method activated on container close **/
     @Override
     public void onContainerClosed(EntityPlayer playerIn) {
         super.onContainerClosed(playerIn);
@@ -393,6 +406,7 @@ public class ContainerVending extends Container {
         }
     }
 
+    /** Buy an Item Method **/
     public ItemStack buyItem(int index, int count) {
         boolean infinite = te.getField(TileVending.FIELD_FINITE) == 0;
         int amount = te.getItemVendor(index).getAmount();
