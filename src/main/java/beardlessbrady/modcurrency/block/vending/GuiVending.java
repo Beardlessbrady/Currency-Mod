@@ -48,13 +48,10 @@ public class GuiVending extends GuiContainer {
 
     private final KeyBinding[] keyBindings = ClientProxy.keyBindings.clone();
 
-    private boolean help;
-
     //Button ID's
     private static final int BUTTONCHANGE = 0;
     private static final int BUTTONADMIN = 1;
-    private static final int BUTTONHELP = 2;
-    private static final int BUTTONINFINITE = 3;
+    private static final int BUTTONINFINITE = 2;
 
     private static final int FIELDPRICE = 0;
     private static final int FIELDAMNT = 1;
@@ -76,14 +73,10 @@ public class GuiVending extends GuiContainer {
         int i = (width - xSize) / 2;
         int j = (height - ySize) / 2;
 
-        help = false;
-
         buttonList.add(new GuiButton(BUTTONCHANGE, i + 143, j + 27, 20, 20, "$"));
 
         String mode = (te.getField(FIELD_MODE) == 1) ? I18n.format("guivending.stock") : I18n.format("guivending.trade");
         buttonList.add(new GuiButton(BUTTONADMIN, i + 137, j - 42, 32, 20, mode));
-
-        buttonList.add(new GuiButtonTextured("help", BUTTONHELP, i + -19, j + -40, 0, 64, 19, 17, 0, "", ASSET_TEXTURE));
 
         buttonList.add(new GuiButtonTextured("infinite", BUTTONINFINITE, i -21, j + 55, 0, 82, 21, 17, 0, "", ASSET_TEXTURE));
         buttonList.get(BUTTONINFINITE).visible = false;
@@ -277,9 +270,6 @@ public class GuiVending extends GuiContainer {
             if (te.getField(TileVending.FIELD_CREATIVE) == 1)
                 buttonList.get(BUTTONINFINITE).visible = false;
         }
-
-        //Help Tab rendering
-        drawHelpTab();
 
         //Warning Message Rendering
         message();
@@ -550,34 +540,6 @@ public class GuiVending extends GuiContainer {
             fieldItemMax.setEnabled(false);
             fieldItemMax.setVisible(false);
         }
-    }
-
-    private void drawHelpTab() {
-        //If Help Open - Help Closed
-        if (help) {
-            Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
-            drawTexturedModalRect(-68, -40, 23, 20, 68, 54);
-
-            fontRenderer.drawStringWithShadow(I18n.format("guivending.help"), -60, -33, Color.yellow.getRGB());
-
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
-            GL11.glPushMatrix();
-            GL11.glScalef(0.7F, 0.7F, 0.8F);
-            if (te.getField(FIELD_MODE) == 0) {
-                fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[0].getDisplayName()), -90, -30, Color.gray.getRGB());
-                fontRenderer.drawStringWithShadow(I18n.format("guivending.help.max"), -85, -20, Color.white.getRGB());
-                fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[1].getDisplayName()), -90, -5, Color.gray.getRGB());
-                fontRenderer.drawStringWithShadow(I18n.format("guivending.help.half"), -85, 5, Color.white.getRGB());
-            } else {
-                fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[0].getDisplayName()), -90, -30, Color.gray.getRGB());
-                fontRenderer.drawStringWithShadow(I18n.format("guivending.help.create"), -85, -20, Color.white.getRGB());
-                fontRenderer.drawStringWithShadow(I18n.format(ClientProxy.keyBindings[1].getDisplayName()), -90, -5, Color.gray.getRGB());
-                fontRenderer.drawStringWithShadow(I18n.format("guivending.help.delete"), -85, 5, Color.white.getRGB());
-            }
-            GL11.glPopMatrix();
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
-        }
-        GlStateManager.color(0xFF, 0xFF, 0xFF);
     }
 
     private void drawBundles() {
@@ -1190,9 +1152,6 @@ public class GuiVending extends GuiContainer {
                 pack0.setData(te.getPos(), false);
                 PacketHandler.INSTANCE.sendToServer(pack0);
                 te.outChange(false);
-                break;
-            case BUTTONHELP:
-                help = !help;
                 break;
             case BUTTONINFINITE:
                 PacketSetFieldToServer pack1 = new PacketSetFieldToServer();

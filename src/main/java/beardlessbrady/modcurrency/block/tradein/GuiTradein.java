@@ -55,6 +55,7 @@ public class GuiTradein extends GuiContainer {
     //Button ID's
     private static final int BUTTONCHANGE = 0;
     private static final int BUTTONADMIN = 1;
+    private static final int BUTTONFUZZY = 2;
 
     public GuiTradein(EntityPlayer entityPlayer, TileTradein te) {
         super(new ContainerTradein(entityPlayer, te));
@@ -72,6 +73,7 @@ public class GuiTradein extends GuiContainer {
 
         String mode = (te.getField(FIELD_MODE) == 1) ? I18n.format("guivending.stock") : I18n.format("guivending.trade");
         buttonList.add(new GuiButton(BUTTONADMIN, i + 137, j - 42, 32, 20, mode));
+        buttonList.add(new GuiButton(BUTTONFUZZY, 0, 0, 20, 20, ""));
 
         fieldPrice = new GuiTextField(FIELDPRICE, fontRenderer, 0, 0, 90, 8);        //Setting Costs
         fieldPrice.setTextColor(Integer.parseInt("3359d4", 16));
