@@ -215,7 +215,7 @@ public class ItemVendor {
     }
 
     public ItemStack growSizeWithStack(ItemStack stack){
-        if(UtilMethods.equalStacks(this.getStack(), stack)) {
+        if(UtilMethods.equalStacks(this.getStack(), stack, false)) {
             int amount = stack.getCount();
             int maxCheck = sizeLimit - size - amount;
 

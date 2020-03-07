@@ -259,7 +259,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider{
     public int outputSlotCheck(ItemStack itemStack, int amount){
         //Checks if any stacks in output are equal to the itemStack and can handle it being added in
         for(int i = 0; i < TE_OUTPUT_SLOT_COUNT; i++){
-            if(UtilMethods.equalStacks(itemStack, outputStackHandler.getStackInSlot(i))){
+            if(UtilMethods.equalStacks(itemStack, outputStackHandler.getStackInSlot(i), false)){
                 if(outputStackHandler.getStackInSlot(i).getCount() +  amount <= outputStackHandler.getStackInSlot(i).getMaxStackSize()){
                     return i;
                 }
@@ -280,7 +280,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider{
 
         for(int i = 0; i < bundleSlots.length; i++){
             for(int j = 0; j < outputStackHandler.getSlots(); j++) {
-                if (UtilMethods.equalStacks(inventoryStackHandler.getItemVendor(bundleSlots[i]).getStack(), outputStackHandler.getStackInSlot(j))) {
+                if (UtilMethods.equalStacks(inventoryStackHandler.getItemVendor(bundleSlots[i]).getStack(), outputStackHandler.getStackInSlot(j), false)) {
                     if (outputStackHandler.getStackInSlot(j).getCount() + inventoryStackHandler.getItemVendor(bundleSlots[i]).getAmount() <= outputStackHandler.getStackInSlot(j).getMaxStackSize()) {
                         ignoreSlots++;
                     }
@@ -452,7 +452,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider{
     }
 
     public ItemStack growOutItemSize(ItemStack stack, int index){
-        if (UtilMethods.equalStacks(stack, outputStackHandler.getStackInSlot(index))) {
+        if (UtilMethods.equalStacks(stack, outputStackHandler.getStackInSlot(index), false)) {
             if(outputStackHandler.getStackInSlot(index).getCount() + stack.getCount() <= outputStackHandler.getStackInSlot(index).getMaxStackSize()){
                 outputStackHandler.getStackInSlot(index).grow(stack.getCount());
                 return ItemStack.EMPTY;

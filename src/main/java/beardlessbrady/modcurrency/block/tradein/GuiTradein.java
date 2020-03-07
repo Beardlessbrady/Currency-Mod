@@ -73,7 +73,11 @@ public class GuiTradein extends GuiContainer {
 
         String mode = (te.getField(FIELD_MODE) == 1) ? I18n.format("guivending.stock") : I18n.format("guivending.trade");
         buttonList.add(new GuiButton(BUTTONADMIN, i + 137, j - 42, 32, 20, mode));
-        buttonList.add(new GuiButton(BUTTONFUZZY, 0, 0, 20, 20, ""));
+
+        String fuzzy = te.getItemTradein(te.getField(FIELD_SELECTED)).getFuzzy() ? I18n.format("Fuzzy") : I18n.format("Smooth");
+        GuiButton butFuzzy = new GuiButton(BUTTONFUZZY, i - 100, j + 55, 40, 20, fuzzy);
+        butFuzzy.visible = false;
+        buttonList.add(butFuzzy);
 
         fieldPrice = new GuiTextField(FIELDPRICE, fontRenderer, 0, 0, 90, 8);        //Setting Costs
         fieldPrice.setTextColor(Integer.parseInt("3359d4", 16));
@@ -255,6 +259,9 @@ public class GuiTradein extends GuiContainer {
             fieldAmnt.setEnabled(true);
             fieldAmnt.setVisible(true);
 
+            // Set Fuzzy Button to visible
+            buttonList.get(BUTTONFUZZY).visible = true;
+
             GlStateManager.color(0xFF, 0xFF, 0xFF); // Resets GL color to prevent visual bugs */
         } else { // TRADE MODE, disables anything that shouldn't enabled*/
             fieldPrice.setEnabled(false);
@@ -262,6 +269,8 @@ public class GuiTradein extends GuiContainer {
 
             fieldAmnt.setEnabled(false);
             fieldAmnt.setVisible(false);
+
+            buttonList.get(BUTTONFUZZY).visible = false;
         }
     }
 
@@ -302,6 +311,8 @@ public class GuiTradein extends GuiContainer {
             fieldAmnt.setText(Integer.toString(te.getItemTradein(te.getField(FIELD_SELECTED)).getAmount()));
             fieldItemMax.setText(Integer.toString(te.getItemTradein(te.getField(FIELD_SELECTED)).getItemMax()));
             fieldTimeRestock.setText(Integer.toString(te.getItemTradein(te.getField(FIELD_SELECTED)).getTimeRaise()));
+
+            buttonList.get(BUTTONFUZZY).displayString = (te.getItemTradein(te.getField(FIELD_SELECTED)).getFuzzy()) ? I18n.format("Fuzzy") : I18n.format("Smooth");
     }
 
     /** Colors background texture based on block color **/
@@ -484,6 +495,15 @@ public class GuiTradein extends GuiContainer {
                 PacketOutChangeToServer pack0 = new PacketOutChangeToServer();
                 pack0.setData(te.getPos(), false);
                 PacketHandler.INSTANCE.sendToServer(pack0);
+                break;
+            case BUTTONFUZZY:
+                boolean newFuzzy = !te.getItemTradein(te.getField(FIELD_SELECTED)).getFuzzy();
+                te.getItemTradein(te.getField(FIELD_SELECTED)).setFuzzy(newFuzzy);
+                PacketSetItemToServer pack2 = new PacketSetItemToServer();
+                pack2.setData(te.getField(FIELD_SELECTED), (newFuzzy == true) ? 1 : 0, PacketSetItemToServer.FIELD_FUZZY, te.getPos());
+                PacketHandler.INSTANCE.sendToServer(pack2);
+
+                te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
                 break;
             default:
                 throw new IllegalStateException("Unexpected value: " + button.id);

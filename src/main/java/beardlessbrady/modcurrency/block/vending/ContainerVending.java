@@ -176,7 +176,7 @@ public class ContainerVending extends Container {
             } else if (slotId >= GUI_INVENTORY_FIRST_INDEX && slotId < GUI_OUTPUT_FIRST_INDEX) {
                 Loop:
                 for (int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) {
-                    if (UtilMethods.equalStacks(playerStack, te.getItemVendor(i).getStack())) {
+                    if (UtilMethods.equalStacks(playerStack, te.getItemVendor(i).getStack(), false)) {
                         if (playerStack.getCount() + te.getItemVendor(i).getSize() <= playerStack.getMaxStackSize()) {
                             playerStack.grow(te.getItemVendor(i).getSize());
                             te.voidItem(i);
@@ -316,7 +316,7 @@ public class ContainerVending extends Container {
                     }
                 } else { // SELL MODE
                     for (int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) {
-                        if (UtilMethods.equalStacks(itemStack, inventorySlots.get(GUI_INVENTORY_FIRST_INDEX + i).getStack())) {
+                        if (UtilMethods.equalStacks(itemStack, inventorySlots.get(GUI_INVENTORY_FIRST_INDEX + i).getStack(), false)) {
                             int count = 0;
                             if (te.getItemVendor(i).getSize() + itemStack.getCount() <= te.getItemVendor(i).getSizeLimit()) {
                                 count = itemStack.getCount();

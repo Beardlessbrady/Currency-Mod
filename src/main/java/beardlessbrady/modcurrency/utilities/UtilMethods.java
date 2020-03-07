@@ -17,13 +17,21 @@ import java.util.Stack;
  */
 
 public final class UtilMethods {
-    public static boolean equalStacks(ItemStack one, ItemStack two){
-        boolean basic = one.getItem().equals(two.getItem()) && (one.getItemDamage() == two.getItemDamage());
-        boolean ench = false;
-        if(one.hasTagCompound() && two.hasTagCompound()) {
-            ench = (one.getTagCompound().equals(two.getTagCompound()));
-        }else if(one.hasTagCompound() == false && two.hasTagCompound() == false) ench = true;
-        return basic && ench;
+    public static boolean equalStacks(ItemStack one, ItemStack two, boolean fuzzy){
+        boolean basic = one.getItem().equals(two.getItem());
+
+        if(!fuzzy) { //If NOT FUZZY (Smooth) Then will check if items have the same metadata and same tag compounds (Enchants)
+            basic = basic && (one.getItemDamage() == two.getItemDamage());
+            boolean ench = false;
+
+            if (one.hasTagCompound() && two.hasTagCompound()) {
+                ench = (one.getTagCompound().equals(two.getTagCompound()));
+            } else if (one.hasTagCompound() == false && two.hasTagCompound() == false) ench = true;
+
+            basic = basic && ench;
+        }
+
+        return basic;
     }
 
     public static String translateMoney(int amount){
