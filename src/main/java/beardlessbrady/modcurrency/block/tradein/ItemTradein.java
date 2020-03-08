@@ -17,7 +17,6 @@ public class ItemTradein {
     private int cost, amount, size;
     private int itemMax, timeRaise, timeElapsed;
     private int sizeLimit;
-    private boolean fuzzy;
 
     public ItemTradein(ItemStack itemStack){
         this.itemStack = itemStack;
@@ -30,8 +29,6 @@ public class ItemTradein {
         timeRaise = 0;
         timeElapsed = 0;
         sizeLimit = 256; //TODO CONFIG
-
-        fuzzy = false;
     }
 
     public ItemTradein(NBTTagCompound compound){
@@ -92,14 +89,6 @@ public class ItemTradein {
     public void setTimeElapsed(int i){
         timeElapsed = i;
     }
-
-    public boolean getFuzzy(){
-        return fuzzy;
-    }
-
-    public void setFuzzy(boolean bool){
-        fuzzy = bool;
-    }
     //</editor-fold>
 
     /** NBT Methods **/
@@ -113,8 +102,6 @@ public class ItemTradein {
         if(itemMax != 0) compound.setInteger("itemMax", itemMax);
         if(timeRaise != 0) compound.setInteger("timeRaise", timeRaise);
         if(timeElapsed != 0) compound.setInteger("timeElapsed", timeElapsed);
-
-        compound.setBoolean("fuzzy", fuzzy);
 
         return compound;
     }
@@ -148,9 +135,6 @@ public class ItemTradein {
                 timeElapsed = nbt.getInteger("timeElapsed");
             }else timeElapsed = 0;
 
-            if(nbt.hasKey("fuzzy")){
-                fuzzy = nbt.getBoolean("fuzzy");
-            }else fuzzy = false;
         }
     }
     //</editor-fold>

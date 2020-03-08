@@ -102,8 +102,6 @@ public class PacketSetItemToServer implements IMessage {
                     case FIELD_AMOUNT:
                         tile.getItemTradein(message.element).setAmount(message.data);
                         break;
-                    case FIELD_FUZZY:
-                        tile.getItemTradein(message.element).setFuzzy(message.data == 1);
                 }
                 tile.markDirty();
             }

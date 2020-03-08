@@ -90,7 +90,7 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
                     searchLoop:
                     for (int i = 0; i < inventoryStackHandler.getSlots(); i++) {
                         if (!inventoryStackHandler.getStackInSlot(i).isEmpty()) {
-                            if (UtilMethods.equalStacks(inputStackHandler.getStackInSlot(0), inventoryStackHandler.getStackInSlot(i), getItemTradein(i).getFuzzy())) {
+                            if (UtilMethods.equalStacks(inputStackHandler.getStackInSlot(0), inventoryStackHandler.getStackInSlot(i), false)) {
 
                                 // Collect items cost and the amount being placed in the INPUT*/
                                 int cost = inventoryStackHandler.getItemTradein(i).getCost();
