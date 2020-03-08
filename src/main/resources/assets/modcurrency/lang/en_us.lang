@@ -24,6 +24,8 @@ guivending.help.half=Buy half stack
 guivending.help.create=Create Bundles
 guivending.help.delete=Delete Bundles
 
+guitradein.fuzzy=Fuzzy:
+
 key.goodolcurrency.category=Good Ol' Currency
 key.shift.desc=GOC Key 1
 key.control.desc=GOC Key 2

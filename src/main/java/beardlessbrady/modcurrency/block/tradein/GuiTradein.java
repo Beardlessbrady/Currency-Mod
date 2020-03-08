@@ -17,6 +17,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -74,16 +76,16 @@ public class GuiTradein extends GuiContainer {
         String mode = (te.getField(FIELD_MODE) == 1) ? I18n.format("guivending.stock") : I18n.format("guivending.trade");
         buttonList.add(new GuiButton(BUTTONADMIN, i + 137, j - 42, 32, 20, mode));
 
-        String fuzzy = te.getItemTradein(te.getField(FIELD_SELECTED)).getFuzzy() ? I18n.format("Fuzzy") : I18n.format("Smooth");
-        GuiButton butFuzzy = new GuiButton(BUTTONFUZZY, i - 100, j + 55, 40, 20, fuzzy);
+        String fuzzy = te.getItemTradein(te.getField(FIELD_SELECTED)).getFuzzy() ? I18n.format(TextFormatting.GREEN + "✔") : I18n.format("");
+        GuiButton butFuzzy = new GuiButton(BUTTONFUZZY, i - 57, j + 49, 10, 10 , fuzzy);
         butFuzzy.visible = false;
+        butFuzzy.enabled = false;
         buttonList.add(butFuzzy);
 
         fieldPrice = new GuiTextField(FIELDPRICE, fontRenderer, 0, 0, 90, 8);        //Setting Costs
         fieldPrice.setTextColor(Integer.parseInt("3359d4", 16));
         fieldPrice.setEnableBackgroundDrawing(false);
         fieldPrice.setMaxStringLength(7);
-        fieldPrice.setEnabled(false);
         fieldPrice.setVisible(false);
         fieldPrice.setText("0.00");
 
@@ -91,7 +93,6 @@ public class GuiTradein extends GuiContainer {
         fieldAmnt.setTextColor(Integer.parseInt("3359d4", 16));
         fieldAmnt.setEnableBackgroundDrawing(false);
         fieldAmnt.setMaxStringLength(2);
-        fieldAmnt.setEnabled(false);
         fieldAmnt.setVisible(false);
         fieldAmnt.setText("1");
 
@@ -99,7 +100,6 @@ public class GuiTradein extends GuiContainer {
         fieldItemMax.setTextColor(Integer.parseInt("3359d4", 16));
         fieldItemMax.setEnableBackgroundDrawing(false);
         fieldItemMax.setMaxStringLength(3);
-        fieldItemMax.setEnabled(false);
         fieldItemMax.setVisible(false);
         fieldItemMax.setText("1");
 
@@ -107,7 +107,6 @@ public class GuiTradein extends GuiContainer {
         fieldTimeRestock.setTextColor(Integer.parseInt("3359d4", 16));
         fieldTimeRestock.setEnableBackgroundDrawing(false);
         fieldTimeRestock.setMaxStringLength(4);
-        fieldTimeRestock.setEnabled(false);
         fieldTimeRestock.setVisible(false);
         fieldTimeRestock.setText("1");
 
@@ -142,7 +141,7 @@ public class GuiTradein extends GuiContainer {
 
         if(te.getField(FIELD_MODE) == 1) { // STOCK MODE */
             Minecraft.getMinecraft().getTextureManager().bindTexture(ASSET_TEXTURE);
-            drawTexturedModalRect(guiLeft - 107, guiTop + 5, 0, 208, 106, 48); // Info Tag background */
+            drawTexturedModalRect(guiLeft - 107, guiTop + 5, 0, 194, 106, 62); // Info Tag background */
         }
     }
 
@@ -249,25 +248,22 @@ public class GuiTradein extends GuiContainer {
             fontRenderer.drawStringWithShadow(I18n.format("$"), -90, 30, Color.lightGray.getRGB());
             fieldPrice.x = i - 82;
             fieldPrice.y = j + 30;
-            fieldPrice.setEnabled(true);
             fieldPrice.setVisible(true);
 
             // Sets Amount textfield's position and enables it */
             fontRenderer.drawStringWithShadow(I18n.format("guivending.amnt"), -90, 40, Color.lightGray.getRGB());
             fieldAmnt.x = i - 65;
             fieldAmnt.y = j + 40;
-            fieldAmnt.setEnabled(true);
             fieldAmnt.setVisible(true);
 
             // Set Fuzzy Button to visible
+            fontRenderer.drawStringWithShadow(I18n.format("guitradein.fuzzy"), -90, 50, Color.lightGray.getRGB());
             buttonList.get(BUTTONFUZZY).visible = true;
 
             GlStateManager.color(0xFF, 0xFF, 0xFF); // Resets GL color to prevent visual bugs */
         } else { // TRADE MODE, disables anything that shouldn't enabled*/
-            fieldPrice.setEnabled(false);
             fieldPrice.setVisible(false);
 
-            fieldAmnt.setEnabled(false);
             fieldAmnt.setVisible(false);
 
             buttonList.get(BUTTONFUZZY).visible = false;
@@ -307,12 +303,21 @@ public class GuiTradein extends GuiContainer {
 
     /** Updated all Text fields**/
     private void updateTextField(){
-            fieldPrice.setText(UtilMethods.translateMoney(te.getItemTradein(te.getField(FIELD_SELECTED)).getCost()));
-            fieldAmnt.setText(Integer.toString(te.getItemTradein(te.getField(FIELD_SELECTED)).getAmount()));
-            fieldItemMax.setText(Integer.toString(te.getItemTradein(te.getField(FIELD_SELECTED)).getItemMax()));
-            fieldTimeRestock.setText(Integer.toString(te.getItemTradein(te.getField(FIELD_SELECTED)).getTimeRaise()));
+        boolean isItem = te.getItemTradein(te.getField(FIELD_SELECTED)).getStack().getItem() != Items.AIR;;
+        fieldPrice.setEnabled(isItem);
+        fieldPrice.setText(UtilMethods.translateMoney(te.getItemTradein(te.getField(FIELD_SELECTED)).getCost()));
 
-            buttonList.get(BUTTONFUZZY).displayString = (te.getItemTradein(te.getField(FIELD_SELECTED)).getFuzzy()) ? I18n.format("Fuzzy") : I18n.format("Smooth");
+        fieldAmnt.setEnabled(isItem);
+        fieldAmnt.setText(Integer.toString(te.getItemTradein(te.getField(FIELD_SELECTED)).getAmount()));
+
+        fieldItemMax.setEnabled(isItem);
+        fieldItemMax.setText(Integer.toString(te.getItemTradein(te.getField(FIELD_SELECTED)).getItemMax()));
+
+        fieldTimeRestock.setEnabled(isItem);
+        fieldTimeRestock.setText(Integer.toString(te.getItemTradein(te.getField(FIELD_SELECTED)).getTimeRaise()));
+
+        buttonList.get(BUTTONFUZZY).enabled = isItem;
+        buttonList.get(BUTTONFUZZY).displayString = (te.getItemTradein(te.getField(FIELD_SELECTED)).getFuzzy()) ? I18n.format(TextFormatting.GREEN + "✔") : I18n.format("");
     }
 
     /** Colors background texture based on block color **/
