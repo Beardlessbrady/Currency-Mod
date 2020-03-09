@@ -248,7 +248,6 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider{
     }
     //</editor-fold>
 
-
     public boolean canAfford(int slot, int amount){
         if(inventoryStackHandler.getItemVendor(slot).getCost() * (amount / inventoryStackHandler.getItemVendor(slot).getAmount()) <= getField(TileEconomyBase.FIELD_CASHRESERVE))
             return true;

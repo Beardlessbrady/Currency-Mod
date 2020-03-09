@@ -2,10 +2,15 @@
   "forge_marker": 1,
   "defaults": {
     "parent": "block/tinted_cross",
-    "model": "modcurrency:tradeinbottom",
+    "model": "forge:multi-layer",
     "textures": {
       "texture": "modcurrency:blocks/blocktradein",
       "particle": "blocks/coal_block"
+    },
+    "custom": {
+      "base": "modcurrency:blocktradein#base",
+      "Solid": "modcurrency:blocktradein#base",
+      "Translucent": "modcurrency:blocktradein#window"
     },
     "transform": "forge:default-block"
   },
@@ -64,7 +69,11 @@
       "one": {},
       "twobottom": {},
       "twotop": {
-        "model": "modcurrency:tradeintop"
+        "custom": {
+          "base": "modcurrency:blocktradein#basetwotop",
+          "Solid": "modcurrency:blocktradein#basetwotop",
+          "Translucent": "modcurrency:blocktradein#basetwotopwindow"
+        }
       }
     },
     "facing": {
@@ -72,7 +81,18 @@
       "south": {"y": 180},
       "west": {"y": 270},
       "east": {"y": 90}
-    }
+    },
+    "base": [{
+      "model": "modcurrency:tradeinbottom"
+    }],
+    "window": [{
+      "model": "modcurrency:tradeinwindowbottom"
+    }],
+    "basetwotop": [{
+      "model": "modcurrency:tradeintop"
+    }],
+    "basetwotopwindow": [{
+      "model": "modcurrency:tradeinwindowtop"
+    }]
   }
 }
-

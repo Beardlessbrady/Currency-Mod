@@ -6,6 +6,7 @@ import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.handler.StateHandler;
 import beardlessbrady.modcurrency.item.ModItems;
 import beardlessbrady.modcurrency.utilities.UtilMethods;
+import com.sun.org.apache.regexp.internal.RE;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.SoundEvents;
@@ -38,6 +39,8 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
     public final int TE_INPUT_SLOT_COUNT = 1;
     public final int TE_INVENTORY_SLOT_COUNT = 25;
     public final int TE_OUTPUT_SLOT_COUNT = 1;
+
+    private int renderCounter = 0;
 
     // Inventory handlers */
     private ItemStackHandler inputStackHandler = new ItemStackHandler(TE_INPUT_SLOT_COUNT) {
@@ -322,5 +325,18 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
                 inputStackHandler.setStackInSlot(i, ItemStack.EMPTY);   //Just in case
             }
         }
+    }
+
+    /** Counter for Model Renderer **/
+    public double getRenderCounter(){
+        renderCounter++;
+        if(renderCounter >= 700) //Fail safe if for some reason the renderCounter tries to go really high
+            renderCounter = 0;
+        return renderCounter -1; //Returns count before being incremented
+    }
+
+    /** Model Renderer Counter **/
+    public void setRenderCounter(int num){
+        renderCounter = num;
     }
 }
