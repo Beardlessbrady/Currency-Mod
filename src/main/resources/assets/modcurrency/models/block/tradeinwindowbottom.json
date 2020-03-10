@@ -6,10 +6,10 @@
 	"elements": [ 	 
 		{
 			"__comment": "Box3",
-			"from": [ 6, 13, 0 ],
-			"to": [ 14, 16, 0.1 ],
+			"from": [ 6, 13, 1 ],
+			"to": [ 14, 16, 1.1 ],
 			"faces": {
-				"north": { "uv": [ 4.25, 8.25, 4.5, 8.5 ], "texture": "#texture", "cullface": "up" },
+				"north": { "uv": [ 5.25, 11.25, 7.25, 12 ], "texture": "#texture", "cullface": "up" },
 				"south": { "uv": [ 4.25, 8.25, 4.5, 8.5 ], "texture": "#texture", "cullface": "up" },
 				"west": { "uv": [ 4.25, 8.25, 4.5, 8.5 ], "texture": "#texture", "cullface": "up" },
 				"east": { "uv": [ 4.25, 8.25, 4.5, 8.5 ], "texture": "#texture", "cullface": "up" }

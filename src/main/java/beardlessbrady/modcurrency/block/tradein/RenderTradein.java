@@ -1,22 +1,18 @@
 package beardlessbrady.modcurrency.block.tradein;
 
 import beardlessbrady.modcurrency.block.ModBlocks;
-import beardlessbrady.modcurrency.block.vending.TileVending;
 import beardlessbrady.modcurrency.handler.StateHandler;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.RayTraceResult;
 
+import java.awt.*;
 import java.util.Stack;
 
 /**
@@ -39,19 +35,59 @@ public class RenderTradein extends TileEntitySpecialRenderer<TileTradein> {
              if(getWorld().getBlockState(te.getPos().up()).getBlock() == ModBlocks.blockTradein) {
                  if (ray.getBlockPos().equals(te.getPos()) || ray.getBlockPos().equals(te.getPos().up())) {
 
+                     //Rendering Text
+                     GlStateManager.pushMatrix();
+                     GlStateManager.pushAttrib();
+                     GlStateManager.translate(x + 0.25, y + 1.55, z + 0.9);
+                     GlStateManager.scale(0.01, 0.01, 0.01);
+                     GlStateManager.rotate(180, 1, 0, 0);
+
+                     //Transforms TEXT based on which direction block is facing
                      int rotation = 0;
+                     switch (this.getWorld().getBlockState(te.getPos()).getValue(StateHandler.FACING)) {
+                         default:
+                             GlStateManager.translate(x + 50, 0, z + 78);
+                            rotation = 180;
+                             break;
+                         case EAST:
+                             GlStateManager.translate(x + 69, 0, z + 14);
+                             rotation = -90;
+                             break;
+                         case WEST:
+                             GlStateManager.translate(x - 18, 0, z + 67);
+                             rotation = 90;
+                             break;
+                         case SOUTH:
+                     }
+                     GlStateManager.rotate(rotation, 0f, 1f, 0f);
+
+
+                     FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+                     fontRenderer.drawString("ITEMS", 0, 0, Color.GRAY.getRGB());
+                     fontRenderer.drawString("FOR", 4, 10, Color.GRAY.getRGB());
+                     GlStateManager.scale(2, 3, 1);
+                     fontRenderer.drawString("$$$", -2, 6, Color.GREEN.getRGB());
+
+
+                     GlStateManager.popAttrib();
+                     GlStateManager.popMatrix();
+
+
+                     //Render Items
+                     rotation = 0;
                      RenderItem itemRenderer = Minecraft.getMinecraft().getRenderItem();
 
                      GlStateManager.pushMatrix();
                      GlStateManager.pushAttrib();
                      RenderHelper.enableStandardItemLighting();
 
+                     //Transforms for ITEMS based on which direction block is facing
                      switch (this.getWorld().getBlockState(te.getPos()).getValue(StateHandler.FACING)) {
                          default:
-                             GlStateManager.translate(x + 0.34, y + 1.05, z + 0.1);
+                             GlStateManager.translate(x + 0.34, y + 1.05, z + 0.13);
                              break;
                          case EAST:
-                             GlStateManager.translate(x + 0.9, y + 1.05, z + 0.35);
+                             GlStateManager.translate(x + 0.88, y + 1.05, z + 0.35);
                              rotation = -90;
                              break;
                          case WEST:
@@ -59,7 +95,7 @@ public class RenderTradein extends TileEntitySpecialRenderer<TileTradein> {
                              rotation = 90;
                              break;
                          case SOUTH:
-                             GlStateManager.translate(x + 0.68, y + 1.05, z + 0.9);
+                             GlStateManager.translate(x + 0.68, y + 1.05, z + 0.88);
                              rotation = 180;
                              break;
                      }
@@ -67,6 +103,7 @@ public class RenderTradein extends TileEntitySpecialRenderer<TileTradein> {
                      GlStateManager.rotate(rotation, 0f, 1f, 0f);
                      GlStateManager.scale(0.16f, 0.16f, 0.16f);
 
+                     //Grabs all items in machine
                      Stack<ItemStack> items = new Stack();
                      for (int i = 0; i < 5; i++) {
                          for (int j = 0; j < 5; j++) {
@@ -76,19 +113,33 @@ public class RenderTradein extends TileEntitySpecialRenderer<TileTradein> {
                          }
                      }
 
+                     //If items <= 5 just render not moving, otherwise animate
                      int size = items.size();
                      if(size == 1){
-                         GlStateManager.translate(+0.8, 0, 0 - 0.8);
+                         GlStateManager.translate(+1.7, 0, 0);
                          itemRenderer.renderItem(items.get(0), ItemCameraTransforms.TransformType.FIXED);
                      }else if(size == 2){
-
+                         GlStateManager.translate(+2.1, 0, 0);
+                         itemRenderer.renderItem(items.get(0), ItemCameraTransforms.TransformType.FIXED);
+                         GlStateManager.translate(-0.7, 0, 0);
+                         itemRenderer.renderItem(items.get(1), ItemCameraTransforms.TransformType.FIXED);
                      }else if(size == 3){
-
+                         GlStateManager.translate(+2.5, 0, 0);
+                         itemRenderer.renderItem(items.get(0), ItemCameraTransforms.TransformType.FIXED);
+                         GlStateManager.translate(-0.7, 0, 0);
+                         itemRenderer.renderItem(items.get(1), ItemCameraTransforms.TransformType.FIXED);
+                         GlStateManager.translate(-0.7, 0, 0);
+                         itemRenderer.renderItem(items.get(2), ItemCameraTransforms.TransformType.FIXED);
                      }else if(size == 4){
-
-                     }else if(size == 5){
-
-                     }else if(items.size() > 5) {
+                         GlStateManager.translate(+2.8, 0, 0);
+                         itemRenderer.renderItem(items.get(0), ItemCameraTransforms.TransformType.FIXED);
+                         GlStateManager.translate(-0.7, 0, 0);
+                         itemRenderer.renderItem(items.get(1), ItemCameraTransforms.TransformType.FIXED);
+                         GlStateManager.translate(-0.7, 0, 0);
+                         itemRenderer.renderItem(items.get(2), ItemCameraTransforms.TransformType.FIXED);
+                         GlStateManager.translate(-0.7, 0, 0);
+                         itemRenderer.renderItem(items.get(3), ItemCameraTransforms.TransformType.FIXED);
+                     }else if(items.size() >= 5) {
                          double count = te.getRenderCounter();
                          GlStateManager.translate(-count * 0.03, 0, 0); //Causes movement via taking the counter from TE (increments every time its accessed)
 
