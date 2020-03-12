@@ -1,5 +1,6 @@
 package beardlessbrady.modcurrency.handler;
 
+import beardlessbrady.modcurrency.block.EconomyBlockBase;
 import beardlessbrady.modcurrency.block.ModBlocks;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.block.vending.BlockVending;
@@ -28,7 +29,7 @@ public class EventHandler {
     public void protectedBreak(PlayerInteractEvent.LeftClickBlock e) {
         Block brokeBlock = e.getWorld().getBlockState(e.getPos()).getBlock();
 
-        if (brokeBlock == ModBlocks.blockVending) {
+        if (brokeBlock instanceof EconomyBlockBase) {
             TileEconomyBase tile = (TileEconomyBase) e.getWorld().getTileEntity(e.getPos());
             if (e.getWorld().getBlockState(e.getPos()).getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP)
                 tile =  (TileEconomyBase) e.getWorld().getTileEntity(e.getPos().down());
