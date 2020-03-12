@@ -19,7 +19,6 @@ public class ItemTradein {
     private ItemStack itemStack;
     private int cost, amount, size;
     private int itemMax, timeRaise, timeElapsed;
-    private int sizeLimit, fuzzLimit;
     private boolean fuzzy;
     private Stack<ItemStack> fuzzStacks;
 
@@ -33,15 +32,11 @@ public class ItemTradein {
         itemMax = 0;
         timeRaise = 0;
         timeElapsed = 0;
-        sizeLimit = 256; //TODO CONFIG
         fuzzy = false;
-        fuzzLimit = sizeLimit /8;
     }
 
     public ItemTradein(NBTTagCompound compound){
         fromNBT(compound);
-        sizeLimit = 256; //TODO CONFIG
-        fuzzLimit = sizeLimit/8;
     }
 
     /** Setters & Getter Methods **/
@@ -129,9 +124,6 @@ public class ItemTradein {
         fuzzStacks = itemStacks;
     }
 
-    public int getFuzzLimit(){
-        return fuzzLimit;
-    }
     //</editor-fold>
 
     /** NBT Methods **/
@@ -224,7 +216,7 @@ public class ItemTradein {
 
     /** Grow size of item by amount **/
     public void growSize(int amount){
-        int maxCheck = sizeLimit - size - amount; // Ensures itemStack size can't grow past size limit */
+        int maxCheck = 512 - size - amount; // Ensures itemStack size can't grow past size limit */
         if(maxCheck >= 0){ // If maxCheck is >= 0 it is within the size limit */
             size = size + amount; // Add amount to size */
         }else{ // Trying to grow past size limit */

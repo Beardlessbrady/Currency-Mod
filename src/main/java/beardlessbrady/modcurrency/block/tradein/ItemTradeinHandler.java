@@ -19,6 +19,8 @@ import javax.annotation.Nonnull;
 
 public class ItemTradeinHandler implements IItemHandler, IItemHandlerModifiable, INBTSerializable<NBTTagCompound> {
     ItemTradein[] itemArray;
+    private int LIMIT = 256;
+    private int FUZZLIMIT = 64;
 
     public ItemTradeinHandler(int size) {
         itemArray = new ItemTradein[size];
@@ -104,7 +106,11 @@ public class ItemTradeinHandler implements IItemHandler, IItemHandlerModifiable,
 
     @Override
     public int getSlotLimit(int slot) {
-        return 256; //TODO CONFIG
+        return LIMIT; //TODO CONFIG
+    }
+
+    public int getFuzzLimit(){
+        return FUZZLIMIT;
     }
 
     @Override

@@ -102,38 +102,39 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
 
                                     Stack<ItemStack> fuzzStack = inventoryStackHandler.getItemTradein(i).getFuzzStack();
 
-                                        if (cashRegister < cost * inputStack.getCount()) { // If there isn't enough cash in the machine set input Amount to highest amount machine can afford */
-                                            stackInputAmount = cashRegister / cost;
-                                            if (stackInputAmount == 0) flag = 2; // Flags for not enough funds error */
-                                        }
+                                    if (cashRegister < cost * inputStack.getCount()) { // If there isn't enough cash in the machine set input Amount to highest amount machine can afford */
+                                        stackInputAmount = cashRegister / cost;
+                                        if (stackInputAmount == 0) flag = 2; // Flags for not enough funds error */
+                                    }
 
-                                        int mergeFlag = -1;
-                                        //Checking to see if item exists already in fuzzStack, if so add to count (if possible)
-                                        for (int j = 0; j < fuzzStack.size(); j++) {
-                                            if (UtilMethods.equalStacks(fuzzStack.get(j), inputStack, false)) {
-                                                mergeFlag = j;
+                                    int mergeFlag = -1;
+                                    //Checking to see if item exists already in fuzzStack, if so add to count (if possible)
+                                    for (int j = 0; j < fuzzStack.size(); j++) {
+                                        if (UtilMethods.equalStacks(fuzzStack.get(j), inputStack, false)) {
+                                            mergeFlag = j;
+
+                                            if (fuzzStack.get(j).getCount() >= inventoryStackHandler.getFuzzLimit()) {
+                                                mergeFlag = -1;
+                                            } else {
                                                 break;
                                             }
                                         }
-                                    if(fuzzStack.size() < inventoryStackHandler.getSlotLimit(i)/inventoryStackHandler.getItemTradein(i).getFuzzLimit()
-                                                      || mergeFlag != -1) { //Only allow MAX/FUZZMAX (256/32 = 8) different types of items OR merging
+                                    }
 
-                                      //  System.out.println("DDOG");
+                                    System.out.println(fuzzStack.size() < inventoryStackHandler.getSlotLimit(i) / inventoryStackHandler.getFuzzLimit());
+                                    if (fuzzStack.size() < inventoryStackHandler.getSlotLimit(i) / inventoryStackHandler.getFuzzLimit()
+                                            || mergeFlag != -1) { //Only allow MAX/FUZZMAX (256/32 = 8) different types of items OR merging
+
+                                        //  System.out.println("DDOG");
 
                                         //No stack matching
                                         if (mergeFlag == -1) { //If not Merging
-                                            if ((stackInputAmount > inventoryStackHandler.getItemTradein(i).getFuzzLimit())) { // Only allow up to the stack size limit*/
-                                                stackInputAmount = stackInputAmount - (stackInputAmount - inventoryStackHandler.getItemTradein(i).getFuzzLimit());
+                                            if ((stackInputAmount > inventoryStackHandler.getFuzzLimit())) { // Only allow up to the stack size limit*/
+                                                stackInputAmount = stackInputAmount - (stackInputAmount - inventoryStackHandler.getFuzzLimit());
                                             }
                                         } else { //Merging
-                                            if ((stackInputAmount > inventoryStackHandler.getItemTradein(i).getFuzzLimit() - fuzzStack.get(mergeFlag).getCount())) { // Only allow up to the stack size limit*/
-                                                stackInputAmount = stackInputAmount - (fuzzStack.get(mergeFlag).getCount() + stackInputAmount - inventoryStackHandler.getItemTradein(i).getFuzzLimit());
-
-                                                if (stackInputAmount == 0) {
-                                                    mergeFlag = -1;
-                                                    stackInputAmount = inputStack.getCount();
-
-                                                }
+                                            if ((stackInputAmount > inventoryStackHandler.getFuzzLimit() - fuzzStack.get(mergeFlag).getCount())) { // Only allow up to the stack size limit*/
+                                                stackInputAmount = stackInputAmount - (fuzzStack.get(mergeFlag).getCount() + stackInputAmount - inventoryStackHandler.getFuzzLimit());
                                             }
                                         }
                                         //if (stackInputAmount == 0) flag = 1; // Flags for size limit reached */ Doesnt make sense in this instance
@@ -147,7 +148,7 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
                                             copyStack.setCount(stackInputAmount);
 
                                             inputStackHandler.getStackInSlot(0).shrink(stackInputAmount); // Remove item from input */
-                                            if (mergeFlag == -1 && stackInputAmount <= inventoryStackHandler.getItemTradein(i).getFuzzLimit()) { //Not Merging
+                                            if (mergeFlag == -1 && stackInputAmount <= inventoryStackHandler.getFuzzLimit()) { //Not Merging
                                                 inventoryStackHandler.getItemTradein(i).pushFuzzy(copyStack); // Add item to machine */
                                             } else if (mergeFlag != -1) { // Merging
                                                 inventoryStackHandler.getItemTradein(i).growFuzzy(mergeFlag, stackInputAmount);
