@@ -14,6 +14,9 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.ItemRenderer;
+import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
@@ -29,6 +32,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Stack;
 
 import static beardlessbrady.modcurrency.block.TileEconomyBase.*;
 
@@ -390,7 +394,6 @@ public class GuiTradein extends GuiContainer {
             int column = ((i - startX) / 18);
             int slot = column + (row * 5);
 
-
             //Collects the vanilla tooltip for the item
             java.util.List<String> list = new ArrayList<>();
             List<String> ogTooltip = stack.getTooltip(mc.player, mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL);
@@ -415,6 +418,16 @@ public class GuiTradein extends GuiContainer {
                     list.add(TextFormatting.GREEN + "Payout of $" + UtilMethods.translateMoney(cost));
                 }else{
                     list.add(TextFormatting.RED + "Machine cannot afford $" + UtilMethods.translateMoney(cost));
+                }
+            }
+
+            //if isFuzzy
+            if (te.getItemTradein(slot).getFuzzy()) {
+                Stack<ItemStack> fuzzStack = te.getItemTradein(slot).getFuzzStack();
+
+                RenderItem itemRenderer = Minecraft.getMinecraft().getRenderItem();
+                for(int k = 0; k < fuzzStack.size(); k++){
+                   itemRenderer.renderItemAndEffectIntoGUI(fuzzStack.get(k), x + (15*k), y);
                 }
             }
 
@@ -499,6 +512,9 @@ public class GuiTradein extends GuiContainer {
                 PacketOutChangeToServer pack0 = new PacketOutChangeToServer();
                 pack0.setData(te.getPos(), false);
                 PacketHandler.INSTANCE.sendToServer(pack0);
+
+                //TODO
+                System.out.println(te.getItemTradein(te.getField(FIELD_SELECTED)).getFuzzStack());
                 break;
             case BUTTONFUZZY:
                 boolean newFuzzy = !te.getItemTradein(te.getField(FIELD_SELECTED)).getFuzzy();

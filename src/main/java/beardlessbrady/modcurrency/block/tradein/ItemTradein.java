@@ -1,5 +1,6 @@
 package beardlessbrady.modcurrency.block.tradein;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -34,13 +35,13 @@ public class ItemTradein {
         timeElapsed = 0;
         sizeLimit = 256; //TODO CONFIG
         fuzzy = false;
-        fuzzLimit = sizeLimit /4;
+        fuzzLimit = sizeLimit /8;
     }
 
     public ItemTradein(NBTTagCompound compound){
         fromNBT(compound);
         sizeLimit = 256; //TODO CONFIG
-        fuzzLimit = sizeLimit/4;
+        fuzzLimit = sizeLimit/8;
     }
 
     /** Setters & Getter Methods **/
@@ -109,15 +110,27 @@ public class ItemTradein {
         }
     }
 
+    public void pushFuzzy(ItemStack item){
+        fuzzStacks.push(item);
+    }
+
+    public void growFuzzy(int element, int growth){
+        fuzzStacks.get(element).grow(growth);
+    }
+
     public Stack getFuzzStack(){
         if(fuzzStacks != null){
-            return getFuzzStack();
+            return fuzzStacks;
         }
         return null;
     }
 
     public void setFuzzStack(Stack<ItemStack> itemStacks){
         fuzzStacks = itemStacks;
+    }
+
+    public int getFuzzLimit(){
+        return fuzzLimit;
     }
     //</editor-fold>
 
@@ -139,6 +152,7 @@ public class ItemTradein {
             }
             compound.setTag("fuzzStacks", fuzzTag);
         }
+
         compound.setBoolean("fuzzy", fuzzy);
 
         return compound;
@@ -176,8 +190,9 @@ public class ItemTradein {
             if(nbt.hasKey("fuzzStacks")){
                 NBTTagCompound fuzzTag = nbt.getCompoundTag("fuzzStacks");
                 fuzzStacks = new Stack<ItemStack>();
-                for(int i = 0; i < fuzzTag.getSize(); i++){ //TODO HOW THAT WORKS
-                    fuzzStacks.push(new ItemStack(nbt.getCompoundTag("stack" + i)));
+
+                for(int i = 0; i < fuzzTag.getSize(); i++){
+                    fuzzStacks.push(new ItemStack(fuzzTag.getCompoundTag("stack" + i)));
                 }
             }
             if(nbt.hasKey("fuzzy")) fuzzy = nbt.getBoolean("fuzzy");

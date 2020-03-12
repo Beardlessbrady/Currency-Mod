@@ -44,7 +44,6 @@ public class BlockTradein extends EconomyBlockBase {
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
         TileTradein te = (TileTradein) getTile(worldIn, pos);
-
         if (TileEconomyBase.EMPTYID.equals(getTile(worldIn, pos).getPlayerUsing())) { // Compares stored PLAYERUSING with an empty playerID to see if a player currently has the machine opened */
             if(playerIn.getHeldItemMainhand().getItem() == Items.DYE){ // Checks if player is holding dye, if so color machine instead of opening*/
 
