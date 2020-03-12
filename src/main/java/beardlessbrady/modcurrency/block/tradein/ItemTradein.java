@@ -3,6 +3,8 @@ package beardlessbrady.modcurrency.block.tradein;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import java.util.Stack;
+
 /**
  * This class was created by BeardlessBrady. It is distributed as
  * part of The Currency-Mod. Source Code located on github:
@@ -16,7 +18,9 @@ public class ItemTradein {
     private ItemStack itemStack;
     private int cost, amount, size;
     private int itemMax, timeRaise, timeElapsed;
-    private int sizeLimit;
+    private int sizeLimit, fuzzLimit;
+    private boolean fuzzy;
+    private Stack<ItemStack> fuzzStacks;
 
     public ItemTradein(ItemStack itemStack){
         this.itemStack = itemStack;
@@ -29,11 +33,14 @@ public class ItemTradein {
         timeRaise = 0;
         timeElapsed = 0;
         sizeLimit = 256; //TODO CONFIG
+        fuzzy = false;
+        fuzzLimit = sizeLimit /4;
     }
 
     public ItemTradein(NBTTagCompound compound){
         fromNBT(compound);
         sizeLimit = 256; //TODO CONFIG
+        fuzzLimit = sizeLimit/4;
     }
 
     /** Setters & Getter Methods **/
@@ -89,6 +96,29 @@ public class ItemTradein {
     public void setTimeElapsed(int i){
         timeElapsed = i;
     }
+
+    public boolean getFuzzy(){
+        return fuzzy;
+    }
+
+    public void setFuzzy(boolean bool){
+        fuzzy = bool;
+
+        if(fuzzy){
+            fuzzStacks = new Stack<ItemStack>();
+        }
+    }
+
+    public Stack getFuzzStack(){
+        if(fuzzStacks != null){
+            return getFuzzStack();
+        }
+        return null;
+    }
+
+    public void setFuzzStack(Stack<ItemStack> itemStacks){
+        fuzzStacks = itemStacks;
+    }
     //</editor-fold>
 
     /** NBT Methods **/
@@ -102,6 +132,14 @@ public class ItemTradein {
         if(itemMax != 0) compound.setInteger("itemMax", itemMax);
         if(timeRaise != 0) compound.setInteger("timeRaise", timeRaise);
         if(timeElapsed != 0) compound.setInteger("timeElapsed", timeElapsed);
+        if(fuzzStacks != null){
+            NBTTagCompound fuzzTag = new NBTTagCompound();
+            for(int i = 0; i < fuzzStacks.size(); i++){
+                fuzzTag.setTag("stack" + i, fuzzStacks.get(i).serializeNBT());
+            }
+            compound.setTag("fuzzStacks", fuzzTag);
+        }
+        compound.setBoolean("fuzzy", fuzzy);
 
         return compound;
     }
@@ -134,6 +172,15 @@ public class ItemTradein {
             if(nbt.hasKey("timeElapsed")){
                 timeElapsed = nbt.getInteger("timeElapsed");
             }else timeElapsed = 0;
+
+            if(nbt.hasKey("fuzzStacks")){
+                NBTTagCompound fuzzTag = nbt.getCompoundTag("fuzzStacks");
+                fuzzStacks = new Stack<ItemStack>();
+                for(int i = 0; i < fuzzTag.getSize(); i++){ //TODO HOW THAT WORKS
+                    fuzzStacks.push(new ItemStack(nbt.getCompoundTag("stack" + i)));
+                }
+            }
+            if(nbt.hasKey("fuzzy")) fuzzy = nbt.getBoolean("fuzzy");
 
         }
     }

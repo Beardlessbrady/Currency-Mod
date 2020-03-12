@@ -223,7 +223,6 @@ public class ContainerTradein extends Container {
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotId) {
         ItemStack itemStack = this.inventorySlots.get(slotId).getStack();
 
-        System.out.println("DDD");
         // If Item being SHIFTED is not empty and in Player Inventory */
         if (!itemStack.isEmpty()) {
             if (slotId < PLAYER_TOTAL_COUNT) {
@@ -238,7 +237,7 @@ public class ContainerTradein extends Container {
                     } else { //SHIFT clicking an item will place a ghost of it in the next empty slot of the machine
                         for(int i = 0; i < te.TE_INVENTORY_SLOT_COUNT; i++){
                             if(te.getItemTradein(i).getStack().equals(ItemStack.EMPTY)){
-                                te.setItemTradein(i, new ItemTradein(itemStack));
+                                te.setItemTradein(i, new ItemTradein(itemStack.copy()));
                                 break;
                             }
                         }

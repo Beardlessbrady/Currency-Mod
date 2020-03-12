@@ -93,8 +93,7 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
                     searchLoop:
                     for (int i = 0; i < inventoryStackHandler.getSlots(); i++) {
                         if (!inventoryStackHandler.getStackInSlot(i).isEmpty()) {
-                            if (UtilMethods.equalStacks(inputStackHandler.getStackInSlot(0), inventoryStackHandler.getStackInSlot(i), false)) {
-
+                            if (!UtilMethods.equalStacks(inputStackHandler.getStackInSlot(0), inventoryStackHandler.getStackInSlot(i), getItemTradein(i).getFuzzy())) { //NOT FUZZY
                                 // Collect items cost and the amount being placed in the INPUT*/
                                 int cost = inventoryStackHandler.getItemTradein(i).getCost();
                                 int inputAmount = inputStackHandler.getStackInSlot(0).getCount();
@@ -134,6 +133,9 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
                                     }
                                     world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 3.0F, false);
                                 }
+                                break searchLoop;
+                            } else if(UtilMethods.equalStacks(inputStackHandler.getStackInSlot(0), inventoryStackHandler.getStackInSlot(i), getItemTradein(i).getFuzzy())){ //FUZZY
+                                System.out.println("DDDES");
                                 break searchLoop;
                             }
                         }
