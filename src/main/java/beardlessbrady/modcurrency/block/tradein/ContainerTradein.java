@@ -4,6 +4,8 @@ import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.item.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
@@ -221,17 +223,24 @@ public class ContainerTradein extends Container {
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int slotId) {
         ItemStack itemStack = this.inventorySlots.get(slotId).getStack();
 
+        System.out.println("DDD");
         // If Item being SHIFTED is not empty and in Player Inventory */
         if (!itemStack.isEmpty()) {
             if (slotId < PLAYER_TOTAL_COUNT) {
-                if (te.getField(TileEconomyBase.FIELD_MODE) == 1) {
-
+                if (te.getField(TileEconomyBase.FIELD_MODE) == 1) { //STOCK MODE
                     // If Item is Currency then shift it into INPUT */
                     if (itemStack.getItem().equals(ModItems.itemCurrency)) {
                         playerIn.world.playSound(playerIn.posX, playerIn.posY, playerIn.posZ, SoundEvents.BLOCK_IRON_TRAPDOOR_OPEN, SoundCategory.BLOCKS, 1.0F, 30.0F, false);
 
                         if (!this.mergeItemStack(itemStack, PLAYER_TOTAL_COUNT + TE_INPUT_SLOT_INDEX, PLAYER_TOTAL_COUNT + TE_INPUT_SLOT_INDEX + 1, false)) {
                             return ItemStack.EMPTY;
+                        }
+                    } else { //SHIFT clicking an item will place a ghost of it in the next empty slot of the machine
+                        for(int i = 0; i < te.TE_INVENTORY_SLOT_COUNT; i++){
+                            if(te.getItemTradein(i).getStack().equals(ItemStack.EMPTY)){
+                                te.setItemTradein(i, new ItemTradein(itemStack));
+                                break;
+                            }
                         }
                     }
                 }
