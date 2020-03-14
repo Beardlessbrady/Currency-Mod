@@ -124,6 +124,15 @@ public class ItemTradein {
         fuzzStacks = itemStacks;
     }
 
+    public int getFuzzySize(){
+        int total = 0;
+        for(int i = 0; i < fuzzStacks.size(); i++){
+            total += fuzzStacks.get(i).getCount();
+        }
+
+        return total;
+    }
+
     //</editor-fold>
 
     /** NBT Methods **/

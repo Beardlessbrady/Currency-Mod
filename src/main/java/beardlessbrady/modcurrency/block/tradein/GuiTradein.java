@@ -421,16 +421,6 @@ public class GuiTradein extends GuiContainer {
                 }
             }
 
-            //if isFuzzy
-            if (te.getItemTradein(slot).getFuzzy()) {
-                Stack<ItemStack> fuzzStack = te.getItemTradein(slot).getFuzzStack();
-
-                RenderItem itemRenderer = Minecraft.getMinecraft().getRenderItem();
-                for(int k = 0; k < fuzzStack.size(); k++){
-                   itemRenderer.renderItemAndEffectIntoGUI(fuzzStack.get(k), x + (15*k), y);
-                }
-            }
-
             // Actually adding the vanilla extra tooltip info back if there is any */
             for (; tooltipStart < stack.getTooltip(mc.player, mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL).size(); tooltipStart++) {
                 list.add(TextFormatting.GRAY + stack.getTooltip(mc.player, mc.gameSettings.advancedItemTooltips ? ITooltipFlag.TooltipFlags.ADVANCED : ITooltipFlag.TooltipFlags.NORMAL).get(tooltipStart));
@@ -442,6 +432,33 @@ public class GuiTradein extends GuiContainer {
             drawHoveringText(list, x, y, (font == null ? fontRenderer : font));
             net.minecraftforge.fml.client.config.GuiUtils.postItemToolTip();
 
+            //if isFuzzy and STOCK MODE draw itemstacks in FuzzyStack
+            if (te.getField(FIELD_MODE) == 1 && te.getItemTradein(slot).getFuzzy()) {
+                Stack<ItemStack> fuzzStack = te.getItemTradein(slot).getFuzzStack();
+
+                RenderItem itemRenderer = Minecraft.getMinecraft().getRenderItem();
+
+                // Shrink text size so it fits with 3 digit numbers */
+                GL11.glDisable(GL11.GL_DEPTH_TEST);
+                GL11.glPushMatrix();
+                GL11.glScalef(0.7F, 0.7F, 0.7F);
+
+                //Draw Fuzzy Items and Sizes (Only draw three stacks then put '...' to signify there are more
+                int countLength = 0;
+                for(int k = 0; k < 3; k++){
+                    if(fuzzStack.size() > k) {
+                        countLength = Integer.toString(fuzzStack.get(k).getCount()).length() - 1;
+                        itemRenderer.renderItemIntoGUI(fuzzStack.get(k), (int)((x + 10 + (14 * k))/0.7), (int)((y + 14 * (list.size() - 1))/0.7));
+                        itemRenderer.renderItemOverlays(fontRenderer, fuzzStack.get(k), (int)((x + 7 + ((k) * 14 + countLength))/0.7), (int)((y + 14 * (list.size() - 1))/0.7));
+                    }
+                }
+
+                if(fuzzStack.size() > 3)
+                    fontRenderer.drawStringWithShadow(". . .", (int)((x + 51)/0.7), (int)((y + 4)/0.7), -1);
+
+                GL11.glPopMatrix();
+                GL11.glDisable(GL11.GL_DEPTH_TEST);
+            }
             te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
         } else {
             super.renderToolTip(stack, x, y);

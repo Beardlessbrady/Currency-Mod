@@ -92,84 +92,67 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
                     // Loops through inventoryStackHandler to try and find an item matching whats in the INPUT*/
                     searchLoop:
                     for (int i = 0; i < inventoryStackHandler.getSlots(); i++) {
+                        ItemTradein item = getItemTradein(i);
                         if (!inventoryStackHandler.getStackInSlot(i).isEmpty()) {
-                            if (UtilMethods.equalStacks(inputStackHandler.getStackInSlot(0), inventoryStackHandler.getStackInSlot(i), getItemTradein(i).getFuzzy())) {
-                                if (getItemTradein(i).getFuzzy()) { //FUZZY
+                            if (UtilMethods.equalStacks(inputStackHandler.getStackInSlot(0), item.getStack(), item.getFuzzy())) {
+                                if (item.getFuzzy()) { //FUZZY
                                     // Collect items cost and the amount being placed in the INPUT*/
-                                    int cost = inventoryStackHandler.getItemTradein(i).getCost();
+                                    int cost = item.getCost();
                                     ItemStack inputStack = inputStackHandler.getStackInSlot(0);
                                     int stackInputAmount = inputStack.getCount();
 
-                                    Stack<ItemStack> fuzzStack = inventoryStackHandler.getItemTradein(i).getFuzzStack();
+                                    Stack<ItemStack> fuzzStack = item.getFuzzStack();
 
                                     if (cashRegister < cost * inputStack.getCount()) { // If there isn't enough cash in the machine set input Amount to highest amount machine can afford */
                                         stackInputAmount = cashRegister / cost;
                                         if (stackInputAmount == 0) flag = 2; // Flags for not enough funds error */
                                     }
 
+                                    if ((stackInputAmount + inventoryStackHandler.getItemTradein(i).getFuzzySize())
+                                            > inventoryStackHandler.getSlotLimit(i)) { // Only allow up to the stack size limit*/
+                                        stackInputAmount = stackInputAmount - (inventoryStackHandler.getItemTradein(i).getFuzzySize() + stackInputAmount - inventoryStackHandler.getSlotLimit(i));
+
+                                        if (stackInputAmount == 0) flag = 1; // Flags for size limit reached */
+                                    }
+
                                     int mergeFlag = -1;
-                                    //Checking to see if item exists already in fuzzStack, if so add to count (if possible)
+                                    //Checking to see if item exists already in fuzzStack, if so merge
                                     for (int j = 0; j < fuzzStack.size(); j++) {
                                         if (UtilMethods.equalStacks(fuzzStack.get(j), inputStack, false)) {
                                             mergeFlag = j;
+                                            break;
+                                        }
+                                    }
 
-                                            if (fuzzStack.get(j).getCount() >= inventoryStackHandler.getFuzzLimit()) {
-                                                mergeFlag = -1;
-                                            } else {
+                                    // If there is enough money in machine
+                                    if (cashRegister >= cost * stackInputAmount) {
+                                        cashReserve = cashReserve + cost * stackInputAmount; // Add money to players cash */
+                                        cashRegister = cashRegister - cost * stackInputAmount; // Remove price from machine cash */
+
+                                        ItemStack copyStack = inputStackHandler.getStackInSlot(0).copy();
+                                        copyStack.setCount(stackInputAmount);
+
+                                        inputStackHandler.getStackInSlot(0).shrink(stackInputAmount); // Remove item from input */
+                                        if (mergeFlag == -1) { //Not Merging
+                                            inventoryStackHandler.getItemTradein(i).pushFuzzy(copyStack); // Add item to machine */
+                                        } else { // Merging
+                                            inventoryStackHandler.getItemTradein(i).growFuzzy(mergeFlag, stackInputAmount);
+                                        }
+                                        world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.BLOCKS, 0.05F, 5.0F, false);
+                                    }
+                                    // Error Message, flag determines what error is happening */
+                                    if (flag != 0) {
+                                        switch (flag) {
+                                            case 1:
+                                                setMessage("SLOT FULL", (byte) 40);
                                                 break;
-                                            }
+                                            case 2:
+                                                setMessage("NOT ENOUGH FUNDS IN MACHINE", (byte) 40);
+                                                break;
                                         }
+                                        world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 3.0F, false);
                                     }
-
-                                    System.out.println(fuzzStack.size() < inventoryStackHandler.getSlotLimit(i) / inventoryStackHandler.getFuzzLimit());
-                                    if (fuzzStack.size() < inventoryStackHandler.getSlotLimit(i) / inventoryStackHandler.getFuzzLimit()
-                                            || mergeFlag != -1) { //Only allow MAX/FUZZMAX (256/32 = 8) different types of items OR merging
-
-                                        //  System.out.println("DDOG");
-
-                                        //No stack matching
-                                        if (mergeFlag == -1) { //If not Merging
-                                            if ((stackInputAmount > inventoryStackHandler.getFuzzLimit())) { // Only allow up to the stack size limit*/
-                                                stackInputAmount = stackInputAmount - (stackInputAmount - inventoryStackHandler.getFuzzLimit());
-                                            }
-                                        } else { //Merging
-                                            if ((stackInputAmount > inventoryStackHandler.getFuzzLimit() - fuzzStack.get(mergeFlag).getCount())) { // Only allow up to the stack size limit*/
-                                                stackInputAmount = stackInputAmount - (fuzzStack.get(mergeFlag).getCount() + stackInputAmount - inventoryStackHandler.getFuzzLimit());
-                                            }
-                                        }
-                                        //if (stackInputAmount == 0) flag = 1; // Flags for size limit reached */ Doesnt make sense in this instance
-
-                                        // If there is enough money in machine and the machine has enough room for the item */
-                                        if (cashRegister >= cost * stackInputAmount) {
-                                            cashReserve = cashReserve + cost * stackInputAmount; // Add money to players cash */
-                                            cashRegister = cashRegister - cost * stackInputAmount; // Remove price from machine cash */
-
-                                            ItemStack copyStack = inputStackHandler.getStackInSlot(0).copy();
-                                            copyStack.setCount(stackInputAmount);
-
-                                            inputStackHandler.getStackInSlot(0).shrink(stackInputAmount); // Remove item from input */
-                                            if (mergeFlag == -1 && stackInputAmount <= inventoryStackHandler.getFuzzLimit()) { //Not Merging
-                                                inventoryStackHandler.getItemTradein(i).pushFuzzy(copyStack); // Add item to machine */
-                                            } else if (mergeFlag != -1) { // Merging
-                                                inventoryStackHandler.getItemTradein(i).growFuzzy(mergeFlag, stackInputAmount);
-                                            }
-                                            world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.BLOCKS, 0.05F, 5.0F, false);
-                                        }
-
-                                        // Error Message, flag determines what error is occuring */
-                                        if (flag != 0) {
-                                            switch (flag) {
-                                                case 1:
-                                                    setMessage("SLOT FULL", (byte) 40);
-                                                    break;
-                                                case 2:
-                                                    setMessage("NOT ENOUGH FUNDS IN MACHINE", (byte) 40);
-                                                    break;
-                                            }
-                                            world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 3.0F, false);
-                                        }
-                                        break searchLoop;
-                                    }
+                                    break;
                                 } else { //NOT FUZZY
                                     // Collect items cost and the amount being placed in the INPUT*/
                                     int cost = inventoryStackHandler.getItemTradein(i).getCost();
@@ -210,7 +193,7 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
                                         }
                                         world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 3.0F, false);
                                     }
-                                    break searchLoop;
+                                    break;
                                 }
                             }
                         }

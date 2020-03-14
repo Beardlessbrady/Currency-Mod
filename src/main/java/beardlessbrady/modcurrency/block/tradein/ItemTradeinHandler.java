@@ -5,6 +5,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nonnull;
 
@@ -19,8 +20,8 @@ import javax.annotation.Nonnull;
 
 public class ItemTradeinHandler implements IItemHandler, IItemHandlerModifiable, INBTSerializable<NBTTagCompound> {
     ItemTradein[] itemArray;
-    private int LIMIT = 256;
-    private int FUZZLIMIT = 64;
+    private final int LIMIT = 256;
+    private int counter = 0;
 
     public ItemTradeinHandler(int size) {
         itemArray = new ItemTradein[size];
@@ -76,6 +77,7 @@ public class ItemTradeinHandler implements IItemHandler, IItemHandlerModifiable,
         if(itemArray[slot] == null){
             return ItemStack.EMPTY;
         }
+
         return itemArray[slot].getStack();
     }
 
@@ -107,10 +109,6 @@ public class ItemTradeinHandler implements IItemHandler, IItemHandlerModifiable,
     @Override
     public int getSlotLimit(int slot) {
         return LIMIT; //TODO CONFIG
-    }
-
-    public int getFuzzLimit(){
-        return FUZZLIMIT;
     }
 
     @Override
