@@ -19,8 +19,6 @@ public class ItemTradein {
     private ItemStack itemStack;
     private int cost, amount, size;
     private int itemMax, timeRaise, timeElapsed;
-    private boolean fuzzy;
-    private Stack<ItemStack> fuzzStacks;
 
     public ItemTradein(ItemStack itemStack){
         this.itemStack = itemStack;
@@ -32,7 +30,6 @@ public class ItemTradein {
         itemMax = 0;
         timeRaise = 0;
         timeElapsed = 0;
-        fuzzy = false;
     }
 
     public ItemTradein(NBTTagCompound compound){
@@ -93,46 +90,6 @@ public class ItemTradein {
         timeElapsed = i;
     }
 
-    public boolean getFuzzy(){
-        return fuzzy;
-    }
-
-    public void setFuzzy(boolean bool){
-        fuzzy = bool;
-
-        if(fuzzy){
-            fuzzStacks = new Stack<ItemStack>();
-        }
-    }
-
-    public void pushFuzzy(ItemStack item){
-        fuzzStacks.push(item);
-    }
-
-    public void growFuzzy(int element, int growth){
-        fuzzStacks.get(element).grow(growth);
-    }
-
-    public Stack getFuzzStack(){
-        if(fuzzStacks != null){
-            return fuzzStacks;
-        }
-        return null;
-    }
-
-    public void setFuzzStack(Stack<ItemStack> itemStacks){
-        fuzzStacks = itemStacks;
-    }
-
-    public int getFuzzySize(){
-        int total = 0;
-        for(int i = 0; i < fuzzStacks.size(); i++){
-            total += fuzzStacks.get(i).getCount();
-        }
-
-        return total;
-    }
-
     //</editor-fold>
 
     /** NBT Methods **/
@@ -146,15 +103,6 @@ public class ItemTradein {
         if(itemMax != 0) compound.setInteger("itemMax", itemMax);
         if(timeRaise != 0) compound.setInteger("timeRaise", timeRaise);
         if(timeElapsed != 0) compound.setInteger("timeElapsed", timeElapsed);
-        if(fuzzStacks != null){
-            NBTTagCompound fuzzTag = new NBTTagCompound();
-            for(int i = 0; i < fuzzStacks.size(); i++){
-                fuzzTag.setTag("stack" + i, fuzzStacks.get(i).serializeNBT());
-            }
-            compound.setTag("fuzzStacks", fuzzTag);
-        }
-
-        compound.setBoolean("fuzzy", fuzzy);
 
         return compound;
     }
@@ -187,17 +135,6 @@ public class ItemTradein {
             if(nbt.hasKey("timeElapsed")){
                 timeElapsed = nbt.getInteger("timeElapsed");
             }else timeElapsed = 0;
-
-            if(nbt.hasKey("fuzzStacks")){
-                NBTTagCompound fuzzTag = nbt.getCompoundTag("fuzzStacks");
-                fuzzStacks = new Stack<ItemStack>();
-
-                for(int i = 0; i < fuzzTag.getSize(); i++){
-                    fuzzStacks.push(new ItemStack(fuzzTag.getCompoundTag("stack" + i)));
-                }
-            }
-            if(nbt.hasKey("fuzzy")) fuzzy = nbt.getBoolean("fuzzy");
-
         }
     }
     //</editor-fold>
