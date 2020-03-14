@@ -61,7 +61,6 @@ public class GuiTradein extends GuiContainer {
     //Button ID's
     private static final int BUTTONCHANGE = 0;
     private static final int BUTTONADMIN = 1;
-    private static final int BUTTONFUZZY = 2;
 
     public GuiTradein(EntityPlayer entityPlayer, TileTradein te) {
         super(new ContainerTradein(entityPlayer, te));
@@ -79,13 +78,6 @@ public class GuiTradein extends GuiContainer {
 
         String mode = (te.getField(FIELD_MODE) == 1) ? I18n.format("guivending.stock") : I18n.format("guivending.trade");
         buttonList.add(new GuiButton(BUTTONADMIN, i + 137, j - 42, 32, 20, mode));
-
-        String fuzzy = te.getItemTradein(te.getField(FIELD_SELECTED)).getFuzzy() ? I18n.format(TextFormatting.GREEN + "✔") : I18n.format("");
-        GuiButton butFuzzy = new GuiButton(BUTTONFUZZY, i - 57, j + 49, 10, 10 , fuzzy);
-        butFuzzy.visible = false;
-        butFuzzy.enabled = false;
-        buttonList.add(butFuzzy);
-
 
         fieldPrice = new GuiTextField(FIELDPRICE, fontRenderer, 0, 0, 90, 8);        //Setting Costs
         fieldPrice.setTextColor(Integer.parseInt("3359d4", 16));
@@ -261,15 +253,10 @@ public class GuiTradein extends GuiContainer {
             fieldAmnt.y = j + 40;
             fieldAmnt.setVisible(true);
 
-            // Set Fuzzy Button to visible
-            fontRenderer.drawStringWithShadow(I18n.format("guitradein.fuzzy"), -90, 50, Color.lightGray.getRGB());
-            buttonList.get(BUTTONFUZZY).visible = true;
-
             GlStateManager.color(0xFF, 0xFF, 0xFF); // Resets GL color to prevent visual bugs */
         } else { // TRADE MODE, disables anything that shouldn't enabled*/
             fieldPrice.setVisible(false);
             fieldAmnt.setVisible(false);
-            buttonList.get(BUTTONFUZZY).visible = false;
         }
     }
 
@@ -318,9 +305,6 @@ public class GuiTradein extends GuiContainer {
 
         fieldTimeRestock.setEnabled(isItem);
         fieldTimeRestock.setText(Integer.toString(te.getItemTradein(te.getField(FIELD_SELECTED)).getTimeRaise()));
-
-        buttonList.get(BUTTONFUZZY).enabled = isItem;
-        buttonList.get(BUTTONFUZZY).displayString = (te.getItemTradein(te.getField(FIELD_SELECTED)).getFuzzy()) ? I18n.format(TextFormatting.GREEN + "✔") : I18n.format("");
     }
 
     /** Colors background texture based on block color **/
@@ -432,33 +416,6 @@ public class GuiTradein extends GuiContainer {
             drawHoveringText(list, x, y, (font == null ? fontRenderer : font));
             net.minecraftforge.fml.client.config.GuiUtils.postItemToolTip();
 
-            //if isFuzzy and STOCK MODE draw itemstacks in FuzzyStack
-            if (te.getField(FIELD_MODE) == 1 && te.getItemTradein(slot).getFuzzy()) {
-                Stack<ItemStack> fuzzStack = te.getItemTradein(slot).getFuzzStack();
-
-                RenderItem itemRenderer = Minecraft.getMinecraft().getRenderItem();
-
-                // Shrink text size so it fits with 3 digit numbers */
-                GL11.glDisable(GL11.GL_DEPTH_TEST);
-                GL11.glPushMatrix();
-                GL11.glScalef(0.7F, 0.7F, 0.7F);
-
-                //Draw Fuzzy Items and Sizes (Only draw three stacks then put '...' to signify there are more
-                int countLength = 0;
-                for(int k = 0; k < 3; k++){
-                    if(fuzzStack.size() > k) {
-                        countLength = Integer.toString(fuzzStack.get(k).getCount()).length() - 1;
-                        itemRenderer.renderItemIntoGUI(fuzzStack.get(k), (int)((x + 10 + (14 * k))/0.7), (int)((y + 14 * (list.size() - 1))/0.7));
-                        itemRenderer.renderItemOverlays(fontRenderer, fuzzStack.get(k), (int)((x + 7 + ((k) * 14 + countLength))/0.7), (int)((y + 14 * (list.size() - 1))/0.7));
-                    }
-                }
-
-                if(fuzzStack.size() > 3)
-                    fontRenderer.drawStringWithShadow(". . .", (int)((x + 51)/0.7), (int)((y + 4)/0.7), -1);
-
-                GL11.glPopMatrix();
-                GL11.glDisable(GL11.GL_DEPTH_TEST);
-            }
             te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
         } else {
             super.renderToolTip(stack, x, y);
@@ -529,19 +486,6 @@ public class GuiTradein extends GuiContainer {
                 PacketOutChangeToServer pack0 = new PacketOutChangeToServer();
                 pack0.setData(te.getPos(), false);
                 PacketHandler.INSTANCE.sendToServer(pack0);
-
-                //TODO
-                System.out.println(te.getItemTradein(te.getField(FIELD_SELECTED)).getFuzzStack());
-                break;
-            case BUTTONFUZZY:
-                boolean newFuzzy = !te.getItemTradein(te.getField(FIELD_SELECTED)).getFuzzy();
-                te.getItemTradein(te.getField(FIELD_SELECTED)).setFuzzy(newFuzzy);
-                PacketSetItemToServer pack2 = new PacketSetItemToServer();
-                pack2.setData(te.getField(FIELD_SELECTED), (newFuzzy == true) ? 1 : 0, PacketSetItemToServer.FIELD_FUZZY, te.getPos());
-                PacketHandler.INSTANCE.sendToServer(pack2);
-
-                te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
-                break;
             default:
                 throw new IllegalStateException("Unexpected value: " + button.id);
         }

@@ -30,7 +30,6 @@ public class PacketSetItemToServer implements IMessage {
     public static final int FIELD_TIMERAISE = 1;
     public static final int FIELD_COST = 2;
     public static final int FIELD_AMOUNT = 3;
-    public static final int FIELD_FUZZY = 4;
 
     public PacketSetItemToServer(){}
 
@@ -102,8 +101,6 @@ public class PacketSetItemToServer implements IMessage {
                     case FIELD_AMOUNT:
                         tile.getItemTradein(message.element).setAmount(message.data);
                         break;
-                    case FIELD_FUZZY:
-                        tile.getItemTradein(message.element).setFuzzy(message.data == 1);
                 }
                 tile.markDirty();
             }
