@@ -63,10 +63,10 @@ public class RenderTradein extends TileEntitySpecialRenderer<TileTradein> {
 
 
                      FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-                     fontRenderer.drawString("ITEMS", 0, 0, Color.GRAY.getRGB());
-                     fontRenderer.drawString("FOR", 4, 10, Color.GRAY.getRGB());
+                     fontRenderer.drawString("guitradein.render1", 0, 0, Color.GRAY.getRGB());
+                     fontRenderer.drawString("guitradein.render2", 4, 10, Color.GRAY.getRGB());
                      GlStateManager.scale(2, 3, 1);
-                     fontRenderer.drawString("$$$", -2, 6, Color.GREEN.getRGB());
+                     fontRenderer.drawString("guitradein.render3", -2, 6, Color.GREEN.getRGB());
 
 
                      GlStateManager.popAttrib();

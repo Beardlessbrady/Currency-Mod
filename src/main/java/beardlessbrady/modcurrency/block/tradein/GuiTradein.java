@@ -265,7 +265,7 @@ public class GuiTradein extends GuiContainer {
             fieldAmnt.setVisible(true);
 
             // Sets Until textfield's position and enables it */
-            fontRenderer.drawStringWithShadow(I18n.format("guitradein.until"), -95, 50, Color.lightGray.getRGB());
+            fontRenderer.drawStringWithShadow(I18n.format("guitradein.until"), -90, 50, Color.lightGray.getRGB());
             fieldUntil.x = i - 65;
             fieldUntil.y = j + 50;
             fieldUntil.setVisible(true);
