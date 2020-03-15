@@ -53,10 +53,9 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
 
     private String selectedName;
     private boolean creative;
-    private int inventoryLimit, selectedSlot;
+    private int selectedSlot;
 
     public TileTradein(){
-        inventoryLimit = 256;
         selectedName = "No Item Selected";
         creative = false;;
     }
@@ -108,11 +107,20 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
                                         if (inputAmount == 0) flag = 2; // Flags for not enough funds error */
                                     }
 
-                                    if (((inputAmount*bulk) + inventoryStackHandler.getItemTradein(i).getSize()) > inventoryStackHandler.getSlotLimit(i)) { // Only allow up to the stack size limit*/
+                                    // Only allow up to the stack size limit
+                                    if (((inputAmount*bulk) + inventoryStackHandler.getItemTradein(i).getSize()) > inventoryStackHandler.getSlotLimit(i)) {
                                         inputAmount = ((inputAmount*bulk) - (inventoryStackHandler.getItemTradein(i).getSize() +
                                                 (inputAmount*bulk) - inventoryStackHandler.getSlotLimit(i))) /bulk;
 
                                         if (inputAmount == 0) flag = 1; // Flags for size limit reached */
+                                    }
+
+                                    //Only allow up to the BUY UNTIL value of item (BUY UNTIL must be set higher then 0)
+                                    if (((inputAmount*bulk) + inventoryStackHandler.getItemTradein(i).getSize()) > item.getUntil() && item.getUntil() > 0){
+                                        inputAmount = ((inputAmount*bulk) - (inventoryStackHandler.getItemTradein(i).getSize() +
+                                                (inputAmount*bulk) - item.getUntil())) /bulk;
+
+                                        if (inputAmount == 0) flag = 3; // Flags for size limit reached */
                                     }
 
                                     // If there is enough money in machine and the machine has enough room for the item */
@@ -135,6 +143,9 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
                                             break;
                                         case 2:
                                             setMessage("NOT ENOUGH FUNDS IN MACHINE", (byte) 40);
+                                            break;
+                                        case 3:
+                                            setMessage("NO LONGER ACCEPTING THIS ITEM", (byte) 40);
                                             break;
                                     }
                                     world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 3.0F, false);
@@ -169,7 +180,6 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
         compound.setTag("input", inputStackHandler.serializeNBT());
 
         compound.setString("selectedName", selectedName);
-        compound.setInteger("inventoryLimit", inventoryLimit);
         compound.setInteger("selectedSlot", selectedSlot);
 
         return compound;
@@ -183,7 +193,6 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
         if(compound.hasKey("input")) inputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("input"));
 
         if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
-        if(compound.hasKey("inventoryLimit")) inventoryLimit = compound.getInteger("inventoryLimit");
         if(compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
     }
 
@@ -199,7 +208,6 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
         NBTTagCompound compound = new NBTTagCompound();
 
         compound.setString("selectedName", selectedName);
-        compound.setInteger("inventoryLimit", inventoryLimit);
         compound.setInteger("selectedSlot", selectedSlot);
 
         return new SPacketUpdateTileEntity(pos, 1, compound);
@@ -211,7 +219,6 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
         NBTTagCompound compound = pkt.getNbtCompound();
 
         if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
-        if(compound.hasKey("inventoryLimit")) inventoryLimit = compound.getInteger("inventoryLimit");
         if(compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
 
     }
@@ -245,6 +252,10 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
     /** ItemTradein Setter **/
     public void setItemTradein(int i, ItemTradein item){
         inventoryStackHandler.setItemTradein(i, item);
+    }
+
+    public int getItemTradeinMax() {
+        return inventoryStackHandler.getSlotLimit(0);
     }
 
     /** Void item in InventoryStackHandler **/

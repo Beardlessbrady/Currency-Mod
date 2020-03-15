@@ -24,7 +24,7 @@ guivending.help.half=Buy half stack
 guivending.help.create=Create Bundles
 guivending.help.delete=Delete Bundles
 
-guitradein.damage=
+guitradein.until= Until:
 
 key.goodolcurrency.category=Good Ol' Currency
 key.shift.desc=GOC Key 1

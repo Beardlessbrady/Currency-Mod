@@ -1,10 +1,7 @@
 package beardlessbrady.modcurrency.block.tradein;
 
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-
-import java.util.Stack;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
@@ -17,7 +14,7 @@ import java.util.Stack;
 
 public class ItemTradein {
     private ItemStack itemStack;
-    private int cost, amount, size;
+    private int cost, amount, size, until;
     private int itemMax, timeRaise, timeElapsed;
 
     public ItemTradein(ItemStack itemStack){
@@ -25,6 +22,7 @@ public class ItemTradein {
         itemStack.setCount(1); // Set itemStack count to 1 as this custom Item handles its own size */
 
         size = 0;
+        until = 0;
         cost = 0;
         amount = 1;
         itemMax = 0;
@@ -66,6 +64,14 @@ public class ItemTradein {
         amount = i;
     }
 
+    public int  getUntil(){
+        return until;
+    }
+
+    public void setUntil(int i){
+        until = i;
+    }
+
     public int getItemMax(){
         return itemMax;
     }
@@ -100,6 +106,7 @@ public class ItemTradein {
         if(size != 0) compound.setInteger("size", size);
         if(cost != 0) compound.setInteger("cost", cost);
         if(amount != 0) compound.setInteger("amount", amount);
+        if(until != 0) compound.setInteger("until", until);
         if(itemMax != 0) compound.setInteger("itemMax", itemMax);
         if(timeRaise != 0) compound.setInteger("timeRaise", timeRaise);
         if(timeElapsed != 0) compound.setInteger("timeElapsed", timeElapsed);
@@ -123,6 +130,10 @@ public class ItemTradein {
             if(nbt.hasKey("amount")){
                 amount = nbt.getInteger("amount");
             }else amount = 0;
+
+            if(nbt.hasKey("until")){
+                until = nbt.getInteger("until");
+            }else until = 0;
 
             if(nbt.hasKey("itemMax")){
                 itemMax = nbt.getInteger("itemMax");

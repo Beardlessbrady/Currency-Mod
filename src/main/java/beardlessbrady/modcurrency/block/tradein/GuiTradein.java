@@ -44,13 +44,14 @@ public class GuiTradein extends GuiContainer {
     private static final ResourceLocation ASSET_TEXTURE = new ResourceLocation(ModCurrency.MODID, "textures/gui/guiassets.png");
 
     private TileTradein te;
-    private GuiTextField fieldPrice, fieldAmnt, fieldItemMax, fieldTimeRestock;
+    private GuiTextField fieldPrice, fieldAmnt, fieldUntil, fieldItemMax, fieldTimeRestock;
 
     //Field ID's
     private static final int FIELDPRICE = 0;
     private static final int FIELDAMNT = 1;
     private static final int FIELDITEMMAX = 2;
     private static final int FIELDTIMERESTOCK = 3;
+    private static final int FIELDUNTIL = 4;
 
     //Button ID's
     private static final int BUTTONCHANGE = 0;
@@ -87,6 +88,13 @@ public class GuiTradein extends GuiContainer {
         fieldAmnt.setVisible(false);
         fieldAmnt.setText("1");
 
+        fieldUntil = new GuiTextField(FIELDUNTIL, fontRenderer, 0, 0, 90, 8);        //Setting Until value (Buy until)
+        fieldUntil.setTextColor(Integer.parseInt("3359d4", 16));
+        fieldUntil.setEnableBackgroundDrawing(false);
+        fieldUntil.setMaxStringLength(3);
+        fieldUntil.setVisible(false);
+        fieldUntil.setText("0");
+
         fieldItemMax = new GuiTextField(FIELDITEMMAX, fontRenderer, i - 66, j + 85, 90, 8);
         fieldItemMax.setTextColor(Integer.parseInt("3359d4", 16));
         fieldItemMax.setEnableBackgroundDrawing(false);
@@ -114,6 +122,7 @@ public class GuiTradein extends GuiContainer {
 
         fieldPrice.drawTextBox();
         fieldAmnt.drawTextBox();
+        fieldUntil.drawTextBox();
         fieldItemMax.drawTextBox();
         fieldTimeRestock.drawTextBox();
     }
@@ -182,7 +191,6 @@ public class GuiTradein extends GuiContainer {
     /** Custom Item Stack size Rendering **/
     private void drawItemStackSize() {
         //TODO Dont render if creative and infinite and don't want items collected
-        // Shrink text size so it fits with 3 digit numbers */
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glPushMatrix();
         GL11.glScalef(0.7F, 0.7F, 0.8F);
@@ -194,17 +202,22 @@ public class GuiTradein extends GuiContainer {
         // Loops through each slot to calculate and render its stack size */
         for (int j = 0; j < columnCount; j++) {
             for (int i = 0; i < 5; i++) {
-                int index = (i + (5 * j));
-
                 num = " ";
-                if (!te.getItemTradein(index).getStack().isEmpty()) // If ItemStack is Empty don't render a number, otherwise render itemStack size*/
+                int index = (i + (5 * j));
+                ItemTradein item = te.getItemTradein(index);
+
+                if (!item.getStack().isEmpty()) // If ItemStack is Empty don't render a number, otherwise render itemStack size*/
 
                     if (te.getField(FIELD_MODE) == 1) { // STOCK MODE
-                        num = Integer.toString(te.getItemTradein(i + (5 * j)).getSize());
+                        num = Integer.toString(item.getSize());
                     } else { // TRADE MODE
-                        int amount = te.getItemTradein(i + (5 * j)).getAmount();
-                        if(amount > 1)
-                            num = Integer.toString(amount);
+                        if(item.getUntil() - item.getSize() > 0) {
+                            int amount = item.getAmount();
+                            if (amount > 1)
+                                num = Integer.toString(amount);
+                        } else if (item.getSize() >= te.getItemTradeinMax()){
+                            num = TextFormatting.RED + "OUT";
+                        }
                     }
 
                 if (num.equals("0"))
@@ -251,10 +264,17 @@ public class GuiTradein extends GuiContainer {
             fieldAmnt.y = j + 40;
             fieldAmnt.setVisible(true);
 
+            // Sets Until textfield's position and enables it */
+            fontRenderer.drawStringWithShadow(I18n.format("guitradein.until"), -95, 50, Color.lightGray.getRGB());
+            fieldUntil.x = i - 65;
+            fieldUntil.y = j + 50;
+            fieldUntil.setVisible(true);
+
             GlStateManager.color(0xFF, 0xFF, 0xFF); // Resets GL color to prevent visual bugs */
         } else { // TRADE MODE, disables anything that shouldn't enabled*/
             fieldPrice.setVisible(false);
             fieldAmnt.setVisible(false);
+            fieldUntil.setVisible(false);
         }
     }
 
@@ -291,18 +311,23 @@ public class GuiTradein extends GuiContainer {
 
     /** Updated all Text fields**/
     private void updateTextField(){
-        boolean isItem = te.getItemTradein(te.getField(FIELD_SELECTED)).getStack().getItem() != Items.AIR;;
+        ItemTradein item = te.getItemTradein(te.getField(FIELD_SELECTED));
+        boolean isItem = item.getStack().getItem() != Items.AIR;;
+
         fieldPrice.setEnabled(isItem);
-        fieldPrice.setText(UtilMethods.translateMoney(te.getItemTradein(te.getField(FIELD_SELECTED)).getCost()));
+        fieldPrice.setText(UtilMethods.translateMoney(item.getCost()));
 
         fieldAmnt.setEnabled(isItem);
-        fieldAmnt.setText(Integer.toString(te.getItemTradein(te.getField(FIELD_SELECTED)).getAmount()));
+        fieldAmnt.setText(Integer.toString(item.getAmount()));
+
+        fieldUntil.setEnabled(isItem);
+        fieldUntil.setText(Integer.toString(item.getUntil()));
 
         fieldItemMax.setEnabled(isItem);
-        fieldItemMax.setText(Integer.toString(te.getItemTradein(te.getField(FIELD_SELECTED)).getItemMax()));
+        fieldItemMax.setText(Integer.toString(item.getItemMax()));
 
         fieldTimeRestock.setEnabled(isItem);
-        fieldTimeRestock.setText(Integer.toString(te.getItemTradein(te.getField(FIELD_SELECTED)).getTimeRaise()));
+        fieldTimeRestock.setText(Integer.toString(item.getTimeRaise()));
     }
 
     /** Colors background texture based on block color **/
@@ -392,19 +417,29 @@ public class GuiTradein extends GuiContainer {
                 tooltipStart = 2;
             }
 
-            int cost = te.getItemTradein(slot).getCost(); // Get Items cost */
-            int amount = te.getItemTradein(slot).getAmount(); // Get Item Bulk Amount
+            ItemTradein item = te.getItemTradein(slot);
+            int cost = item.getCost(); // Get Items cost */
+            int amount = item.getAmount(); // Get Item Bulk Amount
 
             // Adding items price to tooltip: What is written depends on if machine has enough funds to buy the item */
             if (te.getField(FIELD_MODE) == 0) { // TRADE MODE */
-                if (te.getItemTradein(slot).getCost() <= te.getField(FIELD_CASHREGISTER)) {
-                    if (te.getItemTradein(slot).getAmount() == 1) {
+                if (item.getCost() <= te.getField(FIELD_CASHREGISTER)) {
+                    // Changes text if slot is paying on bulk amount or not
+                    if (item.getAmount() == 1) {
                         list.add("Payout of " + TextFormatting.GREEN + "$" + UtilMethods.translateMoney(cost));
                     } else {
                         list.add("Payout of " + TextFormatting.GREEN + "$" + UtilMethods.translateMoney(cost) +
-                                TextFormatting.RESET + " per " + TextFormatting.BLUE + Integer.toString(amount));
+                                TextFormatting.RESET + " per " + TextFormatting.BLUE + amount);
                     }
-                  //  list.add("Payout of " + TextFormatting.GREEN + "$" + UtilMethods.translateMoney(cost));
+
+                    // Changes text if slot wants more of said item or not
+                    if(item.getUntil() > 0){
+                        if(item.getUntil() - item.getSize() <= 0){
+                            list.add(TextFormatting.RED + "Capacity Full");
+                        } else {
+                            list.add(TextFormatting.DARK_GREEN + "Wants " + (item.getUntil() - item.getSize()) + " more");
+                        }
+                    }
 
                 }else{
                     list.add(TextFormatting.RED + "Machine cannot afford $" + UtilMethods.translateMoney(cost));
@@ -448,6 +483,9 @@ public class GuiTradein extends GuiContainer {
             if (fieldAmnt.textboxKeyTyped(typedChar, keyCode))
                 setAmnt(te.getField(FIELD_SELECTED), fieldAmnt);
 
+            if (fieldUntil.textboxKeyTyped(typedChar, keyCode))
+                setUntil(te.getField(FIELD_SELECTED),fieldUntil);
+
             //TODO when we implement this shit
             /*if (te.getField(FIELD_CREATIVE) == 1 && te.getField(FIELD_FINITE) == 1) {
                 if (fieldItemMax.textboxKeyTyped(typedChar, keyCode))
@@ -468,6 +506,7 @@ public class GuiTradein extends GuiContainer {
             super.mouseClicked(mouseX, mouseY, mouseButton);
             fieldPrice.mouseClicked(mouseX, mouseY, mouseButton);
             fieldAmnt.mouseClicked(mouseX, mouseY, mouseButton);
+            fieldUntil.mouseClicked(mouseX, mouseY, mouseButton);
             fieldItemMax.mouseClicked(mouseX, mouseY, mouseButton);
             fieldTimeRestock.mouseClicked(mouseX, mouseY, mouseButton);
             updateTextField();
@@ -550,6 +589,27 @@ public class GuiTradein extends GuiContainer {
             te.getItemTradein(slot).setAmount(amount);
             PacketSetItemToServer pack = new PacketSetItemToServer();
             pack.setData(te.getField(FIELD_SELECTED), amount, PacketSetItemToServer.FIELD_AMOUNT, te.getPos());
+            PacketHandler.INSTANCE.sendToServer(pack);
+
+            te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
+        }
+    }
+
+    /** Sets the 'Buy Until' of the selected item from the text field **/
+    private void setUntil(int slot, GuiTextField guiTextField){
+        if (guiTextField.getText().length() > 0) {
+            int until = Integer.parseInt(guiTextField.getText()); // Set until as per text field */
+
+            // If slot is empty set until textfield to 0, or if textfield is higher then maxStackSize set to maxStackSize */
+            if (te.getItemTradein(slot).getStack().isEmpty()) {
+                until = 0;
+            } else if (Integer.parseInt(guiTextField.getText()) > te.getItemTradeinMax())
+                until = te.getItemTradeinMax();
+
+            // Set new until to ItemTradeIn */
+            te.getItemTradein(slot).setUntil(until);
+            PacketSetItemToServer pack = new PacketSetItemToServer();
+            pack.setData(te.getField(FIELD_SELECTED), until, PacketSetItemToServer.FIELD_UNTIL, te.getPos());
             PacketHandler.INSTANCE.sendToServer(pack);
 
             te.getWorld().notifyBlockUpdate(te.getPos(), te.getBlockType().getDefaultState(), te.getBlockType().getDefaultState(), 3);
