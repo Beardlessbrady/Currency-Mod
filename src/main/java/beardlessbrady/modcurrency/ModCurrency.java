@@ -21,7 +21,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 public class ModCurrency {
     public static final String MODID = "modcurrency";
     public static final String MODNAME = "Good Ol' Currency";
-    public static final String VERSION = "1.12.0-2.0.0-ALPHA-20200311";
+    public static final String VERSION = "1.12.0-2.0.0-ALPHA-20200315";
 
     public static CreativeTabs tabCurrency = new TabCurrency("Good ol' Currency");
 

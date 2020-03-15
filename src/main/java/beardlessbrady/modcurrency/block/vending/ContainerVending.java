@@ -304,7 +304,7 @@ public class ContainerVending extends Container {
         // If Item being SHIFTED is not empty and in Player Inventory */
         if (!itemStack.isEmpty()) {
             if (slotId < PLAYER_TOTAL_COUNT) {
-                if (te.getField(TileEconomyBase.FIELD_MODE) == 0) { // STOCK MODE
+                if (te.getField(TileEconomyBase.FIELD_MODE) == 0) { // SELL MODE
 
                     // If Item is Currency then shift it into INPUT */
                     if (itemStack.getItem().equals(ModItems.itemCurrency)) {
@@ -314,7 +314,7 @@ public class ContainerVending extends Container {
                             return ItemStack.EMPTY;
                         }
                     }
-                } else { // SELL MODE
+                } else { // STOCK MODE
                     for (int i = 0; i < TE_INVENTORY_SLOT_COUNT; i++) {
                         if (UtilMethods.equalStacks(itemStack, inventorySlots.get(GUI_INVENTORY_FIRST_INDEX + i).getStack(), false)) {
                             int count = 0;
@@ -328,6 +328,7 @@ public class ContainerVending extends Container {
                             itemStack.shrink(count);
                             if (itemStack.getCount() == 0)
                                 this.inventorySlots.get(slotId).putStack(ItemStack.EMPTY);
+                            return ItemStack.EMPTY;
                         }
                     }
                 }

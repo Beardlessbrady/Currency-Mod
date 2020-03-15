@@ -1,6 +1,7 @@
 package beardlessbrady.modcurrency.block.vending;
 
 import beardlessbrady.modcurrency.ModCurrency;
+import beardlessbrady.modcurrency.block.tradein.ItemTradein;
 import beardlessbrady.modcurrency.network.*;
 import beardlessbrady.modcurrency.proxy.ClientProxy;
 import beardlessbrady.modcurrency.utilities.GuiButtonTextured;
@@ -15,6 +16,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -85,7 +87,6 @@ public class GuiVending extends GuiContainer {
         fieldPrice.setTextColor(Integer.parseInt("C35763", 16));
         fieldPrice.setEnableBackgroundDrawing(false);
         fieldPrice.setMaxStringLength(7);
-        fieldPrice.setEnabled(false);
         fieldPrice.setVisible(false);
         fieldPrice.setText("0.00");
 
@@ -93,7 +94,6 @@ public class GuiVending extends GuiContainer {
         fieldAmnt.setTextColor(Integer.parseInt("C35763", 16));
         fieldAmnt.setEnableBackgroundDrawing(false);
         fieldAmnt.setMaxStringLength(2);
-        fieldAmnt.setEnabled(false);
         fieldAmnt.setVisible(false);
         fieldAmnt.setText("1");
 
@@ -101,7 +101,6 @@ public class GuiVending extends GuiContainer {
         fieldAmnt2.setTextColor(Integer.parseInt("C35763", 16));
         fieldAmnt2.setEnableBackgroundDrawing(false);
         fieldAmnt2.setMaxStringLength(2);
-        fieldAmnt2.setEnabled(false);
         fieldAmnt2.setVisible(false);
         fieldAmnt2.setText("1");
 
@@ -109,7 +108,6 @@ public class GuiVending extends GuiContainer {
         fieldAmnt3.setTextColor(Integer.parseInt("C35763", 16));
         fieldAmnt3.setEnableBackgroundDrawing(false);
         fieldAmnt3.setMaxStringLength(2);
-        fieldAmnt3.setEnabled(false);
         fieldAmnt3.setVisible(false);
         fieldAmnt3.setText("1");
 
@@ -117,7 +115,6 @@ public class GuiVending extends GuiContainer {
         fieldAmnt4.setTextColor(Integer.parseInt("C35763", 16));
         fieldAmnt4.setEnableBackgroundDrawing(false);
         fieldAmnt4.setMaxStringLength(2);
-        fieldAmnt4.setEnabled(false);
         fieldAmnt4.setVisible(false);
         fieldAmnt4.setText("1");
 
@@ -125,7 +122,6 @@ public class GuiVending extends GuiContainer {
         fieldAmnt5.setTextColor(Integer.parseInt("C35763", 16));
         fieldAmnt5.setEnableBackgroundDrawing(false);
         fieldAmnt5.setMaxStringLength(2);
-        fieldAmnt5.setEnabled(false);
         fieldAmnt5.setVisible(false);
         fieldAmnt5.setText("1");
 
@@ -133,7 +129,6 @@ public class GuiVending extends GuiContainer {
         fieldItemMax.setTextColor(Integer.parseInt("BEA63D", 16));
         fieldItemMax.setEnableBackgroundDrawing(false);
         fieldItemMax.setMaxStringLength(3);
-        fieldItemMax.setEnabled(false);
         fieldItemMax.setVisible(false);
         fieldItemMax.setText("1");
 
@@ -141,7 +136,6 @@ public class GuiVending extends GuiContainer {
         fieldTimeRestock.setTextColor(Integer.parseInt("BEA63D", 16));
         fieldTimeRestock.setEnableBackgroundDrawing(false);
         fieldTimeRestock.setMaxStringLength(4);
-        fieldTimeRestock.setEnabled(false);
         fieldTimeRestock.setVisible(false);
         fieldTimeRestock.setText("1");
 
@@ -395,25 +389,19 @@ public class GuiVending extends GuiContainer {
 
                 fieldPrice.x = i - 82;
                 fieldPrice.y = j + 30;
-                fieldPrice.setEnabled(true);
                 fieldPrice.setVisible(true);
 
                 fontRenderer.drawStringWithShadow(I18n.format("guivending.amnt"), -90, 40, Color.lightGray.getRGB());
                 fieldAmnt.x = i - 65;
                 fieldAmnt.y = j + 40;
-                fieldAmnt.setEnabled(true);
                 fieldAmnt.setVisible(true);
 
-                fieldAmnt2.setEnabled(false);
                 fieldAmnt2.setVisible(false);
 
-                fieldAmnt3.setEnabled(false);
                 fieldAmnt3.setVisible(false);
 
-                fieldAmnt4.setEnabled(false);
                 fieldAmnt4.setVisible(false);
 
-                fieldAmnt5.setEnabled(false);
                 fieldAmnt5.setVisible(false);
             } else { //BUNDLE PANEL
                 fontRenderer.drawStringWithShadow(I18n.format("guivending.slotsettings_bundled"), -80, 6, Integer.parseInt("ffffff", 16));
@@ -421,11 +409,9 @@ public class GuiVending extends GuiContainer {
 
                 fieldPrice.x = i - 62;
                 fieldPrice.y = j + 16;
-                fieldPrice.setEnabled(true);
                 fieldPrice.setVisible(true);
 
                 fontRenderer.drawStringWithShadow(I18n.format("guivending.amnt_bundled"), -70, 26, Color.lightGray.getRGB());
-                fieldAmnt.setEnabled(true);
                 fieldAmnt.setVisible(true);
 
                 int[] bundleSlots = te.getItemVendor(te.getField(FIELD_SELECTED)).getBundle();
@@ -446,29 +432,22 @@ public class GuiVending extends GuiContainer {
                 fieldAmnt.x = i - 22;
                 fieldAmnt.y = j + 36;
 
-                fieldAmnt3.setEnabled(false);
                 fieldAmnt3.setVisible(false);
-                fieldAmnt4.setEnabled(false);
                 fieldAmnt4.setVisible(false);
-                fieldAmnt5.setEnabled(false);
                 fieldAmnt5.setVisible(false);
 
                 switch (bundleSlots.length) {
                     case 5:
                         fontRenderer.drawStringWithShadow(I18n.format("x"), -30, 110, Color.lightGray.getRGB());
-                        fieldAmnt5.setEnabled(true);
                         fieldAmnt5.setVisible(true);
                     case 4:
                         fontRenderer.drawStringWithShadow(I18n.format("x"), -30, 93, Color.lightGray.getRGB());
-                        fieldAmnt4.setEnabled(true);
                         fieldAmnt4.setVisible(true);
                     case 3:
                         fontRenderer.drawStringWithShadow(I18n.format("x"), -30, 72, Color.lightGray.getRGB());
-                        fieldAmnt3.setEnabled(true);
                         fieldAmnt3.setVisible(true);
                     case 2:
                         fontRenderer.drawStringWithShadow(I18n.format("x"), -30, 53, Color.lightGray.getRGB());
-                        fieldAmnt2.setEnabled(true);
                         fieldAmnt2.setVisible(true);
                         break;
                 }
@@ -505,39 +484,24 @@ public class GuiVending extends GuiContainer {
                     fontRenderer.drawStringWithShadow(I18n.format("every       secs"), -95, 74 + bundleMod, Color.WHITE.getRGB());
                     fontRenderer.drawStringWithShadow(I18n.format("up to      items"), -95, 84 + bundleMod, Color.WHITE.getRGB());
 
-                    fieldTimeRestock.setEnabled(true);
                     fieldTimeRestock.setVisible(true);
-                    fieldItemMax.setEnabled(true);
                     fieldItemMax.setVisible(true);
                 } else {
-                    fieldTimeRestock.setEnabled(false);
                     fieldTimeRestock.setVisible(false);
-                    fieldItemMax.setEnabled(false);
                     fieldItemMax.setVisible(false);
                 }
             }
         } else {
-            fieldPrice.setEnabled(false);
             fieldPrice.setVisible(false);
 
-            fieldAmnt.setEnabled(false);
             fieldAmnt.setVisible(false);
 
-            fieldAmnt2.setEnabled(false);
             fieldAmnt2.setVisible(false);
-
-            fieldAmnt3.setEnabled(false);
             fieldAmnt3.setVisible(false);
-
-            fieldAmnt4.setEnabled(false);
             fieldAmnt4.setVisible(false);
-
-            fieldAmnt5.setEnabled(false);
             fieldAmnt5.setVisible(false);
 
-            fieldTimeRestock.setEnabled(false);
             fieldTimeRestock.setVisible(false);
-            fieldItemMax.setEnabled(false);
             fieldItemMax.setVisible(false);
         }
     }
@@ -995,9 +959,19 @@ public class GuiVending extends GuiContainer {
     }
 
     private void updateTextField() {
+        ItemVendor item = te.getItemVendor(te.getField(FIELD_SELECTED));
+        boolean isItem = item.getStack().getItem() != Items.AIR;;
+
+        fieldPrice.setEnabled(isItem);
         fieldPrice.setText(UtilMethods.translateMoney(te.getItemVendor(te.getField(FIELD_SELECTED)).getCost()));
+
+        fieldAmnt.setEnabled(isItem);
         fieldAmnt.setText(Integer.toString(te.getItemVendor(te.getField(FIELD_SELECTED)).getAmount()));
+
+        fieldItemMax.setEnabled(isItem);
         fieldItemMax.setText(Integer.toString(te.getItemVendor(te.getField(FIELD_SELECTED)).getItemMax()));
+
+        fieldTimeRestock.setEnabled(isItem);
         fieldTimeRestock.setText(Integer.toString(te.getItemVendor(te.getField(FIELD_SELECTED)).getTimeRaise()));
 
         if (te.getItemVendor(te.getField(FIELD_SELECTED)).getBundleMainSlot() == te.getField(FIELD_SELECTED)) {

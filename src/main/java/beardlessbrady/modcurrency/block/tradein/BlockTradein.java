@@ -56,7 +56,7 @@ public class BlockTradein extends EconomyBlockBase {
                 te.markDirty();
 
             } else { // If player not holding dye, activate as normal
-                if (playerIn.isSneaking() && (te.getOwner().equals(playerIn.getUniqueID()) || playerIn.isCreative())) {  // Owning/Creative & Sneaking machine will open in STOCK MODE
+                if (playerIn.isSneaking() && (te.getOwner().equals(playerIn.getUniqueID()))) {  // Owning/Creative & Sneaking machine will open in STOCK MODE
                     te.setField(TileEconomyBase.FIELD_MODE, 1);
                 } else { // Opens machine in TRADE MODE */
                     te.setField(TileEconomyBase.FIELD_MODE, 0);

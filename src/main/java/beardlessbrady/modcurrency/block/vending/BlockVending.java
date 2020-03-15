@@ -68,7 +68,7 @@ public class BlockVending extends EconomyBlockBase {
             }else { // If player not holding dye, activate as normal */
                 tile.restock(); // If machine is creative restock items
 
-                if (playerIn.isSneaking() && tile.getOwner().equals(playerIn.getUniqueID()) || playerIn.isCreative()) {   // Owning/Creative & Sneaking machine will open in STOCK MODE */
+                if (playerIn.isSneaking() && tile.getOwner().equals(playerIn.getUniqueID())) {   // Owning/Creative & Sneaking machine will open in STOCK MODE */
                     tile.setField(TileEconomyBase.FIELD_MODE, 1);
                 } else { // Opens machine in TRADE MODE */
                     tile.setField(TileEconomyBase.FIELD_MODE, 0);
