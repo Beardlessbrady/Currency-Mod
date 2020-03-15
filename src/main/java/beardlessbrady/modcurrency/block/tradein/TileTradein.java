@@ -64,7 +64,7 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
     /** Runs every tick**/
     @Override
     public void update() {
-        if (playerUsing != EMPTYID) { // If a player is NOT using the machine */
+        if (playerUsing != EMPTYID) { // If a player is using the machine */
             if (mode) { // STOCK MODE & INPUT SLOT has currency in it*/
                 if (inputStackHandler.getStackInSlot(0).getItem().equals(ModItems.itemCurrency)) {
                     ItemStack itemStack = inputStackHandler.getStackInSlot(0); // Input slot Item */
@@ -95,30 +95,36 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
                         if (!inventoryStackHandler.getStackInSlot(i).isEmpty()) {
                             if (UtilMethods.equalStacks(inputStackHandler.getStackInSlot(0), item.getStack(), false)) {
                                 // Collect items cost and the amount being placed in the INPUT*/
-                                int cost = inventoryStackHandler.getItemTradein(i).getCost();
-                                int inputAmount = inputStackHandler.getStackInSlot(0).getCount();
+                                int cost = item.getCost();
+                                int bulk = item.getAmount(); //Bulk Sell
 
-                                if (cashRegister < cost * inputAmount) { // If there isn't enough cash in the machine set input Amount to highest amount machine can afford */
-                                    inputAmount = cashRegister / cost;
+                                int inputAmount = inputStackHandler.getStackInSlot(0).getCount() / bulk; //Divide by bulk size
 
-                                    if (inputAmount == 0) flag = 2; // Flags for not enough funds error */
-                                }
+                                if(inputAmount != 0) { //If input has high enough count to sell to specified bulk amount
 
-                                if ((inputAmount + inventoryStackHandler.getItemTradein(i).getSize()) > inventoryStackHandler.getSlotLimit(i)) { // Only allow up to the stack size limit*/
-                                    inputAmount = inputAmount - (inventoryStackHandler.getItemTradein(i).getSize() + inputAmount - inventoryStackHandler.getSlotLimit(i));
+                                    if (cashRegister < cost * inputAmount) { // If there isn't enough cash in the machine set input Amount to highest amount machine can afford */
+                                        inputAmount = cashRegister / cost;
 
-                                    if (inputAmount == 0) flag = 1; // Flags for size limit reached */
-                                }
+                                        if (inputAmount == 0) flag = 2; // Flags for not enough funds error */
+                                    }
 
-                                // If there is enough money in machine and the machine has enough room for the item */
-                                if (cashRegister >= cost * inputAmount && (inputAmount + inventoryStackHandler.getItemTradein(i).getSize()) <= inventoryStackHandler.getSlotLimit(i)) {
-                                    cashReserve = cashReserve + cost * inputAmount; // Add money to players cash */
-                                    cashRegister = cashRegister - cost * inputAmount; // Remove price from machine cash */
+                                    if (((inputAmount*bulk) + inventoryStackHandler.getItemTradein(i).getSize()) > inventoryStackHandler.getSlotLimit(i)) { // Only allow up to the stack size limit*/
+                                        inputAmount = ((inputAmount*bulk) - (inventoryStackHandler.getItemTradein(i).getSize() +
+                                                (inputAmount*bulk) - inventoryStackHandler.getSlotLimit(i))) /bulk;
 
-                                    inputStackHandler.getStackInSlot(0).shrink(inputAmount); // Remove item from input */
-                                    inventoryStackHandler.getItemTradein(i).growSize(inputAmount); // Add item to machine */
+                                        if (inputAmount == 0) flag = 1; // Flags for size limit reached */
+                                    }
 
-                                    world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.BLOCKS, 0.05F, 5.0F, false);
+                                    // If there is enough money in machine and the machine has enough room for the item */
+                                    if (cashRegister >= cost * inputAmount && ((inputAmount*bulk) + inventoryStackHandler.getItemTradein(i).getSize()) <= inventoryStackHandler.getSlotLimit(i)) {
+                                        cashReserve = cashReserve + cost * inputAmount; // Add money to players cash */
+                                        cashRegister = cashRegister - cost * inputAmount; // Remove price from machine cash */
+
+                                        inputStackHandler.getStackInSlot(0).shrink(inputAmount*bulk); // Remove item from input */
+                                        inventoryStackHandler.getItemTradein(i).growSize(inputAmount*bulk); // Add item to machine */
+
+                                        world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.BLOCKS, 0.05F, 5.0F, false);
+                                    }
                                 }
 
                                 // Error Message, flag determines what error is occuring */

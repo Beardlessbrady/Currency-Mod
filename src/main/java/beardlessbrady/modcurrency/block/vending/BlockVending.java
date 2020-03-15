@@ -8,6 +8,7 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -211,6 +212,7 @@ public class BlockVending extends EconomyBlockBase {
             items.add(new ItemStack(this, 1, 0));
 
             ItemStack creative = new ItemStack(this, 1, 1);
+            creative.addEnchantment(Enchantment.getEnchantmentByID(28), 1);
             creative.setStackDisplayName("CREATIVE " + getLocalizedName());
             items.add(creative);
         }

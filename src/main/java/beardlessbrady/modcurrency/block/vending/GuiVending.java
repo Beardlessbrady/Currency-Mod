@@ -683,7 +683,7 @@ public class GuiVending extends GuiContainer {
             drawTexturedModalRect(70 - ((message.length()) * 5 / 2), 55, 0, 20, 21, 21);
 
             //Draws extentions of the back panel of message
-            int panelAmounts = (message.length() * 5) / 17;
+            int panelAmounts = (message.length() * 5) / 15;
             for (int i = 0; i < panelAmounts; i++) {
                 drawTexturedModalRect(91 - (message.length() * 5 / 2) + (i * 17), 55, 4, 20, 17, 21);
             }

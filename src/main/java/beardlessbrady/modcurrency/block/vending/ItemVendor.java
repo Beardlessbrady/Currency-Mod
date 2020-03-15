@@ -133,7 +133,7 @@ public class ItemVendor {
     public void setTimeElapsed(int i){
         timeElapsed = i;
     }
-
+    
     public NBTTagCompound toNBT(){
         NBTTagCompound compound = new NBTTagCompound();
         compound.setTag("stack", itemStack.serializeNBT());

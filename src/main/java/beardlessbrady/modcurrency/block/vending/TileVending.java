@@ -41,7 +41,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider{
     public final short TE_INVENTORY_SLOT_COUNT = 25;
     public final short TE_OUTPUT_SLOT_COUNT = 5;
 
-    //Machine inventorys
+    //Machine inventories
     private ItemStackHandler inputStackHandler = new ItemStackHandler(TE_INPUT_SLOT_COUNT) {
         @Override
         protected void onContentsChanged(int slot) {

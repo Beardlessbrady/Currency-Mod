@@ -2,8 +2,6 @@ package beardlessbrady.modcurrency.block.tradein;
 
 import beardlessbrady.modcurrency.block.EconomyBlockBase;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
-import beardlessbrady.modcurrency.block.vending.RenderVending;
-import beardlessbrady.modcurrency.block.vending.TileVending;
 import beardlessbrady.modcurrency.handler.StateHandler;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -39,7 +37,6 @@ public class BlockTradein extends EconomyBlockBase {
     public BlockTradein() {
         super("blocktradein", TileTradein.class);
     }
-
     /** Method activated when the block is RIGHT CLICKED */
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
@@ -152,6 +149,8 @@ public class BlockTradein extends EconomyBlockBase {
         }
         return null;
     }
+
+
 
     /** Block State Methods **/
     //<editor-fold desc="Block State Methods">

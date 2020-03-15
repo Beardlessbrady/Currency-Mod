@@ -1,7 +1,6 @@
 package beardlessbrady.modcurrency.block.tradein;
 
 import beardlessbrady.modcurrency.ModCurrency;
-import beardlessbrady.modcurrency.block.TileEconomyBase;
 import beardlessbrady.modcurrency.block.vending.TileVending;
 import beardlessbrady.modcurrency.network.PacketHandler;
 import beardlessbrady.modcurrency.network.PacketOutChangeToServer;
@@ -14,13 +13,9 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.RenderItem;
-import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemStack;
@@ -32,7 +27,6 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 import static beardlessbrady.modcurrency.block.TileEconomyBase.*;
 
@@ -188,41 +182,45 @@ public class GuiTradein extends GuiContainer {
     /** Custom Item Stack size Rendering **/
     private void drawItemStackSize() {
         //TODO Dont render if creative and infinite and don't want items collected
-        if (te.getField(FIELD_MODE) == 1) { // STOCK MODE */
+        // Shrink text size so it fits with 3 digit numbers */
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GL11.glPushMatrix();
+        GL11.glScalef(0.7F, 0.7F, 0.8F);
 
-            // Shrink text size so it fits with 3 digit numbers */
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
-            GL11.glPushMatrix();
-            GL11.glScalef(0.7F, 0.7F, 0.8F);
+        String num; // Used to calculate the size of each itemStack */
+        int startY = -19; // Starting Y value */
+        int columnCount = 5;
 
-            String num; // Used to calculate the size of each itemStack */
-            int startY = -19; // Starting Y value */
-            int columnCount = 5;
+        // Loops through each slot to calculate and render its stack size */
+        for (int j = 0; j < columnCount; j++) {
+            for (int i = 0; i < 5; i++) {
+                int index = (i + (5 * j));
 
-            // Loops through each slot to calculate and render its stack size */
-            for (int j = 0; j < columnCount; j++) {
-                for (int i = 0; i < 5; i++) {
-                    int index = (i + (5 * j));
+                num = " ";
+                if (!te.getItemTradein(index).getStack().isEmpty()) // If ItemStack is Empty don't render a number, otherwise render itemStack size*/
 
-                    num = " ";
-                    if (!te.getItemTradein(index).getStack().isEmpty()) // If ItemStack is Empty don't render a number, otherwise render itemStack size*/
+                    if (te.getField(FIELD_MODE) == 1) { // STOCK MODE
                         num = Integer.toString(te.getItemTradein(i + (5 * j)).getSize());
+                    } else { // TRADE MODE
+                        int amount = te.getItemTradein(i + (5 * j)).getAmount();
+                        if(amount > 1)
+                            num = Integer.toString(amount);
+                    }
 
-                    if (num.equals("0"))
-                        num = TextFormatting.RED + "  0"; // If itemStack size is 0 then color is red */
-                    if (num.length() == 1) num = "  " + num; // Spacing to center numbers correctly */
-                    if (num.length() == 2) num = " " + num; // Spacing to center numbers correctly */
+                if (num.equals("0"))
+                    num = TextFormatting.RED + "  0"; // If itemStack size is 0 then color is red */
+                if (num.length() == 1) num = "  " + num; // Spacing to center numbers correctly */
+                if (num.length() == 2) num = " " + num; // Spacing to center numbers correctly */
 
 
-                    fontRenderer.drawStringWithShadow(num, 66 + (i * 26), startY + (j * 26), -1); // Renders text */
-                    GlStateManager.color(0xFF, 0xFF, 0xFF); // Resets color in GL to prevent visual glitches */
-                }
+                fontRenderer.drawStringWithShadow(num, 66 + (i * 26), startY + (j * 26), -1); // Renders text */
+                GlStateManager.color(0xFF, 0xFF, 0xFF); // Resets color in GL to prevent visual glitches */
             }
-
-            // Resets gl */
-            GL11.glPopMatrix();
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
         }
+
+        // Resets gl */
+        GL11.glPopMatrix();
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
     }
 
     /** 'Info Tag' Rendering */
@@ -395,11 +393,19 @@ public class GuiTradein extends GuiContainer {
             }
 
             int cost = te.getItemTradein(slot).getCost(); // Get Items cost */
+            int amount = te.getItemTradein(slot).getAmount(); // Get Item Bulk Amount
 
             // Adding items price to tooltip: What is written depends on if machine has enough funds to buy the item */
             if (te.getField(FIELD_MODE) == 0) { // TRADE MODE */
                 if (te.getItemTradein(slot).getCost() <= te.getField(FIELD_CASHREGISTER)) {
-                    list.add(TextFormatting.GREEN + "Payout of $" + UtilMethods.translateMoney(cost));
+                    if (te.getItemTradein(slot).getAmount() == 1) {
+                        list.add("Payout of " + TextFormatting.GREEN + "$" + UtilMethods.translateMoney(cost));
+                    } else {
+                        list.add("Payout of " + TextFormatting.GREEN + "$" + UtilMethods.translateMoney(cost) +
+                                TextFormatting.RESET + " per " + TextFormatting.BLUE + Integer.toString(amount));
+                    }
+                  //  list.add("Payout of " + TextFormatting.GREEN + "$" + UtilMethods.translateMoney(cost));
+
                 }else{
                     list.add(TextFormatting.RED + "Machine cannot afford $" + UtilMethods.translateMoney(cost));
                 }
@@ -486,6 +492,7 @@ public class GuiTradein extends GuiContainer {
                 PacketOutChangeToServer pack0 = new PacketOutChangeToServer();
                 pack0.setData(te.getPos(), false);
                 PacketHandler.INSTANCE.sendToServer(pack0);
+                break;
             default:
                 throw new IllegalStateException("Unexpected value: " + button.id);
         }
@@ -559,7 +566,7 @@ public class GuiTradein extends GuiContainer {
             drawTexturedModalRect(70 - ((message.length()) * 5 / 2), 55, 0, 20, 21, 21); // Draws Back panel */
 
             // Extends the Back panel to fit message */
-            int panelAmounts = (message.length() * 5) / 17;
+            int panelAmounts = (message.length() * 5) / 15;
             for (int i = 0; i < panelAmounts; i++)
                 drawTexturedModalRect(91 - (message.length() * 5 / 2) + (i * 17), 55, 4, 20, 17, 21);
 
