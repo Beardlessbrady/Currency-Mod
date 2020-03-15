@@ -52,12 +52,10 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
     private ItemTradeinHandler inventoryStackHandler = new ItemTradeinHandler(TE_INVENTORY_SLOT_COUNT);
 
     private String selectedName;
-    private boolean creative;
     private int selectedSlot;
 
     public TileTradein(){
         selectedName = "No Item Selected";
-        creative = false;;
     }
 
     /** Runs every tick**/

@@ -174,6 +174,10 @@ public class GuiTradein extends GuiContainer {
         fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getField(TileVending.FIELD_CASHRESERVE))), 15, -30, Integer.parseInt("ffffff", 16));
         // Machines Money text rendering in STOCK MODE*/
         if (te.getField(TileVending.FIELD_MODE) == 1) {
+            //If a creative machine add an extra label saying so
+            if (te.getField(TileTradein.FIELD_CREATIVE) == 1)
+                fontRenderer.drawString(I18n.format("guivending.creative"), 140, -58, Color.pink.getRGB());
+
             fontRenderer.drawStringWithShadow(I18n.format("guivending.cash"), 7, -10, Integer.parseInt("3D78E0", 16));
             fontRenderer.drawStringWithShadow(I18n.format("guivending.moneysign"), 7, 0, Integer.parseInt("ffffff", 16));
             fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getField(TileVending.FIELD_CASHREGISTER))), 15, 0, Integer.parseInt("ffffff", 16));

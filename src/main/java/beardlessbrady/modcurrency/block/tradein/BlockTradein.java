@@ -1,11 +1,15 @@
 package beardlessbrady.modcurrency.block.tradein;
 
+import beardlessbrady.modcurrency.ModCurrency;
 import beardlessbrady.modcurrency.block.EconomyBlockBase;
 import beardlessbrady.modcurrency.block.TileEconomyBase;
+import beardlessbrady.modcurrency.block.vending.TileVending;
 import beardlessbrady.modcurrency.handler.StateHandler;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -16,6 +20,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -37,6 +42,7 @@ public class BlockTradein extends EconomyBlockBase {
     public BlockTradein() {
         super("blocktradein", TileTradein.class);
     }
+
     /** Method activated when the block is RIGHT CLICKED */
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
@@ -82,8 +88,10 @@ public class BlockTradein extends EconomyBlockBase {
         worldIn.setBlockState(pos.up(), state.withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.TWOTOP) // Places the 'top' part of the block */
                 .withProperty(StateHandler.FACING, placer.getHorizontalFacing().getOpposite()));
 
-        getTile(worldIn, pos).setOwner(placer.getUniqueID()); // Sets owner */
+        if(stack.getMetadata() == 1) // If the itemBlock is CREATIVE (metadata = 1) then set the block to creative
+            getTile(worldIn, pos).setField(TileVending.FIELD_CREATIVE, 1);
 
+        getTile(worldIn, pos).setOwner(placer.getUniqueID()); // Sets owner */
         getTile(worldIn, pos).markDirty();
     }
 
@@ -150,7 +158,18 @@ public class BlockTradein extends EconomyBlockBase {
         return null;
     }
 
+    /** Sub blocks of an item**/
+    @Override
+    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items) {
+        if (tab == ModCurrency.tabCurrency) {
+            items.add(new ItemStack(this, 1, 0));
 
+            ItemStack creative = new ItemStack(this, 1, 1);
+            creative.addEnchantment(Enchantment.getEnchantmentByID(28), 1);
+            creative.setStackDisplayName("CREATIVE " + getLocalizedName());
+            items.add(creative);
+        }
+    }
 
     /** Block State Methods **/
     //<editor-fold desc="Block State Methods">
@@ -192,7 +211,7 @@ public class BlockTradein extends EconomyBlockBase {
     public void registerModel() {
         super.registerModel();
         ClientRegistry.bindTileEntitySpecialRenderer(TileTradein.class, new RenderTradein());
-        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 0, new ModelResourceLocation(getRegistryName(), "inventory"));
+        ModelLoader.setCustomModelResourceLocation(Item.getItemFromBlock(this), 1, new ModelResourceLocation(getRegistryName(), "inventory"));
     }
 
     @Override

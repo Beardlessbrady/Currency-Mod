@@ -22,7 +22,7 @@ import java.util.UUID;
 public class TileEconomyBase extends TileEntity implements ITickable {
     protected int cashReserve, cashRegister, selectedSlot;
     protected EnumDyeColor color;
-    protected boolean mode;
+    protected boolean mode, creative;
     protected UUID owner, playerUsing;
     protected String selectedName;
 
@@ -35,6 +35,7 @@ public class TileEconomyBase extends TileEntity implements ITickable {
     public TileEconomyBase(){
         cashReserve = 0;
         cashRegister = 0;
+        creative = false;
         mode = false;
         color = EnumDyeColor.GRAY;
 
@@ -65,6 +66,7 @@ public class TileEconomyBase extends TileEntity implements ITickable {
         compound.setBoolean("mode", mode);
         compound.setUniqueId("playerUsing", playerUsing);
         compound.setUniqueId("owner", owner);
+        compound.setBoolean("creative", creative);
         compound.setInteger("selectedSlot", selectedSlot);
         compound.setString("selectedName", selectedName);
 
@@ -80,6 +82,7 @@ public class TileEconomyBase extends TileEntity implements ITickable {
         if (compound.hasKey("mode")) mode = compound.getBoolean("mode");
         if (compound.hasKey("playerUsing")) playerUsing = compound.getUniqueId("playerUsing");
         if (compound.hasUniqueId("owner")) owner = compound.getUniqueId("owner");
+        if(compound.hasKey("creative")) creative = compound.getBoolean("creative");
         if(compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
         if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
 
@@ -100,6 +103,7 @@ public class TileEconomyBase extends TileEntity implements ITickable {
         compound.setBoolean("mode", mode);
         compound.setUniqueId("playerUsing", playerUsing);
         compound.setUniqueId("owner", owner);
+        compound.setBoolean("creative", creative);
         compound.setInteger("selectedSlot", selectedSlot);
         compound.setString("selectedName", selectedName);
 
@@ -118,6 +122,7 @@ public class TileEconomyBase extends TileEntity implements ITickable {
         if(compound.hasKey("cashRegister")) cashRegister = compound.getInteger("cashRegister");
         if(compound.hasKey("playerUsing")) playerUsing = compound.getUniqueId("playerUsing");
         if(compound.hasUniqueId("owner")) owner = compound.getUniqueId("owner");
+        if(compound.hasKey("creative")) creative = compound.getBoolean("creative");
         if(compound.hasKey("selectedSlot")) selectedSlot = compound.getInteger("selectedSlot");
         if(compound.hasKey("selectedName")) selectedName = compound.getString("selectedName");
 
@@ -129,6 +134,7 @@ public class TileEconomyBase extends TileEntity implements ITickable {
     public static final int FIELD_CASHRESERVE = 1;
     public static final int FIELD_CASHREGISTER = 2;
     public static final byte FIELD_SELECTED = 6;
+    public static final byte FIELD_CREATIVE = 7;
 
     public int getFieldCount(){
         return 4;
@@ -148,6 +154,9 @@ public class TileEconomyBase extends TileEntity implements ITickable {
             case FIELD_SELECTED:
                 selectedSlot = value;
                 break;
+            case FIELD_CREATIVE:
+                creative = (value == 1);
+                break;
         }
     }
 
@@ -161,6 +170,8 @@ public class TileEconomyBase extends TileEntity implements ITickable {
                 return cashRegister;
             case FIELD_SELECTED:
                 return selectedSlot;
+            case FIELD_CREATIVE:
+                return (creative)? 1 : 0;
         }
         return 0;
     }

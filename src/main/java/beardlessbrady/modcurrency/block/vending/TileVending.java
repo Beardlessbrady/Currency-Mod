@@ -64,14 +64,13 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider{
 
     //Used for Creative auto refill of item slots
     private long serverTime;
-    private boolean creative, finite;
+    private boolean finite;
 
     //KeyBinding
     private boolean shift, control;
 
     public TileVending(){
         serverTime = 0;
-        creative = false;
         finite = true;
 
         shift = false;
@@ -126,7 +125,6 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider{
         compound.setTag("inventory", inventoryStackHandler.serializeNBT());
         compound.setTag("input", inputStackHandler.serializeNBT());
         compound.setTag("output", outputStackHandler.serializeNBT());
-        compound.setBoolean("creative", creative);
         compound.setBoolean("finite", finite);
 
         return compound;
@@ -141,7 +139,6 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider{
         if(compound.hasKey("output")) outputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("output"));
 
         if(compound.hasKey("serverTime")) serverTime = compound.getLong("serverTime");
-        if(compound.hasKey("creative")) creative = compound.getBoolean("creative");
         if(compound.hasKey("finite")) finite = compound.getBoolean("finite");
     }
 
@@ -161,8 +158,6 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider{
         compound.setTag("inventory", inventoryStackHandler.serializeNBT());
         compound.setTag("input", inputStackHandler.serializeNBT());
         compound.setTag("output", outputStackHandler.serializeNBT());
-
-        compound.setBoolean("creative", creative);
         compound.setBoolean("finite", finite);
 
         return new SPacketUpdateTileEntity(pos, 1, compound);
@@ -176,9 +171,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider{
        if(compound.hasKey("inventory")) inventoryStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("inventory"));
        if(compound.hasKey("input")) inputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("input"));
        if(compound.hasKey("output")) outputStackHandler.deserializeNBT((NBTTagCompound) compound.getTag("output"));
-
         if(compound.hasKey("serverTime")) serverTime = compound.getLong("serverTime");
-        if(compound.hasKey("creative")) creative = compound.getBoolean("creative");
         if(compound.hasKey("finite")) finite = compound.getBoolean("finite");
     }
 
@@ -203,7 +196,6 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider{
     //</editor-fold>
 
     //<editor-fold desc="fields">
-    public static final byte FIELD_CREATIVE = 4;
     public static final byte FIELD_FINITE = 5;
 
     @Override
@@ -216,9 +208,6 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider{
         switch(id){
             case FIELD_MODE:
                 mode = (value == 1);
-                break;
-            case FIELD_CREATIVE:
-                creative = (value == 1);
                 break;
             case FIELD_FINITE:
                 finite = (value == 1);
@@ -238,8 +227,6 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider{
                 return cashReserve;
             case FIELD_CASHREGISTER:
                 return cashRegister;
-            case FIELD_CREATIVE:
-                return (creative)? 1 : 0;
             case FIELD_FINITE:
                 return (finite)? 1 : 0;
             default:

@@ -173,6 +173,19 @@ public class BlockVending extends EconomyBlockBase {
         return null;
     }
 
+    /** Sub blocks of an item**/
+    @Override
+    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items) {
+        if (tab == ModCurrency.tabCurrency) {
+            items.add(new ItemStack(this, 1, 0));
+
+            ItemStack creative = new ItemStack(this, 1, 1);
+            creative.addEnchantment(Enchantment.getEnchantmentByID(28), 1);
+            creative.setStackDisplayName("CREATIVE " + getLocalizedName());
+            items.add(creative);
+        }
+    }
+
     /** Block State Methods **/
     //<editor-fold desc="Block State Methods">
     @Override
@@ -204,23 +217,10 @@ public class BlockVending extends EconomyBlockBase {
         return this.getDefaultState().withProperty(StateHandler.FACING, EnumFacing.getHorizontal(getMetaFromState(state) % 4))
                 .withProperty(StateHandler.TWOTALL, StateHandler.EnumTwoBlock.class.getEnumConstants()[getMetaFromState(state) / 4]);
     }
-
-    /** Sub blocks of an item**/
-    @Override
-    public void getSubBlocks(CreativeTabs tab, NonNullList<ItemStack> items) {
-        if (tab == ModCurrency.tabCurrency) {
-            items.add(new ItemStack(this, 1, 0));
-
-            ItemStack creative = new ItemStack(this, 1, 1);
-            creative.addEnchantment(Enchantment.getEnchantmentByID(28), 1);
-            creative.setStackDisplayName("CREATIVE " + getLocalizedName());
-            items.add(creative);
-        }
-    }
     //</editor-fold>
 
     /** Rendering Methods **/
-    //<editor-fold desc="Rendering-----------------------------------------------------------------------------------------------------------">
+    //<editor-fold desc="Rendering Methods">
     @Override
     @SideOnly(Side.CLIENT)
     public void registerModel() {
