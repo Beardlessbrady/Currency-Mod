@@ -7,9 +7,11 @@ import beardlessbrady.modcurrency.network.PacketOutChangeToServer;
 import beardlessbrady.modcurrency.network.PacketSetFieldToServer;
 import beardlessbrady.modcurrency.network.PacketSetItemToServer;
 import beardlessbrady.modcurrency.utilities.UtilMethods;
+import mezz.jei.api.gui.IGhostIngredientHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -39,13 +41,11 @@ import static beardlessbrady.modcurrency.block.TileEconomyBase.*;
  * File Created 2019-07-31
  */
 
-public class GuiTradein extends GuiContainer {
+public class GuiTradein extends GuiContainer implements IGhostIngredientHandler {
     private static final ResourceLocation BACK_TEXTURE = new ResourceLocation(ModCurrency.MODID, "textures/gui/tradeingui.png");
     private static final ResourceLocation ASSET_TEXTURE = new ResourceLocation(ModCurrency.MODID, "textures/gui/guiassets.png");
-
     private TileTradein te;
     private GuiTextField fieldPrice, fieldAmnt, fieldUntil, fieldItemMax, fieldTimeRestock;
-
     //Field ID's
     private static final int FIELDPRICE = 0;
     private static final int FIELDAMNT = 1;
@@ -641,4 +641,22 @@ public class GuiTradein extends GuiContainer {
         fontRenderer.drawStringWithShadow(message, 94 - (message.length() * 5) / 2, 62, 0xDE3131); // Message Text */
         GlStateManager.color(0xFF, 0xFF, 0xFF); // Reset GL color to prevent visual bugs */
     }
+
+    //<editor-fold desc="JEI IMPLEMENTATION">
+    @Override
+    public List<Target> getTargets(GuiScreen gui, Object ingredient, boolean doStart) {
+        System.out.println("DD");
+        return null;
+    }
+
+    @Override
+    public void onComplete() {
+
+    }
+
+    @Override
+    public boolean shouldHighlightTargets() {
+        return false;
+    }
+    //</editor-fold>
 }
