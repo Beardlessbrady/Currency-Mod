@@ -35,7 +35,7 @@ public class ItemCurrency extends Item {
 
     @SideOnly(Side.CLIENT)
     public void initModel() {
-        for (int i = 0; i < 21; i++) {
+        for (int i = 0; i < currencyLength; i++) {
             ModelLoader.setCustomModelResourceLocation(this, i, new ModelResourceLocation(getRegistryName() + "_" + i, "inventory"));
         }
     }

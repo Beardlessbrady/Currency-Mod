@@ -40,9 +40,9 @@ public final class UtilMethods {
         String currIdString = Integer.toString(currId);
         if(currIdString.length() == 1 || currIdString.length() == 2){ //Default System
             return "0";
-        } else if(currIdString.length() == 4 ) { //Custom System 1-9
+        } else if(currIdString.length() == 3 ) { //Custom System 1-9
             
-        } else if(currIdString.length() == 5 ) { //Custom System 10+
+        } else if(currIdString.length() == 4 ) { //Custom System 10-99
 
         }
 
