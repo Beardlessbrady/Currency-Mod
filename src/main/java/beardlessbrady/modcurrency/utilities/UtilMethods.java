@@ -34,6 +34,21 @@ public final class UtilMethods {
         return basic;
     }
 
+    /**Gets the currID and returns the CurrencySystem# (Usually the first 1 or 2 digits)
+     */
+    public static String getCurrSystemNumber(int currId){
+        String currIdString = Integer.toString(currId);
+        if(currIdString.length() == 1 || currIdString.length() == 2){ //Default System
+            return "0";
+        } else if(currIdString.length() == 4 ) { //Custom System 1-9
+            
+        } else if(currIdString.length() == 5 ) { //Custom System 10+
+
+        }
+
+        return "Broken";
+    }
+
     public static String translateMoney(int amount){
         String amnt = Integer.toString(amount);
         String finalTranslation;

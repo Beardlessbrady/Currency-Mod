@@ -48,15 +48,22 @@ public class ItemCurrency extends Item {
     @Override
     public String getItemStackDisplayName(ItemStack stack) {
         if(stack.getItemDamage() >= ConfigCurrency.currencyNames.length){
-            return "SOMETHING WENT WRONG: ITEM DAMAGE TOO HIGH.";
+            return "CurrSys: " + Integer.toString(stack.getMetadata());
         }else return ConfigCurrency.currencyNames[stack.getItemDamage()];
     }
 
     @Override
     public void getSubItems(CreativeTabs tab, NonNullList<ItemStack> items) {
+        String defaultSystem = "000";
+        String currentBill;
         if(tab == ModCurrency.tabCurrency){
             for (int i = 0; i < currencyLength; i++) {
-                ItemStack stack = new ItemStack(this, 1, i);
+                if((int) Math.log10(i) + 1 == 1){ //If int i digit length is 1
+                    currentBill = defaultSystem + "0" + Integer.toString(i);
+                }else{
+                    currentBill = defaultSystem + Integer.toString(i);
+                }
+                ItemStack stack = new ItemStack(this, 1, Integer.parseInt(currentBill));
                 items.add(stack);
             }
         }

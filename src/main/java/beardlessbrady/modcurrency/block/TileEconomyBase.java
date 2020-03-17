@@ -25,6 +25,7 @@ public class TileEconomyBase extends TileEntity implements ITickable {
     protected boolean mode, creative;
     protected UUID owner, playerUsing;
     protected String selectedName;
+    protected int currSys;
 
     public static UUID EMPTYID = new UUID(0L, 0L);
 
@@ -38,6 +39,7 @@ public class TileEconomyBase extends TileEntity implements ITickable {
         creative = false;
         mode = false;
         color = EnumDyeColor.GRAY;
+        currSys = 0;
 
         selectedName = "No Item Selected";
 
@@ -61,6 +63,7 @@ public class TileEconomyBase extends TileEntity implements ITickable {
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
         compound.setInteger("color", color.getDyeDamage());
+        compound.setInteger("currSys", currSys);
         compound.setInteger("cashReserve", cashReserve);
         compound.setInteger("cashRegister", cashRegister);
         compound.setBoolean("mode", mode);
@@ -77,6 +80,7 @@ public class TileEconomyBase extends TileEntity implements ITickable {
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         if (compound.hasKey("color")) color = EnumDyeColor.byDyeDamage(compound.getInteger("color"));
+        if (compound.hasKey("currSys")) currSys = compound.getInteger("currSys");
         if (compound.hasKey("cashReserve")) cashReserve = compound.getInteger("cashReserve");
         if(compound.hasKey("cashRegister")) cashRegister = compound.getInteger("cashRegister");
         if (compound.hasKey("mode")) mode = compound.getBoolean("mode");
@@ -98,6 +102,7 @@ public class TileEconomyBase extends TileEntity implements ITickable {
     public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound compound = new NBTTagCompound();
         compound.setInteger("color", color.getDyeDamage());
+        compound.setInteger("currSys", currSys);
         compound.setInteger("cashReserve", cashReserve);
         compound.setInteger("cashRegister", cashRegister);
         compound.setBoolean("mode", mode);
@@ -117,6 +122,7 @@ public class TileEconomyBase extends TileEntity implements ITickable {
         NBTTagCompound compound = pkt.getNbtCompound();
 
         if(compound.hasKey("color")) color = EnumDyeColor.byDyeDamage(compound.getInteger("color"));
+        if(compound.hasKey("currSys")) currSys = compound.getInteger("currSys");
         if(compound.hasKey("mode")) mode = compound.getBoolean("mode");
         if(compound.hasKey("cashReserve")) cashReserve = compound.getInteger("cashReserve");
         if(compound.hasKey("cashRegister")) cashRegister = compound.getInteger("cashRegister");
@@ -130,11 +136,12 @@ public class TileEconomyBase extends TileEntity implements ITickable {
     //</editor-fold>
 
     //Field Id's
-    public static final int FIELD_MODE = 0;
-    public static final int FIELD_CASHRESERVE = 1;
-    public static final int FIELD_CASHREGISTER = 2;
+    public static final byte FIELD_MODE = 0;
+    public static final byte FIELD_CASHRESERVE = 1;
+    public static final byte FIELD_CASHREGISTER = 2;
     public static final byte FIELD_SELECTED = 6;
     public static final byte FIELD_CREATIVE = 7;
+    public static final byte FIELD_CURRSYS = 8;
 
     public int getFieldCount(){
         return 4;
@@ -157,6 +164,9 @@ public class TileEconomyBase extends TileEntity implements ITickable {
             case FIELD_CREATIVE:
                 creative = (value == 1);
                 break;
+            case FIELD_CURRSYS:
+                currSys = value;
+                break;
         }
     }
 
@@ -172,6 +182,8 @@ public class TileEconomyBase extends TileEntity implements ITickable {
                 return selectedSlot;
             case FIELD_CREATIVE:
                 return (creative)? 1 : 0;
+            case FIELD_CURRSYS:
+                return currSys;
         }
         return 0;
     }
