@@ -1,6 +1,7 @@
 package beardlessbrady.modcurrency.command;
 
 import beardlessbrady.modcurrency.ModCurrency;
+import beardlessbrady.modcurrency.item.ModItems;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -52,20 +53,24 @@ public class CurrencyCommand implements ICommand {
 
     @Override
     public void execute(MinecraftServer server, ICommandSender sender, String[] args) throws CommandException {
-        if(args.length == 2) {
-            int currID = Integer.parseInt(args[0]);
-            String textureLink = args[1];
+        if(!server.getEntityWorld().isRemote) { //IS CLIENT
+            if (args.length == 2) {
+                int currID = Integer.parseInt(args[0]);
+                String textureLink = args[1];
 
-            createDirectory(new File("resourcepacks/testme"));
-            createDirectory(new File("resourcepacks/testme/assets"));
-            createDirectory(new File("resourcepacks/testme/assets/modcurrency"));
-            createDirectory(new File("resourcepacks/testme/assets/modcurrency/models"));
-            createDirectory(new File("resourcepacks/testme/assets/modcurrency/models/item"));
+                createDirectory(new File("resourcepacks/testme"));
+                createDirectory(new File("resourcepacks/testme/assets"));
+                createDirectory(new File("resourcepacks/testme/assets/modcurrency"));
+                createDirectory(new File("resourcepacks/testme/assets/modcurrency/models"));
+                createDirectory(new File("resourcepacks/testme/assets/modcurrency/models/item"));
+                createDirectory(new File("resourcepacks/testme/assets/modcurrency/textures"));
+                createDirectory(new File("resourcepacks/testme/assets/modcurrency/textures/items"));
+                createDirectory(new File("resourcepacks/testme/assets/modcurrency/textures/items/currency"));
 
-            createDirectory(new File("resourcepacks/testme/assets/modcurrency/textures"));
-            createCurrencyJSON(currID);
-
-            grabTextureFromWeb(textureLink);
+                createpackData();
+                createCurrencyJSON(currID);
+                grabTextureFromWeb(textureLink, currID);
+            }
         }
     }
 
@@ -91,6 +96,22 @@ public class CurrencyCommand implements ICommand {
 
     public void createDirectory(File directory){
         directory.mkdir();
+    }
+
+    public void createpackData(){
+        String fileString = "{\n" +
+                "   \"pack\": {\n" +
+                "      \"pack_format\": 3,\n" +
+                "      \"description\": \"Test Resource Pack\"\n" +
+                "   }\n" +
+                "}";
+
+        try (FileWriter file = new FileWriter("resourcepacks/testme/pack.mcmeta")) {
+            file.write(fileString);
+            file.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void createCurrencyJSON(int value){
@@ -195,7 +216,7 @@ public class CurrencyCommand implements ICommand {
         Gson gson = gsonBuilder.create();
 
 
-        try (FileWriter file = new FileWriter("resourcepacks/testme/assets/modcurrency/models/item/currency" + value + ".json")) {
+        try (FileWriter file = new FileWriter("resourcepacks/testme/assets/modcurrency/models/item/currency_" + value + ".json")) {
             file.write(gson.toJson(jsonFile));
             file.flush();
         } catch (IOException e) {
@@ -203,12 +224,12 @@ public class CurrencyCommand implements ICommand {
         }
     }
 
-    public void grabTextureFromWeb(String link){
+    public void grabTextureFromWeb(String link, int value){
         BufferedImage image =null;
         try{
-            URL url =new URL(link);
+            URL url =new URL("http://i.imgur.com/" + link);
             image = ImageIO.read(url);
-            ImageIO.write(image, "png",new File("resourcepacks/testme/assets/modcurrency/models/item/poopy.png"));
+            ImageIO.write(image, "png",new File("resourcepacks/testme/assets/modcurrency/textures/items/currency/currency_" + value + ".png"));
 
         }catch(IOException e){
             e.printStackTrace();
