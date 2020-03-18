@@ -1,6 +1,5 @@
 package beardlessbrady.modcurrency.item.playercurrency;
 
-import com.sun.istack.internal.Nullable;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.block.model.BakedQuad;
@@ -10,6 +9,8 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumFacing;
+
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
