@@ -1,5 +1,6 @@
 package beardlessbrady.modcurrency.item;
 
+import beardlessbrady.modcurrency.item.playercurrency.ItemPlayerCurrency;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.event.RegistryEvent;
@@ -18,18 +19,19 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ModItems {
     public static ItemCurrency itemCurrency = new ItemCurrency();
-    //public static ItemMoneyBag itemMoneyBag = new ItemMoneyBag();  I didn't like the item, may come back as a player way to transport money
+    public static ItemPlayerCurrency itemPlayerCurrency = new ItemPlayerCurrency();
 
     @SubscribeEvent
     public void registerItems(RegistryEvent.Register<Item> event){
         event.getRegistry().register(itemCurrency);
-        //event.getRegistry().register(itemMoneyBag);
+        event.getRegistry().register(itemPlayerCurrency);
     }
 
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void registerModels(ModelRegistryEvent event){
         itemCurrency.initModel();
-        //itemMoneyBag.initModel();
+        itemPlayerCurrency.initModel();
+        itemPlayerCurrency.registerCurrencyVariants(); // For special layered item texture
     }
 }

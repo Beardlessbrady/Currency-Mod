@@ -7,7 +7,6 @@ import beardlessbrady.modcurrency.network.PacketOutChangeToServer;
 import beardlessbrady.modcurrency.network.PacketSetFieldToServer;
 import beardlessbrady.modcurrency.network.PacketSetItemToServer;
 import beardlessbrady.modcurrency.utilities.UtilMethods;
-import mezz.jei.api.gui.IGhostIngredientHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -41,7 +40,7 @@ import static beardlessbrady.modcurrency.block.TileEconomyBase.*;
  * File Created 2019-07-31
  */
 
-public class GuiTradein extends GuiContainer implements IGhostIngredientHandler {
+public class GuiTradein extends GuiContainer {
     private static final ResourceLocation BACK_TEXTURE = new ResourceLocation(ModCurrency.MODID, "textures/gui/tradeingui.png");
     private static final ResourceLocation ASSET_TEXTURE = new ResourceLocation(ModCurrency.MODID, "textures/gui/guiassets.png");
     private TileTradein te;
@@ -641,22 +640,4 @@ public class GuiTradein extends GuiContainer implements IGhostIngredientHandler 
         fontRenderer.drawStringWithShadow(message, 94 - (message.length() * 5) / 2, 62, 0xDE3131); // Message Text */
         GlStateManager.color(0xFF, 0xFF, 0xFF); // Reset GL color to prevent visual bugs */
     }
-
-    //<editor-fold desc="JEI IMPLEMENTATION">
-    @Override
-    public List<Target> getTargets(GuiScreen gui, Object ingredient, boolean doStart) {
-        System.out.println("DD");
-        return null;
-    }
-
-    @Override
-    public void onComplete() {
-
-    }
-
-    @Override
-    public boolean shouldHighlightTargets() {
-        return false;
-    }
-    //</editor-fold>
 }

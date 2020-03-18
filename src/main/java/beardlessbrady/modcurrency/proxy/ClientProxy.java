@@ -2,8 +2,9 @@ package beardlessbrady.modcurrency.proxy;
 
 import beardlessbrady.modcurrency.block.ModBlockColors;
 import beardlessbrady.modcurrency.network.PacketHandler;
-import net.minecraft.client.Minecraft;
+import beardlessbrady.modcurrency.handler.BakedHandler;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
@@ -25,6 +26,7 @@ public class ClientProxy extends CommonProxy{
     public void preInit(FMLPreInitializationEvent e){
         super.preInit(e);
         PacketHandler.registerClientMessages("modcurrency");
+        MinecraftForge.EVENT_BUS.register(new BakedHandler());
     }
 
     public void Init(FMLInitializationEvent e) {

@@ -6,6 +6,8 @@ import beardlessbrady.modcurrency.block.ModBlocks;
 import beardlessbrady.modcurrency.handler.EventHandler;
 import beardlessbrady.modcurrency.handler.GuiHandler;
 import beardlessbrady.modcurrency.item.ModItems;
+import beardlessbrady.modcurrency.item.playercurrency.ItemColorCurrency;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -41,6 +43,7 @@ public class CommonProxy {
 
     public void Init(FMLInitializationEvent e){
         MinecraftForge.EVENT_BUS.register(new EventHandler());
+        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemColorCurrency(), ModItems.itemPlayerCurrency);
     }
 
 

@@ -7,8 +7,6 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.RayTraceResult;
 
@@ -28,7 +26,8 @@ public class RenderVending extends TileEntitySpecialRenderer<TileVending> {
              return;
 
          RayTraceResult ray = Minecraft.getMinecraft().objectMouseOver;
-         if (te.getPos() != null && te.getPos().up() != null && ray.getBlockPos() != null) {
+         if (te.getPos() != null && te.getPos().up() != null) {
+             ray.getBlockPos();
              if (ray.getBlockPos().equals(te.getPos()) || ray.getBlockPos().equals(te.getPos().up())) {
 
                  int rotation = 0;
@@ -64,10 +63,11 @@ public class RenderVending extends TileEntitySpecialRenderer<TileVending> {
                  ItemStack itemStack;
                  for (int i = 0; i < 5; i++) {
                      for (int j = 0; j < 5; j++) {
-                        itemStack = te.getItemVendor((j + (i*5))).getStack();
+                         itemStack = te.getItemVendor((j + (i * 5))).getStack();
 
-                        GlStateManager.translate(-0.7, 0, 0);
-                        if(!itemStack.isEmpty()) itemRenderer.renderItem(itemStack, ItemCameraTransforms.TransformType.FIXED);
+                         GlStateManager.translate(-0.7, 0, 0);
+                         if (!itemStack.isEmpty())
+                             itemRenderer.renderItem(itemStack, ItemCameraTransforms.TransformType.FIXED);
 
                      }
                      GlStateManager.translate(3.5, -1.8, 0);
