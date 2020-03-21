@@ -114,8 +114,6 @@ public class ContainerTradein extends Container {
                 addSlotToContainer(new SlotItemHandler(iItemHandler, slotNum, xpos, ypos));
             }
         }
-
-        addSlotToContainer(new SlotItemHandler(iItemHandler, TE_OUTPUT_FIRST_SLOT_INDEX, 145, 32)); // Add OUTPUT slot */
     }
 
     /** Method activates when player clicks a slot in the UI **/
