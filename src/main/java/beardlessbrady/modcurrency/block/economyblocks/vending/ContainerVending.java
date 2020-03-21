@@ -1,6 +1,6 @@
-package beardlessbrady.modcurrency.block.vending;
+package beardlessbrady.modcurrency.block.economyblocks.vending;
 
-import beardlessbrady.modcurrency.block.TileEconomyBase;
+import beardlessbrady.modcurrency.block.economyblocks.TileEconomyBase;
 import beardlessbrady.modcurrency.item.ModItems;
 import beardlessbrady.modcurrency.utilities.UtilMethods;
 import net.minecraft.entity.player.EntityPlayer;
@@ -17,7 +17,7 @@ import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
-import static beardlessbrady.modcurrency.block.vending.TileVending.*;
+import static beardlessbrady.modcurrency.block.economyblocks.vending.TileVending.*;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as

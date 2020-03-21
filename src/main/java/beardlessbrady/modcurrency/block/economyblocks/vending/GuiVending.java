@@ -1,7 +1,6 @@
-package beardlessbrady.modcurrency.block.vending;
+package beardlessbrady.modcurrency.block.economyblocks.vending;
 
 import beardlessbrady.modcurrency.ModCurrency;
-import beardlessbrady.modcurrency.block.tradein.ItemTradein;
 import beardlessbrady.modcurrency.network.*;
 import beardlessbrady.modcurrency.proxy.ClientProxy;
 import beardlessbrady.modcurrency.utilities.GuiButtonTextured;
@@ -29,8 +28,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static beardlessbrady.modcurrency.block.TileEconomyBase.FIELD_MODE;
-import static beardlessbrady.modcurrency.block.vending.TileVending.*;
+import static beardlessbrady.modcurrency.block.economyblocks.TileEconomyBase.FIELD_MODE;
+import static beardlessbrady.modcurrency.block.economyblocks.vending.TileVending.*;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as

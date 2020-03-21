@@ -1,4 +1,4 @@
-package beardlessbrady.modcurrency.block.vending;
+package beardlessbrady.modcurrency.block.economyblocks.vending;
 
 import beardlessbrady.modcurrency.handler.StateHandler;
 import net.minecraft.client.Minecraft;

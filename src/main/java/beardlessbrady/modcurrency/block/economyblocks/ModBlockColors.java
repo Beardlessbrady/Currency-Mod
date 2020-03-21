@@ -1,5 +1,7 @@
-package beardlessbrady.modcurrency.block;
+package beardlessbrady.modcurrency.block.economyblocks;
 
+import beardlessbrady.modcurrency.block.BlockBase;
+import beardlessbrady.modcurrency.block.ModBlocks;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.color.IBlockColor;
@@ -24,9 +26,9 @@ public class ModBlockColors implements IBlockColor {
     @Override
     public int colorMultiplier(IBlockState state, @Nullable IBlockAccess worldIn, @Nullable BlockPos pos, int tintIndex) {
 
-        if(state.getBlock() instanceof EconomyBlockBase) {
-            if (((EconomyBlockBase) state.getBlock()).getTile(worldIn, pos, state) != null) {
-                EnumDyeColor dyeColor = ((EconomyBlockBase) state.getBlock()).getTile(worldIn, pos, state).getColor();
+        if(state.getBlock() instanceof BlockBase) {
+            if (((BlockBase) state.getBlock()).getTile(worldIn, pos, state) != null) {
+                EnumDyeColor dyeColor = ((TileEconomyBase)((BlockBase) state.getBlock()).getTile(worldIn, pos, state)).getColor();
 
                 switch (dyeColor) {
                     case RED: return 0xD2443F;

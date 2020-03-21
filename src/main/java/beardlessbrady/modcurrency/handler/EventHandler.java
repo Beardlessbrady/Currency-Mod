@@ -1,18 +1,11 @@
 package beardlessbrady.modcurrency.handler;
 
-import beardlessbrady.modcurrency.block.EconomyBlockBase;
-import beardlessbrady.modcurrency.block.ModBlocks;
-import beardlessbrady.modcurrency.block.TileEconomyBase;
-import beardlessbrady.modcurrency.block.vending.BlockVending;
-import beardlessbrady.modcurrency.proxy.ClientProxy;
+import beardlessbrady.modcurrency.block.BlockBase;
+import beardlessbrady.modcurrency.block.economyblocks.TileEconomyBase;
 import net.minecraft.block.Block;
-import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.InputEvent;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
@@ -29,7 +22,7 @@ public class EventHandler {
     public void protectedBreak(PlayerInteractEvent.LeftClickBlock e) {
         Block brokeBlock = e.getWorld().getBlockState(e.getPos()).getBlock();
 
-        if (brokeBlock instanceof EconomyBlockBase) {
+        if (brokeBlock instanceof BlockBase) {
             TileEconomyBase tile = (TileEconomyBase) e.getWorld().getTileEntity(e.getPos());
             if (e.getWorld().getBlockState(e.getPos()).getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP)
                 tile =  (TileEconomyBase) e.getWorld().getTileEntity(e.getPos().down());

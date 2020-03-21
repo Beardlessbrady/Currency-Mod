@@ -1,10 +1,8 @@
 package beardlessbrady.modcurrency.network;
 
-import beardlessbrady.modcurrency.block.tradein.TileTradein;
-import beardlessbrady.modcurrency.block.vending.TileVending;
+import beardlessbrady.modcurrency.block.economyblocks.tradein.TileTradein;
+import beardlessbrady.modcurrency.block.economyblocks.vending.TileVending;
 import io.netty.buffer.ByteBuf;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;

@@ -1,11 +1,9 @@
-package beardlessbrady.modcurrency.block.tradein;
+package beardlessbrady.modcurrency.block.economyblocks.tradein;
 
-import beardlessbrady.modcurrency.block.TileEconomyBase;
+import beardlessbrady.modcurrency.block.economyblocks.TileEconomyBase;
 import beardlessbrady.modcurrency.item.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;

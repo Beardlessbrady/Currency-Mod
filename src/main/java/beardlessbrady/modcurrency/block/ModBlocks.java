@@ -1,7 +1,8 @@
 package beardlessbrady.modcurrency.block;
 
-import beardlessbrady.modcurrency.block.tradein.BlockTradein;
-import beardlessbrady.modcurrency.block.vending.BlockVending;
+import beardlessbrady.modcurrency.block.designer.BlockDesigner;
+import beardlessbrady.modcurrency.block.economyblocks.tradein.BlockTradein;
+import beardlessbrady.modcurrency.block.economyblocks.vending.BlockVending;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -23,8 +24,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ModBlocks {
     public static BlockVending blockVending = new BlockVending();
     public static BlockTradein blockTradein = new BlockTradein();
+    public static BlockDesigner blockDesigner = new BlockDesigner();
 
-    private EconomyBlockBase[] blocks = {blockVending, blockTradein};
+    private BlockBase[] blocks = {blockVending, blockTradein, blockDesigner};
 
     @SubscribeEvent
     public void registerBlocks(RegistryEvent.Register<Block> event){
@@ -46,16 +48,16 @@ public class ModBlocks {
     }
 
 
-    public void registerBlock(RegistryEvent.Register<Block> event, EconomyBlockBase block){
+    public void registerBlock(RegistryEvent.Register<Block> event, BlockBase block){
         event.getRegistry().register(block);
         block.registerTileEntity();
     }
 
-    public void registerItems(RegistryEvent.Register<Item> event, EconomyBlockBase block){
+    public void registerItems(RegistryEvent.Register<Item> event, BlockBase block){
         event.getRegistry().register(new ItemBlock(block).setRegistryName(block.getRegistryName()));
     }
 
-    public void registerModel(EconomyBlockBase block){
+    public void registerModel(BlockBase block){
         block.registerModel();
     }
 }

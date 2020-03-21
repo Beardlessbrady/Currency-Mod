@@ -1,4 +1,4 @@
-package beardlessbrady.modcurrency.block.tradein;
+package beardlessbrady.modcurrency.block.economyblocks.tradein;
 
 import beardlessbrady.modcurrency.block.ModBlocks;
 import beardlessbrady.modcurrency.handler.StateHandler;

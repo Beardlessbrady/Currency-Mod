@@ -1,4 +1,4 @@
-package beardlessbrady.modcurrency.block.vending;
+package beardlessbrady.modcurrency.block.economyblocks.tradein;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -14,26 +14,25 @@ import javax.annotation.Nonnull;
  * https://github.com/BeardlessBrady/Currency-Mod
  * -
  * Copyright (C) All Rights Reserved
- * File Created 2019-10-19
+ * File Created 2019-12-08
  */
 
-public class ItemVendorHandler implements IItemHandler, IItemHandlerModifiable, INBTSerializable<NBTTagCompound> {
-    ItemVendor[] itemArray;
+public class ItemTradeinHandler implements IItemHandler, IItemHandlerModifiable, INBTSerializable<NBTTagCompound> {
+    ItemTradein[] itemArray;
+    private final int LIMIT = 256;
+    private int counter = 0;
 
-    public ItemVendorHandler(int size) {
-        itemArray = new ItemVendor[size];
+    public ItemTradeinHandler(int size) {
+        itemArray = new ItemTradein[size];
     }
 
-    public ItemVendor getItemVendor(int i) {
-        if (i >= 0 && i < itemArray.length) {
-            if (itemArray[i] == null)
-                return new ItemVendor(ItemStack.EMPTY);
-            return itemArray[i];
-        } else
-            return new ItemVendor(ItemStack.EMPTY, -1);
+    public ItemTradein getItemTradein(int i) {
+        if (itemArray[i] == null)
+            return new ItemTradein(ItemStack.EMPTY); // If ItemStack is empty return an ItemTradeIn with an empty ItemStack */
+        return itemArray[i];
     }
 
-    public void setItemVendor(int i, ItemVendor item) {
+    public void setItemTradein(int i, ItemTradein item) {
         itemArray[i] = item;
     }
 
@@ -41,6 +40,11 @@ public class ItemVendorHandler implements IItemHandler, IItemHandlerModifiable, 
         itemArray[i] = null;
     }
 
+    public int length() {
+        return itemArray.length;
+    }
+
+    /** Serialize NBT of ItemTradeinHandler for saving **/
     public NBTTagCompound serializeNBT() {
         NBTTagCompound compound = new NBTTagCompound();
         for (int i = 0; i < itemArray.length; i++) {
@@ -51,19 +55,16 @@ public class ItemVendorHandler implements IItemHandler, IItemHandlerModifiable, 
         return compound;
     }
 
+    /** Deserialize NBT from save to be unpacked **/
     public void deserializeNBT(NBTTagCompound nbt) {
         for (int i = 0; i < itemArray.length; i++) {
             if (nbt.hasKey(Integer.toString(i))) {
-                itemArray[i] = new ItemVendor(nbt.getCompoundTag(Integer.toString(i)));
+                itemArray[i] = new ItemTradein(nbt.getCompoundTag(Integer.toString(i)));
             }
         }
     }
 
-    public int length() {
-        return itemArray.length;
-    }
-
-    //------------#ItemStackHandler Overwritten fields----------
+    //#ItemStackHandler Overwritten fields
     @Override
     public int getSlots() {
         return itemArray.length;
@@ -75,6 +76,7 @@ public class ItemVendorHandler implements IItemHandler, IItemHandlerModifiable, 
         if(itemArray[slot] == null){
             return ItemStack.EMPTY;
         }
+
         return itemArray[slot].getStack();
     }
 
@@ -82,7 +84,7 @@ public class ItemVendorHandler implements IItemHandler, IItemHandlerModifiable, 
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
       //  if(itemArray[slot] == null){
-       //     setItemVendor(slot, new ItemVendor(stack));
+       //     setItemTradein(slot, new ItemTradein(stack));
         //    return ItemStack.EMPTY;
       //  }else{
        //    return itemArray[slot].growSizeWithStack(stack);
@@ -105,7 +107,7 @@ public class ItemVendorHandler implements IItemHandler, IItemHandlerModifiable, 
 
     @Override
     public int getSlotLimit(int slot) {
-        return 256;
+        return LIMIT; //TODO CONFIG
     }
 
     @Override

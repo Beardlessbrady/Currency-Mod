@@ -1,8 +1,6 @@
 package beardlessbrady.modcurrency.block;
 
 import beardlessbrady.modcurrency.ModCurrency;
-import beardlessbrady.modcurrency.block.vending.TileVending;
-import beardlessbrady.modcurrency.handler.StateHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -28,11 +26,11 @@ import javax.annotation.Nullable;
  * File Created 2019-02-08
  */
 
-public class EconomyBlockBase extends Block {
-    Class<? extends TileEconomyBase> tileClass;
+public class BlockBase extends Block {
+    Class<? extends TileEntity> tileClass;
 
 
-    public EconomyBlockBase(String name, Class<? extends TileEconomyBase> tileClass) {
+    public BlockBase(String name, Class<? extends TileEntity> tileClass) {
         super(Material.ROCK);
         setRegistryName(name);
         setUnlocalizedName(this.getRegistryName().toString());
@@ -65,15 +63,15 @@ public class EconomyBlockBase extends Block {
         return true;
     }
 
-    public TileEconomyBase getTile(World world, BlockPos pos){
-        if(world.getTileEntity(pos) instanceof TileEconomyBase)
-            return (TileEconomyBase)world.getTileEntity(pos);
+    public TileEntity getTile(World world, BlockPos pos){
+        if(world.getTileEntity(pos) instanceof TileEntity)
+            return world.getTileEntity(pos);
         return null;
     }
 
-    public TileEconomyBase getTile(IBlockAccess world, BlockPos pos, IBlockState state) {
-        if(world.getTileEntity(pos) instanceof TileEconomyBase)
-            return (TileEconomyBase)world.getTileEntity(pos);
+    public TileEntity getTile(IBlockAccess world, BlockPos pos, IBlockState state) {
+        if(world.getTileEntity(pos) instanceof TileEntity)
+            return world.getTileEntity(pos);
         return null;
     }
 

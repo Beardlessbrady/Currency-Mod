@@ -1,6 +1,5 @@
-package beardlessbrady.modcurrency.block.vending;
+package beardlessbrady.modcurrency.block.economyblocks.tradein;
 
-import beardlessbrady.modcurrency.utilities.UtilMethods;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
@@ -10,48 +9,33 @@ import net.minecraft.nbt.NBTTagCompound;
  * https://github.com/BeardlessBrady/Currency-Mod
  * -
  * Copyright (C) All Rights Reserved
- * File Created 2019-10-19
+ * File Created 2019-12-08
  */
 
-public class ItemVendor {
+public class ItemTradein {
     private ItemStack itemStack;
-    private int size, cost, amount;
-    private int[] bundled;
+    private int cost, amount, size, until;
     private int itemMax, timeRaise, timeElapsed;
-    private int sizeLimit;
 
-    public ItemVendor(ItemStack itemStack, int size){
+    public ItemTradein(ItemStack itemStack){
         this.itemStack = itemStack;
-        itemStack.setCount(1);
+        itemStack.setCount(1); // Set itemStack count to 1 as this custom Item handles its own size */
 
-        this.size = size;
-        this.cost = 0;
-
-        amount = 1;
-        itemMax = 0;
-        timeRaise = 0;
-        timeElapsed = 0;
-        sizeLimit = 256;
-    }
-
-    public ItemVendor(ItemStack itemStack){
-        this.itemStack = itemStack;
-
-        size = itemStack.getCount();
-        itemStack.setCount(1);
-
+        size = 0;
+        until = 0;
         cost = 0;
         amount = 1;
         itemMax = 0;
         timeRaise = 0;
         timeElapsed = 0;
-        sizeLimit = 256;
     }
 
-    public ItemVendor(NBTTagCompound compound){
+    public ItemTradein(NBTTagCompound compound){
         fromNBT(compound);
     }
 
+    /** Setters & Getter Methods **/
+    //<editor-fold desc="Setters & Getters">
     public ItemStack getStack(){
         return itemStack;
     }
@@ -80,34 +64,12 @@ public class ItemVendor {
         amount = i;
     }
 
-    public boolean hasBundle(){
-        return bundled != null;
+    public int  getUntil(){
+        return until;
     }
 
-    /**
-     * @return bundle array, 0 is main slot
-     */
-    public int[] getBundle(){
-        return bundled;
-    }
-
-    /**
-     * @param i = Array of bundle slots
-     * main slot is 0
-     */
-    public void setBundle(int[] i){
-        if(i == null){
-            bundled = null;
-        } else {
-            bundled = i.clone();
-        }
-    }
-
-    public int getBundleMainSlot(){
-        if(bundled != null){
-            return bundled[0];
-        }
-        return -1;
+    public void setUntil(int i){
+        until = i;
     }
 
     public int getItemMax(){
@@ -133,15 +95,18 @@ public class ItemVendor {
     public void setTimeElapsed(int i){
         timeElapsed = i;
     }
-    
+
+    //</editor-fold>
+
+    /** NBT Methods **/
+    //<editor-fold desc="NBT Stuff">
     public NBTTagCompound toNBT(){
         NBTTagCompound compound = new NBTTagCompound();
         compound.setTag("stack", itemStack.serializeNBT());
         if(size != 0) compound.setInteger("size", size);
         if(cost != 0) compound.setInteger("cost", cost);
-
         if(amount != 0) compound.setInteger("amount", amount);
-        if(bundled != null) compound.setIntArray("bundled", bundled);
+        if(until != 0) compound.setInteger("until", until);
         if(itemMax != 0) compound.setInteger("itemMax", itemMax);
         if(timeRaise != 0) compound.setInteger("timeRaise", timeRaise);
         if(timeElapsed != 0) compound.setInteger("timeElapsed", timeElapsed);
@@ -159,14 +124,16 @@ public class ItemVendor {
 
             if(nbt.hasKey("cost")){
                 cost = nbt.getInteger("cost");
-            }else cost = 0;
-
-
+            }else{
+                cost = 0;
+            }
             if(nbt.hasKey("amount")){
                 amount = nbt.getInteger("amount");
             }else amount = 0;
 
-            if(nbt.hasKey("bundled")) bundled = nbt.getIntArray("bundled");
+            if(nbt.hasKey("until")){
+                until = nbt.getInteger("until");
+            }else until = 0;
 
             if(nbt.hasKey("itemMax")){
                 itemMax = nbt.getInteger("itemMax");
@@ -181,65 +148,36 @@ public class ItemVendor {
             }else timeElapsed = 0;
         }
     }
+    //</editor-fold>
 
+    /** Shrink size of Item by amount **/
     public void shrinkSize(int amount){
         size = size - amount;
-
         if(size < 0) size = 0;
     }
 
+    /** Shrink size of Item by amount AND output an itemStack of the shrunken amount **/
     public ItemStack shrinkSizeWithStackOutput(int amount){
-            ItemStack outputStack = this.getStack().copy();
-            int output = this.size - amount;
+        ItemStack outputStack = this.getStack().copy();
+        int output = size - amount; // Calculate output stack size */
 
-            if (output < 0) {
-                size = 0;
-                outputStack.setCount(amount + output);
-            } else {
-                size = size - amount;
-                outputStack.setCount(amount);
-            }
-
-            //returns shrunk amount in a stack
-            return outputStack;
-
-    }
-
-    public void growSize(int amount){
-        int maxCheck = sizeLimit - size - amount;
-        if(maxCheck >= 0){
-            size = size + amount;
-        }else{
-            size = size + (amount+maxCheck);
+        if (output < 0) { // If output is < 0 and therefore the stack can't be shrunken by the amount specified */
+            size = 0; //Empty Stack
+            outputStack.setCount(amount + output); // Set Output stack size to amount + output (which is the original size of the itemStack) */
+        } else { // If output is >= 0*/
+            size = size - amount; // Shrink size of itemStack by amount */
+            outputStack.setCount(amount); // set Output stack to amount */
         }
+        return outputStack; // Return output stack with shrunken amount */
     }
 
-    public ItemStack growSizeWithStack(ItemStack stack){
-        if(UtilMethods.equalStacks(this.getStack(), stack, false)) {
-            int amount = stack.getCount();
-            int maxCheck = sizeLimit - size - amount;
-
-            if (maxCheck >= 0) {
-                size = size + amount;
-                return ItemStack.EMPTY;
-            } else {
-                size = size + (amount + maxCheck);
-
-                ItemStack itemStack = getStack();
-                itemStack.setCount(-maxCheck);
-
-                //returns leftover if there is any
-                return itemStack;
-            }
-        }else
-            return stack;
-    }
-
-    public int getSizeLimit(){
-        return sizeLimit;
-    }
-
-    public boolean isEmpty(){
-        return itemStack == ItemStack.EMPTY;
+    /** Grow size of item by amount **/
+    public void growSize(int amount){
+        int maxCheck = 512 - size - amount; // Ensures itemStack size can't grow past size limit */
+        if(maxCheck >= 0){ // If maxCheck is >= 0 it is within the size limit */
+            size = size + amount; // Add amount to size */
+        }else{ // Trying to grow past size limit */
+            size = size + (amount+maxCheck); // Add amount + maxCheck(will be negative) to only grow the item up to the size limit */
+        }
     }
 }

@@ -1,6 +1,6 @@
 package beardlessbrady.modcurrency.proxy;
 
-import beardlessbrady.modcurrency.block.ModBlockColors;
+import beardlessbrady.modcurrency.block.economyblocks.ModBlockColors;
 import beardlessbrady.modcurrency.network.PacketHandler;
 import beardlessbrady.modcurrency.handler.BakedHandler;
 import net.minecraft.client.settings.KeyBinding;

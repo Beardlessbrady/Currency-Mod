@@ -1,11 +1,10 @@
-package beardlessbrady.modcurrency.block.tradein;
+package beardlessbrady.modcurrency.block.economyblocks.vending;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.IItemHandlerModifiable;
-import net.minecraftforge.oredict.OreDictionary;
 
 import javax.annotation.Nonnull;
 
@@ -15,25 +14,26 @@ import javax.annotation.Nonnull;
  * https://github.com/BeardlessBrady/Currency-Mod
  * -
  * Copyright (C) All Rights Reserved
- * File Created 2019-12-08
+ * File Created 2019-10-19
  */
 
-public class ItemTradeinHandler implements IItemHandler, IItemHandlerModifiable, INBTSerializable<NBTTagCompound> {
-    ItemTradein[] itemArray;
-    private final int LIMIT = 256;
-    private int counter = 0;
+public class ItemVendorHandler implements IItemHandler, IItemHandlerModifiable, INBTSerializable<NBTTagCompound> {
+    ItemVendor[] itemArray;
 
-    public ItemTradeinHandler(int size) {
-        itemArray = new ItemTradein[size];
+    public ItemVendorHandler(int size) {
+        itemArray = new ItemVendor[size];
     }
 
-    public ItemTradein getItemTradein(int i) {
-        if (itemArray[i] == null)
-            return new ItemTradein(ItemStack.EMPTY); // If ItemStack is empty return an ItemTradeIn with an empty ItemStack */
-        return itemArray[i];
+    public ItemVendor getItemVendor(int i) {
+        if (i >= 0 && i < itemArray.length) {
+            if (itemArray[i] == null)
+                return new ItemVendor(ItemStack.EMPTY);
+            return itemArray[i];
+        } else
+            return new ItemVendor(ItemStack.EMPTY, -1);
     }
 
-    public void setItemTradein(int i, ItemTradein item) {
+    public void setItemVendor(int i, ItemVendor item) {
         itemArray[i] = item;
     }
 
@@ -41,11 +41,6 @@ public class ItemTradeinHandler implements IItemHandler, IItemHandlerModifiable,
         itemArray[i] = null;
     }
 
-    public int length() {
-        return itemArray.length;
-    }
-
-    /** Serialize NBT of ItemTradeinHandler for saving **/
     public NBTTagCompound serializeNBT() {
         NBTTagCompound compound = new NBTTagCompound();
         for (int i = 0; i < itemArray.length; i++) {
@@ -56,16 +51,19 @@ public class ItemTradeinHandler implements IItemHandler, IItemHandlerModifiable,
         return compound;
     }
 
-    /** Deserialize NBT from save to be unpacked **/
     public void deserializeNBT(NBTTagCompound nbt) {
         for (int i = 0; i < itemArray.length; i++) {
             if (nbt.hasKey(Integer.toString(i))) {
-                itemArray[i] = new ItemTradein(nbt.getCompoundTag(Integer.toString(i)));
+                itemArray[i] = new ItemVendor(nbt.getCompoundTag(Integer.toString(i)));
             }
         }
     }
 
-    //#ItemStackHandler Overwritten fields
+    public int length() {
+        return itemArray.length;
+    }
+
+    //------------#ItemStackHandler Overwritten fields----------
     @Override
     public int getSlots() {
         return itemArray.length;
@@ -77,7 +75,6 @@ public class ItemTradeinHandler implements IItemHandler, IItemHandlerModifiable,
         if(itemArray[slot] == null){
             return ItemStack.EMPTY;
         }
-
         return itemArray[slot].getStack();
     }
 
@@ -85,7 +82,7 @@ public class ItemTradeinHandler implements IItemHandler, IItemHandlerModifiable,
     @Override
     public ItemStack insertItem(int slot, @Nonnull ItemStack stack, boolean simulate) {
       //  if(itemArray[slot] == null){
-       //     setItemTradein(slot, new ItemTradein(stack));
+       //     setItemVendor(slot, new ItemVendor(stack));
         //    return ItemStack.EMPTY;
       //  }else{
        //    return itemArray[slot].growSizeWithStack(stack);
@@ -108,7 +105,7 @@ public class ItemTradeinHandler implements IItemHandler, IItemHandlerModifiable,
 
     @Override
     public int getSlotLimit(int slot) {
-        return LIMIT; //TODO CONFIG
+        return 256;
     }
 
     @Override

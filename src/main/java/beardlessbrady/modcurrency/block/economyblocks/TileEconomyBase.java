@@ -1,4 +1,4 @@
-package beardlessbrady.modcurrency.block;
+package beardlessbrady.modcurrency.block.economyblocks;
 
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.nbt.NBTTagCompound;

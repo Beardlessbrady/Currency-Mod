@@ -1,7 +1,7 @@
-package beardlessbrady.modcurrency.block.tradein;
+package beardlessbrady.modcurrency.block.economyblocks.tradein;
 
 import beardlessbrady.modcurrency.ModCurrency;
-import beardlessbrady.modcurrency.block.vending.TileVending;
+import beardlessbrady.modcurrency.block.economyblocks.vending.TileVending;
 import beardlessbrady.modcurrency.network.PacketHandler;
 import beardlessbrady.modcurrency.network.PacketOutChangeToServer;
 import beardlessbrady.modcurrency.network.PacketSetFieldToServer;
@@ -10,7 +10,6 @@ import beardlessbrady.modcurrency.utilities.UtilMethods;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -29,7 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static beardlessbrady.modcurrency.block.TileEconomyBase.*;
+import static beardlessbrady.modcurrency.block.economyblocks.TileEconomyBase.*;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as

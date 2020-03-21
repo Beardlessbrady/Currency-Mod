@@ -1,7 +1,7 @@
 package beardlessbrady.modcurrency.network;
 
-import beardlessbrady.modcurrency.block.tradein.TileTradein;
-import beardlessbrady.modcurrency.block.vending.TileVending;
+import beardlessbrady.modcurrency.block.economyblocks.tradein.TileTradein;
+import beardlessbrady.modcurrency.block.economyblocks.vending.TileVending;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.math.BlockPos;
@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
-import static beardlessbrady.modcurrency.block.vending.TileVending.FIELD_SELECTED;
+import static beardlessbrady.modcurrency.block.economyblocks.vending.TileVending.FIELD_SELECTED;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
