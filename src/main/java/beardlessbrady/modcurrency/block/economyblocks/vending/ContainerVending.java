@@ -440,10 +440,10 @@ public class ContainerVending extends Container {
                     if (te.growOutItemSize(outputStack, outSlot).equals(ItemStack.EMPTY)) {
                         player.world.playSound(player.posX, player.posY, player.posZ, SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.BLOCKS, 0.05F, 5.0F, false);
 
-                        int newCashReserve = te.getField(TileEconomyBase.FIELD_CASHRESERVE) - (te.getItemVendor(index).getCost() * (count / te.getItemVendor(index).getAmount()));
-                        int newCashRegister = te.getField(TileEconomyBase.FIELD_CASHREGISTER) + (te.getItemVendor(index).getCost() * (count / te.getItemVendor(index).getAmount()));
-                        te.setField(TileEconomyBase.FIELD_CASHRESERVE, newCashReserve);
-                        te.setField(TileEconomyBase.FIELD_CASHREGISTER, newCashRegister);
+                        long newCashReserve = te.getLongField(TileEconomyBase.LONG_FIELD_CASHRESERVE) - (te.getItemVendor(index).getCost() * (count / te.getItemVendor(index).getAmount()));
+                        long newCashRegister = te.getLongField(TileEconomyBase.LONG_FIELD_CASHREGISTER) + (te.getItemVendor(index).getCost() * (count / te.getItemVendor(index).getAmount()));
+                        te.setLongField(TileEconomyBase.LONG_FIELD_CASHRESERVE, newCashReserve);
+                        te.setLongField(TileEconomyBase.LONG_FIELD_CASHREGISTER, newCashRegister);
                         if(!infinite)
                             te.getItemVendor(index).shrinkSize(count);
                     }
@@ -482,10 +482,10 @@ public class ContainerVending extends Container {
                     }
                 }
 
-                int newCashReserve = te.getField(TileEconomyBase.FIELD_CASHRESERVE) - (te.getItemVendor(mainIndex).getCost());
-                int newCashRegister = te.getField(TileEconomyBase.FIELD_CASHREGISTER) + (te.getItemVendor(mainIndex).getCost());
-                te.setField(TileEconomyBase.FIELD_CASHRESERVE, newCashReserve);
-                te.setField(TileEconomyBase.FIELD_CASHREGISTER, newCashRegister);
+                long newCashReserve = te.getLongField(TileEconomyBase.LONG_FIELD_CASHRESERVE) - (te.getItemVendor(mainIndex).getCost());
+                long newCashRegister = te.getLongField(TileEconomyBase.LONG_FIELD_CASHREGISTER) + (te.getItemVendor(mainIndex).getCost());
+                te.setLongField(TileEconomyBase.LONG_FIELD_CASHRESERVE, newCashReserve);
+                te.setLongField(TileEconomyBase.LONG_FIELD_CASHREGISTER, newCashRegister);
             }
         }
         return ItemStack.EMPTY;

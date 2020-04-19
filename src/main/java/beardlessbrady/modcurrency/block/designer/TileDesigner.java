@@ -1,13 +1,12 @@
 package beardlessbrady.modcurrency.block.designer;
 
 import beardlessbrady.modcurrency.ModCurrency;
-import beardlessbrady.modcurrency.block.economyblocks.TileEconomyBase;
-import beardlessbrady.modcurrency.block.economyblocks.tradein.TileTradein;
-import beardlessbrady.modcurrency.handler.StateHandler;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.items.ItemStackHandler;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
@@ -18,6 +17,26 @@ import net.minecraft.world.World;
  * File Created 2020-03-20
  */
 public class TileDesigner extends TileEntity {
+
+    // inventory Itemhandler
+    private ItemStackHandler inventoryHandler = new ItemStackHandler(2) {
+        @Override
+        protected void onContentsChanged(int slot) {
+            super.onContentsChanged(slot);
+            markDirty();
+        }
+    };
+
+    // customized Itemhandler
+    private ItemStackHandler customHandler = new ItemStackHandler(2) {
+        @Override
+        protected void onContentsChanged(int slot) {
+            super.onContentsChanged(slot);
+            markDirty();
+        }
+    };
+
+
 
     /** To open the GUI **/
     public void openGui(EntityPlayer player, World world, BlockPos pos){

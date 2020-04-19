@@ -23,10 +23,10 @@ public class BlockDesigner extends BlockBase {
 
     @Override
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        if (!worldIn.isRemote) { // If CLIENT open GUI
+      //  if (!worldIn.isRemote) { // If CLIENT open GUI
             ((TileDesigner) getTile(worldIn, pos)).openGui(playerIn, worldIn, pos);
             return true;
-        }
-        return true;
+      //  }
+       // return true;
     }
 }

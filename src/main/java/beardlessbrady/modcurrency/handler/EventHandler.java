@@ -3,6 +3,7 @@ package beardlessbrady.modcurrency.handler;
 import beardlessbrady.modcurrency.block.BlockBase;
 import beardlessbrady.modcurrency.block.economyblocks.TileEconomyBase;
 import net.minecraft.block.Block;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -23,12 +24,14 @@ public class EventHandler {
         Block brokeBlock = e.getWorld().getBlockState(e.getPos()).getBlock();
 
         if (brokeBlock instanceof BlockBase) {
-            TileEconomyBase tile = (TileEconomyBase) e.getWorld().getTileEntity(e.getPos());
-            if (e.getWorld().getBlockState(e.getPos()).getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP)
-                tile =  (TileEconomyBase) e.getWorld().getTileEntity(e.getPos().down());
+            TileEntity tile = e.getWorld().getTileEntity(e.getPos());
+            if(tile instanceof TileEconomyBase) {
+                if (e.getWorld().getBlockState(e.getPos()).getValue(StateHandler.TWOTALL) == StateHandler.EnumTwoBlock.TWOTOP)
+                    tile = e.getWorld().getTileEntity(e.getPos().down());
 
-            if (!((e.getEntityPlayer().getUniqueID().equals(tile.getOwner())) || e.getEntityPlayer().isCreative())) {     //If not Owner (and not in creative) Can't Break
-                e.setCanceled(true);
+                if (!((e.getEntityPlayer().getUniqueID().equals(((TileEconomyBase)tile).getOwner())) || e.getEntityPlayer().isCreative())) {     //If not Owner (and not in creative) Can't Break
+                    e.setCanceled(true);
+                }
             }
         }
     }

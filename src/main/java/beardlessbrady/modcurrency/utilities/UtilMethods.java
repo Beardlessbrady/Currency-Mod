@@ -49,8 +49,8 @@ public final class UtilMethods {
         return "Broken";
     }
 
-    public static String translateMoney(int amount){
-        String amnt = Integer.toString(amount);
+    public static String translateMoney(long amount){
+        String amnt = Long.toString(amount);
         String finalTranslation;
 
 

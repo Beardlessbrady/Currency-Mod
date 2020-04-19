@@ -63,6 +63,7 @@ public class CurrencyCommand implements ICommand {
                 createDirectory(new File("resourcepacks/testme/assets/modcurrency"));
                 createDirectory(new File("resourcepacks/testme/assets/modcurrency/models"));
                 createDirectory(new File("resourcepacks/testme/assets/modcurrency/models/item"));
+                createDirectory(new File("resourcepacks/testme/assets/modcurrency/models/item/currency"));
                 createDirectory(new File("resourcepacks/testme/assets/modcurrency/textures"));
                 createDirectory(new File("resourcepacks/testme/assets/modcurrency/textures/items"));
                 createDirectory(new File("resourcepacks/testme/assets/modcurrency/textures/items/currency"));
@@ -216,7 +217,7 @@ public class CurrencyCommand implements ICommand {
         Gson gson = gsonBuilder.create();
 
 
-        try (FileWriter file = new FileWriter("resourcepacks/testme/assets/modcurrency/models/item/currency_" + value + ".json")) {
+        try (FileWriter file = new FileWriter("resourcepacks/testme/assets/modcurrency/models/item/currency/currency_" + value + ".json")) {
             file.write(gson.toJson(jsonFile));
             file.flush();
         } catch (IOException e) {

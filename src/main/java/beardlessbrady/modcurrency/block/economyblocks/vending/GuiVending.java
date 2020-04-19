@@ -225,7 +225,7 @@ public class GuiVending extends GuiContainer {
         fontRenderer.drawStringWithShadow(I18n.format("guivending.moneysign"), 7, -30, Integer.parseInt("ffffff", 16));
 
         //draws players cash in machine
-        fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getField(TileVending.FIELD_CASHRESERVE))), 15, -30, Integer.parseInt("ffffff", 16));
+        fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getLongField(TileVending.LONG_FIELD_CASHRESERVE))), 15, -30, Integer.parseInt("ffffff", 16));
         GL11.glPopMatrix();
         GL11.glDisable(GL11.GL_DEPTH_TEST);
 
@@ -250,7 +250,7 @@ public class GuiVending extends GuiContainer {
             GL11.glScalef(0.7F, 0.7F, 0.8F);
             fontRenderer.drawStringWithShadow(I18n.format("guivending.profit"), 7, -10, Integer.parseInt("3D78E0", 16));
             fontRenderer.drawStringWithShadow(I18n.format("guivending.moneysign"), 7, 0, Integer.parseInt("ffffff", 16));
-            fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getField(TileVending.FIELD_CASHREGISTER))), 15, 0, Integer.parseInt("ffffff", 16));
+            fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getLongField(TileVending.LONG_FIELD_CASHREGISTER))), 15, 0, Integer.parseInt("ffffff", 16));
             GL11.glPopMatrix();
             GL11.glDisable(GL11.GL_DEPTH_TEST);
 

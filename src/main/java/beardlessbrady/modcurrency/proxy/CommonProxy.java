@@ -43,7 +43,6 @@ public class CommonProxy {
 
     public void Init(FMLInitializationEvent e){
         MinecraftForge.EVENT_BUS.register(new EventHandler());
-        Minecraft.getMinecraft().getItemColors().registerItemColorHandler(new ItemColorCurrency(), ModItems.itemPlayerCurrency);
     }
 
 

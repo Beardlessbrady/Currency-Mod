@@ -64,6 +64,12 @@ public class ContainerTradein extends Container {
         setupTeInv();
     }
 
+    /** Required to allow block to be interacted with **/
+    @Override
+    public boolean canInteractWith(EntityPlayer playerIn) {
+        return true;
+    }
+
     /** Setup Player's inventory in the UI **/
     private void setupPlayerInv(InventoryPlayer invPlayer) {
         // Size of SLOT box X and Y */
@@ -242,11 +248,6 @@ public class ContainerTradein extends Container {
             }
         }
         return ItemStack.EMPTY;
-    }
-
-    @Override
-    public boolean canInteractWith(EntityPlayer playerIn) {
-        return true;
     }
 
     //<editor-fold desc="Client Sync">

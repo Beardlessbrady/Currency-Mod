@@ -20,7 +20,8 @@ import java.util.UUID;
  */
 
 public class TileEconomyBase extends TileEntity implements ITickable {
-    protected int cashReserve, cashRegister, selectedSlot;
+    protected int selectedSlot;
+    protected long cashReserve, cashRegister;
     protected EnumDyeColor color;
     protected boolean mode, creative;
     protected UUID owner, playerUsing;
@@ -64,8 +65,8 @@ public class TileEconomyBase extends TileEntity implements ITickable {
         super.writeToNBT(compound);
         compound.setInteger("color", color.getDyeDamage());
         compound.setInteger("currSys", currSys);
-        compound.setInteger("cashReserve", cashReserve);
-        compound.setInteger("cashRegister", cashRegister);
+        compound.setLong("cashReserve", cashReserve);
+        compound.setLong("cashRegister", cashRegister);
         compound.setBoolean("mode", mode);
         compound.setUniqueId("playerUsing", playerUsing);
         compound.setUniqueId("owner", owner);
@@ -81,8 +82,8 @@ public class TileEconomyBase extends TileEntity implements ITickable {
         super.readFromNBT(compound);
         if (compound.hasKey("color")) color = EnumDyeColor.byDyeDamage(compound.getInteger("color"));
         if (compound.hasKey("currSys")) currSys = compound.getInteger("currSys");
-        if (compound.hasKey("cashReserve")) cashReserve = compound.getInteger("cashReserve");
-        if(compound.hasKey("cashRegister")) cashRegister = compound.getInteger("cashRegister");
+        if (compound.hasKey("cashReserve")) cashReserve = compound.getLong("cashReserve");
+        if(compound.hasKey("cashRegister")) cashRegister = compound.getLong("cashRegister");
         if (compound.hasKey("mode")) mode = compound.getBoolean("mode");
         if (compound.hasKey("playerUsing")) playerUsing = compound.getUniqueId("playerUsing");
         if (compound.hasUniqueId("owner")) owner = compound.getUniqueId("owner");
@@ -103,8 +104,8 @@ public class TileEconomyBase extends TileEntity implements ITickable {
         NBTTagCompound compound = new NBTTagCompound();
         compound.setInteger("color", color.getDyeDamage());
         compound.setInteger("currSys", currSys);
-        compound.setInteger("cashReserve", cashReserve);
-        compound.setInteger("cashRegister", cashRegister);
+        compound.setLong("cashReserve", cashReserve);
+        compound.setLong("cashRegister", cashRegister);
         compound.setBoolean("mode", mode);
         compound.setUniqueId("playerUsing", playerUsing);
         compound.setUniqueId("owner", owner);
@@ -124,8 +125,8 @@ public class TileEconomyBase extends TileEntity implements ITickable {
         if(compound.hasKey("color")) color = EnumDyeColor.byDyeDamage(compound.getInteger("color"));
         if(compound.hasKey("currSys")) currSys = compound.getInteger("currSys");
         if(compound.hasKey("mode")) mode = compound.getBoolean("mode");
-        if(compound.hasKey("cashReserve")) cashReserve = compound.getInteger("cashReserve");
-        if(compound.hasKey("cashRegister")) cashRegister = compound.getInteger("cashRegister");
+        if(compound.hasKey("cashReserve")) cashReserve = compound.getLong("cashReserve");
+        if(compound.hasKey("cashRegister")) cashRegister = compound.getLong("cashRegister");
         if(compound.hasKey("playerUsing")) playerUsing = compound.getUniqueId("playerUsing");
         if(compound.hasUniqueId("owner")) owner = compound.getUniqueId("owner");
         if(compound.hasKey("creative")) creative = compound.getBoolean("creative");
@@ -137,8 +138,6 @@ public class TileEconomyBase extends TileEntity implements ITickable {
 
     //Field Id's
     public static final byte FIELD_MODE = 0;
-    public static final byte FIELD_CASHRESERVE = 1;
-    public static final byte FIELD_CASHREGISTER = 2;
     public static final byte FIELD_SELECTED = 6;
     public static final byte FIELD_CREATIVE = 7;
     public static final byte FIELD_CURRSYS = 8;
@@ -151,12 +150,6 @@ public class TileEconomyBase extends TileEntity implements ITickable {
         switch(id){
             case FIELD_MODE:
                 mode = (value == 1);
-                break;
-            case FIELD_CASHRESERVE:
-                cashReserve = value;
-                break;
-            case FIELD_CASHREGISTER:
-                cashRegister = value;
                 break;
             case FIELD_SELECTED:
                 selectedSlot = value;
@@ -174,10 +167,6 @@ public class TileEconomyBase extends TileEntity implements ITickable {
         switch(id){
             case FIELD_MODE:
                 return (mode)? 1 : 0;
-            case FIELD_CASHRESERVE:
-                return cashReserve;
-            case FIELD_CASHREGISTER:
-                return cashRegister;
             case FIELD_SELECTED:
                 return selectedSlot;
             case FIELD_CREATIVE:
@@ -186,6 +175,31 @@ public class TileEconomyBase extends TileEntity implements ITickable {
                 return currSys;
         }
         return 0;
+    }
+
+    //Long Field Id's
+    public static final byte LONG_FIELD_CASHRESERVE = 0;
+    public static final byte LONG_FIELD_CASHREGISTER = 1;
+
+    public long getLongField(int id){
+        switch(id){
+            case LONG_FIELD_CASHRESERVE:
+                return cashReserve;
+            case LONG_FIELD_CASHREGISTER:
+                return cashRegister;
+        }
+        return 0;
+    }
+
+    public void setLongField(int id, long value){
+        switch(id){
+            case LONG_FIELD_CASHRESERVE:
+                cashReserve = value;
+                break;
+            case LONG_FIELD_CASHREGISTER:
+                cashRegister = value;
+                break;
+        }
     }
 
     public UUID getOwner(){

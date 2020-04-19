@@ -95,7 +95,7 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
                                 int cost = item.getCost();
                                 int bulk = item.getAmount(); //Bulk Sell
 
-                                int inputAmount = inputStackHandler.getStackInSlot(0).getCount() / bulk; //Divide by bulk size
+                                long inputAmount = inputStackHandler.getStackInSlot(0).getCount() / bulk; //Divide by bulk size
 
                                 if(inputAmount != 0) { //If input has high enough count to sell to specified bulk amount
 
@@ -126,8 +126,8 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
                                         cashReserve = cashReserve + cost * inputAmount; // Add money to players cash */
                                         cashRegister = cashRegister - cost * inputAmount; // Remove price from machine cash */
 
-                                        inputStackHandler.getStackInSlot(0).shrink(inputAmount*bulk); // Remove item from input */
-                                        inventoryStackHandler.getItemTradein(i).growSize(inputAmount*bulk); // Add item to machine */
+                                        inputStackHandler.getStackInSlot(0).shrink((int)inputAmount*bulk); // Remove item from input */
+                                        inventoryStackHandler.getItemTradein(i).growSize((int)inputAmount*bulk); // Add item to machine */
 
                                         world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.ENTITY_EXPERIENCE_ORB_PICKUP, SoundCategory.BLOCKS, 0.05F, 5.0F, false);
                                     }
@@ -263,7 +263,7 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
 
     /** Outputs Currency in Machine **/
     public void outChange(boolean blockBreak) {
-        int bank;
+        long bank;
 
         OUTER_LOOP:
         for (int i = ConfigCurrency.currencyValues.length - 1; i >= 0; i--) {
@@ -275,7 +275,7 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
 
             boolean repeat = false;
             if ((bank / (Float.parseFloat(ConfigCurrency.currencyValues[i])) * 100) > 0) { //Divisible by currency value
-                int amount = (bank / ((int) ((Float.parseFloat(ConfigCurrency.currencyValues[i])) * 100)));
+                long amount = (bank / ((long) ((Float.parseFloat(ConfigCurrency.currencyValues[i])) * 100)));
 
                 if (amount > 64) {
                     amount = 64;
@@ -283,7 +283,7 @@ public class TileTradein extends TileEconomyBase implements ICapabilityProvider{
                 }
 
                 if(amount != 0) {
-                    ItemStack outChange = new ItemStack(ModItems.itemCurrency, amount, i);
+                    ItemStack outChange = new ItemStack(ModItems.itemCurrency, (int)amount, i);
 
                     if (blockBreak) { //If Block is being broken spit to the ground
                         world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), outChange));

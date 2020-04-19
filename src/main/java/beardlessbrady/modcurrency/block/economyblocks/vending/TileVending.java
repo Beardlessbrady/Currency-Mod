@@ -90,7 +90,12 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider{
 
                 if (amount + cashReserve <= 999999999) {
                     inputStackHandler.setStackInSlot(0, ItemStack.EMPTY);
+
+                    System.out.println(cashReserve + " + " + amount);
+
                     cashReserve += amount;
+
+                    System.out.println(cashReserve);
                 } else {
                     setMessage("CAN'T FIT ANYMORE CURRENCY!", (byte) 40);
                     world.playSound(pos.getX(), pos.getY(), pos.getZ(), SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 0.5F, 3.0F, false);
@@ -222,10 +227,6 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider{
         switch(id){
             case FIELD_MODE:
                 return (mode)? 1 : 0;
-            case FIELD_CASHRESERVE:
-                return cashReserve;
-            case FIELD_CASHREGISTER:
-                return cashRegister;
             case FIELD_FINITE:
                 return (finite)? 1 : 0;
             default:
@@ -235,7 +236,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider{
     //</editor-fold>
 
     public boolean canAfford(int slot, int amount){
-        if(inventoryStackHandler.getItemVendor(slot).getCost() * (amount / inventoryStackHandler.getItemVendor(slot).getAmount()) <= getField(TileEconomyBase.FIELD_CASHRESERVE))
+        if(inventoryStackHandler.getItemVendor(slot).getCost() * (amount / inventoryStackHandler.getItemVendor(slot).getAmount()) <= getLongField(TileEconomyBase.LONG_FIELD_CASHRESERVE))
             return true;
 
         return false;
@@ -284,7 +285,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider{
     }
 
     public void outChange(boolean blockBreak) {
-        int bank;
+        long bank;
 
         OUTER_LOOP:
         for (int i = ConfigCurrency.currencyValues.length - 1; i >= 0; i--) {
@@ -296,7 +297,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider{
 
             boolean repeat = false;
             if ((bank / (Float.parseFloat(ConfigCurrency.currencyValues[i])) * 100) > 0) { //Divisible by currency value
-                int amount = (bank / ((int) ((Float.parseFloat(ConfigCurrency.currencyValues[i])) * 100)));
+                long amount = (bank / ((long) ((Float.parseFloat(ConfigCurrency.currencyValues[i])) * 100)));
 
                 if (amount > 64) {
                     amount = 64;
@@ -304,7 +305,7 @@ public class TileVending extends TileEconomyBase implements ICapabilityProvider{
                 }
 
                 if(amount != 0) {
-                    ItemStack outChange = new ItemStack(ModItems.itemCurrency, amount, i);
+                    ItemStack outChange = new ItemStack(ModItems.itemCurrency, (int)amount, i);
 
                     if (blockBreak) { //If Block is being broken spit to the ground
                         world.spawnEntity(new EntityItem(world, getPos().getX(), getPos().getY(), getPos().getZ(), outChange));

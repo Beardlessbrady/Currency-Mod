@@ -169,7 +169,7 @@ public class GuiTradein extends GuiContainer {
         // Players Money text rendering */
         fontRenderer.drawStringWithShadow(I18n.format("guivending.profit"), 7, -40, Integer.parseInt("2DB22F", 16));
         fontRenderer.drawStringWithShadow(I18n.format("guivending.moneysign"), 7, -30, Integer.parseInt("ffffff", 16));
-        fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getField(TileVending.FIELD_CASHRESERVE))), 15, -30, Integer.parseInt("ffffff", 16));
+        fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getLongField(TileVending.LONG_FIELD_CASHRESERVE))), 15, -30, Integer.parseInt("ffffff", 16));
         // Machines Money text rendering in STOCK MODE*/
         if (te.getField(TileVending.FIELD_MODE) == 1) {
             //If a creative machine add an extra label saying so
@@ -178,7 +178,7 @@ public class GuiTradein extends GuiContainer {
 
             fontRenderer.drawStringWithShadow(I18n.format("guivending.cash"), 7, -10, Integer.parseInt("3D78E0", 16));
             fontRenderer.drawStringWithShadow(I18n.format("guivending.moneysign"), 7, 0, Integer.parseInt("ffffff", 16));
-            fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getField(TileVending.FIELD_CASHREGISTER))), 15, 0, Integer.parseInt("ffffff", 16));
+            fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getLongField(TileVending.LONG_FIELD_CASHREGISTER))), 15, 0, Integer.parseInt("ffffff", 16));
 
             buttonList.set(BUTTONCHANGE, new GuiButton(BUTTONCHANGE, i + 143, j - 5, 20, 20, TextFormatting.BLUE + "$"));  //Changes '$' to blue to signify clicking it cashes out Machines money
         } else { //TRADE MODE
@@ -425,7 +425,7 @@ public class GuiTradein extends GuiContainer {
 
             // Adding items price to tooltip: What is written depends on if machine has enough funds to buy the item */
             if (te.getField(FIELD_MODE) == 0) { // TRADE MODE */
-                if (item.getCost() <= te.getField(FIELD_CASHREGISTER)) {
+                if (item.getCost() <= te.getLongField(LONG_FIELD_CASHREGISTER)) {
                     // Changes text if slot is paying on bulk amount or not
                     if (item.getAmount() == 1) {
                         list.add("Payout of " + TextFormatting.GREEN + "$" + UtilMethods.translateMoney(cost));
