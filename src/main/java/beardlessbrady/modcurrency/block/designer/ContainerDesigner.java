@@ -1,11 +1,16 @@
 package beardlessbrady.modcurrency.block.designer;
 
+import beardlessbrady.modcurrency.item.ModItems;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.SoundCategory;
+import net.minecraftforge.items.CapabilityItemHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 
 /**
@@ -25,6 +30,16 @@ public class ContainerDesigner extends Container {
     public final int PLAYER_INV_COLUMN_COUNT = 9;
     public final int PLAYER_INV_TOTAL_COUNT = PLAYER_INV_COLUMN_COUNT * PLAYER_INV_ROW_COUNT;
     public final int PLAYER_TOTAL_COUNT = HOTBAR_SLOT_COUNT + PLAYER_INV_TOTAL_COUNT;
+
+    public final int TE_TEMPLATE_SLOT_INDEX = 0;
+    public final int TE_COLOR_SLOT_INDEX = 1;
+    public final int TE_CUSTOM_SLOT_INDEX_START = TE_COLOR_SLOT_INDEX + 1;
+    public final int TE_CUSTOM_SLOT_COUNT = 21;
+
+    //36 -- TE Inv
+    public final int GUI_TEMPLATE_SLOTID = 36;
+    public final int GUI_COLOR_SLOTID = 37;
+
 
     public ContainerDesigner(EntityPlayer entityPlayer, TileDesigner te){
         this.te = te;
@@ -67,12 +82,28 @@ public class ContainerDesigner extends Container {
 
     /** Setup Tile's inventory in the UI **/
     private void setupTeInv(){
-      //  addSlotToContainer(new Slot())
+        IItemHandler iItemHandler = this.te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
+        //0 Template, 1 Colour
+        //3-22 Custom Currencies from Template Item
+
+        addSlotToContainer(new SlotItemHandler(iItemHandler, TE_TEMPLATE_SLOT_INDEX, 123, -31)); // Add Template slot
+        addSlotToContainer(new SlotItemHandler(iItemHandler, TE_COLOR_SLOT_INDEX, 123, 67)); // Add Color slot
     }
 
     /** Slot clicked **/
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
+        ItemStack playerStack = player.inventory.getItemStack();
+
+        if(slotId == GUI_TEMPLATE_SLOTID){
+            if (playerStack.getItem().equals(ModItems.itemMasterCurrency)) { // If player tries to input Master Currency Template, TRUE
+                te.setField(TileDesigner.FIELD_TEMPLATE, 1); // Set Tile to know that a template is in the machine
+            } else if(playerStack.isEmpty()) { // If player has an empty hand
+                te.setField(TileDesigner.FIELD_TEMPLATE, 0); // Set Tile to know that a template is no longer in machine
+            }else{
+                return ItemStack.EMPTY;
+            }
+        }
         return super.slotClick(slotId, dragType, clickTypeIn, player);
     }
 

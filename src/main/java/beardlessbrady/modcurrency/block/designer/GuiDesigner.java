@@ -1,11 +1,19 @@
 package beardlessbrady.modcurrency.block.designer;
 
 import beardlessbrady.modcurrency.ModCurrency;
+import beardlessbrady.modcurrency.network.PacketHandler;
+import beardlessbrady.modcurrency.network.PacketSetFieldToServer;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+
+import java.io.IOException;
+
+import static beardlessbrady.modcurrency.block.economyblocks.TileEconomyBase.FIELD_MODE;
 
 /**
  * This class was created by BeardlessBrady. It is distributed as
@@ -24,9 +32,17 @@ public class GuiDesigner extends GuiContainer {
         this.te = te;
     }
 
+    //Button ID's
+    private static final int BUTTONADD = 0;
+
     @Override
     public void initGui() {
         super.initGui();
+        int i = (width - xSize) / 2;
+        int j = (height - ySize) / 2;
+
+        buttonList.add(new GuiButton(BUTTONADD, i + 183, j - 33, 20, 20, "+"));
+        buttonList.get(BUTTONADD).enabled = false;
     }
 
     @Override
@@ -45,5 +61,20 @@ public class GuiDesigner extends GuiContainer {
     @Override
     protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
         super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+
+        if(te.getField(TileDesigner.FIELD_TEMPLATE) == 1){ // If template is in machine
+            buttonList.get(BUTTONADD).enabled = true;
+        } else {
+            buttonList.get(BUTTONADD).enabled = false;
+        }
+    }
+
+    @Override
+    protected void actionPerformed(GuiButton button) throws IOException {
+        switch (button.id) {
+            case BUTTONADD:
+
+                break;
+        }
     }
 }

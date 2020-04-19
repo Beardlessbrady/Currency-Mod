@@ -20,11 +20,13 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ModItems {
     public static ItemCurrency itemCurrency = new ItemCurrency();
     public static ItemPlayerCurrency itemPlayerCurrency = new ItemPlayerCurrency();
+    public static ItemMasterCurrency itemMasterCurrency = new ItemMasterCurrency();
 
     @SubscribeEvent
     public void registerItems(RegistryEvent.Register<Item> event){
         event.getRegistry().register(itemCurrency);
         event.getRegistry().register(itemPlayerCurrency);
+        event.getRegistry().register(itemMasterCurrency);
     }
 
     @SideOnly(Side.CLIENT)
@@ -33,5 +35,6 @@ public class ModItems {
         itemCurrency.initModel();
         itemPlayerCurrency.initModel();
         itemPlayerCurrency.registerCurrencyVariants(); // For special layered item texture
+        itemMasterCurrency.initModel();
     }
 }
