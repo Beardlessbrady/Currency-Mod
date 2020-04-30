@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "modcurrency2_tradein",
+  "pattern": [
+    "aba",
+    "aca",
+    "ada"
+  ],
+  "key": {
+    "a": { "item": "minecraft:iron_ingot" },
+    "b": { "item": "minecraft:hopper" },
+    "c": { "item": "minecraft:chest" },
+    "d": { "item": "minecraft:iron_door" }
+  },
+  "result": {
+    "item": "modcurrency2:blocktradein",
+    "data": 0
+  }
+}

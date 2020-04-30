@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "modcurrency2:items/playercurrency/primedetail/leaf"
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "forge_marker": 1,
+  "defaults": {
+    "parent": "block/tinted_cross",
+    "model": "forge:multi-layer",
+    "textures": {
+      "texture": "modcurrency2:blocks/blocktradein",
+      "particle": "blocks/coal_block"
+    },
+    "custom": {
+      "base": "modcurrency2:blocktradein#base",
+      "Solid": "modcurrency2:blocktradein#base",
+      "Translucent": "modcurrency2:blocktradein#window"
+    },
+    "transform": "forge:default-block"
+  },
+  "variants": {
+    "normal": [{}],
+    "inventory": [{
+      "textures": {
+        "texture": "modcurrency2:blocks/blocktradeinitem",
+        "particle": "blocks/coal_block"
+      },
+      "model": "modcurrency2:tradeinitem",
+      "transform": {
+        "thirdperson_righthand": {
+          "rotation": [ 50, 0, 0 ],
+          "translation": [ 0.00, 0.00, 0.00 ],
+          "scale": [ 0.30, 0.30, 0.30 ]
+        },
+        "thirdperson_lefthand": {
+          "rotation": [ 50, 0, 0 ],
+          "translation": [ 0.00, 0.00, 0.00 ],
+          "scale": [ 0.30, 0.30, 0.30 ]
+        },
+        "firstperson_righthand": {
+          "rotation": [ 0, 96, 0 ],
+          "translation": [ 0.00, 0.00, 0.00 ],
+          "scale": [ 0.30, 0.30, 0.30 ]
+        },
+        "firstperson_lefthand": {
+          "rotation": [ 0, 96, 0 ],
+          "translation": [ 0.00, 0.00, 0.00 ],
+          "scale": [ 0.30, 0.30, 0.30 ]
+        },
+        "gui": {
+          "rotation": [ 22, 212, 0 ],
+          "translation": [ 0.00, -0.20, 0.00 ],
+          "scale": [ 0.50, 0.40, 0.50 ]
+        },
+        "head": {
+          "rotation": [ 0, 0, 0 ],
+          "translation": [ 0.00, 0.00, 0.00 ],
+          "scale": [ 1.00, 1.00, 1.00 ]
+        },
+        "fixed": {
+          "rotation": [ 0, 0, 0 ],
+          "translation": [ 0.00, -0.30, 0.00 ],
+          "scale": [ 0.56, 0.56, 0.56 ]
+        },
+        "ground": {
+          "rotation": [ 0, 0, 0 ],
+          "translation": [ 0.00, 0.00, 0.00 ],
+          "scale": [ 0.40, 0.40, 0.40 ]
+        }
+      }
+    }],
+    "twotall": {
+      "one": {},
+      "twobottom": {},
+      "twotop": {
+        "custom": {
+          "base": "modcurrency2:blocktradein#basetwotop",
+          "Solid": "modcurrency2:blocktradein#basetwotop",
+          "Translucent": "modcurrency2:blocktradein#basetwotopwindow"
+        }
+      }
+    },
+    "facing": {
+      "north": {},
+      "south": {"y": 180},
+      "west": {"y": 270},
+      "east": {"y": 90}
+    },
+    "base": [{
+      "model": "modcurrency2:tradeinbottom"
+    }],
+    "window": [{
+      "model": "modcurrency2:tradeinwindowbottom"
+    }],
+    "basetwotop": [{
+      "model": "modcurrency2:tradeintop"
+    }],
+    "basetwotopwindow": [{
+      "model": "modcurrency2:tradeinwindowtop"
+    }]
+  }
+}
