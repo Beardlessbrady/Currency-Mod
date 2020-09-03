@@ -1,0 +1,45 @@
+//Item names //Nomes dos itens 
+item.modcurrency:banknote_0.name=NÃO ME USE, SUBSTITUÍDO PELA MOEDA DE UM CENTAVO
+item.modcurrency:banknote_1.name=Nota de Cinco Dólares
+item.modcurrency:banknote_2.name=Nota de Dez Dólares
+item.modcurrency:banknote_3.name=Nota de Vinte Dólares
+item.modcurrency:banknote_4.name=Nota de Cinquenta Dólares
+item.modcurrency:banknote_5.name=Nota de Cem Dólares
+item.modcurrency:coin_0.name=Um Centavo
+item.modcurrency:coin_1.name=Cinco Centavos
+item.modcurrency:coin_2.name=Dez Centavos
+item.modcurrency:coin_3.name=Vinte Centavos
+item.modcurrency:coin_4.name=Moeda de Um Dólar
+item.modcurrency:coin_5.name=Moeda de Dois Dólares
+item.modcurrency:wallet.name=Carteira
+item.modcurrency:guidebook.name=Para Cabeças-duras
+item.modcurrency:bundledbag.name=Saco Empacotado
+item.modcurrency:upgrade_1.name= Atualização de Pedido
+item.modcurrency:upgrade_2.name= Atualização de Tamanho I
+item.modcurrency:upgrade_3.name= Atualização de Tamanho II
+item.modcurrency:upgrade_4.name= Atualização de Tamanho III
+item.modcurrency:upgrade_5.name= Atualização de Tamanho IV
+
+//Block names //Nomes dos Blocos
+tile.modcurrency:blockvending.name=Maquina de Vendas
+tile.modcurrency:blockexchanger.name=Maquina de Compras
+tile.modcurrency:blockatm.name=Caixa Eletrônico
+
+//Shared Gui Stuff //Janelas Gui Compartilhadas
+tile.modcurrency:gui.playerinventory=Inventário
+
+//Buy Sell Gui Stuff //Janelas Gui de Compra e Venda
+tile.modcurrency:guivending.profit=Lucro
+tile.modcurrency:guivending.funds=Fundos
+tile.modcurrency:guivending.slotsettings=Configurações
+tile.modcurrency:guivending.cost=Preço:
+tile.modcurrency:guivending.costs=Preços
+tile.modcurrency:guivending.bundle=Qtd:
+tile.modcurrency:guivending.amount=Pedir:
+tile.modcurrency:guivending.cash=Retirar
+tile.modcurrency:guivending.infinitestock=Estoque Infinito
+tile.modcurrency:guivending.locktab=Bloquear Guia
+
+//ATM Gui Stuff // Janelas GUI de ATM /Caixa Eletrônico/
+tile.modcurrency:guiatm.feesettings=Configurações de ATM 
+tile.modcurrency:guiatm.fee=Taxa:
