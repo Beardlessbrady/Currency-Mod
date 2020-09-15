@@ -1,8 +1,5 @@
 package beardlessbrady.modcurrency2.handler;
 
-import beardlessbrady.modcurrency2.block.designer.ContainerDesigner;
-import beardlessbrady.modcurrency2.block.designer.GuiDesigner;
-import beardlessbrady.modcurrency2.block.designer.TileDesigner;
 import beardlessbrady.modcurrency2.block.economyblocks.tradein.ContainerTradein;
 import beardlessbrady.modcurrency2.block.economyblocks.tradein.GuiTradein;
 import beardlessbrady.modcurrency2.block.economyblocks.tradein.TileTradein;
@@ -40,9 +37,6 @@ public class GuiHandler implements IGuiHandler {
             case 31: // Trade-in Machine
                 TileTradein tileTradeIn = (TileTradein) tileEntity;
                 return new ContainerTradein(player, tileTradeIn);
-            case 32: // Currency Designer
-                TileDesigner tileDesigner = (TileDesigner) tileEntity;
-                return new ContainerDesigner(player, tileDesigner);
             default:
                 return null;
         }
@@ -61,9 +55,6 @@ public class GuiHandler implements IGuiHandler {
             case 31: // Trade-in Machine
                 TileTradein tileTradein = (TileTradein) tileEntity;
                 return new GuiTradein(player, tileTradein);
-            case 32: // Currency Designer
-                TileDesigner tileDesigner = (TileDesigner) tileEntity;
-                return new GuiDesigner(player, tileDesigner);
             default:
                 return null;
         }

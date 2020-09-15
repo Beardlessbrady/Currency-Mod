@@ -150,6 +150,9 @@ public class GuiTradein extends GuiContainer {
         int i = (width - xSize) / 2;
         int j = (height - ySize) / 2;
 
+        //If owner or creative make admin button visible
+        buttonList.get(BUTTONADMIN).visible = te.isOwner() || Minecraft.getMinecraft().player.isCreative();
+
         // Barebone GUI text */
         fontRenderer.drawString(I18n.format("tile.modcurrency2:blocktradein.name"), 8, -42, Integer.parseInt("ffffff", 16));
         fontRenderer.drawString(I18n.format("container.inventory"), 8, 87, Color.darkGray.getRGB());
@@ -170,7 +173,7 @@ public class GuiTradein extends GuiContainer {
         fontRenderer.drawStringWithShadow(I18n.format("guivending.profit"), 7, -40, Integer.parseInt("2DB22F", 16));
         fontRenderer.drawStringWithShadow(I18n.format("guivending.moneysign"), 7, -30, Integer.parseInt("ffffff", 16));
         fontRenderer.drawStringWithShadow(I18n.format(UtilMethods.translateMoney(te.getLongField(TileVending.LONG_FIELD_CASHRESERVE))), 15, -30, Integer.parseInt("ffffff", 16));
-        // Machines Money text rendering in STOCK MODE*/
+        // Machines Money text rendering in STOCK MODE
         if (te.getField(TileVending.FIELD_MODE) == 1) {
             //If a creative machine add an extra label saying so
             if (te.getField(TileTradein.FIELD_CREATIVE) == 1)

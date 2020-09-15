@@ -1,6 +1,0 @@
-{
-  "parent": "item/generated",
-  "textures": {
-    "layer0": "modcurrency2:items/playercurrency/shape/currency_circle_big"
-  }
-}

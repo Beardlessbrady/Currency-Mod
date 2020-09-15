@@ -18,18 +18,15 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ModItems {
     public static ItemCurrency itemCurrency = new ItemCurrency();
-    public static ItemMasterCurrency itemMasterCurrency = new ItemMasterCurrency();
 
     @SubscribeEvent
     public void registerItems(RegistryEvent.Register<Item> event){
         event.getRegistry().register(itemCurrency);
-        event.getRegistry().register(itemMasterCurrency);
     }
 
     @SideOnly(Side.CLIENT)
     @SubscribeEvent
     public void registerModels(ModelRegistryEvent event){
         itemCurrency.initModel();
-        itemMasterCurrency.initModel();
     }
 }

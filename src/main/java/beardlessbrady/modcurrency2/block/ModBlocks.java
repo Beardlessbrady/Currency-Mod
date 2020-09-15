@@ -1,6 +1,5 @@
 package beardlessbrady.modcurrency2.block;
 
-import beardlessbrady.modcurrency2.block.designer.BlockDesigner;
 import beardlessbrady.modcurrency2.block.economyblocks.tradein.BlockTradein;
 import beardlessbrady.modcurrency2.block.economyblocks.vending.BlockVending;
 import net.minecraft.block.Block;
@@ -24,9 +23,8 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class ModBlocks {
     public static BlockVending blockVending = new BlockVending();
     public static BlockTradein blockTradein = new BlockTradein();
-    public static BlockDesigner blockDesigner = new BlockDesigner();
 
-    private BlockBase[] blocks = {blockVending, blockTradein, blockDesigner};
+    private BlockBase[] blocks = {blockVending, blockTradein};
 
     @SubscribeEvent
     public void registerBlocks(RegistryEvent.Register<Block> event){

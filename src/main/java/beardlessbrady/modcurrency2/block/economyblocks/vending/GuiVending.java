@@ -179,23 +179,24 @@ public class GuiVending extends GuiContainer {
         if(te.getField(FIELD_MODE) == 1) {
 
             //If not bundles price normal tag background, IF bundles print bundle tag
-            if(te.getItemVendor(te.getField(FIELD_SELECTED)).getBundleMainSlot() != te.getField(FIELD_SELECTED)){
+            if (te.getItemVendor(te.getField(FIELD_SELECTED)).getBundleMainSlot() != te.getField(FIELD_SELECTED)) {
                 drawTexturedModalRect(guiLeft - 107, guiTop + 5, 150, 135, 106, 48);
-            }else
+            } else
                 drawTexturedModalRect(guiLeft - 91, guiTop - 10, 166, 0, 90, 134);
 
-            if(te.getField(FIELD_CREATIVE) == 1) {
+            if (te.getField(FIELD_CREATIVE) == 1) {
                 if (te.getField(FIELD_FINITE) == 1) {
                     //If bundled tag is open move everything down by y=bundleMod
                     int bundleMod = 0;
                     if (te.getItemVendor(te.getField(FIELD_SELECTED)).getBundleMainSlot() == te.getField(FIELD_SELECTED)) {
                         bundleMod = 72;
-                    } else
-                        //Do not draw string on bundled tag mode
-                        drawTexturedModalRect(guiLeft - 14, guiTop + 27, 146, 184, 9, 56);
+                    }
 
                     //finite Tag
                     drawTexturedModalRect(guiLeft - 101, guiTop + 62 + bundleMod, 156, 184, 100, 36);
+                    //Do not draw string on bundled tag mode
+                    if (te.getItemVendor(te.getField(FIELD_SELECTED)).getBundleMainSlot() != te.getField(FIELD_SELECTED))
+                        drawTexturedModalRect(guiLeft - 14, guiTop + 27, 146, 184, 9, 56);
                 }
             }
         }
@@ -474,7 +475,7 @@ public class GuiVending extends GuiContainer {
                 buttonList.get(BUTTONINFINITE).y = j + 55 + bundleMod;
 
                 //Draw slash through infinite button if finite
-                if (te.getField(FIELD_FINITE) == 1)
+                if (te.getField(FIELD_FINITE) != 1)
                     drawTexturedModalRect(-20, 55 + bundleMod, 61, 1, 19, 17);
 
                     //Adds extra 'Restock' screen if inventory is 'finite'
