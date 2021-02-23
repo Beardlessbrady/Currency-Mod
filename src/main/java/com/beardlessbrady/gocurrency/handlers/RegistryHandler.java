@@ -1,5 +1,6 @@
-package com.beardlessbrady.gocurrency;
+package com.beardlessbrady.gocurrency.handlers;
 
+import com.beardlessbrady.gocurrency.GOCurrency;
 import com.beardlessbrady.gocurrency.blocks.DesignerBlock;
 import com.beardlessbrady.gocurrency.items.CurrencyItem;
 import net.minecraft.block.Block;

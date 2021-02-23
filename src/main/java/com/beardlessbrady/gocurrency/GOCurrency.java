@@ -1,5 +1,6 @@
 package com.beardlessbrady.gocurrency;
 
+import com.beardlessbrady.gocurrency.handlers.RegistryHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
