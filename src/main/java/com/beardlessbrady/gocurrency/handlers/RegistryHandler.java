@@ -32,7 +32,7 @@ public class RegistryHandler {
 
     // Items
     public static final RegistryObject<Item> ITEM_CURRENCY = ITEMS.register("currency", () ->
-            new CurrencyItem(new Item.Properties().group(ItemGroup.MATERIALS)));
+            new CurrencyItem(new Item.Properties().group(GOCurrency.GOC_ITEM_GROUP)));
 
     // Blocks
     public static final RegistryObject<Block> BLOCK_DESIGNER = BLOCKS.register("designer", () ->
@@ -40,6 +40,6 @@ public class RegistryHandler {
 
     // ItemBlocks
     public static final RegistryObject<Item> BLOCKITEM_DESIGNER = ITEMS.register("designer", () ->
-            new BlockItem(BLOCK_DESIGNER.get(), new Item.Properties().group(ItemGroup.MATERIALS)));
+            new BlockItem(BLOCK_DESIGNER.get(), new Item.Properties().group(GOCurrency.GOC_ITEM_GROUP)));
 
 }

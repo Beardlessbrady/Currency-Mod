@@ -28,9 +28,11 @@ public class ConfigHandler {
     }
 
     public static ForgeConfigSpec.ConfigValue<List<? extends Double>> configCurrencyValue;
+    public static ForgeConfigSpec.ConfigValue<List<? extends String>> configCurrencyName;
 
     public static void bakeConfig() {
         configCurrencyValue = CLIENT.getConfigCurrencyValue();
+        configCurrencyName = CLIENT.getConfigCurrencyName();
     }
 
     @SubscribeEvent
@@ -40,29 +42,34 @@ public class ConfigHandler {
         }
     }
 
-
-
-
-
-
     public static class ClientConfig {
         public final ForgeConfigSpec.ConfigValue<List<? extends Double>> configCurrencyValue;
-        Predicate<Object> validator = n -> ((Double)n > 0.0 && (Double)n < 999999.999);
+        Predicate<Object> currencyValueValidator = n -> ((Double)n > 0.0 && (Double)n < 999999.999);
 
-      //   defineList(String path, List<? extends T> defaultValue, Predicate<Object> elementValidator) {
-
+        public final ForgeConfigSpec.ConfigValue<List<? extends String>> configCurrencyName;
+        Predicate<Object> currencyNameValidator = n -> (true);
 
         public ForgeConfigSpec.ConfigValue<List<? extends Double>> getConfigCurrencyValue() {
             return configCurrencyValue;
         }
 
-        public ClientConfig (ForgeConfigSpec.Builder builder) {
-            configCurrencyValue = builder
-                    .comment("aBoolean usage description")
-                    .translation(GOCurrency.MODID + ".config." + "aBoolean")
-                    .defineList("configCurrencyValue", Arrays.asList(1.0, 2.0, 3.0), validator);
+        public ForgeConfigSpec.ConfigValue<List<? extends String>> getConfigCurrencyName() {
+            return configCurrencyName;
+        }
 
-            builder.push("Category");
+        public ClientConfig (ForgeConfigSpec.Builder builder) {
+            builder.push("Currency Configuration");
+
+            configCurrencyName = builder
+                    .comment("Currency Names - defining the names of each currency item in the mod.")
+                    .translation(GOCurrency.MODID + ".config." + "configCurrencyName")
+                    .defineList("currencyNames", Arrays.asList("One Cent", "Five Cents", "Ten Cents"), currencyNameValidator);
+
+            configCurrencyValue = builder
+                    .comment("Currency Values - defining the monetary values of each currency item in the mod (0.01 - 9999999.99)")
+                    .translation(GOCurrency.MODID + ".config." + "configCurrencyValue")
+                    .defineList("currencyValue", Arrays.asList(1.0, 2.0, 3.0), currencyValueValidator);
+
             builder.pop();
         }
     }

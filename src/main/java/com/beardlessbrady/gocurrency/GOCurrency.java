@@ -2,6 +2,10 @@ package com.beardlessbrady.gocurrency;
 
 import com.beardlessbrady.gocurrency.handlers.ConfigHandler;
 import com.beardlessbrady.gocurrency.handlers.RegistryHandler;
+import com.beardlessbrady.gocurrency.init.ModItemGroup;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -23,10 +27,9 @@ import org.apache.logging.log4j.Logger;
  */
 @Mod("gocurrency")
 public class GOCurrency {
-    // Directly reference a log4j logger.
-    private static final Logger LOGGER = LogManager.getLogger();
-
     public static String MODID = "gocurrency";
+    public static final ItemGroup GOC_ITEM_GROUP = new ModItemGroup(MODID, () -> new ItemStack(Items.PUMPKIN));
+
 
     public GOCurrency() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
