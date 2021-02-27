@@ -1,15 +1,22 @@
 package com.beardlessbrady.gocurrency.items;
 
+import com.beardlessbrady.gocurrency.GOCurrency;
+import com.beardlessbrady.gocurrency.handlers.ConfigHandler;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.ModLoadingContext;
 
+import java.lang.reflect.Array;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -19,10 +26,18 @@ import java.util.Optional;
  */
 public class CurrencyItem extends Item {
     public static final String NBT_TAG_CURRENCY = "currency";
-
+    private final CurrencyObject[] currencyList;
 
     public CurrencyItem(Properties properties) {
         super(properties);
+
+        currencyList = new CurrencyObject[ConfigHandler.configCurrencyName.get().size()];
+        // Generate Currency from config
+        List<? extends String> currNames = ConfigHandler.configCurrencyName.get();
+        List<? extends Double> currValues = ConfigHandler.configCurrencyValue.get();
+        for(byte i = 0; i < currNames.size(); i++) {
+            currencyList[i] = new CurrencyObject(i, currNames.get(i), currValues.get(i));
+        }
     }
 
     /**
@@ -31,20 +46,19 @@ public class CurrencyItem extends Item {
      * @param stack
      * @return
      */
-    public static EnumCurrency getCurrency(ItemStack stack) {
+    public CurrencyObject getCurrency(ItemStack stack) {
         CompoundNBT compoundNBT = stack.getOrCreateTag();
-        return EnumCurrency.fromNBT(compoundNBT, NBT_TAG_CURRENCY);
+        return fromNBT(compoundNBT, NBT_TAG_CURRENCY);
     }
 
     /**
      * Set NBT currency value for item
-     *
      * @param stack
-     * @param enumCurrency
+     * @param currencyObject
      */
-    public static void setCurrency(ItemStack stack, EnumCurrency enumCurrency) {
+    public static void setCurrency(ItemStack stack, CurrencyObject currencyObject) {
         CompoundNBT compoundNBT = stack.getOrCreateTag();
-        enumCurrency.putIntoNBT(compoundNBT, NBT_TAG_CURRENCY);
+        putIntoNBT(compoundNBT, NBT_TAG_CURRENCY, currencyObject.getID());
     }
 
     /**
@@ -55,7 +69,7 @@ public class CurrencyItem extends Item {
      */
     @Override
     public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
-        for (EnumCurrency currency : EnumCurrency.values()) {
+        for (CurrencyObject currency : currencyList) {
             ItemStack subItemStack = new ItemStack(this, 1);
             setCurrency(subItemStack, currency);
             items.add(subItemStack);
@@ -64,55 +78,54 @@ public class CurrencyItem extends Item {
 
     @Override
     public ITextComponent getDisplayName(ItemStack stack) {
-        ModLoadingContext.get().con
         return super.getDisplayName(stack);
     }
 
-    public enum EnumCurrency implements IStringSerializable {
-        // TODO pull values from CONFIG
-        NULL(0, 0, "Null Coin"),
-        LOONIE(1, 100, "Loonie Coin"),
-        Toonie(2, 200, "Toonie Coin");
+    // NBT Methods
+    private Optional<CurrencyObject> getValuefromID(byte ID) {
+        for (CurrencyObject currency : currencyList) {
+            if (currency.getID() == ID) return Optional.of(currency);
+        }
+        return Optional.empty();
+    }
 
-        private final byte nbtID;
-        private final String name;
-        private final int value;
+    public CurrencyObject fromNBT(CompoundNBT compoundNBT, String tagname) {
+        byte currencyID = 0;
+        if (compoundNBT != null & compoundNBT.contains(tagname)) {
+            currencyID = compoundNBT.getByte(tagname);
+        }
+        Optional<CurrencyObject> currencyValue = getValuefromID(currencyID);
+        return new CurrencyObject((byte)-1, "Error", 0.00);
+    }
 
-        EnumCurrency(int id, int value, String name) {
-            this.nbtID = (byte) id;
+    public static void putIntoNBT(CompoundNBT compoundNBT, String tagname, byte nbtID) {
+        compoundNBT.putByte(tagname, nbtID);
+    }
+
+    /**
+     * Hold Currency values
+     */
+    public static class CurrencyObject{
+        private byte ID;
+        private String name;
+        private double value;
+
+
+        public CurrencyObject(byte id, String name, double value){
+            this.ID = id;
             this.name = name;
             this.value = value;
         }
 
         // Getters
-        @Override
+        public byte getID() {
+            return this.ID;
+        }
         public String getString() {
             return this.name;
         }
-
-        public int getValue() {
+        public double getValue() {
             return this.value;
-        }
-
-        private static Optional<EnumCurrency> getValuefromID(byte ID) {
-            for (EnumCurrency currency : EnumCurrency.values()) {
-                if (currency.nbtID == ID) return Optional.of(currency);
-            }
-            return Optional.empty();
-        }
-
-        // NBT Methods
-        public static EnumCurrency fromNBT(CompoundNBT compoundNBT, String tagname) {
-            byte currencyID = 0;
-            if (compoundNBT != null & compoundNBT.contains(tagname)) {
-                currencyID = compoundNBT.getByte(tagname);
-            }
-            Optional<EnumCurrency> currencyValue = getValuefromID(currencyID);
-            return currencyValue.orElse(NULL);
-        }
-
-        public void putIntoNBT(CompoundNBT compoundNBT, String tagname) {
-            compoundNBT.putByte(tagname, nbtID);
         }
     }
 }

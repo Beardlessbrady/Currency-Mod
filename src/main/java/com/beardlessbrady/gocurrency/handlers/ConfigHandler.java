@@ -18,31 +18,31 @@ import java.util.function.Predicate;
  */
 @Mod.EventBusSubscriber(modid = "gocurrency", bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ConfigHandler {
-    public static final ClientConfig CLIENT;
-    public static final ForgeConfigSpec CLIENT_SPEC;
+    public static final CommonConfig COMMON;
+    public static final ForgeConfigSpec COMMON_SPEC;
 
     static {
-        final Pair<ClientConfig, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(ClientConfig::new);
-        CLIENT_SPEC = specPair.getValue();
-        CLIENT = specPair.getKey();
+        final Pair<CommonConfig, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(CommonConfig::new);
+        COMMON_SPEC = specPair.getValue();
+        COMMON = specPair.getKey();
     }
 
     public static ForgeConfigSpec.ConfigValue<List<? extends Double>> configCurrencyValue;
     public static ForgeConfigSpec.ConfigValue<List<? extends String>> configCurrencyName;
 
     public static void bakeConfig() {
-        configCurrencyValue = CLIENT.getConfigCurrencyValue();
-        configCurrencyName = CLIENT.getConfigCurrencyName();
+        configCurrencyValue = COMMON.getConfigCurrencyValue();
+        configCurrencyName = COMMON.getConfigCurrencyName();
     }
 
     @SubscribeEvent
     public static void onModConfigEvent(final ModConfig.ModConfigEvent configEvent) {
-        if (configEvent.getConfig().getSpec() == ConfigHandler.CLIENT_SPEC) {
+        if (configEvent.getConfig().getSpec() == ConfigHandler.COMMON_SPEC) {
             bakeConfig();
         }
     }
 
-    public static class ClientConfig {
+    public static class CommonConfig {
         public final ForgeConfigSpec.ConfigValue<List<? extends Double>> configCurrencyValue;
         Predicate<Object> currencyValueValidator = n -> ((Double)n > 0.0 && (Double)n < 999999.999);
 
@@ -57,7 +57,7 @@ public class ConfigHandler {
             return configCurrencyName;
         }
 
-        public ClientConfig (ForgeConfigSpec.Builder builder) {
+        public CommonConfig (ForgeConfigSpec.Builder builder) {
             builder.push("Currency Configuration");
 
             configCurrencyName = builder
