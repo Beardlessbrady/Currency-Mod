@@ -12,6 +12,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.IStringSerializable;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeConfigSpec;
 
@@ -26,18 +27,9 @@ import java.util.Optional;
  */
 public class CurrencyItem extends Item {
     public static final String NBT_TAG_CURRENCY = "currency";
-    private final CurrencyObject[] currencyList;
 
     public CurrencyItem(Properties properties) {
         super(properties);
-
-        currencyList = new CurrencyObject[ConfigHandler.configCurrencyName.get().size()];
-        // Generate Currency from config
-        List<? extends String> currNames = ConfigHandler.configCurrencyName.get();
-        List<? extends Double> currValues = ConfigHandler.configCurrencyValue.get();
-        for(byte i = 0; i < currNames.size(); i++) {
-            currencyList[i] = new CurrencyObject(i, currNames.get(i), currValues.get(i));
-        }
     }
 
     /**
@@ -46,19 +38,9 @@ public class CurrencyItem extends Item {
      * @param stack
      * @return
      */
-    public CurrencyObject getCurrency(ItemStack stack) {
+    public static CurrencyObject getCurrency(ItemStack stack) {
         CompoundNBT compoundNBT = stack.getOrCreateTag();
-        return fromNBT(compoundNBT, NBT_TAG_CURRENCY);
-    }
-
-    /**
-     * Set NBT currency value for item
-     * @param stack
-     * @param currencyObject
-     */
-    public static void setCurrency(ItemStack stack, CurrencyObject currencyObject) {
-        CompoundNBT compoundNBT = stack.getOrCreateTag();
-        putIntoNBT(compoundNBT, NBT_TAG_CURRENCY, currencyObject.getID());
+        return fromNBT(stack);
     }
 
     /**
@@ -69,37 +51,59 @@ public class CurrencyItem extends Item {
      */
     @Override
     public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
-        for (CurrencyObject currency : currencyList) {
-            ItemStack subItemStack = new ItemStack(this, 1);
-            setCurrency(subItemStack, currency);
-            items.add(subItemStack);
+        CurrencyItem.CurrencyObject[] currList = GOCurrency.currencyList;
+
+        if(currList != null) {
+            for (CurrencyObject currency : currList) {
+                ItemStack subItemStack = new ItemStack(this, 1);
+                putIntoNBT(subItemStack, currency);
+                items.add(subItemStack);
+            }
         }
     }
 
     @Override
     public ITextComponent getDisplayName(ItemStack stack) {
-        return super.getDisplayName(stack);
+        CurrencyObject object = fromNBT(stack);
+        String name = "ERROR";
+        if(object != null) {
+            name = object.name;
+        }
+        return new StringTextComponent(name);
     }
 
     // NBT Methods
-    private Optional<CurrencyObject> getValuefromID(byte ID) {
-        for (CurrencyObject currency : currencyList) {
-            if (currency.getID() == ID) return Optional.of(currency);
+    private static Optional<CurrencyObject> getValuefromID(byte ID) {
+        CurrencyItem.CurrencyObject[] currList = GOCurrency.currencyList;
+
+        if(currList != null) {
+            for (CurrencyObject currency : currList) {
+                if (currency.getID() == ID) return Optional.of(currency);
+            }
         }
         return Optional.empty();
     }
 
-    public CurrencyObject fromNBT(CompoundNBT compoundNBT, String tagname) {
-        byte currencyID = 0;
-        if (compoundNBT != null & compoundNBT.contains(tagname)) {
-            currencyID = compoundNBT.getByte(tagname);
-        }
-        Optional<CurrencyObject> currencyValue = getValuefromID(currencyID);
-        return new CurrencyObject((byte)-1, "Error", 0.00);
+    /**
+     * Set NBT currency value for item
+     * @param stack
+     * @param currencyObject
+     */
+    public static void putIntoNBT(ItemStack stack, CurrencyObject currencyObject) {
+        CompoundNBT compoundNBT = stack.getOrCreateTag();
+        compoundNBT.putByte(NBT_TAG_CURRENCY, currencyObject.getID());
+        stack.setTag(compoundNBT);
     }
 
-    public static void putIntoNBT(CompoundNBT compoundNBT, String tagname, byte nbtID) {
-        compoundNBT.putByte(tagname, nbtID);
+    public static CurrencyObject fromNBT(ItemStack stack) {
+        byte currencyID = -1;
+        CompoundNBT compoundNBT = stack.getOrCreateTag();
+
+        if (compoundNBT.contains(NBT_TAG_CURRENCY)) {
+            currencyID = compoundNBT.getByte(NBT_TAG_CURRENCY);
+        }
+        Optional<CurrencyObject> currencyValue = getValuefromID(currencyID);
+        return currencyValue.orElse(new CurrencyObject((byte)-1, "Error", 0.00));
     }
 
     /**

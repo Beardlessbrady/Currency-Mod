@@ -3,6 +3,7 @@ package com.beardlessbrady.gocurrency;
 import com.beardlessbrady.gocurrency.handlers.ConfigHandler;
 import com.beardlessbrady.gocurrency.handlers.RegistryHandler;
 import com.beardlessbrady.gocurrency.init.ModItemGroup;
+import com.beardlessbrady.gocurrency.items.CurrencyItem;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -46,7 +47,18 @@ public class GOCurrency {
         RegistryHandler.init();
     }
 
+
+
+    public static CurrencyItem.CurrencyObject[] currencyList;
+    public static List<? extends String> currNames;
+    public static List<? extends Double> currValues;
     private void setup(final FMLCommonSetupEvent event) {
+        currencyList = new CurrencyItem.CurrencyObject[ConfigHandler.configCurrencyName.get().size()];
+        currNames = ConfigHandler.configCurrencyName.get();
+        currValues = ConfigHandler.configCurrencyValue.get();
+        for(byte i = 0; i < currNames.size(); i++) {
+            currencyList[i] = new CurrencyItem.CurrencyObject(i, currNames.get(i), currValues.get(i));
+        }
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
