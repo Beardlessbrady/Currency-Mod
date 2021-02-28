@@ -1,13 +1,14 @@
 package com.beardlessbrady.gocurrency;
 
+import com.beardlessbrady.gocurrency.handlers.ClientRegistryHandler;
+import com.beardlessbrady.gocurrency.handlers.CommonRegistryHandler;
 import com.beardlessbrady.gocurrency.handlers.ConfigHandler;
-import com.beardlessbrady.gocurrency.handlers.RegistryHandler;
+import com.beardlessbrady.gocurrency.init.GenerateResourcePack;
 import com.beardlessbrady.gocurrency.init.ModItemGroup;
 import com.beardlessbrady.gocurrency.items.CurrencyItem;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -19,9 +20,10 @@ import net.minecraftforge.fml.event.lifecycle.InterModEnqueueEvent;
 import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
+import java.io.*;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -44,24 +46,35 @@ public class GOCurrency {
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
-        RegistryHandler.init();
+        CommonRegistryHandler.init();
     }
-
 
 
     public static CurrencyItem.CurrencyObject[] currencyList;
     public static List<? extends String> currNames;
     public static List<? extends Double> currValues;
+
+    /**
+     * @param event
+     */
     private void setup(final FMLCommonSetupEvent event) {
         currencyList = new CurrencyItem.CurrencyObject[ConfigHandler.configCurrencyName.get().size()];
         currNames = ConfigHandler.configCurrencyName.get();
         currValues = ConfigHandler.configCurrencyValue.get();
-        for(byte i = 0; i < currNames.size(); i++) {
+        for (byte i = 0; i < currNames.size(); i++) {
             currencyList[i] = new CurrencyItem.CurrencyObject(i, currNames.get(i), currValues.get(i));
         }
+
+        try {
+            GenerateResourcePack.init();
+        } catch (IOException e) {
+            System.out.println("Good Ol' Currency: Error with creating resource pack - " + e);
+        }
+
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
+        ClientRegistryHandler.doClientStuff();
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {
@@ -86,7 +99,7 @@ public class GOCurrency {
 
     // You can use EventBusSubscriber to automatically subscribe events on the contained class (this is subscribing to the MOD
     // Event bus for receiving Registry Events)
-    @Mod.EventBusSubscriber(bus=Mod.EventBusSubscriber.Bus.MOD)
+    @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class RegistryEvents {
        /* @SubscribeEvent
         public static void onBlocksRegistry(final RegistryEvent.Register<Block> blockRegistryEvent) {

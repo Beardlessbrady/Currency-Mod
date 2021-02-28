@@ -18,7 +18,7 @@ import net.minecraftforge.registries.ForgeRegistries;
  * All Rights Reserved
  * https://github.com/Beardlessbrady/Currency-Mod
  */
-public class RegistryHandler {
+public class CommonRegistryHandler {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, GOCurrency.MODID);
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, GOCurrency.MODID);
 

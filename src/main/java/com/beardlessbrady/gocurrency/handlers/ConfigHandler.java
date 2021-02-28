@@ -63,12 +63,12 @@ public class ConfigHandler {
             configCurrencyName = builder
                     .comment("Currency Names - defining the names of each currency item in the mod.")
                     .translation(GOCurrency.MODID + ".config." + "configCurrencyName")
-                    .defineList("currencyNames", Arrays.asList("One Cent", "Five Cents", "Ten Cents"), currencyNameValidator);
+                    .defineList("currencyNames", Arrays.asList("One Dollar", "Five Dollars", "Ten Dollars", "Twenty Dollars", "Fifty Dollars", "One Hundred Dollars"), currencyNameValidator);
 
             configCurrencyValue = builder
                     .comment("Currency Values - defining the monetary values of each currency item in the mod (0.01 - 9999999.99)")
                     .translation(GOCurrency.MODID + ".config." + "configCurrencyValue")
-                    .defineList("currencyValue", Arrays.asList(1.0, 2.0, 3.0), currencyValueValidator);
+                    .defineList("currencyValue", Arrays.asList(1.0, 5.0, 10.0, 20.0, 50.0, 100.0), currencyValueValidator);
 
             builder.pop();
         }

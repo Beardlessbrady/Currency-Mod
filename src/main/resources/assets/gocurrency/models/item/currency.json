@@ -1,0 +1,16 @@
+{
+  "parent": "builtin/generated",
+  "textures": {
+    "layer0": "gocurrency:items/currency",
+    "layer1": "gocurrency:items/currency"
+  },
+  "__comment": "Currency ID Defaults",
+  "overrides": [
+    { "predicate": { "currency": 0 }, "model": "gocurrency:item/currency_0" },
+    { "predicate": { "currency": 1 }, "model": "gocurrency:item/currency_1" },
+    { "predicate": { "currency": 2 }, "model": "gocurrency:item/currency_2" },
+    { "predicate": { "currency": 3 }, "model": "gocurrency:item/currency_3" },
+    { "predicate": { "currency": 4 }, "model": "gocurrency:item/currency_4" },
+    { "predicate": { "currency": 5 }, "model": "gocurrency:item/currency_5" }
+  ]
+}
