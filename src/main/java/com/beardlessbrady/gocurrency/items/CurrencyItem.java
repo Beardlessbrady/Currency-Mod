@@ -61,8 +61,7 @@ public class CurrencyItem extends Item {
         return new StringTextComponent(name);
     }
 
-    public static float getPropertyOverride(ItemStack itemStack, @Nullable World world, @Nullable LivingEntity livingEntity)
-    {
+    public static float getPropertyOverride(ItemStack itemStack, @Nullable World world, @Nullable LivingEntity livingEntity) {
         CurrencyObject currencyObject = fromNBT(itemStack);
         return currencyObject.getPropertyOverrideValue();
     }
