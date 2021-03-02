@@ -64,11 +64,9 @@ public class VendingTile extends TileEntity implements INamedContainerProvider {
 
     @Nullable
     @Override
-    public Container createMenu(int p_createMenu_1_, PlayerInventory p_createMenu_2_, PlayerEntity p_createMenu_3_) {
-        return null;
+    public Container createMenu(int windowID, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+        return new VendingContainer(windowID, playerInventory, stockContents, inputContents, outputContents);
     }
-
-
 
     // ---- NBT Stuff ----
     private final String STOCK_SLOTS_NBT = "stockSlots";
