@@ -1,14 +1,12 @@
 package com.beardlessbrady.gocurrency;
 
 import com.beardlessbrady.gocurrency.handlers.ClientRegistryHandler;
-import com.beardlessbrady.gocurrency.handlers.CommonRegistryHandler;
+import com.beardlessbrady.gocurrency.handlers.CommonRegistry;
 import com.beardlessbrady.gocurrency.handlers.ConfigHandler;
 import com.beardlessbrady.gocurrency.init.GenerateResourcePack;
 import com.beardlessbrady.gocurrency.init.ModItemGroup;
 import com.beardlessbrady.gocurrency.items.CurrencyItem;
 import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -22,8 +20,6 @@ import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import java.io.*;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.List;
 
 /**
@@ -34,7 +30,8 @@ import java.util.List;
 @Mod("gocurrency")
 public class GOCurrency {
     public static String MODID = "gocurrency";
-    public static final ItemGroup GOC_ITEM_GROUP = new ModItemGroup(MODID, () -> new ItemStack(Items.PUMPKIN));
+    public static final ItemGroup
+            GOC_ITEM_GROUP = new ModItemGroup(MODID, () -> CurrencyItem.getTabItem());
 
     public GOCurrency() {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
@@ -46,7 +43,7 @@ public class GOCurrency {
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
-        CommonRegistryHandler.init();
+        CommonRegistry.init();
     }
 
 

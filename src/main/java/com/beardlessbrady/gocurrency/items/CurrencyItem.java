@@ -1,6 +1,7 @@
 package com.beardlessbrady.gocurrency.items;
 
 import com.beardlessbrady.gocurrency.GOCurrency;
+import com.beardlessbrady.gocurrency.handlers.CommonRegistry;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -43,6 +44,14 @@ public class CurrencyItem extends Item {
                 items.add(subItemStack);
             }
         }
+    }
+
+    public static ItemStack getTabItem(){
+        ItemStack tabItem = new ItemStack(CommonRegistry.ITEM_CURRENCY.get());
+        CurrencyObject nbtCUrrency = new CurrencyObject((byte)0, "One Dollar", 1.0);
+        putIntoNBT(tabItem,nbtCUrrency);
+
+        return tabItem;
     }
 
     @Override

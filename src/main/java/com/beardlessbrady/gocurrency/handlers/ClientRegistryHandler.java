@@ -18,6 +18,6 @@ public class ClientRegistryHandler {
     }
 
     public static void doClientStuff() {
-        ItemModelsProperties.registerProperty(CommonRegistryHandler.ITEM_CURRENCY.get(), new ResourceLocation("currency"), CurrencyItem::getPropertyOverride);
+        ItemModelsProperties.registerProperty(CommonRegistry.ITEM_CURRENCY.get(), new ResourceLocation("currency"), CurrencyItem::getPropertyOverride);
     }
 }
