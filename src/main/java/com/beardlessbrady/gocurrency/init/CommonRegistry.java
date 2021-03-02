@@ -1,4 +1,4 @@
-package com.beardlessbrady.gocurrency.handlers;
+package com.beardlessbrady.gocurrency.init;
 
 import com.beardlessbrady.gocurrency.GOCurrency;
 import com.beardlessbrady.gocurrency.blocks.vending.VendingBlock;
@@ -11,6 +11,7 @@ import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
@@ -24,6 +25,8 @@ import net.minecraftforge.registries.ForgeRegistries;
 public class CommonRegistry {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, GOCurrency.MODID);
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, GOCurrency.MODID);
+    public static final DeferredRegister<TileEntityType<?>> TILES = DeferredRegister.create(ForgeRegistries.TILE_ENTITIES, GOCurrency.MODID);
+    public static final DeferredRegister<ContainerType<?>> CONTAINERS = DeferredRegister.create(ForgeRegistries.CONTAINERS, GOCurrency.MODID);
 
     // Items
     public static final RegistryObject<Item> ITEM_CURRENCY = ITEMS.register("currency", () ->
@@ -38,19 +41,20 @@ public class CommonRegistry {
             new BlockItem(BLOCK_VENDING.get(), new Item.Properties().group(GOCurrency.GOC_ITEM_GROUP)));
 
     // Tiles
-    public static final DeferredRegister<TileEntityType<?>> TILE_ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.TILE_ENTITIES, GOCurrency.MODID);
-    public static final RegistryObject<TileEntityType<VendingTile>> TILE_VENDING = TILE_ENTITY_TYPES.register("vending_te",
-            () -> TileEntityType.Builder.create(VendingTile::new, BLOCK_VENDING.get()).build(null));
-
+    public static final RegistryObject<TileEntityType<VendingTile>> TILE_VENDING = TILES.register("vending_te", () ->
+            TileEntityType.Builder.create(VendingTile::new, BLOCK_VENDING.get()).build(null));
 
     // Containers
-    public static ContainerType<VendingContainer> containerVending;
+    public static final RegistryObject<ContainerType<VendingContainer>> CONTAINER_VENDING = CONTAINERS.register("vending_con", () ->
+            IForgeContainerType.create(VendingContainer::new));
 
     /**
      * Initializes registry
      */
     public static void init() {
-        BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
         ITEMS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
+        TILES.register(FMLJavaModLoadingContext.get().getModEventBus());
+        CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
     }
 }

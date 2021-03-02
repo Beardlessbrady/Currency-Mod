@@ -1,7 +1,7 @@
 package com.beardlessbrady.gocurrency.items;
 
 import com.beardlessbrady.gocurrency.GOCurrency;
-import com.beardlessbrady.gocurrency.handlers.CommonRegistry;
+import com.beardlessbrady.gocurrency.init.CommonRegistry;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;

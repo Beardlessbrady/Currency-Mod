@@ -1,6 +1,6 @@
 package com.beardlessbrady.gocurrency.blocks.vending;
 
-import com.beardlessbrady.gocurrency.handlers.CommonRegistry;
+import com.beardlessbrady.gocurrency.init.CommonRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
@@ -51,8 +51,8 @@ public class VendingContainer extends Container {
 
     // Client side Creation
     public VendingContainer(int windowID, PlayerInventory playerInventory, PacketBuffer extraData) {
-        super(CommonRegistry.containerVending, windowID);
-        if( CommonRegistry.containerVending == null)
+        super(CommonRegistry.CONTAINER_VENDING.get(), windowID);
+        if( CommonRegistry.CONTAINER_VENDING.get() == null)
             throw new IllegalStateException("Must initialise containerTypeVendingContainer before constructing a ContainerVending!");
 
         VendingContents input = new VendingContents(INPUT_SLOTS_COUNT);
@@ -64,8 +64,8 @@ public class VendingContainer extends Container {
 
     // Server side Creation
     public VendingContainer(int windowID, PlayerInventory playerInventory, VendingContents stock, VendingContents input, VendingContents output){
-        super(CommonRegistry.containerVending, windowID);
-        if( CommonRegistry.containerVending == null)
+        super(CommonRegistry.CONTAINER_VENDING.get(), windowID);
+        if( CommonRegistry.CONTAINER_VENDING.get() == null)
             throw new IllegalStateException("Must initialise containerTypeVendingContainer before constructing a ContainerVending!");
 
         generateSlots(stock, input, output, playerInventory);

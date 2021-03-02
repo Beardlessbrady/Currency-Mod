@@ -1,6 +1,6 @@
 package com.beardlessbrady.gocurrency.blocks.vending;
 
-import net.minecraft.block.Block;
+import com.beardlessbrady.gocurrency.init.CommonRegistry;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ContainerBlock;
@@ -12,8 +12,6 @@ import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.network.NetworkHooks;
@@ -34,7 +32,7 @@ public class VendingBlock extends ContainerBlock {
     @Nullable
     @Override
     public TileEntity createNewTileEntity(IBlockReader worldIn) {
-        return createNewTileEntity(worldIn);
+        return CommonRegistry.TILE_VENDING.get().create();
     }
 
     @Override

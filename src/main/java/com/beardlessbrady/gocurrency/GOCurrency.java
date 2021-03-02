@@ -1,14 +1,16 @@
 package com.beardlessbrady.gocurrency;
 
-import com.beardlessbrady.gocurrency.handlers.ClientRegistryHandler;
-import com.beardlessbrady.gocurrency.handlers.CommonRegistry;
+import com.beardlessbrady.gocurrency.init.ClientRegistry;
+import com.beardlessbrady.gocurrency.init.CommonRegistry;
 import com.beardlessbrady.gocurrency.handlers.ConfigHandler;
 import com.beardlessbrady.gocurrency.init.GenerateResourcePack;
 import com.beardlessbrady.gocurrency.init.ModItemGroup;
 import com.beardlessbrady.gocurrency.items.CurrencyItem;
 import net.minecraft.item.ItemGroup;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
@@ -29,7 +31,7 @@ import java.util.List;
  */
 @Mod("gocurrency")
 public class GOCurrency {
-    public static String MODID = "gocurrency";
+    public final static String MODID = "gocurrency";
     public static final ItemGroup
             GOC_ITEM_GROUP = new ModItemGroup(MODID, () -> CurrencyItem.getTabItem());
 
@@ -44,6 +46,10 @@ public class GOCurrency {
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
         CommonRegistry.init();
+
+        // Register Client Side only events
+        final ClientRegistry clientRegistry = new ClientRegistry(MinecraftForge.EVENT_BUS);
+        DistExecutor.safeRunWhenOn(Dist.CLIENT, () -> clientRegistry::registerClientOnlyEvents);
     }
 
 
@@ -71,7 +77,7 @@ public class GOCurrency {
     }
 
     private void doClientStuff(final FMLClientSetupEvent event) {
-        ClientRegistryHandler.doClientStuff();
+        ClientRegistry.doClientStuff();
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {

@@ -1,6 +1,6 @@
 package com.beardlessbrady.gocurrency.blocks.vending;
 
-import com.beardlessbrady.gocurrency.handlers.CommonRegistry;
+import com.beardlessbrady.gocurrency.init.CommonRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -11,7 +11,6 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityType;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -36,7 +35,7 @@ public class VendingTile extends TileEntity implements INamedContainerProvider {
 
     private static final String CONTENTS_INVENTORY_TAG = "contents";
 
-    public VendingTile(TileEntityType<?> tileEntityTypeIn) {
+    public VendingTile() {
         super(CommonRegistry.TILE_VENDING.get());
         stockContents = new VendingContents(STOCK_SLOTS_COUNT, this::canPlayerUse, this::markDirty);
         inputContents = new VendingContents(INPUT_SLOTS_COUNT, this::canPlayerUse, this::markDirty);
