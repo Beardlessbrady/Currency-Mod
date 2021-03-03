@@ -24,10 +24,12 @@ import javax.annotation.Nullable;
  * https://github.com/Beardlessbrady/Currency-Mod
  */
 public class VendingTile extends TileEntity implements INamedContainerProvider {
-    public static final int STOCK_SLOTS_COUNT = 12;
+    public static final int STOCK_ROW_COUNT = 4;
+    public static final int STOCK_COLUMN_COUNT = 4;
+    public static final int STOCK_SLOT_COUNT = STOCK_ROW_COUNT * STOCK_COLUMN_COUNT;
     public static final int INPUT_SLOTS_COUNT = 1;
     public static final int OUTPUT_SLOTS_COUNT = 3;
-    public static final int TOTAL_SLOTS_COUNT = STOCK_SLOTS_COUNT + INPUT_SLOTS_COUNT + OUTPUT_SLOTS_COUNT;
+    public static final int TOTAL_SLOTS_COUNT = STOCK_SLOT_COUNT + INPUT_SLOTS_COUNT + OUTPUT_SLOTS_COUNT;
 
     private VendingContents stockContents;
     private VendingContents inputContents;
@@ -37,7 +39,7 @@ public class VendingTile extends TileEntity implements INamedContainerProvider {
 
     public VendingTile() {
         super(CommonRegistry.TILE_VENDING.get());
-        stockContents = new VendingContents(STOCK_SLOTS_COUNT, this::canPlayerUse, this::markDirty);
+        stockContents = new VendingContents(STOCK_SLOT_COUNT, this::canPlayerUse, this::markDirty);
         inputContents = new VendingContents(INPUT_SLOTS_COUNT, this::canPlayerUse, this::markDirty);
         outputContents = new VendingContents(OUTPUT_SLOTS_COUNT, this::canPlayerUse, this::markDirty);
     }
@@ -95,7 +97,7 @@ public class VendingTile extends TileEntity implements INamedContainerProvider {
         CompoundNBT outputNBT = nbt.getCompound(OUTPUT_SLOTS_NBT);
         outputContents.deserializeNBT(outputNBT);
 
-        if (stockContents.getSizeInventory() != STOCK_SLOTS_COUNT || inputContents.getSizeInventory() != INPUT_SLOTS_COUNT
+        if (stockContents.getSizeInventory() != STOCK_SLOT_COUNT || inputContents.getSizeInventory() != INPUT_SLOTS_COUNT
                 || outputContents.getSizeInventory() != OUTPUT_SLOTS_COUNT)
             throw new IllegalArgumentException("Corrupted NBT: Number of inventory slots did not match expected.");
     }

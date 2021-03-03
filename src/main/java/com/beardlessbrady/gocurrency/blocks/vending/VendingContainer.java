@@ -28,26 +28,36 @@ public class VendingContainer extends Container {
     private static final int PLAYER_INVENTORY_SLOT_COUNT = PLAYER_INVENTORY_COLUMN_COUNT * PLAYER_INVENTORY_ROW_COUNT;
     private static final int VANILLA_SLOT_COUNT = HOTBAR_SLOT_COUNT + PLAYER_INVENTORY_SLOT_COUNT;
 
-    public static final int STOCK_SLOTS_COUNT = VendingTile.STOCK_SLOTS_COUNT;
+    public static final int STOCK_ROW_COUNT = VendingTile.STOCK_ROW_COUNT;
+    public static final int STOCK_COLUMN_COUNT = VendingTile.STOCK_COLUMN_COUNT;
+    public static final int STOCK_SLOT_COUNT = VendingTile.STOCK_SLOT_COUNT;
     public static final int INPUT_SLOTS_COUNT = VendingTile.INPUT_SLOTS_COUNT;
     public static final int OUTPUT_SLOTS_COUNT = VendingTile.OUTPUT_SLOTS_COUNT;
-    public static final int VENDING_SLOTS_COUNT = STOCK_SLOTS_COUNT + INPUT_SLOTS_COUNT + OUTPUT_SLOTS_COUNT;
+    public static final int VENDING_TOTAL_SLOTS_COUNT = STOCK_SLOT_COUNT + INPUT_SLOTS_COUNT + OUTPUT_SLOTS_COUNT;
 
     // Slot Index: The unique index for all slots in this container i.e. 0 - 35 for invPlayer then 36 - 41 for VendingContents
     private static final int VANILLA_FIRST_SLOT_INDEX = 0;
     private static final int HOTBAR_FIRST_SLOT_INDEX = VANILLA_FIRST_SLOT_INDEX;
     private static final int PLAYER_INVENTORY_FIRST_SLOT_INDEX = HOTBAR_FIRST_SLOT_INDEX + HOTBAR_SLOT_COUNT;
     private static final int FIRST_STOCK_SLOT_INDEX = PLAYER_INVENTORY_FIRST_SLOT_INDEX + PLAYER_INVENTORY_SLOT_COUNT;
-    private static final int FIRST_INPUT_SLOT_INDEX = FIRST_STOCK_SLOT_INDEX + STOCK_SLOTS_COUNT;
+    private static final int FIRST_INPUT_SLOT_INDEX = FIRST_STOCK_SLOT_INDEX + STOCK_SLOT_COUNT;
     private static final int FIRST_OUTPUT_SLOT_INDEX = FIRST_INPUT_SLOT_INDEX + INPUT_SLOTS_COUNT;
 
-    // GUI pos of the player inventory grid
+    // GUI pos of inventory grid
     public static final int PLAYER_INVENTORY_XPOS = 8;
-    public static final int PLAYER_INVENTORY_YPOS = 125;
+    public static final int PLAYER_INVENTORY_YPOS = 128;
+    public static final int HOTBAR_XPOS = 8;
+    public static final int HOTBAR_YPOS = 186;
+    public static final int STOCK_INVENTORY_XPOS = 39;
+    public static final int STOCK_INVENTORY_YPOS = -31;
+    public static final int OUTPUT_SLOTS_XPOS = 61;
+    public static final int OUTPUT_SLOTS_YPOS = 71;
+    public static final int INPUT_SLOTS_XPOS = 117;
+    public static final int INPUT_SLOTS_YPOS = 10;
 
     // slot number is the slot number within each component;
     // i.e. invPlayer slots 0 - 35 (hotbar 0 - 8 then main inventory 9 to 35)
-    // and vending: input slots 0 - 2, output slots 0, stock slots 0 - 11
+    // and vending: input slots 0 - 2, output slots 0, stock slots 0 - 16 (for 1x2)
 
     // Client side Creation
     public VendingContainer(int windowID, PlayerInventory playerInventory, PacketBuffer extraData) {
@@ -57,9 +67,9 @@ public class VendingContainer extends Container {
 
         VendingContents input = new VendingContents(INPUT_SLOTS_COUNT);
         VendingContents output = new VendingContents(OUTPUT_SLOTS_COUNT);
-        VendingContents stock = new VendingContents(STOCK_SLOTS_COUNT);
+        VendingContents stock = new VendingContents(STOCK_SLOT_COUNT);
 
-        generateSlots(stock, input, output, playerInventory);
+        generateSlots(playerInventory, stock, input, output, playerInventory);
     }
 
     // Server side Creation
@@ -68,10 +78,10 @@ public class VendingContainer extends Container {
         if( CommonRegistry.CONTAINER_VENDING.get() == null)
             throw new IllegalStateException("Must initialise containerTypeVendingContainer before constructing a ContainerVending!");
 
-        generateSlots(stock, input, output, playerInventory);
+        generateSlots(playerInventory, stock, input, output, playerInventory);
     }
 
-    private void generateSlots(VendingContents stock, VendingContents input, VendingContents output, PlayerInventory playerInventory){
+    private void generateSlots(PlayerInventory invPlayer, VendingContents stock, VendingContents input, VendingContents output, PlayerInventory playerInventory){
         this.stockContents = stock;
         this.inputContents = input;
         this.outputContents = output;
@@ -79,17 +89,13 @@ public class VendingContainer extends Container {
 
         final int SLOT_X_SPACING = 18;
         final int SLOT_Y_SPACING = 18;
-        final int HOTBAR_XPOS = 8;
-        final int HOTBAR_YPOS = 183;
 
-        /*
-        // Add the players hotbar to the gui - the [xpos, ypos] location of each item
-        for (int x = 0; x < HOTBAR_SLOT_COUNT; x++) {
-            int slotNumber = x;
-            addSlot(new Slot(invPlayer, slotNumber, HOTBAR_XPOS + SLOT_X_SPACING * x, HOTBAR_YPOS));
+        // Add the players hotbar to the gui
+        for (int x = 0; x < HOTBAR_SLOT_COUNT; x++) { // x represents slot num
+            addSlot(new Slot(invPlayer, x, HOTBAR_XPOS + SLOT_X_SPACING * x, HOTBAR_YPOS));
         }
 
-        // Add the rest of the players inventory to the gui
+        // Add the expanded player inventory to gui
         for (int y = 0; y < PLAYER_INVENTORY_ROW_COUNT; y++) {
             for (int x = 0; x < PLAYER_INVENTORY_COLUMN_COUNT; x++) {
                 int slotNumber = HOTBAR_SLOT_COUNT + y * PLAYER_INVENTORY_COLUMN_COUNT + x;
@@ -99,29 +105,24 @@ public class VendingContainer extends Container {
             }
         }
 
-        final int FUEL_SLOTS_XPOS = 53;
-        final int FUEL_SLOTS_YPOS = 96;
-        // Add the tile fuel slots
-        for (int x = 0; x < FUEL_SLOTS_COUNT; x++) {
-            int slotNumber = x;
-            addSlot(new SlotFuel(fuelZoneContents, slotNumber, FUEL_SLOTS_XPOS + SLOT_X_SPACING * x, FUEL_SLOTS_YPOS));
+        // Add Stocks slot to gui
+        final int STOCK_Y_SPACING = 22;
+        for (int x = 0; x < STOCK_ROW_COUNT; x++) {
+            for (int y = 0; y < STOCK_COLUMN_COUNT; y++) {
+                int slotNumber = y * STOCK_COLUMN_COUNT + x;
+                int xpos = STOCK_INVENTORY_XPOS + x * SLOT_X_SPACING;
+                int ypos = STOCK_INVENTORY_YPOS + y * STOCK_Y_SPACING;
+                addSlot(new StockSlot(stockContents, slotNumber, xpos, ypos));
+            }
         }
 
-        final int INPUT_SLOTS_XPOS = 26;
-        final int INPUT_SLOTS_YPOS = 24;
-        // Add the tile input slots
-        for (int y = 0; y < INPUT_SLOTS_COUNT; y++) {
-            int slotNumber = y;
-            addSlot(new SlotSmeltableInput(inputZoneContents, slotNumber, INPUT_SLOTS_XPOS, INPUT_SLOTS_YPOS+ SLOT_Y_SPACING * y));
-        }
+        // Add Input slot to gui
+        addSlot(new InputSlot(inputContents, 0, INPUT_SLOTS_XPOS, INPUT_SLOTS_YPOS));
 
-        final int OUTPUT_SLOTS_XPOS = 134;
-        final int OUTPUT_SLOTS_YPOS = 24;
-        // Add the tile output slots
-        for (int y = 0; y < OUTPUT_SLOTS_COUNT; y++) {
-            int slotNumber = y;
-            addSlot(new SlotOutput(outputZoneContents, slotNumber, OUTPUT_SLOTS_XPOS, OUTPUT_SLOTS_YPOS + SLOT_Y_SPACING * y));
-        } */
+        // Add Output slots to gui
+        for (int x = 0; x < OUTPUT_SLOTS_COUNT; x++) { // x is slot num
+            addSlot(new OutputSlot(outputContents, x, OUTPUT_SLOTS_XPOS + SLOT_X_SPACING * x, OUTPUT_SLOTS_YPOS));
+        }
     }
 
     @Override
@@ -164,7 +165,7 @@ public class VendingContainer extends Container {
     }
 
     private enum SlotZones {
-        STOCK_ZONE(FIRST_STOCK_SLOT_INDEX, STOCK_SLOTS_COUNT),
+        STOCK_ZONE(FIRST_STOCK_SLOT_INDEX, STOCK_SLOT_COUNT),
         INPUT_ZONE(FIRST_INPUT_SLOT_INDEX, INPUT_SLOTS_COUNT),
         OUTPUT_ZONE(FIRST_OUTPUT_SLOT_INDEX, OUTPUT_SLOTS_COUNT),
         PLAYER_MAIN(PLAYER_INVENTORY_FIRST_SLOT_INDEX, PLAYER_INVENTORY_SLOT_COUNT),

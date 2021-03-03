@@ -17,8 +17,8 @@ public class VendingContents implements IInventory {
     private final ItemStackHandler vendingComponentContents;
     private Predicate<PlayerEntity> canPlayerAccess = x-> true;
     private Notify markDirtyNotification = ()->{};
-    private Notify openInventoryNotificationLambda = ()->{};
-    private Notify closeInventoryNotificationLambda = ()->{};
+    private final Notify openInventoryNotificationLambda = ()->{};
+    private final Notify closeInventoryNotificationLambda = ()->{};
 
     @FunctionalInterface
     public interface Notify {

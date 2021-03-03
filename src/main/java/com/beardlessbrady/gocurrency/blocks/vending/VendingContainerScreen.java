@@ -16,7 +16,6 @@ import java.awt.*;
  */
 public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
     private VendingContainer vendingContainer;
-
     private static final ResourceLocation TEXTURE = new ResourceLocation("gocurrency", "textures/gui/vending.png");
 
     final static  int FONT_Y_SPACING = 10;
@@ -26,9 +25,6 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
     public VendingContainerScreen(VendingContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
         this.vendingContainer = screenContainer;
-
-        xSize = 176;
-        ySize = 207;
     }
 
     @Override
@@ -48,15 +44,15 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
         this.minecraft.getTextureManager().bindTexture(TEXTURE);
 
-        // Draw background for this window
+        // Draw Background
         int edgeSpacingX = (this.width - this.xSize) / 2;
         int edgeSpacingY = (this.height - this.ySize) / 2;
-        this.blit(matrixStack, edgeSpacingX, edgeSpacingY, 0, 0, this.xSize, this.ySize);
 
-        // Draw title
-        final int LABEL_XPOS = 5;
-        final int LABEL_YPOS = 5;
-        this.font.func_243248_b(matrixStack, this.title, LABEL_XPOS, LABEL_YPOS, Color.darkGray.getRGB());     ///    this.font.drawString
+        //Draw Player Inventory background
+        this.blit(matrixStack, edgeSpacingX, edgeSpacingY + 111, 0, 157, 175, 99);
+
+        //Draw Vending Machine background
+        this.blit(matrixStack, edgeSpacingX + 32, edgeSpacingY - 47, 0, 0, 124, 157);
     }
 
     // Returns true if the given x,y coordinates are within the given rectangle
@@ -64,7 +60,14 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
         return ((mouseX >= x && mouseX <= x+xSize) && (mouseY >= y && mouseY <= y+ySize));
     }
 
+    @Override
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
+        this.font.func_243248_b(matrixStack, this.title, 40, -41, 4210752); //Block Title
+        this.font.func_243248_b(matrixStack, this.playerInventory.getDisplayName(), (float)this.playerInventoryTitleX, 117, 4210752); //Inventory Title
 
-
-
+        // Draw Top tips of outer machine to cover items inside
+        this.minecraft.getTextureManager().bindTexture(TEXTURE);
+        this.blit(matrixStack, 98, -31, 176, 245, 11, 11);
+        this.blit(matrixStack, 39, -31, 187, 245, 11, 11);
+    }
 }
