@@ -31,7 +31,7 @@ public class VendingTile extends TileEntity implements INamedContainerProvider {
     public static final int OUTPUT_SLOTS_COUNT = 3;
     public static final int TOTAL_SLOTS_COUNT = STOCK_SLOT_COUNT + INPUT_SLOTS_COUNT + OUTPUT_SLOTS_COUNT;
 
-    private VendingContents stockContents;
+    private VendingStockContents stockContents;
     private VendingContents inputContents;
     private VendingContents outputContents;
 
@@ -39,7 +39,7 @@ public class VendingTile extends TileEntity implements INamedContainerProvider {
 
     public VendingTile() {
         super(CommonRegistry.TILE_VENDING.get());
-        stockContents = new VendingContents(STOCK_SLOT_COUNT, this::canPlayerUse, this::markDirty);
+        stockContents = new VendingStockContents(STOCK_SLOT_COUNT, this::canPlayerUse, this::markDirty);
         inputContents = new VendingContents(INPUT_SLOTS_COUNT, this::canPlayerUse, this::markDirty);
         outputContents = new VendingContents(OUTPUT_SLOTS_COUNT, this::canPlayerUse, this::markDirty);
     }
@@ -81,12 +81,19 @@ public class VendingTile extends TileEntity implements INamedContainerProvider {
         compound.put(STOCK_SLOTS_NBT, stockContents.serializeNBT());
         compound.put(INPUT_SLOTS_NBT, inputContents.serializeNBT());
         compound.put(OUTPUT_SLOTS_NBT, outputContents.serializeNBT());
+
+
+        System.out.println("WRITE");
+        System.out.println(compound);
         return compound;
     }
 
     @Override
     public void read(BlockState state, CompoundNBT nbt) {
         super.read(state, nbt);
+
+        System.out.println("READ");
+        System.out.println(nbt);
 
         CompoundNBT stockNBT = nbt.getCompound(STOCK_SLOTS_NBT);
         stockContents.deserializeNBT(stockNBT);
@@ -96,6 +103,9 @@ public class VendingTile extends TileEntity implements INamedContainerProvider {
 
         CompoundNBT outputNBT = nbt.getCompound(OUTPUT_SLOTS_NBT);
         outputContents.deserializeNBT(outputNBT);
+
+        System.out.println("STOCK COUNT: " + stockContents.getSizeInventory() + " " + STOCK_SLOT_COUNT);
+
 
         if (stockContents.getSizeInventory() != STOCK_SLOT_COUNT || inputContents.getSizeInventory() != INPUT_SLOTS_COUNT
                 || outputContents.getSizeInventory() != OUTPUT_SLOTS_COUNT)

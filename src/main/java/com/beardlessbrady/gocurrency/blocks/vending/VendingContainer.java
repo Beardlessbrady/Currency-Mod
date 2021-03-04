@@ -4,6 +4,7 @@ import com.beardlessbrady.gocurrency.init.CommonRegistry;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
@@ -16,7 +17,7 @@ import net.minecraft.world.World;
  * https://github.com/Beardlessbrady/Currency-Mod
  */
 public class VendingContainer extends Container {
-    private VendingContents stockContents;
+    private VendingStockContents stockContents;
     private VendingContents inputContents;
     private VendingContents outputContents;
     private World world;
@@ -67,13 +68,13 @@ public class VendingContainer extends Container {
 
         VendingContents input = new VendingContents(INPUT_SLOTS_COUNT);
         VendingContents output = new VendingContents(OUTPUT_SLOTS_COUNT);
-        VendingContents stock = new VendingContents(STOCK_SLOT_COUNT);
+        VendingStockContents stock = new VendingStockContents(STOCK_SLOT_COUNT);
 
         generateSlots(playerInventory, stock, input, output, playerInventory);
     }
 
     // Server side Creation
-    public VendingContainer(int windowID, PlayerInventory playerInventory, VendingContents stock, VendingContents input, VendingContents output){
+    public VendingContainer(int windowID, PlayerInventory playerInventory, VendingStockContents stock, VendingContents input, VendingContents output){
         super(CommonRegistry.CONTAINER_VENDING.get(), windowID);
         if( CommonRegistry.CONTAINER_VENDING.get() == null)
             throw new IllegalStateException("Must initialise containerTypeVendingContainer before constructing a ContainerVending!");
@@ -81,7 +82,7 @@ public class VendingContainer extends Container {
         generateSlots(playerInventory, stock, input, output, playerInventory);
     }
 
-    private void generateSlots(PlayerInventory invPlayer, VendingContents stock, VendingContents input, VendingContents output, PlayerInventory playerInventory){
+    private void generateSlots(PlayerInventory invPlayer, VendingStockContents stock, VendingContents input, VendingContents output, PlayerInventory playerInventory){
         this.stockContents = stock;
         this.inputContents = input;
         this.outputContents = output;
@@ -131,6 +132,31 @@ public class VendingContainer extends Container {
     }
 
     // ---- Slot manipulation ----
+
+    @Override
+    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+        try {
+            System.out.println(slotId + " " + dragType + " " + clickTypeIn);
+            if ((slotId >= PLAYER_INVENTORY_FIRST_SLOT_INDEX && //PLAYER INVENTORY
+                    slotId <= PLAYER_INVENTORY_FIRST_SLOT_INDEX + PLAYER_INVENTORY_SLOT_COUNT) || (slotId == -999)) {
+                return super.slotClick(slotId, dragType, clickTypeIn, player);
+            } else if (slotId >= FIRST_STOCK_SLOT_INDEX && // STOCK INVENTORY
+                    slotId < FIRST_INPUT_SLOT_INDEX) {
+
+            } else if (slotId >= FIRST_INPUT_SLOT_INDEX && // INPUT INVENTORY
+                    slotId < FIRST_OUTPUT_SLOT_INDEX) {
+
+            } else if (slotId >= FIRST_OUTPUT_SLOT_INDEX && // OUTPUT INVENTORY
+                    slotId < FIRST_OUTPUT_SLOT_INDEX + OUTPUT_SLOTS_COUNT){
+            } else {
+                // SlotID -1...not sure what this is yet
+            }
+            return ItemStack.EMPTY;
+        } catch (Exception exception) {
+            System.out.println("CRASH IN VENDING CONTAINER- slotid:" + slotId + " dragType:" + dragType + " clickType:" + clickTypeIn + " player:" + player);
+            return ItemStack.EMPTY;
+        }
+    }
 
     // Shift clicking
     @Override
