@@ -3,9 +3,11 @@ package com.beardlessbrady.gocurrency.blocks.vending;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.awt.*;
 
@@ -25,6 +27,26 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
     public VendingContainerScreen(VendingContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
         this.vendingContainer = screenContainer;
+    }
+
+    @Override
+    protected void init() {
+        super.init();
+        int i = (width - xSize) / 2;
+        int j = (height - ySize) / 2;
+
+        buttons.clear();
+
+        addButton(new Button(50, 50, 10, 10,
+                new TranslationTextComponent("gui.gocurrency.vending_" + vendingContainer.getVendingStateData(VendingStateData.MODE_INDEX)), (button) -> {
+            int mode = vendingContainer.getVendingStateData(VendingStateData.MODE_INDEX);
+
+            if(mode == 1){
+               // vendingContainer.setVendingStateData(VendingStateData.MODE_INDEX, 0);
+            } else {
+               // vendingContainer.setVendingStateData(VendingStateData.MODE_INDEX, 1);
+            }
+        }));
     }
 
     @Override

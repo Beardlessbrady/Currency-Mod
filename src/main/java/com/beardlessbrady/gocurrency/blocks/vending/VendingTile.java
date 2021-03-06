@@ -10,6 +10,7 @@ import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
+import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
@@ -23,7 +24,9 @@ import javax.annotation.Nullable;
  * All Rights Reserved
  * https://github.com/Beardlessbrady/Currency-Mod
  */
-public class VendingTile extends TileEntity implements INamedContainerProvider {
+public class VendingTile extends TileEntity implements INamedContainerProvider, ITickableTileEntity {
+    private static final String CONTENTS_INVENTORY_TAG = "contents";
+
     public static final int STOCK_ROW_COUNT = 4;
     public static final int STOCK_COLUMN_COUNT = 4;
     public static final int STOCK_SLOT_COUNT = STOCK_ROW_COUNT * STOCK_COLUMN_COUNT;
@@ -35,13 +38,22 @@ public class VendingTile extends TileEntity implements INamedContainerProvider {
     private VendingContents inputContents;
     private VendingContents outputContents;
 
-    private static final String CONTENTS_INVENTORY_TAG = "contents";
+    private final VendingStateData vendingStateData= new VendingStateData();
 
     public VendingTile() {
         super(CommonRegistry.TILE_VENDING.get());
         stockContents = new VendingStockContents(STOCK_SLOT_COUNT, this::canPlayerUse, this::markDirty);
         inputContents = new VendingContents(INPUT_SLOTS_COUNT, this::canPlayerUse, this::markDirty);
         outputContents = new VendingContents(OUTPUT_SLOTS_COUNT, this::canPlayerUse, this::markDirty);
+    }
+
+    @Override
+    public void tick() {
+        if(world.isRemote){
+      //      System.out.println("CLIENT: " + vendingStateData.get(VendingStateData.MODE_INDEX));
+        } else {
+         //   System.out.println("SERVER: " + vendingStateData.get(VendingStateData.MODE_INDEX));
+        }
     }
 
     public boolean canPlayerUse(PlayerEntity player) {
@@ -67,7 +79,7 @@ public class VendingTile extends TileEntity implements INamedContainerProvider {
     @Nullable
     @Override
     public Container createMenu(int windowID, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-        return new VendingContainer(windowID, playerInventory, stockContents, inputContents, outputContents);
+        return new VendingContainer(windowID, playerInventory, stockContents, inputContents, outputContents, vendingStateData);
     }
 
     // ---- NBT Stuff ----
@@ -81,20 +93,13 @@ public class VendingTile extends TileEntity implements INamedContainerProvider {
         compound.put(STOCK_SLOTS_NBT, stockContents.serializeNBT());
         compound.put(INPUT_SLOTS_NBT, inputContents.serializeNBT());
         compound.put(OUTPUT_SLOTS_NBT, outputContents.serializeNBT());
-
-
-        System.out.println("WRITE");
-        System.out.println(compound);
+        vendingStateData.putIntoNBT(compound);
         return compound;
     }
 
     @Override
     public void read(BlockState state, CompoundNBT nbt) {
         super.read(state, nbt);
-
-        System.out.println("READ");
-        System.out.println(nbt);
-
         CompoundNBT stockNBT = nbt.getCompound(STOCK_SLOTS_NBT);
         stockContents.deserializeNBT(stockNBT);
 
@@ -104,8 +109,7 @@ public class VendingTile extends TileEntity implements INamedContainerProvider {
         CompoundNBT outputNBT = nbt.getCompound(OUTPUT_SLOTS_NBT);
         outputContents.deserializeNBT(outputNBT);
 
-        System.out.println("STOCK COUNT: " + stockContents.getSizeInventory() + " " + STOCK_SLOT_COUNT);
-
+        vendingStateData.readFromNBT(nbt);
 
         if (stockContents.getSizeInventory() != STOCK_SLOT_COUNT || inputContents.getSizeInventory() != INPUT_SLOTS_COUNT
                 || outputContents.getSizeInventory() != OUTPUT_SLOTS_COUNT)

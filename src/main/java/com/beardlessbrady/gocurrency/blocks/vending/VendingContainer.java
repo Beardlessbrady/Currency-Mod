@@ -60,12 +60,16 @@ public class VendingContainer extends Container {
     // i.e. invPlayer slots 0 - 35 (hotbar 0 - 8 then main inventory 9 to 35)
     // and vending: input slots 0 - 2, output slots 0, stock slots 0 - 16 (for 1x2)
 
+    private VendingStateData vendingStateData;
+
     // Client side Creation
     public VendingContainer(int windowID, PlayerInventory playerInventory, PacketBuffer extraData) {
         super(CommonRegistry.CONTAINER_VENDING.get(), windowID);
         if( CommonRegistry.CONTAINER_VENDING.get() == null)
             throw new IllegalStateException("Must initialise containerTypeVendingContainer before constructing a ContainerVending!");
 
+        // Dummys for client
+        this.vendingStateData = new VendingStateData();
         VendingContents input = new VendingContents(INPUT_SLOTS_COUNT);
         VendingContents output = new VendingContents(OUTPUT_SLOTS_COUNT);
         VendingStockContents stock = new VendingStockContents(STOCK_SLOT_COUNT);
@@ -74,10 +78,13 @@ public class VendingContainer extends Container {
     }
 
     // Server side Creation
-    public VendingContainer(int windowID, PlayerInventory playerInventory, VendingStockContents stock, VendingContents input, VendingContents output){
+    public VendingContainer(int windowID, PlayerInventory playerInventory, VendingStockContents stock, VendingContents input, VendingContents output, VendingStateData vendingStateData){
         super(CommonRegistry.CONTAINER_VENDING.get(), windowID);
         if( CommonRegistry.CONTAINER_VENDING.get() == null)
             throw new IllegalStateException("Must initialise containerTypeVendingContainer before constructing a ContainerVending!");
+
+        this.vendingStateData = vendingStateData;
+        trackIntArray(vendingStateData); // Tells vanilla to track stateData and keep synchronized between client and server containers!!
 
         generateSlots(playerInventory, stock, input, output, playerInventory);
     }
@@ -138,16 +145,19 @@ public class VendingContainer extends Container {
         try {
             System.out.println(slotId + " " + dragType + " " + clickTypeIn);
             if ((slotId >= PLAYER_INVENTORY_FIRST_SLOT_INDEX && //PLAYER INVENTORY
-                    slotId <= PLAYER_INVENTORY_FIRST_SLOT_INDEX + PLAYER_INVENTORY_SLOT_COUNT) || (slotId == -999)) {
+                    slotId < PLAYER_INVENTORY_FIRST_SLOT_INDEX + PLAYER_INVENTORY_SLOT_COUNT) || (slotId == -999)) {
                 return super.slotClick(slotId, dragType, clickTypeIn, player);
             } else if (slotId >= FIRST_STOCK_SLOT_INDEX && // STOCK INVENTORY
                     slotId < FIRST_INPUT_SLOT_INDEX) {
+                return stockSlotClick(slotId, dragType, clickTypeIn, player);
 
             } else if (slotId >= FIRST_INPUT_SLOT_INDEX && // INPUT INVENTORY
                     slotId < FIRST_OUTPUT_SLOT_INDEX) {
+                return inputSlotClick(slotId, dragType, clickTypeIn, player);
 
             } else if (slotId >= FIRST_OUTPUT_SLOT_INDEX && // OUTPUT INVENTORY
                     slotId < FIRST_OUTPUT_SLOT_INDEX + OUTPUT_SLOTS_COUNT){
+                return outputSlotClick(slotId, dragType, clickTypeIn, player);
             } else {
                 // SlotID -1...not sure what this is yet
             }
@@ -156,6 +166,18 @@ public class VendingContainer extends Container {
             System.out.println("CRASH IN VENDING CONTAINER- slotid:" + slotId + " dragType:" + dragType + " clickType:" + clickTypeIn + " player:" + player);
             return ItemStack.EMPTY;
         }
+    }
+
+    private ItemStack stockSlotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+        return ItemStack.EMPTY;
+    }
+
+    private ItemStack inputSlotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+        return ItemStack.EMPTY;
+    }
+
+    private ItemStack outputSlotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+        return ItemStack.EMPTY;
     }
 
     // Shift clicking
@@ -188,6 +210,14 @@ public class VendingContainer extends Container {
         public OutputSlot(IInventory inventoryIn, int index, int xPosition, int yPosition) {
             super(inventoryIn, index, xPosition, yPosition);
         }
+    }
+
+    public int getVendingStateData(int index){
+        return vendingStateData.get(index);
+    }
+
+    public void setVendingStateData(int index, int value){
+        this.vendingStateData.set(index, value);
     }
 
     private enum SlotZones {
