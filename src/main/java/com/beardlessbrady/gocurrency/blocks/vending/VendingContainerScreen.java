@@ -1,5 +1,7 @@
 package com.beardlessbrady.gocurrency.blocks.vending;
 
+import com.beardlessbrady.gocurrency.GOCurrency;
+import com.beardlessbrady.gocurrency.network.MessageVendingStateData;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
@@ -17,16 +19,16 @@ import java.awt.*;
  * https://github.com/Beardlessbrady/Currency-Mod
  */
 public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
-    private VendingContainer vendingContainer;
     private static final ResourceLocation TEXTURE = new ResourceLocation("gocurrency", "textures/gui/vending.png");
 
     final static  int FONT_Y_SPACING = 10;
     final static  int PLAYER_INV_LABEL_XPOS = VendingContainer.PLAYER_INVENTORY_XPOS;
     final static  int PLAYER_INV_LABEL_YPOS = VendingContainer.PLAYER_INVENTORY_YPOS - FONT_Y_SPACING;
 
+    final static byte BUTTONID_MODE = 0;
+
     public VendingContainerScreen(VendingContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
-        this.vendingContainer = screenContainer;
     }
 
     @Override
@@ -36,18 +38,25 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
         int j = (height - ySize) / 2;
 
         buttons.clear();
-
         addButton(new Button(50, 50, 10, 10,
-                new TranslationTextComponent("gui.gocurrency.vending_" + vendingContainer.getVendingStateData(VendingStateData.MODE_INDEX)), (button) -> {
-            int mode = vendingContainer.getVendingStateData(VendingStateData.MODE_INDEX);
-
-            if(mode == 1){
-               // vendingContainer.setVendingStateData(VendingStateData.MODE_INDEX, 0);
-            } else {
-               // vendingContainer.setVendingStateData(VendingStateData.MODE_INDEX, 1);
-            }
+                new TranslationTextComponent("gui.gocurrency.vending_" + container.getTile().getVendingStateData(VendingStateData.MODE_INDEX)), (button) -> {
+            handle(VendingStateData.MODE_INDEX);
+            buttons.get(BUTTONID_MODE).setMessage(new TranslationTextComponent("gui.gocurrency.vending_" + container.getTile().getVendingStateData(VendingStateData.MODE_INDEX)));
         }));
     }
+
+    private void handle(int i){
+        GOCurrency.NETWORK_HANDLER.sendToServer(new MessageVendingStateData(container.getTile().getPos(), i));
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        buttons.get(BUTTONID_MODE).setMessage(new TranslationTextComponent("gui.gocurrency.vending.buttonmode" + container.getVendingStateData(VendingStateData.MODE_INDEX)));
+
+
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
 
     @Override
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
@@ -73,8 +82,10 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
         //Draw Player Inventory background
         this.blit(matrixStack, edgeSpacingX, edgeSpacingY + 111, 0, 157, 175, 99);
 
-        //Draw Vending Machine background
-        this.blit(matrixStack, edgeSpacingX + 32, edgeSpacingY - 47, 0, 0, 124, 157);
+        if(container.getVendingStateData(0) == 1) { // Example of changing mode effect
+            //Draw Vending Machine background
+            this.blit(matrixStack, edgeSpacingX + 32, edgeSpacingY - 47, 0, 0, 124, 157);
+        }
     }
 
     // Returns true if the given x,y coordinates are within the given rectangle

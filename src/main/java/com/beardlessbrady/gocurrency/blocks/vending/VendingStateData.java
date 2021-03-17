@@ -10,9 +10,18 @@ import net.minecraft.util.IIntArray;
  */
 public class VendingStateData implements IIntArray {
 
-    private int mode;
+    private int mode = 0;
     private int storedCash = 0;
     private int playerCash = 0;
+
+    public VendingStateData(){
+    }
+
+    public VendingStateData(int[] array){
+        for(int i = 0; i < array.length; i++){
+            this.set(i, array[i]);
+        }
+    }
 
     public void putIntoNBT(CompoundNBT compoundNBT){
         compoundNBT.putInt("mode", mode);
@@ -26,7 +35,7 @@ public class VendingStateData implements IIntArray {
         playerCash = compoundNBT.getInt("playerCash");
     }
 
-    // Vanilla Stuff, NO TOUCHY
+    // Vanilla Stuff, NO TOUCH
     public static final int MODE_INDEX = 0;
     public static final int STOREDCASH_INDEX = 1;
     public static final int PLAYERCASH_INDEX = 2;
@@ -52,7 +61,6 @@ public class VendingStateData implements IIntArray {
         validateIndex(index);
         switch (index){
             case MODE_INDEX:
-                System.out.println(value);
                 mode = value;
                 break;
             case STOREDCASH_INDEX:

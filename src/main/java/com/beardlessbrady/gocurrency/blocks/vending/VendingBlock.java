@@ -48,9 +48,9 @@ public class VendingBlock extends ContainerBlock {
         if(namedContainerProvider != null) {
             if(! (player instanceof ServerPlayerEntity)) return ActionResultType.FAIL;
                 ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) player;
-                NetworkHooks.openGui(serverPlayerEntity, namedContainerProvider, (packetBuffer -> {
-                })); // Can put extra data in packet Buffer
 
+                int[] dataArray = ((VendingTile) worldIn.getTileEntity(pos)).getVendingStateDataAsArray();
+                NetworkHooks.openGui(serverPlayerEntity, namedContainerProvider, buf -> buf.writeVarIntArray(dataArray).writeBlockPos(pos));
         }
 
         return ActionResultType.SUCCESS;
