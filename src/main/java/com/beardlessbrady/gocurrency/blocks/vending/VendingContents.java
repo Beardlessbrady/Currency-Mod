@@ -14,11 +14,11 @@ import java.util.function.Predicate;
  * https://github.com/Beardlessbrady/Currency-Mod
  */
 public class VendingContents implements IInventory {
-    private final ItemStackHandler vendingComponentContents;
-    private Predicate<PlayerEntity> canPlayerAccess = x-> true;
-    private Notify markDirtyNotification = ()->{};
-    private final Notify openInventoryNotificationLambda = ()->{};
-    private final Notify closeInventoryNotificationLambda = ()->{};
+    protected final ItemStackHandler vendingComponentContents;
+    protected Predicate<PlayerEntity> canPlayerAccess = x-> true;
+    protected Notify markDirtyNotification = ()->{};
+    protected final Notify openInventoryNotificationLambda = ()->{};
+    protected final Notify closeInventoryNotificationLambda = ()->{};
 
     @FunctionalInterface
     public interface Notify {

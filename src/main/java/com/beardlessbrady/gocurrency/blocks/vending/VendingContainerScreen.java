@@ -9,9 +9,8 @@ import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-
-import java.awt.*;
 
 /**
  * Created by BeardlessBrady on 2021-03-01 for Currency-Mod
@@ -39,9 +38,8 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
 
         buttons.clear();
         addButton(new Button(50, 50, 10, 10,
-                new TranslationTextComponent("gui.gocurrency.vending_" + container.getTile().getVendingStateData(VendingStateData.MODE_INDEX)), (button) -> {
+                new TranslationTextComponent("gui.gocurrency.vending.buttonmode" + container.getVendingStateData(VendingStateData.MODE_INDEX)), (button) -> {
             handle(VendingStateData.MODE_INDEX);
-            buttons.get(BUTTONID_MODE).setMessage(new TranslationTextComponent("gui.gocurrency.vending_" + container.getTile().getVendingStateData(VendingStateData.MODE_INDEX)));
         }));
     }
 
@@ -51,9 +49,6 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
-        buttons.get(BUTTONID_MODE).setMessage(new TranslationTextComponent("gui.gocurrency.vending.buttonmode" + container.getVendingStateData(VendingStateData.MODE_INDEX)));
-
-
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
@@ -82,10 +77,9 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
         //Draw Player Inventory background
         this.blit(matrixStack, edgeSpacingX, edgeSpacingY + 111, 0, 157, 175, 99);
 
-        if(container.getVendingStateData(0) == 1) { // Example of changing mode effect
-            //Draw Vending Machine background
-            this.blit(matrixStack, edgeSpacingX + 32, edgeSpacingY - 47, 0, 0, 124, 157);
-        }
+        //Draw Vending Machine background
+        this.blit(matrixStack, edgeSpacingX + 32, edgeSpacingY - 47, 0, 0, 124, 157);
+
     }
 
     // Returns true if the given x,y coordinates are within the given rectangle
@@ -98,9 +92,22 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
         this.font.func_243248_b(matrixStack, this.title, 40, -41, 4210752); //Block Title
         this.font.func_243248_b(matrixStack, this.playerInventory.getDisplayName(), (float)this.playerInventoryTitleX, 117, 4210752); //Inventory Title
 
+        buttons.get(BUTTONID_MODE).setMessage(new TranslationTextComponent("gui.gocurrency.vending.buttonmode" + container.getVendingStateData(VendingStateData.MODE_INDEX)));
+
         // Draw Top tips of outer machine to cover items inside
         this.minecraft.getTextureManager().bindTexture(TEXTURE);
         this.blit(matrixStack, 98, -31, 176, 245, 11, 11);
         this.blit(matrixStack, 39, -31, 187, 245, 11, 11);
+
+
+
+
+
+        VendingContentsBuffer buffer = container.getStockContents();
+        for(int i = 0; i < buffer.getSizeInventory(); i++){
+            this.font.func_243248_b(matrixStack, new StringTextComponent(Integer.toString(buffer.getBuffer(i))), -140 + (10 * i), 30 + (((i) / 4) * 5), 4210752); //Inventory Title
+
+        }
+
     }
 }

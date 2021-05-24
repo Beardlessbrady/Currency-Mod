@@ -34,7 +34,7 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
     public static final int OUTPUT_SLOTS_COUNT = 3;
     public static final int TOTAL_SLOTS_COUNT = STOCK_SLOT_COUNT + INPUT_SLOTS_COUNT + OUTPUT_SLOTS_COUNT;
 
-    private VendingStockContents stockContents;
+    private VendingContentsBuffer stockContents;
     private VendingContents inputContents;
     private VendingContents outputContents;
 
@@ -42,7 +42,7 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
 
     public VendingTile() {
         super(CommonRegistry.TILE_VENDING.get());
-        stockContents = new VendingStockContents(STOCK_SLOT_COUNT, this::canPlayerUse, this::markDirty);
+        stockContents = new VendingContentsBuffer(STOCK_SLOT_COUNT, this::canPlayerUse, this::markDirty);
         inputContents = new VendingContents(INPUT_SLOTS_COUNT, this::canPlayerUse, this::markDirty);
         outputContents = new VendingContents(OUTPUT_SLOTS_COUNT, this::canPlayerUse, this::markDirty);
     }

@@ -6,11 +6,9 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.IContainerListener;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.IntReferenceHolder;
 import net.minecraft.world.World;
 
 /**
@@ -19,7 +17,7 @@ import net.minecraft.world.World;
  * https://github.com/Beardlessbrady/Currency-Mod
  */
 public class VendingContainer extends Container {
-    private VendingStockContents stockContents;
+    private VendingContentsBuffer stockContents;
     private VendingContents inputContents;
     private VendingContents outputContents;
     private World world;
@@ -69,17 +67,17 @@ public class VendingContainer extends Container {
         VendingStateData vendingStateData = new VendingStateData(extraData.readVarIntArray());
         VendingContents input = new VendingContents(INPUT_SLOTS_COUNT);
         VendingContents output = new VendingContents(OUTPUT_SLOTS_COUNT);
-        VendingStockContents stock = new VendingStockContents(STOCK_SLOT_COUNT);
+        VendingContentsBuffer stock = new VendingContentsBuffer(STOCK_SLOT_COUNT);
         VendingTile tile = (VendingTile) playerInventory.player.world.getTileEntity(extraData.readBlockPos());
 
         return new VendingContainer(windowID, playerInventory, stock, input, output, vendingStateData, tile);
     }
 
-    public static VendingContainer createContainerServer(int windowID, PlayerInventory playerInventory, VendingStockContents stock, VendingContents input, VendingContents output, VendingStateData vendingStateData, VendingTile tile) {
+    public static VendingContainer createContainerServer(int windowID, PlayerInventory playerInventory, VendingContentsBuffer stock, VendingContents input, VendingContents output, VendingStateData vendingStateData, VendingTile tile) {
         return new VendingContainer(windowID, playerInventory, stock, input, output, vendingStateData, tile);
     }
 
-    public VendingContainer(int windowID, PlayerInventory playerInventory, VendingStockContents stock, VendingContents input, VendingContents output, VendingStateData vendingStateData, VendingTile tile) {
+    public VendingContainer(int windowID, PlayerInventory playerInventory, VendingContentsBuffer stock, VendingContents input, VendingContents output, VendingStateData vendingStateData, VendingTile tile) {
         super(CommonRegistry.CONTAINER_VENDING.get(), windowID);
         if( CommonRegistry.CONTAINER_VENDING.get() == null)
             throw new IllegalStateException("Must initialise containerTypeVendingContainer before constructing a ContainerVending!");
@@ -100,7 +98,7 @@ public class VendingContainer extends Container {
         return this.tile;
     }
 
-    private void generateSlots(PlayerInventory invPlayer, VendingStockContents stock, VendingContents input, VendingContents output){
+    private void generateSlots(PlayerInventory invPlayer, VendingContentsBuffer stock, VendingContents input, VendingContents output){
         this.stockContents = stock;
         this.inputContents = input;
         this.outputContents = output;
@@ -126,8 +124,8 @@ public class VendingContainer extends Container {
 
         // Add Stocks slot to gui
         final int STOCK_Y_SPACING = 22;
-        for (int x = 0; x < STOCK_ROW_COUNT; x++) {
-            for (int y = 0; y < STOCK_COLUMN_COUNT; y++) {
+        for (int y = 0; y < STOCK_ROW_COUNT; y++) {
+            for (int x = 0; x < STOCK_COLUMN_COUNT; x++) {
                 int slotNumber = y * STOCK_COLUMN_COUNT + x;
                 int xpos = STOCK_INVENTORY_XPOS + x * SLOT_X_SPACING;
                 int ypos = STOCK_INVENTORY_YPOS + y * STOCK_Y_SPACING;
@@ -154,18 +152,16 @@ public class VendingContainer extends Container {
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
         try {
-       //     System.out.println(slotId + " " + dragType + " " + clickTypeIn);
-            if ((slotId >= PLAYER_INVENTORY_FIRST_SLOT_INDEX && //PLAYER INVENTORY
+            //System.out.println(slotId + " " + dragType + " " + clickTypeIn);
+            if ((slotId >= HOTBAR_FIRST_SLOT_INDEX && //PLAYER INVENTORY
                     slotId < PLAYER_INVENTORY_FIRST_SLOT_INDEX + PLAYER_INVENTORY_SLOT_COUNT) || (slotId == -999)) {
                 return super.slotClick(slotId, dragType, clickTypeIn, player);
             } else if (slotId >= FIRST_STOCK_SLOT_INDEX && // STOCK INVENTORY
                     slotId < FIRST_INPUT_SLOT_INDEX) {
                 return stockSlotClick(slotId, dragType, clickTypeIn, player);
-
             } else if (slotId >= FIRST_INPUT_SLOT_INDEX && // INPUT INVENTORY
                     slotId < FIRST_OUTPUT_SLOT_INDEX) {
                 return inputSlotClick(slotId, dragType, clickTypeIn, player);
-
             } else if (slotId >= FIRST_OUTPUT_SLOT_INDEX && // OUTPUT INVENTORY
                     slotId < FIRST_OUTPUT_SLOT_INDEX + OUTPUT_SLOTS_COUNT){
                 return outputSlotClick(slotId, dragType, clickTypeIn, player);
@@ -180,6 +176,49 @@ public class VendingContainer extends Container {
     }
 
     private ItemStack stockSlotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+        int index = slotId - FIRST_STOCK_SLOT_INDEX;
+        if (vendingStateData.get(VendingStateData.MODE_INDEX) == 0) { // Sell
+            //TODO
+        } else { // Stock
+            if(clickTypeIn == ClickType.QUICK_CRAFT){
+                return super.slotClick(slotId, dragType, clickTypeIn, player);
+            }
+
+
+            ItemStack playerStack = player.inventory.getItemStack();
+            ItemStack slotStack = this.inventorySlots.get(slotId).getStack();
+            if (this.inventorySlots.get(slotId).getStack().isEmpty()) { // Slot EMPTY
+                return super.slotClick(slotId, dragType, clickTypeIn, player);
+            } else { // Slot NOT EMPTY
+                if (player.inventory.isEmpty()) { // Empty hand, GRAB ITEMS
+
+                } else { // Full hand, PLACE ITEMS
+                    if (areItemsAndTagsEqual(slotStack, playerStack)) {
+                        //+ = CAN FIT WHOLE STACK, - IS AMOUNT LEFTOVER
+                        int stackLimit = slotStack.getMaxStackSize() - (playerStack.getCount() + slotStack.getCount());
+
+
+                        if(stackLimit >= 0){ // Can fit with NO LEFTOVERS
+                            this.inventorySlots.get(slotId).getStack().grow(stackLimit);
+                            player.inventory.setItemStack(ItemStack.EMPTY);
+                            return ItemStack.EMPTY;
+                        } else { // LEFTOVER, send to buffer
+                            if(stockContents.canGrow(index, Math.abs(stackLimit))){ // Buffer has room for entire amount
+                                this.inventorySlots.get(slotId).getStack().grow(stackLimit + playerStack.getCount());
+                                player.inventory.setItemStack(ItemStack.EMPTY);
+                                stockContents.growBuffer(index, Math.abs(stackLimit)); // TODO
+                                return ItemStack.EMPTY;
+                            } else {
+
+                            }
+                        }
+                    } else {
+                        return ItemStack.EMPTY;
+                    }
+                }
+              //  this.inventorySlots.get(slotId).putStack(ItemStack.EMPTY);
+            }
+        }
         return ItemStack.EMPTY;
     }
 
@@ -201,6 +240,10 @@ public class VendingContainer extends Container {
     @Override
     public boolean canMergeSlot(ItemStack stack, Slot slotIn) {
         return super.canMergeSlot(stack, slotIn);
+    }
+
+    public VendingContentsBuffer getStockContents(){
+        return stockContents;
     }
 
 
