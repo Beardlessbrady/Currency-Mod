@@ -206,9 +206,13 @@ public class VendingContainer extends Container {
                             if(stockContents.canGrow(index, Math.abs(stackLimit))){ // Buffer has room for entire amount
                                 this.inventorySlots.get(slotId).getStack().grow(stackLimit + playerStack.getCount());
                                 player.inventory.setItemStack(ItemStack.EMPTY);
-                                stockContents.growBuffer(index, Math.abs(stackLimit)); // TODO
+                                stockContents.growBuffer(index, Math.abs(stackLimit));
                                 return ItemStack.EMPTY;
                             } else {
+                                this.inventorySlots.get(slotId).getStack().grow(stackLimit + playerStack.getCount());
+                                player.inventory.getItemStack().shrink(stockContents.growthAmount(index));
+                                stockContents.growBuffer(index, stockContents.growthAmount(index));
+                                return ItemStack.EMPTY;
 
                             }
                         }

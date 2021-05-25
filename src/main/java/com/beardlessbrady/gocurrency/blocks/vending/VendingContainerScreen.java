@@ -3,6 +3,7 @@ package com.beardlessbrady.gocurrency.blocks.vending;
 import com.beardlessbrady.gocurrency.GOCurrency;
 import com.beardlessbrady.gocurrency.network.MessageVendingStateData;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.button.Button;
@@ -10,7 +11,9 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
+import org.lwjgl.opengl.GL12;
 
 /**
  * Created by BeardlessBrady on 2021-03-01 for Currency-Mod
@@ -99,15 +102,42 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
         this.blit(matrixStack, 98, -31, 176, 245, 11, 11);
         this.blit(matrixStack, 39, -31, 187, 245, 11, 11);
 
+        drawItemStackSize(matrixStack);
+    }
 
+    private void drawItemStackSize(MatrixStack matrixStack) {
+        GL12.glDisable(GL12.GL_DEPTH_TEST);
+        GL12.glPushMatrix();
+        GL12.glScalef(0.7F, 0.7F, 0.8F);
 
+        String num;
+        int startY = -29;
+        int columnCount = 4;
+        int rowCount = 4;
 
+        VendingTile te = container.getTile();
 
-        VendingContentsBuffer buffer = container.getStockContents();
-        for(int i = 0; i < buffer.getSizeInventory(); i++){
-            this.font.func_243248_b(matrixStack, new StringTextComponent(Integer.toString(buffer.getBuffer(i))), -140 + (10 * i), 30 + (((i) / 4) * 5), 4210752); //Inventory Title
+        for (int j = 0; j < columnCount; j++) {
+            for (int i = 0; i < rowCount; i++) {
+                int index = (i + (rowCount * j));
+                int count = te.getTotalCount(index);
 
+                if (count > 0) {
+                    num = Integer.toString(count);
+                } else if (count == 0) {
+                    num = TextFormatting.RED + "Out";
+                } else {
+                    num = " ";
+                }
+
+                if (num.length() == 1) num = "  " + num;
+                if (num.length() == 2) num = " " + num;
+
+                if (count != 1)
+                    this.font.func_243248_b(matrixStack, new StringTextComponent(num), 66 + (i * 26), startY + (j * 26), 4210752); //Inventory Title
+            }
         }
-
+        GL12.glPopMatrix();
+        GL12.glDisable(GL12.GL_DEPTH_TEST);
     }
 }

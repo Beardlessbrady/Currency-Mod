@@ -156,4 +156,12 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
     public void handleUpdateTag(BlockState state, CompoundNBT tag) {
         read(state, tag);
     }
+
+    public int getBuffer(int index){
+        return stockContents.getBuffer(index);
+    }
+
+    public int getTotalCount(int index){
+        return stockContents.getBuffer(index) + stockContents.getStackInSlot(index).getCount();
+    }
 }

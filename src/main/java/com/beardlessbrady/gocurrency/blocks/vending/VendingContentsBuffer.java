@@ -43,6 +43,10 @@ public class VendingContentsBuffer extends VendingContents {
         return buffer[index] + amnt <= maxBufferSize;
     }
 
+    public int growthAmount(int index){
+        return maxBufferSize - buffer[index];
+    }
+
     public boolean growBuffer(int index, int amnt){
         if(amnt + buffer[index] <= maxBufferSize){
             buffer[index] = buffer[index] + amnt;
