@@ -188,7 +188,7 @@ public class VendingContainer extends Container {
             ItemStack playerStack = player.inventory.getItemStack();
             ItemStack slotStack = this.inventorySlots.get(slotId).getStack();
             if (this.inventorySlots.get(slotId).getStack().isEmpty()) { // Slot EMPTY
-                return super.slotClick(slotId, dragType, clickTypeIn, player);
+                super.slotClick(slotId, dragType, clickTypeIn, player);
             } else { // Slot NOT EMPTY
                 if (player.inventory.isEmpty()) { // Empty hand, GRAB ITEMS
 
@@ -197,31 +197,24 @@ public class VendingContainer extends Container {
                         //+ = CAN FIT WHOLE STACK, - IS AMOUNT LEFTOVER
                         int stackLimit = slotStack.getMaxStackSize() - (playerStack.getCount() + slotStack.getCount());
 
-
                         if(stackLimit >= 0){ // Can fit with NO LEFTOVERS
                             this.inventorySlots.get(slotId).getStack().grow(stackLimit);
                             player.inventory.setItemStack(ItemStack.EMPTY);
-                            return ItemStack.EMPTY;
                         } else { // LEFTOVER, send to buffer
                             if(stockContents.canGrow(index, Math.abs(stackLimit))){ // Buffer has room for entire amount
                                 this.inventorySlots.get(slotId).getStack().grow(stackLimit + playerStack.getCount());
                                 player.inventory.setItemStack(ItemStack.EMPTY);
                                 stockContents.growBuffer(index, Math.abs(stackLimit));
-                                return ItemStack.EMPTY;
                             } else {
                                 this.inventorySlots.get(slotId).getStack().grow(stackLimit + playerStack.getCount());
                                 player.inventory.getItemStack().shrink(stockContents.growthAmount(index));
                                 stockContents.growBuffer(index, stockContents.growthAmount(index));
-                                return ItemStack.EMPTY;
-
                             }
                         }
-                    } else {
-                        return ItemStack.EMPTY;
                     }
                 }
-              //  this.inventorySlots.get(slotId).putStack(ItemStack.EMPTY);
             }
+            stockContents.countToBuffer(index);
         }
         return ItemStack.EMPTY;
     }

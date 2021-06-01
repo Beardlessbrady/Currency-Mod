@@ -56,12 +56,21 @@ public class VendingContentsBuffer extends VendingContents {
         }
     }
 
+    // Moves stack count to the buffer, reducing stack to 1
     public boolean shrinkBuffer(int index, int amnt){
         if(buffer[index] - amnt >= 0){
             buffer[index] = buffer[index] - amnt;
             return true;
         } else {
             return false;
+        }
+    }
+
+    public void countToBuffer(int index){
+        if(index >= 0 && index <= buffer.length) {
+            int count = vendingComponentContents.getStackInSlot(index).getCount();
+            vendingComponentContents.getStackInSlot(index).setCount(1);
+            buffer[index] = buffer[index] + (count - 1);
         }
     }
 
