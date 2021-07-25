@@ -1,6 +1,9 @@
 package com.beardlessbrady.gocurrency.blocks.vending;
 
+import com.beardlessbrady.gocurrency.GOCurrency;
 import com.beardlessbrady.gocurrency.init.CommonRegistry;
+import com.beardlessbrady.gocurrency.network.MessageVendingStackSizeToClient;
+import com.beardlessbrady.gocurrency.network.MessageVendingStateData;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -12,6 +15,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -34,15 +38,15 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
     public static final int OUTPUT_SLOTS_COUNT = 3;
     public static final int TOTAL_SLOTS_COUNT = STOCK_SLOT_COUNT + INPUT_SLOTS_COUNT + OUTPUT_SLOTS_COUNT;
 
-    private VendingContentsBuffer stockContents;
-    private VendingContents inputContents;
-    private VendingContents outputContents;
+    private final VendingContentsOverloaded stockContents;
+    private final VendingContents inputContents;
+    private final VendingContents outputContents;
 
-    private final VendingStateData vendingStateData= new VendingStateData();
+    private final VendingStateData vendingStateData = new VendingStateData();
 
     public VendingTile() {
         super(CommonRegistry.TILE_VENDING.get());
-        stockContents = new VendingContentsBuffer(STOCK_SLOT_COUNT, this::canPlayerUse, this::markDirty);
+        stockContents = new VendingContentsOverloaded(STOCK_SLOT_COUNT, this::canPlayerUse, this::markDirty);
         inputContents = new VendingContents(INPUT_SLOTS_COUNT, this::canPlayerUse, this::markDirty);
         outputContents = new VendingContents(OUTPUT_SLOTS_COUNT, this::canPlayerUse, this::markDirty);
     }
@@ -60,7 +64,7 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
         return player.getDistanceSq(pos.getX() + X_CENTRE_OFFSET, pos.getY() + Y_CENTRE_OFFSET, pos.getZ() + Z_CENTRE_OFFSET) < MAXIMUM_DISTANCE_SQ;
     }
 
-    public void dropAllContents(World world, BlockPos blockPos){
+    public void dropAllContents(World world, BlockPos blockPos) {
         InventoryHelper.dropInventoryItems(world, blockPos, stockContents);
         InventoryHelper.dropInventoryItems(world, blockPos, inputContents);
         InventoryHelper.dropInventoryItems(world, blockPos, outputContents);
@@ -78,24 +82,23 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
         return VendingContainer.createContainerServer(windowID, playerInventory, stockContents, inputContents, outputContents, vendingStateData, this);
     }
 
-    public int getVendingStateData(int index){
+    public int getVendingStateData(int index) {
         return vendingStateData.get(index);
     }
 
-    public int[] getVendingStateDataAsArray(){
+    public int[] getVendingStateDataAsArray() {
         int[] array = new int[vendingStateData.size()];
 
-        for(int i = 0; i < vendingStateData.size(); i++){
+        for (int i = 0; i < vendingStateData.size(); i++) {
             array[i] = vendingStateData.get(i);
         }
 
         return array;
     }
 
-    public void setVendingStateData(int index, int value){
+    public void setVendingStateData(int index, int value) {
         this.vendingStateData.set(index, value);
     }
-
 
     // ---- NBT Stuff ----
     private final String STOCK_SLOTS_NBT = "stockSlots";
@@ -157,11 +160,17 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
         read(state, tag);
     }
 
-    public int getBuffer(int index){
-        return stockContents.getBuffer(index);
+    public void setStackSizes(int[] array){
+        NonNullList<Integer> list = NonNullList.withSize(array.length, 0);
+
+        for(int i = 0; i < array.length; i++){
+            list.set(i, array[i]);
+        }
+
+        stockContents.setSizeList(list);
     }
 
-    public int getTotalCount(int index){
-        return stockContents.getBuffer(index) + stockContents.getStackInSlot(index).getCount();
+    public NonNullList<Integer> getStackSizes(){
+        return stockContents.getSizeList();
     }
 }

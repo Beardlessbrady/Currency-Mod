@@ -3,14 +3,12 @@ package com.beardlessbrady.gocurrency.blocks.vending;
 import com.beardlessbrady.gocurrency.GOCurrency;
 import com.beardlessbrady.gocurrency.network.MessageVendingStateData;
 import com.mojang.blaze3d.matrix.MatrixStack;
-import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.lwjgl.opengl.GL12;
@@ -23,9 +21,9 @@ import org.lwjgl.opengl.GL12;
 public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
     private static final ResourceLocation TEXTURE = new ResourceLocation("gocurrency", "textures/gui/vending.png");
 
-    final static  int FONT_Y_SPACING = 10;
-    final static  int PLAYER_INV_LABEL_XPOS = VendingContainer.PLAYER_INVENTORY_XPOS;
-    final static  int PLAYER_INV_LABEL_YPOS = VendingContainer.PLAYER_INVENTORY_YPOS - FONT_Y_SPACING;
+    final static int FONT_Y_SPACING = 10;
+    final static int PLAYER_INV_LABEL_XPOS = VendingContainer.PLAYER_INVENTORY_XPOS;
+    final static int PLAYER_INV_LABEL_YPOS = VendingContainer.PLAYER_INVENTORY_YPOS - FONT_Y_SPACING;
 
     final static byte BUTTONID_MODE = 0;
 
@@ -46,7 +44,7 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
         }));
     }
 
-    private void handle(int i){
+    private void handle(int i) {
         GOCurrency.NETWORK_HANDLER.sendToServer(new MessageVendingStateData(container.getTile().getPos(), i));
     }
 
@@ -88,8 +86,8 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
     }
 
     // Returns true if the given x,y coordinates are within the given rectangle
-    public static boolean isInRect(int x, int y, int xSize, int ySize, int mouseX, int mouseY){
-        return ((mouseX >= x && mouseX <= x+xSize) && (mouseY >= y && mouseY <= y+ySize));
+    public static boolean isInRect(int x, int y, int xSize, int ySize, int mouseX, int mouseY) {
+        return ((mouseX >= x && mouseX <= x + xSize) && (mouseY >= y && mouseY <= y + ySize));
     }
 
     @Override
@@ -97,7 +95,7 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
         drawBufferSize(matrixStack);
 
         this.font.func_243248_b(matrixStack, this.title, 40, -41, 4210752); //Block Title
-        this.font.func_243248_b(matrixStack, this.playerInventory.getDisplayName(), (float)this.playerInventoryTitleX, 117, 4210752); //Inventory Title
+        this.font.func_243248_b(matrixStack, this.playerInventory.getDisplayName(), (float) this.playerInventoryTitleX, 117, 4210752); //Inventory Title
         buttons.get(BUTTONID_MODE).setMessage(new TranslationTextComponent("gui.gocurrency.vending.buttonmode" + container.getVendingStateData(VendingStateData.MODE_INDEX)));
 
         // Draw Top tips of outer machine to cover items inside
@@ -113,18 +111,19 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
         GL12.glPushMatrix();
         GL12.glScalef(0.7F, 0.7F, 0.8F);
 
+        matrixStack.push();
+        matrixStack.translate(0, 0, 500);
+
         String num;
         int startY = -30;
-        int startX = 66;
+        int startX = 59;
         int columnCount = 4;
         int rowCount = 4;
-
-        VendingTile te = container.getTile();
 
         for (int j = 0; j < columnCount; j++) {
             for (int i = 0; i < rowCount; i++) {
                 int index = (i + (rowCount * j));
-                int count = te.getTotalCount(index);
+                int count = container.getStockContents().getStackSize(index);
 
                 if (count > 0) {
                     num = TextFormatting.WHITE + Integer.toString(count);
@@ -134,13 +133,14 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
                     num = " ";
                 }
 
-                if (num.length() == 1) num = "  " + num;
-                if (num.length() == 2) num = " " + num;
+                if (count < 10 && count > 0) num = "  " + num;
+                if (count >= 10 && count < 100) num = " " + num;
 
                 if (count != 1)
-                    this.font.drawStringWithShadow(matrixStack, num, startX + (i * 26), startY + (j * 26), 1); //Inventory Title
+                    this.font.drawStringWithShadow(matrixStack, num, startX + (i * 26), startY + (j * 31), 1); //Inventory Title
             }
         }
+        matrixStack.pop();
         GL12.glPopMatrix();
         GL12.glDisable(GL12.GL_DEPTH_TEST);
     }
