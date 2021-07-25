@@ -1,9 +1,6 @@
 package com.beardlessbrady.gocurrency.blocks.vending;
 
-import com.beardlessbrady.gocurrency.GOCurrency;
 import com.beardlessbrady.gocurrency.init.CommonRegistry;
-import com.beardlessbrady.gocurrency.network.MessageVendingStackSizeToClient;
-import com.beardlessbrady.gocurrency.network.MessageVendingStateData;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -158,19 +155,5 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
     @Override
     public void handleUpdateTag(BlockState state, CompoundNBT tag) {
         read(state, tag);
-    }
-
-    public void setStackSizes(int[] array){
-        NonNullList<Integer> list = NonNullList.withSize(array.length, 0);
-
-        for(int i = 0; i < array.length; i++){
-            list.set(i, array[i]);
-        }
-
-        stockContents.setSizeList(list);
-    }
-
-    public NonNullList<Integer> getStackSizes(){
-        return stockContents.getSizeList();
     }
 }

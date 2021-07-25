@@ -1,8 +1,6 @@
 package com.beardlessbrady.gocurrency.blocks.vending;
 
-import com.beardlessbrady.gocurrency.GOCurrency;
 import com.beardlessbrady.gocurrency.init.CommonRegistry;
-import com.beardlessbrady.gocurrency.network.MessageVendingStackSizeToClient;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ContainerBlock;
@@ -12,7 +10,6 @@ import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.world.IBlockReader;
@@ -51,16 +48,6 @@ public class VendingBlock extends ContainerBlock {
         if (namedContainerProvider != null) {
             if (!(player instanceof ServerPlayerEntity)) return ActionResultType.FAIL;
             ServerPlayerEntity serverPlayerEntity = (ServerPlayerEntity) player;
-
-            // Send stack sizes to player opening GUI
-            NonNullList<Integer> sizeList = ((VendingTile) worldIn.getTileEntity(pos)).getStackSizes();
-            int[] sizeArray = new int[sizeList.size()];
-            for (int i = 0; i < sizeArray.length; i++) {
-                sizeArray[i] = sizeList.get(i);
-            }
-
-            GOCurrency.NETWORK_HANDLER.sendTo(serverPlayerEntity, new MessageVendingStackSizeToClient(pos, sizeArray));
-
 
             // OPEN GUI
             int[] dataArray = ((VendingTile) worldIn.getTileEntity(pos)).getVendingStateDataAsArray();

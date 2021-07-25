@@ -90,6 +90,7 @@ public class VendingContainer extends Container {
         this.tile = tile;
 
         trackIntArray(this.vendingStateData);
+        trackIntArray(this.stockContents.getStackSizeIntArray());
 
         generateSlots(playerInventory, stock, input, output);
     }
@@ -311,5 +312,17 @@ public class VendingContainer extends Container {
             }
             throw new IndexOutOfBoundsException("Unexpected slotIndex");
         }
+    }
+
+    @Override
+    public void detectAndSendChanges() {
+        super.detectAndSendChanges();
+    }
+
+    @Override
+    public void updateProgressBar(int id, int data) {
+        super.updateProgressBar(id, data);
+
+        System.out.println(id + " - " + data);
     }
 }

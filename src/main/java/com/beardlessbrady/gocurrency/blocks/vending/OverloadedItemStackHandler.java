@@ -18,9 +18,9 @@ import javax.annotation.Nonnull;
  * https://github.com/Beardlessbrady/Currency-Mod
  */
 public class OverloadedItemStackHandler implements IItemHandler, IItemHandlerModifiable, INBTSerializable<CompoundNBT> {
-    protected NonNullList<ItemStack> stacks;
-    protected NonNullList<Integer> stackSize;
-    protected int stackSizeLimit = 256;
+    private NonNullList<ItemStack> stacks;
+    private StackSizeIntArray stackSize;
+    private int stackSizeLimit = 256;
 
     public OverloadedItemStackHandler() {
         this(1);
@@ -28,26 +28,23 @@ public class OverloadedItemStackHandler implements IItemHandler, IItemHandlerMod
 
     public OverloadedItemStackHandler(int size) {
         stacks = NonNullList.withSize(size, ItemStack.EMPTY);
-        stackSize = NonNullList.withSize(size, 0);
+        stackSize = new StackSizeIntArray(size);
     }
 
     public OverloadedItemStackHandler(NonNullList<ItemStack> add) {
         stacks = NonNullList.withSize(add.size(), ItemStack.EMPTY);
-        stackSize = NonNullList.withSize(add.size(), 0);
+        stackSize = new StackSizeIntArray(add.size());
 
         for (int i = 0; i < add.size(); i++) {
             stackSize.set(i, add.get(i).getCount());
             add.get(i).setCount(1);
             stacks.set(i, add.get(i).copy());
         }
-
-
-        this.stacks = stacks;
     }
 
     public void setSize(int size) {
         stacks = NonNullList.withSize(size, ItemStack.EMPTY);
-        stackSize = NonNullList.withSize(size, 0);
+        stackSize = new StackSizeIntArray(size);
     }
 
     @Override
@@ -73,7 +70,7 @@ public class OverloadedItemStackHandler implements IItemHandler, IItemHandlerMod
         return this.stacks.get(slot);
     }
 
-    public int getSizeInSlot(int slot){
+    public int getSizeInSlot(int slot) {
         return this.stackSize.get(slot);
     }
 
@@ -136,7 +133,7 @@ public class OverloadedItemStackHandler implements IItemHandler, IItemHandlerMod
             onContentsChanged(slot);
         }
 
-        return reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, stack.getCount()- limit) : ItemStack.EMPTY;
+        return reachedLimit ? ItemHandlerHelper.copyStackWithSize(stack, stack.getCount() - limit) : ItemStack.EMPTY;
     }
 
     @Override
@@ -244,5 +241,13 @@ public class OverloadedItemStackHandler implements IItemHandler, IItemHandlerMod
     }
 
     protected void onContentsChanged(int slot) {
+    }
+
+    public StackSizeIntArray getStackSizeIntArray(){
+        return stackSize;
+    }
+
+    public void setStackSizeIntArray(StackSizeIntArray i){
+        stackSize = i;
     }
 }

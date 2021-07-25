@@ -136,7 +136,7 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
                 if (count < 10 && count > 0) num = "  " + num;
                 if (count >= 10 && count < 100) num = " " + num;
 
-                if (count != 1)
+                if (count != 1 && !container.getStockContents().getStackInSlot(index).isEmpty())
                     this.font.drawStringWithShadow(matrixStack, num, startX + (i * 26), startY + (j * 31), 1); //Inventory Title
             }
         }

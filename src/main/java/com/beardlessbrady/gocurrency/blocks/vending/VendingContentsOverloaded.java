@@ -102,14 +102,6 @@ public class VendingContentsOverloaded implements IInventory {
         return vendingComponentContents.getSizeInSlot(index);
     }
 
-    public void setSizeList(NonNullList<Integer> array){
-        vendingComponentContents.stackSize = array;
-    }
-
-    public NonNullList<Integer> getSizeList(){
-        return vendingComponentContents.stackSize;
-    }
-
     @Override
     public ItemStack decrStackSize(int index, int count) {
         if (count < 0) throw new IllegalArgumentException("count should be >= 0:" + count);
@@ -128,7 +120,7 @@ public class VendingContentsOverloaded implements IInventory {
     }
 
     public ItemStack growInventorySlotSize(int index, ItemStack stack){
-        if(ItemHandlerHelper.canItemStacksStack(stack, vendingComponentContents.stacks.get(index))){
+        if(ItemHandlerHelper.canItemStacksStack(stack, vendingComponentContents.getStackInSlot(index))){
             int leftover = vendingComponentContents.growStackSize(index, stack.getCount());
             if(leftover == 0){ // No leftover
                 return ItemStack.EMPTY;
@@ -150,7 +142,15 @@ public class VendingContentsOverloaded implements IInventory {
     }
 
     public int getStackSize(int slot){
-        return vendingComponentContents.stackSize.get(slot);
+        return vendingComponentContents.getSizeInSlot(slot);
+    }
+
+    public StackSizeIntArray getStackSizeIntArray(){
+        return vendingComponentContents.getStackSizeIntArray();
+    }
+
+    public void setStackSizeIntArray(StackSizeIntArray i){
+        vendingComponentContents.setStackSizeIntArray(i);
     }
 
     // ---- MY NEW MANIPULATION METHODS
