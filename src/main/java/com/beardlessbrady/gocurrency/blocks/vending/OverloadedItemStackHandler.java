@@ -246,8 +246,4 @@ public class OverloadedItemStackHandler implements IItemHandler, IItemHandlerMod
     public StackSizeIntArray getStackSizeIntArray(){
         return stackSize;
     }
-
-    public void setStackSizeIntArray(StackSizeIntArray i){
-        stackSize = i;
-    }
 }

@@ -7,9 +7,15 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
+import org.lwjgl.system.CallbackI;
+
+import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by BeardlessBrady on 2021-03-01 for Currency-Mod
@@ -156,7 +162,7 @@ public class VendingContainer extends Container {
             //System.out.println(slotId + " " + dragType + " " + clickTypeIn);
             if ((slotId >= HOTBAR_FIRST_SLOT_INDEX && //PLAYER INVENTORY
                     slotId < PLAYER_INVENTORY_FIRST_SLOT_INDEX + PLAYER_INVENTORY_SLOT_COUNT) || (slotId == -999)) {
-                return super.slotClick(slotId, dragType, clickTypeIn, player);
+                return playerSlotClick(slotId, dragType, clickTypeIn, player);
             } else if (slotId >= FIRST_STOCK_SLOT_INDEX && // STOCK INVENTORY
                     slotId < FIRST_INPUT_SLOT_INDEX) {
                 return stockSlotClick(slotId, dragType, clickTypeIn, player);
@@ -177,17 +183,55 @@ public class VendingContainer extends Container {
         }
     }
 
+    private ItemStack playerSlotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player){
+        // Follows VANILLA PICKUP_ALL except only pulls from players inventory
+        if (clickTypeIn == ClickType.PICKUP_ALL && slotId >= 0) {
+            Slot slot2 = this.inventorySlots.get(slotId);
+            ItemStack itemstack5 = player.inventory.getItemStack();
+            if (!itemstack5.isEmpty() && (slot2 == null || !slot2.getHasStack() || !slot2.canTakeStack(player))) {
+                int j1 = dragType == 0 ? 0 : this.inventorySlots.size() - 1;
+                int i2 = dragType == 0 ? 1 : -1;
+
+                for(int j = 0; j < 2; ++j) {
+                    for(int k = j1; k >= 0 && k < FIRST_STOCK_SLOT_INDEX && itemstack5.getCount() < itemstack5.getMaxStackSize(); k += i2) {
+                        Slot slot1 = this.inventorySlots.get(k);
+                        if (slot1.getHasStack() && canAddItemToSlot(slot1, itemstack5, true) && slot1.canTakeStack(player) && this.canMergeSlot(itemstack5, slot1)) {
+                            ItemStack itemstack3 = slot1.getStack();
+                            if (j != 0 || itemstack3.getCount() != itemstack3.getMaxStackSize()) {
+                                int l = Math.min(itemstack5.getMaxStackSize() - itemstack5.getCount(), itemstack3.getCount());
+                                ItemStack itemstack4 = slot1.decrStackSize(l);
+                                itemstack5.grow(l);
+                                if (itemstack4.isEmpty()) {
+                                    slot1.putStack(ItemStack.EMPTY);
+                                }
+
+                                slot1.onTake(player, itemstack4);
+                            }
+                        }
+                    }
+                }
+            }
+            this.detectAndSendChanges();
+            return ItemStack.EMPTY;
+        }
+
+        return super.slotClick(slotId, dragType, clickTypeIn, player);
+    }
+
     private ItemStack stockSlotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
         int index = slotId - FIRST_STOCK_SLOT_INDEX;
         ItemStack playerStack = player.inventory.getItemStack();
         ItemStack slotStack = this.stockContents.getStackInSlot(index);
         int slotCount = this.stockContents.getSizeInSlot(index);
 
-       //System.out.println("SLOTID: "+ slotId + " DRAGTYPE: " + dragType + " CLICKTYPE: " + clickTypeIn);
-
         if (vendingStateData.get(VendingStateData.MODE_INDEX) == 0) { // Sell
             //TODO
         } else { // Restock
+            if (clickTypeIn == ClickType.QUICK_CRAFT || clickTypeIn == ClickType.PICKUP_ALL ){ // Drag Click DISABLED
+                clickTypeIn = ClickType.PICKUP;
+                dragType = 0;
+            }
+
             if (clickTypeIn == ClickType.PICKUP) { // Regular Click = Place all/Pickup all
                 if (playerStack.isEmpty()) { // Player Stack empty, PICKUP
                     if(!slotStack.isEmpty()) { //TODO In creative allow opening Creative menu to place item here if both empty
@@ -257,8 +301,21 @@ public class VendingContainer extends Container {
         return super.canMergeSlot(stack, slotIn);
     }
 
+    public static boolean canAddItemToItemStack(ItemStack slotStack, int slotSize, ItemStack stack, boolean stackSizeMatters) {
+        boolean flag = slotStack == null || slotStack.isEmpty();
+        if (!flag && stack.isItemEqual(slotStack) && ItemStack.areItemStackTagsEqual(slotStack, stack)) {
+            return slotSize + (stackSizeMatters ? 0 : stack.getCount()) <= stack.getMaxStackSize();
+        } else {
+            return flag;
+        }
+    }
+
     public VendingContentsOverloaded getStockContents(){
         return stockContents;
+    }
+
+    public int getVendingStateData(int index){
+        return vendingStateData.get(index);
     }
 
     // --- Slot customization ----
@@ -279,14 +336,6 @@ public class VendingContainer extends Container {
         public OutputSlot(IInventory inventoryIn, int index, int xPosition, int yPosition) {
             super(inventoryIn, index, xPosition, yPosition);
         }
-    }
-
-    public int getVendingStateData(int index){
-        return vendingStateData.get(index);
-    }
-
-    public void setVendingStateData(int index, int value){
-        this.vendingStateData.set(index, value);
     }
 
     private enum SlotZones {
@@ -312,17 +361,5 @@ public class VendingContainer extends Container {
             }
             throw new IndexOutOfBoundsException("Unexpected slotIndex");
         }
-    }
-
-    @Override
-    public void detectAndSendChanges() {
-        super.detectAndSendChanges();
-    }
-
-    @Override
-    public void updateProgressBar(int id, int data) {
-        super.updateProgressBar(id, data);
-
-        System.out.println(id + " - " + data);
     }
 }

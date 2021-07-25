@@ -102,6 +102,14 @@ public class VendingContentsOverloaded implements IInventory {
         return vendingComponentContents.getSizeInSlot(index);
     }
 
+    public int getStackSize(int slot){
+        return vendingComponentContents.getSizeInSlot(slot);
+    }
+
+    public StackSizeIntArray getStackSizeIntArray(){
+        return vendingComponentContents.getStackSizeIntArray();
+    }
+
     @Override
     public ItemStack decrStackSize(int index, int count) {
         if (count < 0) throw new IllegalArgumentException("count should be >= 0:" + count);
@@ -140,18 +148,4 @@ public class VendingContentsOverloaded implements IInventory {
             vendingComponentContents.setStackInSlot(i, ItemStack.EMPTY);
         }
     }
-
-    public int getStackSize(int slot){
-        return vendingComponentContents.getSizeInSlot(slot);
-    }
-
-    public StackSizeIntArray getStackSizeIntArray(){
-        return vendingComponentContents.getStackSizeIntArray();
-    }
-
-    public void setStackSizeIntArray(StackSizeIntArray i){
-        vendingComponentContents.setStackSizeIntArray(i);
-    }
-
-    // ---- MY NEW MANIPULATION METHODS
 }
