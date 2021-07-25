@@ -33,7 +33,7 @@ import java.util.List;
 public class GOCurrency {
     public final static String MODID = "gocurrency";
     public static final ItemGroup
-            GOC_ITEM_GROUP = new ModItemGroup(MODID, () -> CurrencyItem.getTabItem());
+            GOC_ITEM_GROUP = new ModItemGroup(MODID, CurrencyItem::getTabItem);
 
     public static final NetworkHandler NETWORK_HANDLER = new NetworkHandler();
 

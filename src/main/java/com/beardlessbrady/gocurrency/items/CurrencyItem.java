@@ -37,11 +37,14 @@ public class CurrencyItem extends Item {
     public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
         CurrencyItem.CurrencyObject[] currList = GOCurrency.currencyList;
 
-        if (currList != null) {
-            for (CurrencyObject currency : currList) {
-                ItemStack subItemStack = new ItemStack(this, 1);
-                putIntoNBT(subItemStack, currency);
-                items.add(subItemStack);
+        System.out.println(group.getIcon());
+        if(currList != null) {
+            if (this.isInGroup(group)) {
+                for (CurrencyObject currency : currList) {
+                    ItemStack subItemStack = new ItemStack(this, 1);
+                    putIntoNBT(subItemStack, currency);
+                    items.add(subItemStack);
+                }
             }
         }
     }
