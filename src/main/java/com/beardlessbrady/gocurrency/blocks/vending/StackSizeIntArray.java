@@ -1,6 +1,5 @@
 package com.beardlessbrady.gocurrency.blocks.vending;
 
-import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.IIntArray;
 import net.minecraft.util.NonNullList;
 
@@ -15,29 +14,6 @@ public class StackSizeIntArray implements IIntArray {
     public StackSizeIntArray(int size){
         intSize = NonNullList.withSize(size, 0);
         END_OF_INDEX_PLUS_ONE = intSize.size() + 1;
-    }
-
-    public StackSizeIntArray(NonNullList<Integer> array){
-        intSize = array;
-        END_OF_INDEX_PLUS_ONE = intSize.size() + 1;
-    }
-
-    public void putIntoNBT(CompoundNBT compoundNBT){
-        CompoundNBT comp = new CompoundNBT();
-
-        for (int i = 0; i < intSize.size(); i++){
-            comp.putInt(Integer.toString(i), intSize.get(i));
-        }
-
-        compoundNBT.put("intSize", comp);
-    }
-
-    public void readFromNBT(CompoundNBT compoundNBT){
-        CompoundNBT comp = compoundNBT.getCompound("intSize");
-
-        for (int i = 0; i < intSize.size(); i++){
-            intSize.set(i, comp.getInt(Integer.toString(i)));
-        }
     }
 
     // Vanilla Stuff, NO TOUCH

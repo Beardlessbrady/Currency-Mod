@@ -112,7 +112,7 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
         GL12.glScalef(0.7F, 0.7F, 0.8F);
 
         matrixStack.push();
-        matrixStack.translate(0, 0, 500);
+        matrixStack.translate(0, 0, 350);
 
         String num;
         int startY = -30;
