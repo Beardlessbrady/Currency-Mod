@@ -7,15 +7,11 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
-import org.lwjgl.system.CallbackI;
 
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedList;
 
 /**
  * Created by BeardlessBrady on 2021-03-01 for Currency-Mod
@@ -94,11 +90,13 @@ public class VendingContainer extends Container {
         this.vendingStateData = vendingStateData;
         this.world = playerInventory.player.world;
         this.tile = tile;
+        dragging = false;
 
         trackIntArray(this.vendingStateData);
         trackIntArray(this.stockContents.getStackSizeIntArray());
 
         generateSlots(playerInventory, stock, input, output);
+
     }
 
     public VendingTile getTile(){
@@ -155,13 +153,28 @@ public class VendingContainer extends Container {
     }
 
     // ---- Slot manipulation ----
+    private boolean dragging = false;
+    private LinkedList<Integer> dragSlots = new LinkedList<Integer>();
 
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+        System.out.println(slotId + " " + dragType + " " + clickTypeIn);
+
         try {
-            //System.out.println(slotId + " " + dragType + " " + clickTypeIn);
+            // Quick Crafting
+            if(slotId == -999) {
+                dragClick(slotId, dragType, clickTypeIn, player);
+            }
+
+            if (clickTypeIn == ClickType.QUICK_CRAFT && dragging){
+                dragSlots.add(slotId);
+                return ItemStack.EMPTY;
+            } else if (clickTypeIn == ClickType.QUICK_CRAFT) { // Probably will never be reached
+                return ItemStack.EMPTY;
+            }
+
             if ((slotId >= HOTBAR_FIRST_SLOT_INDEX && //PLAYER INVENTORY
-                    slotId < PLAYER_INVENTORY_FIRST_SLOT_INDEX + PLAYER_INVENTORY_SLOT_COUNT) || (slotId == -999)) {
+                    slotId < PLAYER_INVENTORY_FIRST_SLOT_INDEX + PLAYER_INVENTORY_SLOT_COUNT)) {
                 return playerSlotClick(slotId, dragType, clickTypeIn, player);
             } else if (slotId >= FIRST_STOCK_SLOT_INDEX && // STOCK INVENTORY
                     slotId < FIRST_INPUT_SLOT_INDEX) {
@@ -227,9 +240,28 @@ public class VendingContainer extends Container {
         if (vendingStateData.get(VendingStateData.MODE_INDEX) == 0) { // Sell
             //TODO
         } else { // Restock
-            if (clickTypeIn == ClickType.QUICK_CRAFT || clickTypeIn == ClickType.PICKUP_ALL ){ // Drag Click DISABLED
-                clickTypeIn = ClickType.PICKUP;
-                dragType = 0;
+            if (clickTypeIn == ClickType.PICKUP_ALL ) {
+                if (!playerStack.isEmpty() && (slotStack.isEmpty())) {
+                    for (int k = 0; k < this.stockContents.getSizeInventory(); k++) {
+                        if (!stockContents.getStackInSlot(k).isEmpty() && areItemsAndTagsEqual(stockContents.getStackInSlot(k), playerStack)) {
+                            int growthLeft = playerStack.getMaxStackSize() - playerStack.getCount();
+
+                            if (stockContents.getStackSize(k) >= growthLeft) {
+                                playerStack.grow(growthLeft);
+                                stockContents.decrStackSize(k, growthLeft);
+                            } else { // Stock size < growthLeft
+                                playerStack.grow(stockContents.getStackSize(k));
+                                stockContents.decrStackSize(k, stockContents.getStackSize(k));
+                            }
+                        }
+                        if (playerStack.getMaxStackSize() == playerStack.getCount()) {
+                            this.detectAndSendChanges();
+                            return ItemStack.EMPTY;
+                        }
+                    }
+                }
+                this.detectAndSendChanges();
+                return ItemStack.EMPTY;
             }
 
             if (clickTypeIn == ClickType.PICKUP) { // Regular Click = Place all/Pickup all
@@ -289,22 +321,128 @@ public class VendingContainer extends Container {
         return ItemStack.EMPTY;
     }
 
-    // Shift clicking
-    @Override
-    public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
-        return super.transferStackInSlot(playerIn, index);
+    /**
+     * When Dragging is activated, (slot = -999 flags start and stop)
+     */
+    public ItemStack dragClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+        dragging = !dragging;
+        if (!dragging) { // Dragging has completed
+            // Validate Drag Slots
+            LinkedList<Integer> tempList = new LinkedList<>();
+            for (int i = 0; i < dragSlots.size(); i++) {
+                // If Player Inv OR (Stock Inv AND Stock Mode)
+                if ((dragSlots.get(i) >= HOTBAR_FIRST_SLOT_INDEX && dragSlots.get(i) < PLAYER_INVENTORY_FIRST_SLOT_INDEX + PLAYER_INVENTORY_SLOT_COUNT) //PLAYER INVENTORY
+                        ||
+                        ((dragSlots.get(i) >= FIRST_STOCK_SLOT_INDEX && dragSlots.get(i) < FIRST_INPUT_SLOT_INDEX) // STOCK INVENTORY
+                                && (vendingStateData.get(VendingStateData.MODE_INDEX) == 1))) { // Stock Mode
+                    tempList.push(dragSlots.get(i)); // Valid slots are added to a temp list
+                }
+            }
+            dragSlots = tempList; // Set dragSlots to temp validated slot list
+
+            if(dragSlots.size() > 0) { // Not Empty after validation
+                ItemStack playerStack = player.inventory.getItemStack();
+                int divCount = (dragType == 2 ? playerStack.getCount() / dragSlots.size() : 1);
+                ItemStack divStack = playerStack.copy();
+                divStack.setCount(divCount);
+
+                // Divide Stack and put in slot if possible
+                for (int i = 0; i < dragSlots.size(); i++) {
+                    if (dragSlots.get(i) >= HOTBAR_FIRST_SLOT_INDEX && dragSlots.get(i) < PLAYER_INVENTORY_FIRST_SLOT_INDEX + PLAYER_INVENTORY_SLOT_COUNT) { //PLAYER INVENTORY
+                        Slot inputSlot = inventorySlots.get(dragSlots.get(i));
+
+                        // Enough room for whole divisor stack
+                        if (canAddItemToSlot(inputSlot, divStack.copy(), false )) {
+                            if (inputSlot.getStack().isEmpty()) {
+                                inputSlot.putStack(divStack.copy());
+                            } else {
+                                inputSlot.getStack().grow(divCount);
+                            }
+                            playerStack.shrink(divCount);
+                        } else {
+                            // Same item, add some of stack
+                            if (canAddItemToSlot(inventorySlots.get(dragSlots.get(i)), divStack.copy(), true )) {
+                                int growthAmount = divCount + (inputSlot.getStack().getMaxStackSize() - (inputSlot.getStack().getCount() + divCount));
+                                inputSlot.getStack().grow(growthAmount);
+                                playerStack.shrink(growthAmount);
+                            }
+                        }
+                    } else if ((dragSlots.get(i) >= FIRST_STOCK_SLOT_INDEX && dragSlots.get(i) < FIRST_INPUT_SLOT_INDEX) // STOCK INVENTORY
+                            && (vendingStateData.get(VendingStateData.MODE_INDEX) == 1)) { // Stock Mode
+
+                        int stockIndex = dragSlots.get(i) - FIRST_STOCK_SLOT_INDEX;
+                        ItemStack slotStack = this.stockContents.getStackInSlot(stockIndex);
+                        int slotCount = this.stockContents.getSizeInSlot(stockIndex);
+
+                        // Enough room for whole divisor stack
+                        if (canAddStackToOverloadedStack(slotStack, slotCount, stockContents.getStackLimit(stockIndex), divStack.copy(), true)) {
+                            if (stockContents.getStackInSlot(stockIndex).isEmpty()) {
+                                stockContents.setInventorySlotContents(stockIndex, divStack.copy());
+                            } else {
+                                stockContents.growInventorySlotSize(stockIndex, divStack.copy());
+                            }
+                            playerStack.shrink(divCount);
+                        } else {
+
+                            // Same item, add some of stack
+                            if (canAddStackToOverloadedStack(slotStack, slotCount, stockContents.getStackLimit(stockIndex), divStack.copy(), false)) {
+                                playerStack.shrink(divCount - stockContents.growInventorySlotSize(stockIndex, divStack.copy()).getCount()); // Shrink by divcount - leftover
+                            }
+                        }
+                    }
+                }
+            }
+            dragSlots = new LinkedList<Integer>();
+        }
+        return ItemStack.EMPTY;
     }
 
-    // Try to merge from given source stack into slot
-    @Override
+    @Override // Shift clicking
+    public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
+        Slot slot = this.inventorySlots.get(index);
+
+        if (vendingStateData.get(VendingStateData.MODE_INDEX) == 1) { // Stock
+            // Stack has same item and can fit stack being shifted
+            for (int i = 0; i < stockContents.getSizeInventory(); i++) {
+                // Has same item and can fit stack size
+                if (!stockContents.getStackInSlot(i).isEmpty() &&
+                        canAddStackToOverloadedStack(stockContents.getStackInSlot(i), stockContents.getStackSize(i), stockContents.getStackLimit(i), slot.getStack(), true)) {
+                    stockContents.growInventorySlotSize(i, slot.getStack());
+                    slot.decrStackSize(slot.getStack().getCount());
+                    return ItemStack.EMPTY;
+
+                    // Has same item and CANNOT fit stack size
+                } else  if (!stockContents.getStackInSlot(i).isEmpty() &&
+                        canAddStackToOverloadedStack(stockContents.getStackInSlot(i), stockContents.getStackSize(i), stockContents.getStackLimit(i), slot.getStack(), false)) {
+                    slot.getStack().setCount(stockContents.growInventorySlotSize(i, slot.getStack()).getCount());
+                }
+            }
+
+            // Since no matching items with room place in EMPTY slot if possible
+            for (int i = 0; i < stockContents.getSizeInventory(); i++) {
+                if (stockContents.getStackInSlot(i).isEmpty() &&
+                        canAddStackToOverloadedStack(stockContents.getStackInSlot(i), stockContents.getStackSize(i), stockContents.getStackLimit(i), slot.getStack(), false)) {
+                    stockContents.setInventorySlotContents(i, slot.getStack().copy());
+                    slot.decrStackSize(slot.getStack().getCount());
+                    return ItemStack.EMPTY;
+                }
+            }
+        }
+        return ItemStack.EMPTY;
+    }
+
+    @Override // Try to merge from given source stack into slot
     public boolean canMergeSlot(ItemStack stack, Slot slotIn) {
         return super.canMergeSlot(stack, slotIn);
     }
 
-    public static boolean canAddItemToItemStack(ItemStack slotStack, int slotSize, ItemStack stack, boolean stackSizeMatters) {
+    /**
+     * Regular Stack -> Overloaded Stack Slot
+     */
+    public static boolean canAddStackToOverloadedStack(ItemStack slotStack, int slotSize, int slotLimit, ItemStack stack, boolean stackSizeMatters) {
         boolean flag = slotStack == null || slotStack.isEmpty();
         if (!flag && stack.isItemEqual(slotStack) && ItemStack.areItemStackTagsEqual(slotStack, stack)) {
-            return slotSize + (stackSizeMatters ? 0 : stack.getCount()) <= stack.getMaxStackSize();
+            return slotSize + (!stackSizeMatters ? 0 : stack.getCount()) <= slotLimit;
         } else {
             return flag;
         }
@@ -332,7 +470,6 @@ public class VendingContainer extends Container {
     }
 
     public class OutputSlot extends Slot {
-
         public OutputSlot(IInventory inventoryIn, int index, int xPosition, int yPosition) {
             super(inventoryIn, index, xPosition, yPosition);
         }

@@ -142,6 +142,10 @@ public class VendingContentsOverloaded implements IInventory {
         }
     }
 
+    public int getStackLimit(int index){
+        return vendingComponentContents.getStackLimit(index, null);
+    }
+
     @Override
     public void clear() {
         for(int i = 0; i < vendingComponentContents.getSlots(); i++){

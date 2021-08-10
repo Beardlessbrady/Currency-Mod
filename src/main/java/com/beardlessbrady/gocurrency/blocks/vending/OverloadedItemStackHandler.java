@@ -50,7 +50,6 @@ public class OverloadedItemStackHandler implements IItemHandler, IItemHandlerMod
     @Override
     public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
         validateSlotIndex(slot);
-
         this.stackSize.set(slot, stack.getCount());
 
         stack.setCount(1);
