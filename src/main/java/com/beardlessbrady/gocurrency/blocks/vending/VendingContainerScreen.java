@@ -20,6 +20,7 @@ import org.lwjgl.opengl.GL12;
  */
 public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
     private static final ResourceLocation TEXTURE = new ResourceLocation("gocurrency", "textures/gui/vending.png");
+    private static final ResourceLocation TEXTURE2 = new ResourceLocation("gocurrency", "textures/gui/vending2.png");
 
     final static int FONT_Y_SPACING = 10;
     final static int PLAYER_INV_LABEL_XPOS = VendingContainer.PLAYER_INVENTORY_XPOS;
@@ -80,8 +81,19 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
         //Draw Player Inventory background
         this.blit(matrixStack, edgeSpacingX, edgeSpacingY + 111, 0, 157, 175, 99);
 
-        //Draw Vending Machine background
-        this.blit(matrixStack, edgeSpacingX + 32, edgeSpacingY - 47, 0, 0, 124, 157);
+
+
+        if (container.getVendingStateData(VendingStateData.MODE_INDEX) == 0) { // Sell
+            //Draw closed machine background
+            this.blit(matrixStack, edgeSpacingX + 32, edgeSpacingY - 47, 0, 0, 124, 157);
+        } else {
+            this.minecraft.getTextureManager().bindTexture(TEXTURE2);
+            //Draw closed machine background
+            this.blit(matrixStack, edgeSpacingX - 78, edgeSpacingY - 47, 0, 0, 234, 157);
+            this.minecraft.getTextureManager().bindTexture(TEXTURE);
+        }
+
+
 
     }
 
@@ -98,10 +110,12 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
         this.font.func_243248_b(matrixStack, this.playerInventory.getDisplayName(), (float) this.playerInventoryTitleX, 117, 4210752); //Inventory Title
         buttons.get(BUTTONID_MODE).setMessage(new TranslationTextComponent("gui.gocurrency.vending.buttonmode" + container.getVendingStateData(VendingStateData.MODE_INDEX)));
 
-        // Draw Top tips of outer machine to cover items inside
-        this.minecraft.getTextureManager().bindTexture(TEXTURE);
-        this.blit(matrixStack, 98, -31, 176, 245, 11, 11);
-        this.blit(matrixStack, 39, -31, 187, 245, 11, 11);
+        if (container.getVendingStateData(VendingStateData.MODE_INDEX) == 0) { // Sell
+            // Draw Top tips of outer machine to cover items inside
+            this.minecraft.getTextureManager().bindTexture(TEXTURE);
+            this.blit(matrixStack, 98, -31, 176, 245, 11, 11);
+            this.blit(matrixStack, 39, -31, 187, 245, 11, 11);
+        }
 
 
     }

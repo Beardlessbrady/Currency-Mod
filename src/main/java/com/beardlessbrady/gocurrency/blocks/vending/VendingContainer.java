@@ -158,7 +158,7 @@ public class VendingContainer extends Container {
 
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
-        System.out.println(slotId + " " + dragType + " " + clickTypeIn);
+        // System.out.println(slotId + " " + dragType + " " + clickTypeIn);
 
         try {
             // Quick Crafting
@@ -171,7 +171,11 @@ public class VendingContainer extends Container {
                 return ItemStack.EMPTY;
             } else if (clickTypeIn == ClickType.QUICK_CRAFT) { // Probably will never be reached
                 return ItemStack.EMPTY;
+            } else if (dragging){ // Dragging out of QUICK_CRAFT
+                dragging = false;
+                dragSlots = new LinkedList<Integer>();
             }
+
 
             if ((slotId >= HOTBAR_FIRST_SLOT_INDEX && //PLAYER INVENTORY
                     slotId < PLAYER_INVENTORY_FIRST_SLOT_INDEX + PLAYER_INVENTORY_SLOT_COUNT)) {
