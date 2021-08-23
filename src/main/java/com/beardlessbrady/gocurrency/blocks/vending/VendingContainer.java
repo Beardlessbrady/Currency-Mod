@@ -464,6 +464,8 @@ public class VendingContainer extends Container {
 
     public void updateModeSlots() {
         if (vendingStateData.get(VendingStateData.MODE_INDEX) == 1) { // Sell (Not changed yet)
+            // Inputs
+          //  inventorySlots.get(FIRST_INPUT_SLOT_INDEX).xPos = 0;
             inventorySlots.set(FIRST_INPUT_SLOT_INDEX, new InputSlot(inputContents, 0, INPUT_SLOTS_XPOS, INPUT_SLOTS_YPOS));
 
             // Outputs
@@ -476,7 +478,7 @@ public class VendingContainer extends Container {
 
             // Outputs
             for (int x = 0; x < OUTPUT_SLOTS_COUNT; x++) { // x is slot num
-                inventorySlots.set(FIRST_OUTPUT_SLOT_INDEX + x, new OutputSlot(outputContents, 0, -10000, -10000));
+                inventorySlots.set(FIRST_OUTPUT_SLOT_INDEX + x, new OutputSlot(outputContents, x, -10000, -10000));
             }
         }
     }
@@ -498,6 +500,15 @@ public class VendingContainer extends Container {
         public OutputSlot(IInventory inventoryIn, int index, int xPosition, int yPosition) {
             super(inventoryIn, index, xPosition, yPosition);
         }
+    }
+
+    // ---- Get Slot Index ----
+    public int getFirstInputSlotIndex(){
+        return FIRST_INPUT_SLOT_INDEX;
+    }
+
+    public int getFirstOutputSlotIndex(){
+        return FIRST_OUTPUT_SLOT_INDEX;
     }
 
     private enum SlotZones {

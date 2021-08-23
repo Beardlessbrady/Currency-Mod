@@ -3,18 +3,18 @@ package com.beardlessbrady.gocurrency.blocks.vending;
 import com.beardlessbrady.gocurrency.CustomButton;
 import com.beardlessbrady.gocurrency.GOCurrency;
 import com.beardlessbrady.gocurrency.network.MessageVendingStateData;
+import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.Color;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
 import org.lwjgl.opengl.GL12;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -118,12 +118,26 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
 
     @Override
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        super.render(matrixStack, mouseX, mouseY, partialTicks);
-        this.renderHoveredTooltip(matrixStack, mouseX, mouseY);
+            super.render(matrixStack, mouseX, mouseY, partialTicks);
+            this.renderHoveredTooltip(matrixStack, mouseX, mouseY);
     }
 
     @Override
     protected void renderHoveredTooltip(MatrixStack matrixStack, int x, int y) {
+        if (this.minecraft.player.inventory.getItemStack().isEmpty() && this.hoveredSlot != null) {
+            int slot = this.hoveredSlot.slotNumber;
+            System.out.println(slot);
+
+            if(slot == ((VendingContainer)container).getFirstInputSlotIndex()) { // INPUT SLOT
+                List<ITextComponent> list = Lists.newArrayList();
+                IFormattableTextComponent test = (new StringTextComponent("$1,000,000,000.00"));
+                list.add(test);
+
+                FontRenderer font = getMinecraft().fontRenderer;
+                this.renderWrappedToolTip(matrixStack, list, x, y, (font == null ? this.font : font));
+                net.minecraftforge.fml.client.gui.GuiUtils.postItemToolTip();
+            }
+        }
         super.renderHoveredTooltip(matrixStack, x, y);
     }
 
@@ -170,8 +184,15 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
         this.font.func_243248_b(matrixStack, this.title, 40, -41, 4210752); //Block Title
         this.font.func_243248_b(matrixStack, this.playerInventory.getDisplayName(), (float) this.playerInventoryTitleX, 117, 4210752); //Inventory Title
 
-        this.minecraft.getTextureManager().bindTexture(TEXTURE);
+      /*  GL12.glDisable(GL12.GL_DEPTH_TEST);
+        GL12.glPushMatrix();
+        GL12.glScalef(0.7F, 0.7F, 0.8F);
+        this.font.drawStringWithShadow(matrixStack, "$1'000'000.00", 0, 0, Color.fromHex("#73AF52").getColor());
+        GL12.glPopMatrix();
+        GL12.glDisable(GL12.GL_DEPTH_TEST);*/
 
+
+        this.minecraft.getTextureManager().bindTexture(TEXTURE);
         if (container.getVendingStateData(VendingStateData.MODE_INDEX) == 0) { // Sell
             // Draw Top tips of outer machine to cover items inside
             this.blit(matrixStack, 98, -31, 176, 245, 11, 11);
