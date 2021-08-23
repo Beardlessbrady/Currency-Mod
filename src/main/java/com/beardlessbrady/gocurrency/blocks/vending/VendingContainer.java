@@ -465,7 +465,7 @@ public class VendingContainer extends Container {
     public void updateModeSlots() {
         if (vendingStateData.get(VendingStateData.MODE_INDEX) == 1) { // Sell (Not changed yet)
             // Inputs
-          //  inventorySlots.get(FIRST_INPUT_SLOT_INDEX).xPos = 0;
+            inventorySlots.get(FIRST_INPUT_SLOT_INDEX).xPos = 0;
             inventorySlots.set(FIRST_INPUT_SLOT_INDEX, new InputSlot(inputContents, 0, INPUT_SLOTS_XPOS, INPUT_SLOTS_YPOS));
 
             // Outputs
