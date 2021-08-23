@@ -1,5 +1,6 @@
 package com.beardlessbrady.gocurrency.network;
 
+import com.beardlessbrady.gocurrency.blocks.vending.VendingContainer;
 import com.beardlessbrady.gocurrency.blocks.vending.VendingStateData;
 import com.beardlessbrady.gocurrency.blocks.vending.VendingTile;
 import net.minecraft.entity.player.PlayerEntity;

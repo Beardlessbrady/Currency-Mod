@@ -68,6 +68,8 @@ public class VendingStateData implements IIntArray {
         switch (index){
             case MODE_INDEX:
                 mode = value;
+                if(mode == 1) // STOCK
+                    editPrice = 0;
                 break;
             case STOREDCASH_INDEX:
                 storedCash = value;

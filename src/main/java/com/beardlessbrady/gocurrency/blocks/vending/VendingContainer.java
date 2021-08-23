@@ -57,6 +57,8 @@ public class VendingContainer extends Container {
     public static final int OUTPUT_SLOTS_YPOS = 71;
     public static final int INPUT_SLOTS_XPOS = 117;
     public static final int INPUT_SLOTS_YPOS = 10;
+    public static final int SLOT_X_SPACING = 18;
+    public static final int SLOT_Y_SPACING = 18;
 
     // slot number is the slot number within each component;
     // i.e. invPlayer slots 0 - 35 (hotbar 0 - 8 then main inventory 9 to 35)
@@ -97,6 +99,9 @@ public class VendingContainer extends Container {
 
         generateSlots(playerInventory, stock, input, output);
 
+        vendingStateData.set(VendingStateData.MODE_INDEX, 0);
+        vendingStateData.set(VendingStateData.EDITPRICE_INDEX, 0);
+
     }
 
     public VendingTile getTile(){
@@ -108,9 +113,6 @@ public class VendingContainer extends Container {
         this.inputContents = input;
         this.outputContents = output;
         this.world = invPlayer.player.world;
-
-        final int SLOT_X_SPACING = 18;
-        final int SLOT_Y_SPACING = 18;
 
         // Add the players hotbar to the gui
         for (int x = 0; x < HOTBAR_SLOT_COUNT; x++) { // x represents slot num
@@ -457,16 +459,26 @@ public class VendingContainer extends Container {
     }
 
     public int getVendingStateData(int index){
-
-        if(index == 0) {
-            // Sell
-            inventorySlots.set(FIRST_INPUT_SLOT_INDEX, new InputSlot(inputContents, 0, -10000, -10000));
-        } else {
-        }
-
-
-
         return vendingStateData.get(index);
+    }
+
+    public void updateModeSlots() {
+        if (vendingStateData.get(VendingStateData.MODE_INDEX) == 1) { // Sell (Not changed yet)
+            inventorySlots.set(FIRST_INPUT_SLOT_INDEX, new InputSlot(inputContents, 0, INPUT_SLOTS_XPOS, INPUT_SLOTS_YPOS));
+
+            // Outputs
+            for (int x = 0; x < OUTPUT_SLOTS_COUNT; x++) { // x is slot num
+                inventorySlots.set(FIRST_OUTPUT_SLOT_INDEX + x, new OutputSlot(outputContents, x, OUTPUT_SLOTS_XPOS + SLOT_X_SPACING * x, OUTPUT_SLOTS_YPOS));
+            }
+        } else {
+            // Inputs
+            inventorySlots.set(FIRST_INPUT_SLOT_INDEX, new InputSlot(inputContents, 0, -10000, -10000));
+
+            // Outputs
+            for (int x = 0; x < OUTPUT_SLOTS_COUNT; x++) { // x is slot num
+                inventorySlots.set(FIRST_OUTPUT_SLOT_INDEX + x, new OutputSlot(outputContents, 0, -10000, -10000));
+            }
+        }
     }
 
     // --- Slot customization ----

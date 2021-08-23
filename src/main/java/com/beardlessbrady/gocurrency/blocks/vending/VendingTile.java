@@ -37,6 +37,7 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
     private final VendingContentsOverloaded stockContents;
     private final VendingContents inputContents;
     private final VendingContents outputContents;
+    private VendingContainer container;
 
     private final VendingStateData vendingStateData = new VendingStateData();
 
@@ -75,7 +76,8 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
     @Override
     // Server side creation of Container
     public Container createMenu(int windowID, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-        return VendingContainer.createContainerServer(windowID, playerInventory, stockContents, inputContents, outputContents, vendingStateData, this);
+        this.container = VendingContainer.createContainerServer(windowID, playerInventory, stockContents, inputContents, outputContents, vendingStateData, this);
+        return this.container;
     }
 
     public int getVendingStateData(int index) {
@@ -94,6 +96,10 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
 
     public void setVendingStateData(int index, int value) {
         this.vendingStateData.set(index, value);
+
+        if(index == VendingStateData.MODE_INDEX){
+            container.updateModeSlots();
+        }
     }
 
     // ---- NBT Stuff ----
