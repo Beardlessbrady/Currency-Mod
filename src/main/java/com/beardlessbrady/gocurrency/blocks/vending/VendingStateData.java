@@ -13,6 +13,7 @@ public class VendingStateData implements IIntArray {
     private int mode = 0;
     private int storedCash = 0;
     private int playerCash = 0;
+    private int editPrice = 0;
 
     public VendingStateData(){
     }
@@ -27,19 +28,22 @@ public class VendingStateData implements IIntArray {
         compoundNBT.putInt("mode", mode);
         compoundNBT.putInt("storedCash", storedCash);
         compoundNBT.putInt("playerCash", playerCash);
+        compoundNBT.putInt("editPrice", editPrice);
     }
 
     public void readFromNBT(CompoundNBT compoundNBT){
         mode = compoundNBT.getInt("mode");
         storedCash = compoundNBT.getInt("storedCash");
         playerCash = compoundNBT.getInt("playerCash");
+        editPrice = compoundNBT.getInt("editPrice");
     }
 
     // Vanilla Stuff, NO TOUCH
     public static final int MODE_INDEX = 0;
     public static final int STOREDCASH_INDEX = 1;
     public static final int PLAYERCASH_INDEX = 2;
-    public static final int END_OF_INDEX_PLUS_ONE = 2 + 1;
+    public static final int EDITPRICE_INDEX = 3;
+    public static final int END_OF_INDEX_PLUS_ONE = 3 + 1;
 
     @Override
     public int get(int index) {
@@ -51,6 +55,8 @@ public class VendingStateData implements IIntArray {
                 return storedCash;
             case PLAYERCASH_INDEX:
                 return playerCash;
+            case EDITPRICE_INDEX:
+                return editPrice;
             default:
                 return -1;
         }
@@ -69,6 +75,8 @@ public class VendingStateData implements IIntArray {
             case PLAYERCASH_INDEX:
                 playerCash = value;
                 break;
+            case EDITPRICE_INDEX:
+                editPrice = value;
         }
     }
 

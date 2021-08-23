@@ -1,7 +1,5 @@
 {
   "itemGroup.gocurrency": "Good Ol' Currency",
   "block.gocurrency.vending": "Vending Machine",
-  "container.gocurrency.vending": "Vending Machine",
-  "gui.gocurrency.vending.buttonmode0": "Sell",
-  "gui.gocurrency.vending.buttonmode1": "Stock"
+  "container.gocurrency.vending": "Vending Machine"
 }

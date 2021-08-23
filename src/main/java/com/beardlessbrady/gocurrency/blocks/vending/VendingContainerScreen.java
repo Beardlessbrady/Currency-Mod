@@ -1,5 +1,6 @@
 package com.beardlessbrady.gocurrency.blocks.vending;
 
+import com.beardlessbrady.gocurrency.CustomButton;
 import com.beardlessbrady.gocurrency.GOCurrency;
 import com.beardlessbrady.gocurrency.network.MessageVendingStateData;
 import com.mojang.blaze3d.matrix.MatrixStack;
@@ -39,14 +40,35 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
         int j = (height - ySize) / 2;
 
         buttons.clear();
-        addButton(new Button(50, 50, 10, 10,
-                new TranslationTextComponent("gui.gocurrency.vending.buttonmode" + container.getVendingStateData(VendingStateData.MODE_INDEX)), (button) -> {
-            handle(VendingStateData.MODE_INDEX);
-        }));
+        // 0
+        this.buttons.add(new Button(i + 115, j - 30, 20, 20,
+                new TranslationTextComponent(""), (button) -> {handle(VendingStateData.MODE_INDEX);}));
+        this.addListener(this.buttons.get(0));
+
+        this.buttons.add(new CustomButton(i + 11, j - 33, 21,23, 232, 21, 232, 21,
+                new TranslationTextComponent(""), (button) -> {handle(VendingStateData.EDITPRICE_INDEX);}));
+        this.addListener(this.buttons.get(1));
     }
 
-    private void handle(int i) {
-        GOCurrency.NETWORK_HANDLER.sendToServer(new MessageVendingStateData(container.getTile().getPos(), i));
+    private void handle(int k) {
+        int i = (width - xSize) / 2;
+        int j = (height - ySize) / 2;
+
+        GOCurrency.NETWORK_HANDLER.sendToServer(new MessageVendingStateData(container.getTile().getPos(), k));
+
+        if(k == VendingStateData.EDITPRICE_INDEX){
+            if(container.getVendingStateData(VendingStateData.EDITPRICE_INDEX) == 0) { // PRICE EDIT ON
+                this.children.remove(this.buttons.get(1));
+                this.buttons.set(1, new CustomButton(i - 73, j - 33 , 21, 23, 126, 0, 126, 0,
+                        new TranslationTextComponent(""), (button) -> { handle(VendingStateData.EDITPRICE_INDEX); }));
+                this.addListener(this.buttons.get(1));
+            } else {
+                this.children.remove(this.buttons.get(1));
+                this.buttons.set(1,new CustomButton(i + 11, j - 33, 21,23, 232, 21, 232, 21,
+                        new TranslationTextComponent(""), (button) -> {handle(VendingStateData.EDITPRICE_INDEX);}));
+                this.addListener(this.buttons.get(1));
+            }
+        }
     }
 
     @Override
@@ -54,14 +76,10 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
-
     @Override
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(matrixStack);
         super.render(matrixStack, mouseX, mouseY, partialTicks);
         this.renderHoveredTooltip(matrixStack, mouseX, mouseY);
-
-
     }
 
     @Override
@@ -79,17 +97,17 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
         int edgeSpacingY = (this.height - this.ySize) / 2;
 
         //Draw Player Inventory background
-        this.blit(matrixStack, edgeSpacingX, edgeSpacingY + 111, 0, 157, 175, 99);
+        this.blit(matrixStack, edgeSpacingX, edgeSpacingY + 111, 0, 157, 176, 99);
 
 
 
         if (container.getVendingStateData(VendingStateData.MODE_INDEX) == 0) { // Sell
             //Draw closed machine background
-            this.blit(matrixStack, edgeSpacingX + 32, edgeSpacingY - 47, 0, 0, 124, 157);
+            this.blit(matrixStack, edgeSpacingX + 32, edgeSpacingY - 47, 0, 0, 125, 157);
         } else {
             this.minecraft.getTextureManager().bindTexture(TEXTURE2);
             //Draw closed machine background
-            this.blit(matrixStack, edgeSpacingX - 78, edgeSpacingY - 47, 0, 0, 234, 157);
+            this.blit(matrixStack, edgeSpacingX - 78, edgeSpacingY - 47, 0, 0, 235, 157);
             this.minecraft.getTextureManager().bindTexture(TEXTURE);
         }
 
@@ -104,17 +122,33 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
 
     @Override
     protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
+        int i = (width - xSize) / 2;
+        int j = (height - ySize) / 2;
+
         drawBufferSize(matrixStack);
 
         this.font.func_243248_b(matrixStack, this.title, 40, -41, 4210752); //Block Title
         this.font.func_243248_b(matrixStack, this.playerInventory.getDisplayName(), (float) this.playerInventoryTitleX, 117, 4210752); //Inventory Title
-        buttons.get(BUTTONID_MODE).setMessage(new TranslationTextComponent("gui.gocurrency.vending.buttonmode" + container.getVendingStateData(VendingStateData.MODE_INDEX)));
+
+        this.minecraft.getTextureManager().bindTexture(TEXTURE);
 
         if (container.getVendingStateData(VendingStateData.MODE_INDEX) == 0) { // Sell
             // Draw Top tips of outer machine to cover items inside
-            this.minecraft.getTextureManager().bindTexture(TEXTURE);
             this.blit(matrixStack, 98, -31, 176, 245, 11, 11);
             this.blit(matrixStack, 39, -31, 187, 245, 11, 11);
+
+            // Sell Mode Button icon
+            this.blit(matrixStack, 117, -28, 144, 67, 16, 16);
+        } else {
+            // Stock Mode Button icon
+            this.blit(matrixStack, 117, -28, 127, 67, 16, 16);
+
+            // Price Tag Button Icon
+            this.blit(matrixStack, 7, 2, 178, 67, 16, 16);
+
+            if(container.getVendingStateData(VendingStateData.EDITPRICE_INDEX) == 1) { // PRICE EDIT ON
+                this.blit(matrixStack, -73, -33, 126, 0, 106, 48); // Big Tag
+            }
         }
 
 
@@ -158,4 +192,6 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
         GL12.glPopMatrix();
         GL12.glDisable(GL12.GL_DEPTH_TEST);
     }
+
+
 }

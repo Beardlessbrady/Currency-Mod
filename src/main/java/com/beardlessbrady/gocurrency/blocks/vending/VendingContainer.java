@@ -457,6 +457,15 @@ public class VendingContainer extends Container {
     }
 
     public int getVendingStateData(int index){
+
+        if(index == 0) {
+            // Sell
+            inventorySlots.set(FIRST_INPUT_SLOT_INDEX, new InputSlot(inputContents, 0, -10000, -10000));
+        } else {
+        }
+
+
+
         return vendingStateData.get(index);
     }
 

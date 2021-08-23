@@ -8,7 +8,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraftforge.fml.network.NetworkEvent;
 
-import java.security.Permission;
 import java.util.function.Supplier;
 
 /**
@@ -44,9 +43,10 @@ public class MessageVendingStateData{
             ctx.get().enqueueWork(() -> {
                 TileEntity tile = playerEntity.getEntityWorld().getTileEntity(message.pos);
 
-                if(tile instanceof VendingTile){
+                if (tile instanceof VendingTile) {
                     switch (message.id) {
                         case VendingStateData.MODE_INDEX:
+                        case VendingStateData.EDITPRICE_INDEX:
                             ((VendingTile) tile).setVendingStateData(message.id, ((VendingTile) tile).getVendingStateData(message.id) == 0 ? 1 : 0);
                             break;
                     }
