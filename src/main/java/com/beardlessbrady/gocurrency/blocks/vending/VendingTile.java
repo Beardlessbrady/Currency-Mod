@@ -34,7 +34,7 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
     public static final int OUTPUT_SLOTS_COUNT = 3;
     public static final int TOTAL_SLOTS_COUNT = STOCK_SLOT_COUNT + INPUT_SLOTS_COUNT + OUTPUT_SLOTS_COUNT;
 
-    public static final int MAX_DOLLAR = Integer.MAX_VALUE;
+    public static final int MAX_DOLLAR = 2147000000;
 
     private final VendingContentsOverloaded stockContents;
     private final VendingContents inputContents;
@@ -54,9 +54,34 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
     public void tick() {
         if (!world.isRemote) { // Server
            if (!inputContents.getStackInSlot(0).isEmpty()) {
-                       //   CurrencyItem.getCurrencyValue(inputContents.getStackInSlot(0));
+               addCurrency(CurrencyItem.getCurrencyValue(inputContents.getStackInSlot(0)), container.getVendingStateData(VendingStateData.MODE_INDEX));
+               inputContents.getStackInSlot(0).setCount(0);
             }
         }
+    }
+
+
+    public void addCurrency(int[] currency, int mode){
+        byte DOLLAR_INDEX = VendingStateData.CASHDOLLAR_INDEX;
+        byte CENT_INDEX = VendingStateData.CASHCENT_INDEX;
+
+        if(mode == 1){
+            DOLLAR_INDEX = VendingStateData.INCOMEDOLLAR_INDEX;
+            CENT_INDEX = VendingStateData.INCOMECENT_INDEX;
+        }
+
+        int dollar = container.getVendingStateData(DOLLAR_INDEX);
+        int cent = container.getVendingStateData(CENT_INDEX);
+
+        dollar += currency[0];
+        cent += currency[1];
+
+        int[] dollarFromCents = CurrencyItem.roundCents(cent);
+        dollar += dollarFromCents[0];
+        cent = dollarFromCents[1];
+
+        container.setVendingStateData(DOLLAR_INDEX, dollar);
+        container.setVendingStateData(CENT_INDEX, cent);
     }
 
     public boolean canPlayerUse(PlayerEntity player) {

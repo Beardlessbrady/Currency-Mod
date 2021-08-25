@@ -75,10 +75,6 @@ public class GOCurrency {
             String name = values[0];
             String curr = values[1].replaceAll("[^0-9.]", "");
 
-
-            System.out.println("TES");
-            System.out.println(curr);
-
             currNames.add(name);
             currValues.add(curr);
             currencyList[i] = new CurrencyItem.CurrencyObject((byte)i, name, curr);

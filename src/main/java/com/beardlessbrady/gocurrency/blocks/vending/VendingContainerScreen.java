@@ -188,7 +188,7 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
             GL12.glPushMatrix();
             GL12.glScalef(0.7F, 0.7F, 0.8F);
             this.font.drawStringWithShadow(matrixStack, TextFormatting.WHITE + "Cash: $", 56, -55,0);
-            this.font.drawString(matrixStack, TextFormatting.DARK_GREEN + "1'000'000.00", 94, -55,0);
+            this.font.drawString(matrixStack, TextFormatting.DARK_GREEN + container.currencyToString(container.getVendingStateData(VendingStateData.MODE_INDEX)), 94, -55, 0);
             GL12.glPopMatrix();
             GL12.glDisable(GL12.GL_DEPTH_TEST);
 

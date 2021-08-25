@@ -474,6 +474,29 @@ public class VendingContainer extends Container {
         return vendingStateData.get(index);
     }
 
+    public void setVendingStateData(int index, int value){
+        vendingStateData.set(index, value);
+    }
+
+    public String currencyToString(int mode){
+        int INDEX_DOLLAR = VendingStateData.CASHDOLLAR_INDEX;
+        int INDEX_CENT = VendingStateData.CASHCENT_INDEX;
+
+        if (mode == 1) {
+            INDEX_DOLLAR = VendingStateData.INCOMEDOLLAR_INDEX;
+            INDEX_CENT = VendingStateData.INCOMECENT_INDEX;
+        }
+
+        String dollar = String.valueOf(getVendingStateData(INDEX_DOLLAR));
+        String cent = String.valueOf(getVendingStateData(INDEX_CENT));
+
+        if(cent.length() < 2){
+            cent = "0" + cent;
+        }
+
+        return dollar + "." + cent;
+    }
+
     public void updateModeSlots() {
         if (vendingStateData.get(VendingStateData.MODE_INDEX) == 1) { // Sell (Not changed yet)
             // Inputs
