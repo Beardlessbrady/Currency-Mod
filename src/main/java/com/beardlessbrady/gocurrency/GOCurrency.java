@@ -21,7 +21,8 @@ import net.minecraftforge.fml.event.lifecycle.InterModProcessEvent;
 import net.minecraftforge.fml.event.server.FMLServerStartingEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
-import java.io.*;
+import java.io.IOException;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -58,18 +59,29 @@ public class GOCurrency {
 
 
     public static CurrencyItem.CurrencyObject[] currencyList;
-    public static List<? extends String> currNames;
-    public static List<? extends Double> currValues;
+    public static List<String> currNames;
+    public static List<String> currValues;
 
     /**
      * @param event
      */
     private void setup(final FMLCommonSetupEvent event) {
-        currencyList = new CurrencyItem.CurrencyObject[ConfigHandler.configCurrencyName.get().size()];
-        currNames = ConfigHandler.configCurrencyName.get();
-        currValues = ConfigHandler.configCurrencyValue.get();
-        for (byte i = 0; i < currNames.size(); i++) {
-            currencyList[i] = new CurrencyItem.CurrencyObject(i, currNames.get(i), currValues.get(i));
+        currencyList = new CurrencyItem.CurrencyObject[ConfigHandler.configCurrency.get().size()];
+        currNames = new LinkedList();
+        currValues = new LinkedList();
+        for (int i = 0; i < ConfigHandler.configCurrency.get().size(); i++) {
+            String s = ConfigHandler.configCurrency.get().get(i);
+            String[] values = s.split(":");
+            String name = values[0];
+            String curr = values[1].replaceAll("[^0-9.]", "");
+
+
+            System.out.println("TES");
+            System.out.println(curr);
+
+            currNames.add(name);
+            currValues.add(curr);
+            currencyList[i] = new CurrencyItem.CurrencyObject((byte)i, name, curr);
         }
 
         try {

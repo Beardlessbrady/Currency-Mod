@@ -3,18 +3,18 @@ package com.beardlessbrady.gocurrency.blocks.vending;
 import com.beardlessbrady.gocurrency.CustomButton;
 import com.beardlessbrady.gocurrency.GOCurrency;
 import com.beardlessbrady.gocurrency.network.MessageVendingStateData;
-import com.google.common.collect.Lists;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.*;
+import net.minecraft.util.text.Color;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import org.lwjgl.opengl.GL12;
 
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -23,6 +23,7 @@ import java.util.Objects;
  * https://github.com/Beardlessbrady/Currency-Mod
  */
 public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
+    private static final ResourceLocation PLAYER = new ResourceLocation("gocurrency", "textures/gui/player.png");
     private static final ResourceLocation TEXTURE = new ResourceLocation("gocurrency", "textures/gui/vending.png");
     private static final ResourceLocation TEXTURE2 = new ResourceLocation("gocurrency", "textures/gui/vending2.png");
 
@@ -126,16 +127,15 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
     protected void renderHoveredTooltip(MatrixStack matrixStack, int x, int y) {
         if (this.minecraft.player.inventory.getItemStack().isEmpty() && this.hoveredSlot != null) {
             int slot = this.hoveredSlot.slotNumber;
-            System.out.println(slot);
 
             if(slot == ((VendingContainer)container).getFirstInputSlotIndex()) { // INPUT SLOT
-                List<ITextComponent> list = Lists.newArrayList();
-                IFormattableTextComponent test = (new StringTextComponent("$1,000,000,000.00"));
-                list.add(test);
+             //   List<ITextComponent> list = Lists.newArrayList();
+             //   IFormattableTextComponent test = (new StringTextComponent(TextFormatting.GREEN + "Cash: " + TextFormatting.WHITE + "$1,000,000,000.00"));
+             //   list.add(test);
 
-                FontRenderer font = getMinecraft().fontRenderer;
-                this.renderWrappedToolTip(matrixStack, list, x, y, (font == null ? this.font : font));
-                net.minecraftforge.fml.client.gui.GuiUtils.postItemToolTip();
+           //     FontRenderer font = getMinecraft().fontRenderer;
+          //      this.renderWrappedToolTip(matrixStack, list, x, y, (font == null ? this.font : font));
+           //     net.minecraftforge.fml.client.gui.GuiUtils.postItemToolTip();
             }
         }
         super.renderHoveredTooltip(matrixStack, x, y);
@@ -143,25 +143,24 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
 
     @Override
     protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.minecraft.getTextureManager().bindTexture(TEXTURE);
-
         // Draw Background
         int edgeSpacingX = (this.width - this.xSize) / 2;
         int edgeSpacingY = (this.height - this.ySize) / 2;
 
-        //Draw Player Inventory background
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+
+        //Player Inventory
+        this.minecraft.getTextureManager().bindTexture(PLAYER);
         this.blit(matrixStack, edgeSpacingX, edgeSpacingY + 111, 0, 157, 176, 99);
 
-
-
         if (container.getVendingStateData(VendingStateData.MODE_INDEX) == 0) { // Sell
-            //Draw closed machine background
-            this.blit(matrixStack, edgeSpacingX + 32, edgeSpacingY - 47, 0, 0, 125, 157);
+            // CLOSED Vending Machine
+            this.minecraft.getTextureManager().bindTexture(TEXTURE);
+            this.blit(matrixStack, edgeSpacingX + 32, edgeSpacingY - 53, 0, 0, 125, 163);
         } else {
+            // OPEN Vending Machine
             this.minecraft.getTextureManager().bindTexture(TEXTURE2);
-            //Draw closed machine background
-            this.blit(matrixStack, edgeSpacingX - 78, edgeSpacingY - 47, 0, 0, 235, 157);
+            this.blit(matrixStack, edgeSpacingX - 78, edgeSpacingY - 53, 0, 0, 235, 163);
             this.minecraft.getTextureManager().bindTexture(TEXTURE);
         }
 
@@ -181,19 +180,19 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
 
         drawBufferSize(matrixStack);
 
-        this.font.func_243248_b(matrixStack, this.title, 40, -41, 4210752); //Block Title
+        this.font.func_243248_b(matrixStack, this.title, 40, -48, 4210752); //Block Title
         this.font.func_243248_b(matrixStack, this.playerInventory.getDisplayName(), (float) this.playerInventoryTitleX, 117, 4210752); //Inventory Title
 
-      /*  GL12.glDisable(GL12.GL_DEPTH_TEST);
-        GL12.glPushMatrix();
-        GL12.glScalef(0.7F, 0.7F, 0.8F);
-        this.font.drawStringWithShadow(matrixStack, "$1'000'000.00", 0, 0, Color.fromHex("#73AF52").getColor());
-        GL12.glPopMatrix();
-        GL12.glDisable(GL12.GL_DEPTH_TEST);*/
-
-
-        this.minecraft.getTextureManager().bindTexture(TEXTURE);
         if (container.getVendingStateData(VendingStateData.MODE_INDEX) == 0) { // Sell
+            GL12.glDisable(GL12.GL_DEPTH_TEST);
+            GL12.glPushMatrix();
+            GL12.glScalef(0.7F, 0.7F, 0.8F);
+            this.font.drawStringWithShadow(matrixStack, TextFormatting.WHITE + "Cash: $", 56, -55,0);
+            this.font.drawString(matrixStack, TextFormatting.DARK_GREEN + "1'000'000.00", 94, -55,0);
+            GL12.glPopMatrix();
+            GL12.glDisable(GL12.GL_DEPTH_TEST);
+
+            this.minecraft.getTextureManager().bindTexture(TEXTURE);
             // Draw Top tips of outer machine to cover items inside
             this.blit(matrixStack, 98, -31, 176, 245, 11, 11);
             this.blit(matrixStack, 39, -31, 187, 245, 11, 11);
@@ -201,6 +200,15 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
             // Sell Mode Button icon
             this.blit(matrixStack, 117, -28, 144, 67, 16, 16);
         } else {
+            GL12.glDisable(GL12.GL_DEPTH_TEST);
+            GL12.glPushMatrix();
+            GL12.glScalef(0.7F, 0.7F, 0.8F);
+            this.font.drawStringWithShadow(matrixStack, TextFormatting.WHITE + "Income: $", 56, -55,0);
+            this.font.drawString(matrixStack, TextFormatting.AQUA + "1'000'000.00", 103, -55,0);
+            GL12.glPopMatrix();
+            GL12.glDisable(GL12.GL_DEPTH_TEST);
+
+            this.minecraft.getTextureManager().bindTexture(TEXTURE);
             // Stock Mode Button icon
             this.blit(matrixStack, 117, -28, 127, 67, 16, 16);
 

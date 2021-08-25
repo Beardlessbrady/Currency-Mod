@@ -26,12 +26,10 @@ public class ConfigHandler {
         COMMON = specPair.getKey();
     }
 
-    public static ForgeConfigSpec.ConfigValue<List<? extends Double>> configCurrencyValue;
-    public static ForgeConfigSpec.ConfigValue<List<? extends String>> configCurrencyName;
+    public static ForgeConfigSpec.ConfigValue<List<? extends String>> configCurrency;
 
     public static void bakeConfig() {
-        configCurrencyValue = COMMON.getConfigCurrencyValue();
-        configCurrencyName = COMMON.getConfigCurrencyName();
+        configCurrency = COMMON.getConfigCurrency();
     }
 
     @SubscribeEvent
@@ -42,32 +40,51 @@ public class ConfigHandler {
     }
 
     public static class CommonConfig {
-        public final ForgeConfigSpec.ConfigValue<List<? extends Double>> configCurrencyValue;
-        Predicate<Object> currencyValueValidator = n -> ((Double)n > 0.0 && (Double)n < 999999.999);
+        public final ForgeConfigSpec.ConfigValue<List<? extends String>> configCurrency;
+        Predicate<Object> currencyValidator = new Predicate<Object>() {
+            @Override
+            public boolean test(Object o) {
+                String s = ((String) o);
 
-        public final ForgeConfigSpec.ConfigValue<List<? extends String>> configCurrencyName;
-        Predicate<Object> currencyNameValidator = n -> (true);
+                if (s.contains(":")){
+                    String[] values = s.split(":");
 
-        public ForgeConfigSpec.ConfigValue<List<? extends Double>> getConfigCurrencyValue() {
-            return configCurrencyValue;
+                    if (values.length == 2) {
+                        if(values[1].contains(".")) {
+                            String[] currency = values[1].split("[.]");
+                            if (currency.length == 2){
+                                currency[0] = currency[0].replaceAll("[^0-9]", "");
+                                currency[1] = currency[1].replaceAll("[^0-9]", "");
+
+
+                                System.out.println("HEEE");
+                                System.out.println(currency[0]);
+
+                                if(Long.parseLong(currency[0]) <= (long)Integer.MAX_VALUE) {
+
+                                    int d = Integer.parseInt(currency[0]);
+                                    int c = Integer.parseInt(currency[1]);
+
+                                    return (d >= 0 && c <= 99 && c >= 0);
+                                }
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+        };
+
+        public ForgeConfigSpec.ConfigValue<List<? extends String>> getConfigCurrency() {
+            return configCurrency;
         }
-
-        public ForgeConfigSpec.ConfigValue<List<? extends String>> getConfigCurrencyName() {
-            return configCurrencyName;
-        }
-
         public CommonConfig (ForgeConfigSpec.Builder builder) {
             builder.push("Currency Configuration");
 
-            configCurrencyName = builder
-                    .comment("Currency Names - defining the names of each currency item in the mod.")
-                    .translation(GOCurrency.MODID + ".config." + "configCurrencyName")
-                    .defineList("currencyNames", Arrays.asList("One Dollar", "Five Dollars", "Ten Dollars", "Twenty Dollars", "Fifty Dollars", "One Hundred Dollars"), currencyNameValidator);
-
-            configCurrencyValue = builder
-                    .comment("Currency Values - defining the monetary values of each currency item in the mod (0.01 - 9999999.99)")
-                    .translation(GOCurrency.MODID + ".config." + "configCurrencyValue")
-                    .defineList("currencyValue", Arrays.asList(1.0, 5.0, 10.0, 20.0, 50.0, 100.0), currencyValueValidator);
+            configCurrency = builder
+                    .comment("Currency - defining the names and values of each currency item in the mod. NAME:VALUE, Value must be within 0.01 to " + Integer.MAX_VALUE + ".99")
+                    .translation(GOCurrency.MODID + ".config." + "configCurrency")
+                    .defineList("currency", Arrays.asList("One Dollar:1.00", "Five Dollars:5.00", "Ten Dollars:10.00", "Twenty Dollars:20.00", "Fifty Dollars:50.00", "One Hundred Dollars:100.00"), currencyValidator);
 
             builder.pop();
         }

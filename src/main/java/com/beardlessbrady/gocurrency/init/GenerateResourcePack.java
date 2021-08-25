@@ -1,6 +1,7 @@
 package com.beardlessbrady.gocurrency.init;
 
 import com.beardlessbrady.gocurrency.ConfigHandler;
+import com.beardlessbrady.gocurrency.GOCurrency;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -48,10 +49,10 @@ public class GenerateResourcePack {
                 "  \"__comment\": \"Currency ID's\",\n" +
                 "  \"overrides\": [\n");
 
-        for (int i = 0; i < ConfigHandler.configCurrencyName.get().size(); i++) {
+        for (int i = 0; i < GOCurrency.currNames.size(); i++) {
             modelJson.append("    { \"predicate\": { \"currency\": ").append(i).append(" }, \"model\": \"gocurrency:item/currency_").append(i).append("\" }");
 
-            if (i != ConfigHandler.configCurrencyName.get().size() - 1) {
+            if (i != GOCurrency.currNames.size() - 1) {
                 modelJson.append(",\n");
             } else {
                 modelJson.append("\n");
@@ -64,8 +65,8 @@ public class GenerateResourcePack {
         writeFile("resourcepacks/GOC Resources/assets/gocurrency/models/item/currency.json", modelJson.toString(), true);
 
         // Create custom currency MODELS and TEXTURES
-        currencyPredicateModels(ConfigHandler.configCurrencyName.get().size());
-        currencyPredicateTexture(ConfigHandler.configCurrencyName.get().size());
+        currencyPredicateModels(GOCurrency.currNames.size());
+        currencyPredicateTexture(GOCurrency.currNames.size());
     }
 
     private static void createDir(String dir) {

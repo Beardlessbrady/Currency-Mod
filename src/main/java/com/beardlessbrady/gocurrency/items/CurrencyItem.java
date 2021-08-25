@@ -1,5 +1,6 @@
 package com.beardlessbrady.gocurrency.items;
 
+import com.beardlessbrady.gocurrency.ConfigHandler;
 import com.beardlessbrady.gocurrency.GOCurrency;
 import com.beardlessbrady.gocurrency.init.CommonRegistry;
 import net.minecraft.entity.LivingEntity;
@@ -36,8 +37,6 @@ public class CurrencyItem extends Item {
     @Override
     public void fillItemGroup(ItemGroup group, NonNullList<ItemStack> items) {
         CurrencyItem.CurrencyObject[] currList = GOCurrency.currencyList;
-
-        System.out.println(group.getIcon());
         if(currList != null) {
             if (this.isInGroup(group)) {
                 for (CurrencyObject currency : currList) {
@@ -51,7 +50,7 @@ public class CurrencyItem extends Item {
 
     public static ItemStack getTabItem(){
         ItemStack tabItem = new ItemStack(CommonRegistry.ITEM_CURRENCY.get());
-        CurrencyObject nbtCUrrency = new CurrencyObject((byte)0, "One Dollar", 1.0);
+        CurrencyObject nbtCUrrency = new CurrencyObject((byte)0, "One Dollar", "1.00");
         putIntoNBT(tabItem,nbtCUrrency);
 
         return tabItem;
@@ -79,23 +78,17 @@ public class CurrencyItem extends Item {
     }
 
     // NBT Methods
-    private static Optional<CurrencyObject> getValuefromID(byte ID) {
+    private static CurrencyObject getValuefromID(byte ID) {
         CurrencyItem.CurrencyObject[] currList = GOCurrency.currencyList;
 
         if (currList != null) {
             for (CurrencyObject currency : currList) {
-                if (currency.getID() == ID) return Optional.of(currency);
+                if ((int)currency.getID() == (int)ID) return currency;
             }
         }
-        return Optional.empty();
+        return new CurrencyObject((byte)-1, "NULL", "-1.00");
     }
 
-    /**
-     * Set NBT currency value for item
-     *
-     * @param stack
-     * @param currencyObject
-     */
     public static void putIntoNBT(ItemStack stack, CurrencyObject currencyObject) {
         CompoundNBT compoundNBT = stack.getOrCreateTag();
         compoundNBT.putByte(NBT_TAG_CURRENCY, currencyObject.getID());
@@ -109,23 +102,52 @@ public class CurrencyItem extends Item {
         if (compoundNBT.contains(NBT_TAG_CURRENCY)) {
             currencyID = compoundNBT.getByte(NBT_TAG_CURRENCY);
         }
-        Optional<CurrencyObject> currencyValue = getValuefromID(currencyID);
-        return currencyValue.orElse(new CurrencyObject((byte) -1, "Error", 0.00));
+        return getValuefromID(currencyID);
+    }
+
+    public static int[] getCurrencyValue(ItemStack item) {
+        CurrencyItem.CurrencyObject currency = CurrencyItem.fromNBT(item);
+
+        int dollar = currency.getDollar() * item.getCount();
+        int cent = currency.getCent() * item.getCount();
+
+        int[] addition = roundCents(cent);
+        dollar += addition[0];
+        cent = addition[1];
+
+        return new int[]{dollar, cent};
+    }
+
+    public static int[] roundCents(int cents){
+        if(cents > 99) {
+            int c = cents;
+            int d = 0;
+            while(c > 99){
+                d++;
+                c=-99;
+            }
+            return new int[]{d, c};
+        }
+        return new int[]{0, cents};
     }
 
     /**
      * Hold Currency values
      */
     public static class CurrencyObject {
-        private byte ID;
-        private String name;
-        private double value;
+        private final byte ID;
+        private final String name;
+        private final int dollar;
+        private final int cent;
 
 
-        public CurrencyObject(byte id, String name, double value) {
+        public CurrencyObject(byte id, String name, String value) {
             this.ID = id;
             this.name = name;
-            this.value = value;
+
+            String[] v = value.split("[.]");
+            this.dollar = Integer.parseInt(v[0]);
+            this.cent = Integer.parseInt(v[1]);
         }
 
         // Getters
@@ -137,8 +159,12 @@ public class CurrencyItem extends Item {
             return this.name;
         }
 
-        public double getValue() {
-            return this.value;
+        public int getDollar() {
+            return this.dollar;
+        }
+
+        public int getCent() {
+            return this.cent;
         }
 
         public float getPropertyOverrideValue() {

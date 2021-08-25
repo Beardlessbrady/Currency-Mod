@@ -11,8 +11,10 @@ import net.minecraft.util.IIntArray;
 public class VendingStateData implements IIntArray {
 
     private int mode = 0;
-    private int storedCash = 0;
-    private int playerCash = 0;
+    private int incomeDollar = 0;
+    private int incomeCent = 0;
+    private int cashDollar = 0;
+    private int cashCent = 0;
     private int editPrice = 0;
 
     public VendingStateData(){
@@ -26,24 +28,30 @@ public class VendingStateData implements IIntArray {
 
     public void putIntoNBT(CompoundNBT compoundNBT){
         compoundNBT.putInt("mode", mode);
-        compoundNBT.putInt("storedCash", storedCash);
-        compoundNBT.putInt("playerCash", playerCash);
+        compoundNBT.putInt("incomeDollar", incomeDollar);
+        compoundNBT.putInt("incomeCent", incomeCent);
+        compoundNBT.putInt("cashDollar", cashDollar);
+        compoundNBT.putInt("cashCent", cashCent);
         compoundNBT.putInt("editPrice", editPrice);
     }
 
     public void readFromNBT(CompoundNBT compoundNBT){
         mode = compoundNBT.getInt("mode");
-        storedCash = compoundNBT.getInt("storedCash");
-        playerCash = compoundNBT.getInt("playerCash");
+        incomeDollar = compoundNBT.getInt("incomeDollar");
+        incomeCent = compoundNBT.getInt("incomeCent");
+        cashDollar = compoundNBT.getInt("cashDollar");
+        cashCent = compoundNBT.getInt("cashCent");
         editPrice = compoundNBT.getInt("editPrice");
     }
 
     // Vanilla Stuff, NO TOUCH
     public static final int MODE_INDEX = 0;
-    public static final int STOREDCASH_INDEX = 1;
-    public static final int PLAYERCASH_INDEX = 2;
-    public static final int EDITPRICE_INDEX = 3;
-    public static final int END_OF_INDEX_PLUS_ONE = 3 + 1;
+    public static final int INCOMEDOLLAR_INDEX = 1;
+    public static final int INCOMECENT_INDEX = 2;
+    public static final int CASHDOLLAR_INDEX = 3;
+    public static final int CASHCENT_INDEX = 4;
+    public static final int EDITPRICE_INDEX = 5;
+    public static final int END_OF_INDEX_PLUS_ONE = 5 + 1;
 
     @Override
     public int get(int index) {
@@ -51,10 +59,14 @@ public class VendingStateData implements IIntArray {
         switch (index){
             case MODE_INDEX:
                 return mode;
-            case STOREDCASH_INDEX:
-                return storedCash;
-            case PLAYERCASH_INDEX:
-                return playerCash;
+            case INCOMEDOLLAR_INDEX:
+                return incomeDollar;
+            case INCOMECENT_INDEX:
+                return incomeCent;
+            case CASHDOLLAR_INDEX:
+                return cashDollar;
+            case CASHCENT_INDEX:
+                return cashCent;
             case EDITPRICE_INDEX:
                 return editPrice;
             default:
@@ -71,11 +83,17 @@ public class VendingStateData implements IIntArray {
                 if(mode == 1) // STOCK
                     editPrice = 0;
                 break;
-            case STOREDCASH_INDEX:
-                storedCash = value;
+            case INCOMEDOLLAR_INDEX:
+                incomeDollar = value;
                 break;
-            case PLAYERCASH_INDEX:
-                playerCash = value;
+            case INCOMECENT_INDEX:
+                incomeCent = value;
+                break;
+            case CASHDOLLAR_INDEX:
+                cashDollar = value;
+                break;
+            case CASHCENT_INDEX:
+                cashCent = value;
                 break;
             case EDITPRICE_INDEX:
                 editPrice = value;

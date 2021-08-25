@@ -1,6 +1,7 @@
 package com.beardlessbrady.gocurrency.blocks.vending;
 
 import com.beardlessbrady.gocurrency.init.CommonRegistry;
+import com.beardlessbrady.gocurrency.items.CurrencyItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
@@ -320,6 +321,17 @@ public class VendingContainer extends Container {
     }
 
     private ItemStack inputSlotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+        int index = slotId - FIRST_INPUT_SLOT_INDEX;
+        ItemStack playerStack = player.inventory.getItemStack();
+        ItemStack slotStack = this.stockContents.getStackInSlot(index);
+        int slotCount = this.stockContents.getSizeInSlot(index);
+        if(!playerStack.isEmpty()) {
+            if (playerStack.getItem().equals(CommonRegistry.ITEM_CURRENCY.get())) {
+                return super.slotClick(slotId, dragType, clickTypeIn, player);
+            }
+        } else {
+            return super.slotClick(slotId, dragType, clickTypeIn, player);
+        }
         return ItemStack.EMPTY;
     }
 
@@ -465,20 +477,23 @@ public class VendingContainer extends Container {
     public void updateModeSlots() {
         if (vendingStateData.get(VendingStateData.MODE_INDEX) == 1) { // Sell (Not changed yet)
             // Inputs
-            inventorySlots.get(FIRST_INPUT_SLOT_INDEX).xPos = 0;
-            inventorySlots.set(FIRST_INPUT_SLOT_INDEX, new InputSlot(inputContents, 0, INPUT_SLOTS_XPOS, INPUT_SLOTS_YPOS));
+            inventorySlots.get(FIRST_INPUT_SLOT_INDEX).xPos = INPUT_SLOTS_XPOS;
+            inventorySlots.get(FIRST_INPUT_SLOT_INDEX).yPos = INPUT_SLOTS_YPOS;
 
             // Outputs
             for (int x = 0; x < OUTPUT_SLOTS_COUNT; x++) { // x is slot num
-                inventorySlots.set(FIRST_OUTPUT_SLOT_INDEX + x, new OutputSlot(outputContents, x, OUTPUT_SLOTS_XPOS + SLOT_X_SPACING * x, OUTPUT_SLOTS_YPOS));
+                inventorySlots.get(FIRST_OUTPUT_SLOT_INDEX + x).xPos = OUTPUT_SLOTS_XPOS + SLOT_X_SPACING * x;
+                inventorySlots.get(FIRST_OUTPUT_SLOT_INDEX + x).yPos = OUTPUT_SLOTS_YPOS;
             }
         } else {
             // Inputs
-            inventorySlots.set(FIRST_INPUT_SLOT_INDEX, new InputSlot(inputContents, 0, -10000, -10000));
+            inventorySlots.get(FIRST_INPUT_SLOT_INDEX).xPos = -10000;
+            inventorySlots.get(FIRST_INPUT_SLOT_INDEX).yPos = -10000;
 
             // Outputs
             for (int x = 0; x < OUTPUT_SLOTS_COUNT; x++) { // x is slot num
-                inventorySlots.set(FIRST_OUTPUT_SLOT_INDEX + x, new OutputSlot(outputContents, x, -10000, -10000));
+                inventorySlots.get(FIRST_OUTPUT_SLOT_INDEX + x).xPos = -10000;
+                inventorySlots.get(FIRST_OUTPUT_SLOT_INDEX + x).yPos = -10000;
             }
         }
     }

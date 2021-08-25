@@ -1,6 +1,7 @@
 package com.beardlessbrady.gocurrency.blocks.vending;
 
 import com.beardlessbrady.gocurrency.init.CommonRegistry;
+import com.beardlessbrady.gocurrency.items.CurrencyItem;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
@@ -16,7 +17,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
-
 import javax.annotation.Nullable;
 
 /**
@@ -34,6 +34,8 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
     public static final int OUTPUT_SLOTS_COUNT = 3;
     public static final int TOTAL_SLOTS_COUNT = STOCK_SLOT_COUNT + INPUT_SLOTS_COUNT + OUTPUT_SLOTS_COUNT;
 
+    public static final int MAX_DOLLAR = Integer.MAX_VALUE;
+
     private final VendingContentsOverloaded stockContents;
     private final VendingContents inputContents;
     private final VendingContents outputContents;
@@ -50,6 +52,11 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
 
     @Override
     public void tick() {
+        if (!world.isRemote) { // Server
+           if (!inputContents.getStackInSlot(0).isEmpty()) {
+                       //   CurrencyItem.getCurrencyValue(inputContents.getStackInSlot(0));
+            }
+        }
     }
 
     public boolean canPlayerUse(PlayerEntity player) {
