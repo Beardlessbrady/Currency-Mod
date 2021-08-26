@@ -18,7 +18,7 @@ import java.util.function.Predicate;
  * https://github.com/Beardlessbrady/Currency-Mod
  */
 public class VendingContentsOverloaded implements IInventory {
-    protected final OverloadedItemStackHandler vendingComponentContents;
+    protected final SaleItemStackHandler vendingComponentContents;
     protected Predicate<PlayerEntity> canPlayerAccess = x-> true;
     protected Notify markDirtyNotification = ()->{};
     protected final Notify openInventoryNotificationLambda = ()->{};
@@ -31,14 +31,14 @@ public class VendingContentsOverloaded implements IInventory {
 
     // Server side initialization
     VendingContentsOverloaded(int size, Predicate<PlayerEntity> canPlayerAccess, Notify notify) {
-        this.vendingComponentContents = new OverloadedItemStackHandler(size);
+        this.vendingComponentContents = new SaleItemStackHandler(size);
         this.canPlayerAccess = canPlayerAccess;
         this.markDirtyNotification = notify;
     }
 
     // Client side initialization
     VendingContentsOverloaded(int size) {
-        this.vendingComponentContents = new OverloadedItemStackHandler(size);
+        this.vendingComponentContents = new SaleItemStackHandler(size);
     }
 
     // ----- Setters and Getters -----

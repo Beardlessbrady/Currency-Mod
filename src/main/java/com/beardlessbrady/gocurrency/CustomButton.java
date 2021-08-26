@@ -65,6 +65,5 @@ public class CustomButton extends Button {
         this.renderBg(matrixStack, minecraft, mouseX, mouseY);
         int j = getFGColor();
         drawCenteredString(matrixStack, fontrenderer, this.getMessage(), this.x + this.width / 2, this.y + (this.height - 8) / 2, j | MathHelper.ceil(this.alpha * 255.0F) << 24);
-
     }
 }

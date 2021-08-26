@@ -6,16 +6,18 @@ import com.beardlessbrady.gocurrency.network.MessageVendingCashButton;
 import com.beardlessbrady.gocurrency.network.MessageVendingStateData;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.Color;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.util.text.*;
 import org.lwjgl.opengl.GL12;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -142,22 +144,13 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
             super.render(matrixStack, mouseX, mouseY, partialTicks);
             this.renderHoveredTooltip(matrixStack, mouseX, mouseY);
+            this.drawCustomTooltips(matrixStack, mouseX, mouseY);
     }
 
     @Override
     protected void renderHoveredTooltip(MatrixStack matrixStack, int x, int y) {
         if (this.minecraft.player.inventory.getItemStack().isEmpty() && this.hoveredSlot != null) {
             int slot = this.hoveredSlot.slotNumber;
-
-            if(slot == ((VendingContainer)container).getFirstInputSlotIndex()) { // INPUT SLOT
-             //   List<ITextComponent> list = Lists.newArrayList();
-             //   IFormattableTextComponent test = (new StringTextComponent(TextFormatting.GREEN + "Cash: " + TextFormatting.WHITE + "$1,000,000,000.00"));
-             //   list.add(test);
-
-           //     FontRenderer font = getMinecraft().fontRenderer;
-          //      this.renderWrappedToolTip(matrixStack, list, x, y, (font == null ? this.font : font));
-           //     net.minecraftforge.fml.client.gui.GuiUtils.postItemToolTip();
-            }
         }
         super.renderHoveredTooltip(matrixStack, x, y);
     }
@@ -208,7 +201,7 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
             GL12.glDisable(GL12.GL_DEPTH_TEST);
             GL12.glPushMatrix();
             GL12.glScalef(0.7F, 0.7F, 0.8F);
-            this.font.drawStringWithShadow(matrixStack, TextFormatting.WHITE + "Cash: $", 56, -55,0);
+            this.font.drawStringWithShadow(matrixStack, TextFormatting.WHITE + I18n.format("block.gocurrency.vending.cash"), 56, -55,0);
             this.font.drawString(matrixStack, TextFormatting.DARK_GREEN + container.currencyToString(container.getVendingStateData(VendingStateData.MODE_INDEX)), 94, -55, 0);
             GL12.glPopMatrix();
             GL12.glDisable(GL12.GL_DEPTH_TEST);
@@ -224,7 +217,7 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
             GL12.glDisable(GL12.GL_DEPTH_TEST);
             GL12.glPushMatrix();
             GL12.glScalef(0.7F, 0.7F, 0.8F);
-            this.font.drawStringWithShadow(matrixStack, TextFormatting.WHITE + "Income: $", 56, -55,0);
+            this.font.drawStringWithShadow(matrixStack, TextFormatting.WHITE + I18n.format("block.gocurrency.vending.income"), 56, -55,0);
             this.font.drawString(matrixStack, TextFormatting.AQUA + container.currencyToString(container.getVendingStateData(VendingStateData.MODE_INDEX)), 104, -55,0);
             GL12.glPopMatrix();
             GL12.glDisable(GL12.GL_DEPTH_TEST);
@@ -239,11 +232,40 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
             if(container.getVendingStateData(VendingStateData.EDITPRICE_INDEX) == 1) { // PRICE EDIT ON
                 this.blit(matrixStack, -73, -33, 126, 0, 106, 48); // Big Tag
 
-                this.font.drawStringWithShadow(matrixStack, "Slot Pricing", -45, -27, Objects.requireNonNull(Color.fromHex("#cbd11d")).getColor()); //Inventory Title
+                this.font.drawStringWithShadow(matrixStack, I18n.format("block.gocurrency.vending.slotpricing"), -45, -27, Objects.requireNonNull(Color.fromHex("#cbd11d")).getColor()); //Inventory Title
             }
         }
 
 
+    }
+
+    protected void drawCustomTooltips(MatrixStack matrixStack, int x, int y){
+        for (int i = 0; i < buttons.size(); i++) {
+            Widget butt = buttons.get(i);
+            if (x >= butt.x && x <= butt.x + butt.getWidth() && y >= butt.y && y <= butt.y + butt.getHeightRealms()) {
+                String text = "NULL";
+                int mode = container.getVendingStateData(VendingStateData.MODE_INDEX);
+                List<ITextComponent> listText = new ArrayList<>();
+
+                switch(i) {
+                    case BUTTONID_MODE:
+                        listText.add(ITextComponent.getTextComponentOrEmpty(I18n.format("block.gocurrency.vending.tooltip.mode" + mode + "_0", TextFormatting.DARK_PURPLE, TextFormatting.RESET)));
+                        listText.add(ITextComponent.getTextComponentOrEmpty(I18n.format("block.gocurrency.vending.tooltip.mode" + mode + "_1", TextFormatting.GRAY)));
+                        break;
+                    case BUTTONID_CASH:
+                        listText.add(ITextComponent.getTextComponentOrEmpty(I18n.format("block.gocurrency.vending.tooltip.cash" + mode, mode == 0? TextFormatting.GREEN : TextFormatting.AQUA)));
+                        break;
+                    case BUTTONID_GUISWITCH:
+                        listText.add(ITextComponent.getTextComponentOrEmpty(I18n.format("block.gocurrency.vending.tooltip.guiswitch")));
+                        break;
+                    case BUTTONID_PRICE:
+                        listText.add(ITextComponent.getTextComponentOrEmpty(I18n.format("block.gocurrency.vending.tooltip.pricesetting")));
+                        break;
+                }
+
+                renderWrappedToolTip(matrixStack, listText, x, y, this.font);
+            }
+        }
     }
 
     private void drawBufferSize(MatrixStack matrixStack) {

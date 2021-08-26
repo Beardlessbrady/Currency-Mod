@@ -9,12 +9,14 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -66,7 +68,7 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
         }
     }
 
-    public ItemStack[] currencyDrop(int mode) {
+    public ItemStack[] extractCurrency(int mode) {
         // Get Currency List and order from largest to smallest dollar/Cent value
         CurrencyItem.CurrencyObject[] currencyList = GOCurrency.currencyList.clone();
         Arrays.sort(currencyList, Comparator.reverseOrder());
@@ -113,7 +115,7 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
     }
 
     public void cashButton(int mode) {
-        ItemStack[] currency = currencyDrop(mode);
+        ItemStack[] currency = extractCurrency(mode);
 
         // Fill Output Slots
         for (int i = 0; i < currency.length; i++) {
@@ -187,6 +189,25 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
         InventoryHelper.dropInventoryItems(world, blockPos, stockContents);
         InventoryHelper.dropInventoryItems(world, blockPos, inputContents);
         InventoryHelper.dropInventoryItems(world, blockPos, outputContents);
+
+        // Get Cash Items
+        NonNullList<ItemStack> cashList = NonNullList.create();
+        for(ItemStack item: extractCurrency(0)) {
+            if(!item.isEmpty()) {
+                cashList.add(item);
+            }
+        }
+
+        // Get Income Items
+        NonNullList<ItemStack> incomeList = NonNullList.create();
+        for(ItemStack item: extractCurrency(1)) {
+            if(!item.isEmpty()) {
+                incomeList.add(item);
+            }
+        }
+
+        InventoryHelper.dropItems(world, blockPos, cashList);
+        InventoryHelper.dropItems(world, blockPos, incomeList);
     }
 
     @Override
