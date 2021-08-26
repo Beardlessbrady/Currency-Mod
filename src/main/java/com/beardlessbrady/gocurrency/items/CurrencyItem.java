@@ -28,6 +28,7 @@ public class CurrencyItem extends Item {
         super(properties);
     }
 
+
     /**
      * What to add to creative menu
      *
@@ -134,7 +135,7 @@ public class CurrencyItem extends Item {
     /**
      * Hold Currency values
      */
-    public static class CurrencyObject {
+    public static class CurrencyObject implements Comparable<CurrencyObject>{
         private final byte ID;
         private final String name;
         private final int dollar;
@@ -169,6 +170,15 @@ public class CurrencyItem extends Item {
 
         public float getPropertyOverrideValue() {
             return this.ID;
+        }
+
+        @Override
+        public int compareTo(CurrencyObject o) {
+            if(this.dollar != o.dollar){
+                return Integer.compare(this.dollar, o.dollar);
+            } else {
+                return Integer.compare(this.cent, o.cent);
+            }
         }
     }
 }

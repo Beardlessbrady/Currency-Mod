@@ -27,6 +27,7 @@ public class NetworkHandler {
         int id = 0;
 
         handler.registerMessage(id++, MessageVendingStateData.class, MessageVendingStateData::encode, MessageVendingStateData::decode, MessageVendingStateData::handle);
+        handler.registerMessage(id++, MessageVendingCashButton.class, MessageVendingCashButton::encode, MessageVendingCashButton::decode, MessageVendingCashButton::handle);
     }
 
     public void sendToServer(Object message){

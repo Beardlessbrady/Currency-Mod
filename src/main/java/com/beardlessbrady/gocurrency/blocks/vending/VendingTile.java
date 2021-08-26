@@ -1,5 +1,6 @@
 package com.beardlessbrady.gocurrency.blocks.vending;
 
+import com.beardlessbrady.gocurrency.GOCurrency;
 import com.beardlessbrady.gocurrency.init.CommonRegistry;
 import com.beardlessbrady.gocurrency.items.CurrencyItem;
 import net.minecraft.block.BlockState;
@@ -8,6 +9,7 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SUpdateTileEntityPacket;
@@ -17,7 +19,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+
 import javax.annotation.Nullable;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.LinkedList;
 
 /**
  * Created by BeardlessBrady on 2021-03-01 for Currency-Mod
@@ -60,6 +66,90 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
         }
     }
 
+    public ItemStack[] currencyDrop(int mode) {
+        // Get Currency List and order from largest to smallest dollar/Cent value
+        CurrencyItem.CurrencyObject[] currencyList = GOCurrency.currencyList.clone();
+        Arrays.sort(currencyList, Comparator.reverseOrder());
+
+        // Drop Cash/Income depending on Mode
+        byte DOLLAR_INDEX = VendingStateData.CASHDOLLAR_INDEX;
+        byte CENT_INDEX = VendingStateData.CASHCENT_INDEX;
+        if(mode == 1){
+            DOLLAR_INDEX = VendingStateData.INCOMEDOLLAR_INDEX;
+            CENT_INDEX = VendingStateData.INCOMECENT_INDEX;
+        }
+        int dollar = container.getVendingStateData(DOLLAR_INDEX);
+        int cent = container.getVendingStateData(CENT_INDEX);
+
+        container.setVendingStateData(DOLLAR_INDEX, 0);
+        container.setVendingStateData(CENT_INDEX, 0);
+
+        // List of Currency Itemstacks to drop
+        LinkedList<ItemStack> currencyDrop = new LinkedList<ItemStack>();
+
+        // Iterate through currency list and see how many of each currency is needed for total currency
+        for (int i = 0; i < currencyList.length; i++) {
+            int count = 0;
+            int currencyIndex = 0;
+            while (dollar >= currencyList[i].getDollar() && cent >= currencyList[i].getCent()) {
+                dollar -= currencyList[i].getDollar();
+                cent -= currencyList[i].getCent();
+
+                count++;
+                currencyIndex = i;
+
+                if (count == new ItemStack(CommonRegistry.ITEM_CURRENCY.get()).getMaxStackSize()) {
+                    i--;
+                    break;
+                }
+            }
+
+            ItemStack stack = new ItemStack(CommonRegistry.ITEM_CURRENCY.get(), count);
+            CurrencyItem.putIntoNBT(stack, currencyList[currencyIndex]);
+            currencyDrop.add(stack);
+        }
+
+        return currencyDrop.toArray(new ItemStack[currencyDrop.size()]);
+    }
+
+    public void cashButton(int mode) {
+        ItemStack[] currency = currencyDrop(mode);
+
+        // Fill Output Slots
+        for (int i = 0; i < currency.length; i++) {
+            for (int j = 0; j < outputContents.getSizeInventory(); j++) {
+                if (outputContents.getStackInSlot(j).isEmpty()) {
+                    ItemStack outStack = currency[i];
+                    currency[i] = ItemStack.EMPTY;
+
+                    outputContents.setInventorySlotContents(j, outStack);
+                }
+            }
+        }
+
+        // Check if money left over, if so put back into machine
+        byte DOLLAR_INDEX = VendingStateData.CASHDOLLAR_INDEX;
+        byte CENT_INDEX = VendingStateData.CASHCENT_INDEX;
+
+        if(mode == 1){
+            DOLLAR_INDEX = VendingStateData.INCOMEDOLLAR_INDEX;
+            CENT_INDEX = VendingStateData.INCOMECENT_INDEX;
+        }
+
+        int dollar = container.getVendingStateData(DOLLAR_INDEX);
+        int cent = container.getVendingStateData(CENT_INDEX);
+
+        for (ItemStack leftover: currency) {
+            if (!leftover.isEmpty()) {
+                int[] leftoverValue = CurrencyItem.getCurrencyValue(leftover);
+                dollar += leftoverValue[0];
+                cent += leftoverValue[1];
+            }
+        }
+
+        container.setVendingStateData(DOLLAR_INDEX, dollar);
+        container.setVendingStateData(CENT_INDEX, cent);
+    }
 
     public void addCurrency(int[] currency, int mode){
         byte DOLLAR_INDEX = VendingStateData.CASHDOLLAR_INDEX;

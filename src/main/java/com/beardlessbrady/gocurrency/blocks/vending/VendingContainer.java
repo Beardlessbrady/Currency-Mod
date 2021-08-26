@@ -1,7 +1,6 @@
 package com.beardlessbrady.gocurrency.blocks.vending;
 
 import com.beardlessbrady.gocurrency.init.CommonRegistry;
-import com.beardlessbrady.gocurrency.items.CurrencyItem;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
@@ -336,6 +335,9 @@ public class VendingContainer extends Container {
     }
 
     private ItemStack outputSlotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+        if ((clickTypeIn == ClickType.PICKUP && player.inventory.getItemStack().isEmpty()) || clickTypeIn == ClickType.QUICK_MOVE) { // Pickup / Transfer
+            return super.slotClick(slotId, dragType, clickTypeIn, player);
+        }
         return ItemStack.EMPTY;
     }
 
@@ -352,7 +354,9 @@ public class VendingContainer extends Container {
                 if ((dragSlots.get(i) >= HOTBAR_FIRST_SLOT_INDEX && dragSlots.get(i) < PLAYER_INVENTORY_FIRST_SLOT_INDEX + PLAYER_INVENTORY_SLOT_COUNT) //PLAYER INVENTORY
                         ||
                         ((dragSlots.get(i) >= FIRST_STOCK_SLOT_INDEX && dragSlots.get(i) < FIRST_INPUT_SLOT_INDEX) // STOCK INVENTORY
-                                && (vendingStateData.get(VendingStateData.MODE_INDEX) == 1))) { // Stock Mode
+                                && (vendingStateData.get(VendingStateData.MODE_INDEX) == 1))
+                        ||
+                        ((dragSlots.get(i) >= FIRST_INPUT_SLOT_INDEX && dragSlots.get(i) < FIRST_OUTPUT_SLOT_INDEX))) { // Stock Mode
                     tempList.push(dragSlots.get(i)); // Valid slots are added to a temp list
                 }
             }
@@ -407,6 +411,27 @@ public class VendingContainer extends Container {
                                 playerStack.shrink(divCount - stockContents.growInventorySlotSize(stockIndex, divStack.copy()).getCount()); // Shrink by divcount - leftover
                             }
                         }
+                    } else if ((dragSlots.get(i) >= FIRST_INPUT_SLOT_INDEX && dragSlots.get(i) < FIRST_OUTPUT_SLOT_INDEX)) {
+                        if (playerStack.getItem().equals(CommonRegistry.ITEM_CURRENCY.get())) { // IS CURRENCY
+                            Slot inputSlot = inventorySlots.get(dragSlots.get(i));
+
+                            // Enough room for whole divisor stack
+                            if (canAddItemToSlot(inputSlot, divStack.copy(), false )) {
+                                if (inputSlot.getStack().isEmpty()) {
+                                    inputSlot.putStack(divStack.copy());
+                                } else {
+                                    inputSlot.getStack().grow(divCount);
+                                }
+                                playerStack.shrink(divCount);
+                            } else {
+                                // Same item, add some of stack
+                                if (canAddItemToSlot(inventorySlots.get(dragSlots.get(i)), divStack.copy(), true )) {
+                                    int growthAmount = divCount + (inputSlot.getStack().getMaxStackSize() - (inputSlot.getStack().getCount() + divCount));
+                                    inputSlot.getStack().grow(growthAmount);
+                                    playerStack.shrink(growthAmount);
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -418,7 +443,6 @@ public class VendingContainer extends Container {
     @Override // Shift clicking
     public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
         Slot slot = this.inventorySlots.get(index);
-
         if (vendingStateData.get(VendingStateData.MODE_INDEX) == 1) { // Stock
             // Stack has same item and can fit stack being shifted
             for (int i = 0; i < stockContents.getSizeInventory(); i++) {
@@ -444,6 +468,68 @@ public class VendingContainer extends Container {
                     slot.decrStackSize(slot.getStack().getCount());
                     return ItemStack.EMPTY;
                 }
+            }
+        } else if (vendingStateData.get(VendingStateData.MODE_INDEX) == 0) { // Sell
+            if ((index >= HOTBAR_FIRST_SLOT_INDEX && //PLAYER INVENTORY
+                    index < PLAYER_INVENTORY_FIRST_SLOT_INDEX + PLAYER_INVENTORY_SLOT_COUNT)) {
+                if (slot.getStack().getItem().equals(CommonRegistry.ITEM_CURRENCY.get())) { // IS CURRENCY
+                    // Stack has same item and can fit stack being shifted
+                    for (int i = 0; i < inputContents.getSizeInventory(); i++) {
+                        // Has same item and can fit stack size
+                        if (!inputContents.getStackInSlot(i).isEmpty() &&
+                                canAddStackToOverloadedStack(inputContents.getStackInSlot(i), inputContents.getStackInSlot(i).getCount(), inputContents.getStackInSlot(i).getMaxStackSize(), slot.getStack(), true)) {
+                            inputContents.getStackInSlot(i).grow(slot.getStack().getCount());
+                            slot.decrStackSize(slot.getStack().getCount());
+                            return ItemStack.EMPTY;
+
+                            // Has same item and CANNOT fit stack size
+                        } else  if (!inputContents.getStackInSlot(i).isEmpty() &&
+                                canAddStackToOverloadedStack(inputContents.getStackInSlot(i), inputContents.getStackInSlot(i).getCount(), inputContents.getStackInSlot(i).getMaxStackSize(), slot.getStack(), false)) {
+                            slot.getStack().setCount(stockContents.growInventorySlotSize(i, slot.getStack()).getCount());
+                        }
+                    }
+
+                    // Since no matching items with room place in EMPTY slot if possible
+                    for (int i = 0; i < inputContents.getSizeInventory(); i++) {
+                        if (inputContents.getStackInSlot(i).isEmpty() &&
+                                canAddStackToOverloadedStack(inputContents.getStackInSlot(i), inputContents.getStackInSlot(i).getCount(), inputContents.getStackInSlot(i).getMaxStackSize(), slot.getStack(), false)) {
+                            inputContents.setInventorySlotContents(i, slot.getStack().copy());
+                            slot.decrStackSize(slot.getStack().getCount());
+                            return ItemStack.EMPTY;
+                        }
+                    }
+                }
+            } else if (index >= FIRST_OUTPUT_SLOT_INDEX && // OUTPUT INVENTORY
+                    index < FIRST_OUTPUT_SLOT_INDEX + OUTPUT_SLOTS_COUNT) {
+                // Stack has same item and can fit stack being shifted
+                for (int i = 0; i < playerIn.inventory.getSizeInventory(); i++) {
+                    // Has same item and can fit stack size
+                    if (!playerIn.inventory.getStackInSlot(i).isEmpty() &&
+                            canAddStackToOverloadedStack(playerIn.inventory.getStackInSlot(i), playerIn.inventory.getStackInSlot(i).getCount(), playerIn.inventory.getStackInSlot(i).getMaxStackSize(), slot.getStack(), true)) {
+                        playerIn.inventory.getStackInSlot(i).grow(slot.getStack().getCount());
+                        slot.decrStackSize(slot.getStack().getCount());
+                        return ItemStack.EMPTY;
+
+                        // Has same item and CANNOT fit stack size
+                    } else  if (!playerIn.inventory.getStackInSlot(i).isEmpty() &&
+                            canAddStackToOverloadedStack(playerIn.inventory.getStackInSlot(i), playerIn.inventory.getStackInSlot(i).getCount(), playerIn.inventory.getStackInSlot(i).getMaxStackSize(), slot.getStack(), false)) {
+                        int amount = playerIn.inventory.getStackInSlot(i).getMaxStackSize() - playerIn.inventory.getStackInSlot(i).getCount() ;
+                        playerIn.inventory.getStackInSlot(i).grow(amount);
+                        slot.getStack().shrink(amount);
+                    }
+                }
+
+                // Since no matching items with room place in EMPTY slot if possible
+                for (int i = 0; i < playerIn.inventory.getSizeInventory(); i++) {
+                    if (playerIn.inventory.getStackInSlot(i).isEmpty() &&
+                            canAddStackToOverloadedStack(playerIn.inventory.getStackInSlot(i), playerIn.inventory.getStackInSlot(i).getCount(), playerIn.inventory.getStackInSlot(i).getMaxStackSize(), slot.getStack(), false)) {
+                        playerIn.inventory.setInventorySlotContents(i, slot.getStack().copy());
+                        slot.decrStackSize(slot.getStack().getCount());
+                        return ItemStack.EMPTY;
+                    }
+                }
+            } else {
+                // SlotID -1...not sure what this is yet
             }
         }
         return ItemStack.EMPTY;
@@ -498,7 +584,7 @@ public class VendingContainer extends Container {
     }
 
     public void updateModeSlots() {
-        if (vendingStateData.get(VendingStateData.MODE_INDEX) == 1) { // Sell (Not changed yet)
+        if (vendingStateData.get(VendingStateData.MODE_INDEX) == 1) { // SELL (NOT CHANGED YET SO OPPOSITE)
             // Inputs
             inventorySlots.get(FIRST_INPUT_SLOT_INDEX).xPos = INPUT_SLOTS_XPOS;
             inventorySlots.get(FIRST_INPUT_SLOT_INDEX).yPos = INPUT_SLOTS_YPOS;

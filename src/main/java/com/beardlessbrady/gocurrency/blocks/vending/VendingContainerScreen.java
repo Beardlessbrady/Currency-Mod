@@ -2,6 +2,7 @@ package com.beardlessbrady.gocurrency.blocks.vending;
 
 import com.beardlessbrady.gocurrency.CustomButton;
 import com.beardlessbrady.gocurrency.GOCurrency;
+import com.beardlessbrady.gocurrency.network.MessageVendingCashButton;
 import com.beardlessbrady.gocurrency.network.MessageVendingStateData;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -34,6 +35,7 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
     final static byte BUTTONID_MODE = 0;
     final static byte BUTTONID_PRICE = 1;
     final static byte BUTTONID_CASH = 2;
+    final static byte BUTTONID_GUISWITCH = 3;
 
     public VendingContainerScreen(VendingContainer screenContainer, PlayerInventory inv, ITextComponent titleIn) {
         super(screenContainer, inv, titleIn);
@@ -48,68 +50,87 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
         buttons.clear();
         // 0
         this.buttons.add(new Button(i + 115, j - 30, 20, 20,
-                new TranslationTextComponent(""), (button) -> {handle(VendingStateData.MODE_INDEX);}));
+                new TranslationTextComponent(""), (button) -> {handle(HANDLE_MODE);}));
         this.children.add(this.buttons.get(BUTTONID_MODE));
 
         this.buttons.add(new CustomButton(i - 1000, j - 1000 , 21,23, 232, 21, 232, 21,
-                new TranslationTextComponent(""), (button) -> {handle(VendingStateData.EDITPRICE_INDEX);}));
+                new TranslationTextComponent(""), (button) -> {handle(HANDLE_EDITPRICE);}));
 
         this.buttons.add(new CustomButton(i + 116, j + 29 , 20,13, 177, 218, 177, 231,
-                new TranslationTextComponent(""), (button) -> {handle(VendingStateData.EDITPRICE_INDEX);})); // TODO
-      //  this.children.add(this.buttons.get(BUTTONID_CASH));
+                new TranslationTextComponent(""), (button) -> {handle(HANDLE_CASH);})); //
+        this.children.add(this.buttons.get(BUTTONID_CASH));
+
+        this.buttons.add(new CustomButton(i - 1000, j - 1000 , 10,10, 217, 218, 217, 228,
+                new TranslationTextComponent(""), (button) -> {      })); //TODO
     }
 
+    private final static byte HANDLE_MODE = 0;
+    private final static byte HANDLE_EDITPRICE = 1;
+    private final static byte HANDLE_CASH = 2;
     private void handle(int k) {
-        container.updateModeSlots();
         int i = (width - xSize) / 2;
         int j = (height - ySize) / 2;
-
         switch (k) {
-            case VendingStateData.MODE_INDEX:
+            case HANDLE_MODE: //VendingStateData.MODE_INDEX:
                 if (container.getVendingStateData(VendingStateData.MODE_INDEX) == 1) { // MODE SELL (Reverse since hase not changed yet)
                     // Hide Price Settings Tab
                     this.children.remove(this.buttons.get(BUTTONID_PRICE));
                     this.buttons.set(BUTTONID_PRICE, new CustomButton(i + 1000, j + 1000, 21, 23, 232, 21, 232, 21,
                             new TranslationTextComponent(""), (button) -> {
-                        handle(VendingStateData.EDITPRICE_INDEX);
+                        handle(HANDLE_EDITPRICE);
                     }));
                     this.children.add(this.buttons.get(BUTTONID_PRICE));
 
+                    // Hide GUI_SWITCH BUTTON
+                    this.children.remove(this.buttons.get(BUTTONID_GUISWITCH));
+                    this.buttons.set(BUTTONID_GUISWITCH, new CustomButton(i + 1000, j + 1000, 10,10, 217, 218, 217, 228,
+                            new TranslationTextComponent(""), (button) -> {      }));
+                    this.children.add(this.buttons.get(BUTTONID_GUISWITCH));
+
                     this.buttons.set(BUTTONID_CASH, (new CustomButton(i + 116, j + 29 , 20,13, 177, 218, 177, 231,
-                            new TranslationTextComponent(""), (button) -> {handle(VendingStateData.EDITPRICE_INDEX);})));
+                            new TranslationTextComponent(""), (button) -> {handle(HANDLE_EDITPRICE);})));
                 } else { // Mode STOCK
                     // Show Price Settings Tab
                     this.children.remove(this.buttons.get(BUTTONID_PRICE));
                     this.buttons.set(BUTTONID_PRICE, new CustomButton(i + 11, j - 33, 21, 23, 232, 21, 232, 21,
                             new TranslationTextComponent(""), (button) -> {
-                        handle(VendingStateData.EDITPRICE_INDEX);
+                        handle(HANDLE_EDITPRICE);
                     }));
                     this.children.add(this.buttons.get(BUTTONID_PRICE));
 
+                    // Show GUI_SWITCH Button
+                    this.buttons.set(BUTTONID_GUISWITCH, new CustomButton(i + 125, j - 48 , 10,10, 217, 218, 217, 228,
+                            new TranslationTextComponent(""), (button) -> {      })); //TODO
+                    this.children.add(this.buttons.get(BUTTONID_GUISWITCH));
+
                     this.buttons.set(BUTTONID_CASH, (new CustomButton(i + 116, j + 29 , 20,13, 197, 218, 197, 231,
-                            new TranslationTextComponent(""), (button) -> {handle(VendingStateData.EDITPRICE_INDEX);})));
+                            new TranslationTextComponent(""), (button) -> {handle(HANDLE_EDITPRICE);})));
                 }
+                container.updateModeSlots();
+                GOCurrency.NETWORK_HANDLER.sendToServer(new MessageVendingStateData(container.getTile().getPos(),VendingStateData.MODE_INDEX));
                 break;
-            case VendingStateData.EDITPRICE_INDEX:
+            case HANDLE_EDITPRICE: //VendingStateData.EDITPRICE_INDEX:
                 if (container.getVendingStateData(VendingStateData.EDITPRICE_INDEX) == 1) { // PRICE EDIT ON (Reverse since hase not changed yet)
                     this.children.remove(this.buttons.get(BUTTONID_PRICE));
                     this.buttons.set(BUTTONID_PRICE, new CustomButton(i + 11, j - 33, 21, 23, 232, 21, 232, 21,
                             new TranslationTextComponent(""), (button) -> {
-                        handle(VendingStateData.EDITPRICE_INDEX);
+                        handle(HANDLE_EDITPRICE);
                     }));
                     this.children.add(this.buttons.get(BUTTONID_PRICE));
                 } else {
                     this.children.remove(this.buttons.get(BUTTONID_PRICE));
                     this.buttons.set(BUTTONID_PRICE, new CustomButton(i - 73, j - 33, 21, 23, 126, 0, 126, 0,
                             new TranslationTextComponent(""), (button) -> {
-                        handle(VendingStateData.EDITPRICE_INDEX);
+                        handle(HANDLE_EDITPRICE);
                     }));
                     this.children.add(this.buttons.get(BUTTONID_PRICE));
                 }
+                GOCurrency.NETWORK_HANDLER.sendToServer(new MessageVendingStateData(container.getTile().getPos(), VendingStateData.EDITPRICE_INDEX));
+                break;
+            case HANDLE_CASH: //CASH BUTTON
+                GOCurrency.NETWORK_HANDLER.sendToServer(new MessageVendingCashButton(container.getTile().getPos(), container.getVendingStateData(VendingStateData.MODE_INDEX)));
                 break;
         }
-
-        GOCurrency.NETWORK_HANDLER.sendToServer(new MessageVendingStateData(container.getTile().getPos(), k));
     }
 
     @Override
@@ -204,7 +225,7 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
             GL12.glPushMatrix();
             GL12.glScalef(0.7F, 0.7F, 0.8F);
             this.font.drawStringWithShadow(matrixStack, TextFormatting.WHITE + "Income: $", 56, -55,0);
-            this.font.drawString(matrixStack, TextFormatting.AQUA + "1'000'000.00", 103, -55,0);
+            this.font.drawString(matrixStack, TextFormatting.AQUA + container.currencyToString(container.getVendingStateData(VendingStateData.MODE_INDEX)), 104, -55,0);
             GL12.glPopMatrix();
             GL12.glDisable(GL12.GL_DEPTH_TEST);
 
