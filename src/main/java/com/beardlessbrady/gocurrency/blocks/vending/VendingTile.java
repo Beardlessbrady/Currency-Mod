@@ -68,6 +68,11 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
         }
     }
 
+    /**
+     * Goes through currency and outputs a list of currency item stacks
+     * @param mode used to determine which currency is being extracted (0=cash, 1=income)
+     * @return list of item stacks for currency
+     */
     public ItemStack[] extractCurrency(int mode) {
         // Get Currency List and order from largest to smallest dollar/Cent value
         CurrencyItem.CurrencyObject[] currencyList = GOCurrency.currencyList.clone();
@@ -114,6 +119,10 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
         return currencyDrop.toArray(new ItemStack[currencyDrop.size()]);
     }
 
+    /**
+     * Extract Currency and output into OUTPUT slots
+     * @param mode determines which currency is output (0=cash, 1=income)
+     */
     public void cashButton(int mode) {
         ItemStack[] currency = extractCurrency(mode);
 
@@ -153,6 +162,11 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
         container.setVendingStateData(CENT_INDEX, cent);
     }
 
+    /**
+     * Input {DOLLAR, CENT} and add those to the mode's currency (0=cash, 1=income)
+     * @param currency integer amounts {DOLLAR, CENT}
+     * @param mode determines which currency to add to
+     */
     public void addCurrency(int[] currency, int mode){
         byte DOLLAR_INDEX = VendingStateData.CASHDOLLAR_INDEX;
         byte CENT_INDEX = VendingStateData.CASHCENT_INDEX;
@@ -208,6 +222,14 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
 
         InventoryHelper.dropItems(world, blockPos, cashList);
         InventoryHelper.dropItems(world, blockPos, incomeList);
+    }
+
+    public void setPrice(int index, String price) {
+        stockContents.setPriceInSlot(index, price);
+    }
+
+    public String getPrice(int index){
+        return stockContents.getPriceInSlot(index);
     }
 
     @Override

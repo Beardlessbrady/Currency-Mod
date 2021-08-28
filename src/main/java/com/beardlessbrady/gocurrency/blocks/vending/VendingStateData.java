@@ -16,6 +16,8 @@ public class VendingStateData implements IIntArray {
     private int cashDollar = 0;
     private int cashCent = 0;
     private int editPrice = 0;
+    private int selectedSlot = 0;
+    private int guiSide = 0; // 0 = Left 1 = Right
 
     public VendingStateData(){
     }
@@ -33,6 +35,7 @@ public class VendingStateData implements IIntArray {
         compoundNBT.putInt("cashDollar", cashDollar);
         compoundNBT.putInt("cashCent", cashCent);
         compoundNBT.putInt("editPrice", editPrice);
+        compoundNBT.putInt("selectedSlot", selectedSlot);
     }
 
     public void readFromNBT(CompoundNBT compoundNBT){
@@ -42,6 +45,7 @@ public class VendingStateData implements IIntArray {
         cashDollar = compoundNBT.getInt("cashDollar");
         cashCent = compoundNBT.getInt("cashCent");
         editPrice = compoundNBT.getInt("editPrice");
+        selectedSlot = compoundNBT.getInt("selectedSlot");
     }
 
     // Vanilla Stuff, NO TOUCH
@@ -51,7 +55,9 @@ public class VendingStateData implements IIntArray {
     public static final int CASHDOLLAR_INDEX = 3;
     public static final int CASHCENT_INDEX = 4;
     public static final int EDITPRICE_INDEX = 5;
-    public static final int END_OF_INDEX_PLUS_ONE = 5 + 1;
+    public static final int GUISIDE_INDEX = 6;
+    public static final int SELECTEDSLOT_INDEX = 7;
+    public static final int END_OF_INDEX_PLUS_ONE = 7 + 1;
 
     @Override
     public int get(int index) {
@@ -69,6 +75,10 @@ public class VendingStateData implements IIntArray {
                 return cashCent;
             case EDITPRICE_INDEX:
                 return editPrice;
+            case GUISIDE_INDEX:
+                return guiSide;
+            case SELECTEDSLOT_INDEX:
+                return selectedSlot;
             default:
                 return -1;
         }
@@ -97,6 +107,13 @@ public class VendingStateData implements IIntArray {
                 break;
             case EDITPRICE_INDEX:
                 editPrice = value;
+                break;
+            case GUISIDE_INDEX:
+                guiSide = value;
+                break;
+            case SELECTEDSLOT_INDEX:
+                selectedSlot = value;
+                break;
         }
     }
 

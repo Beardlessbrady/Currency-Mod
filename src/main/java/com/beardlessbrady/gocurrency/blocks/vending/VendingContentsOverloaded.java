@@ -46,6 +46,14 @@ public class VendingContentsOverloaded implements IInventory {
         this.canPlayerAccess = canPlayerAccess;
     }
 
+    public String getPriceInSlot(int index){
+        return vendingComponentContents.getPriceInSlot(index);
+    }
+
+    public void setPriceInSlot(int index, String price){
+        vendingComponentContents.setPriceInSlot(index, price);
+    }
+
     @Override
     public boolean isUsableByPlayer(PlayerEntity player) {
         return canPlayerAccess.test(player); // Only does anything on server side

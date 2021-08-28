@@ -5,12 +5,14 @@
   "block.gocurrency.vending.cash": "Cash $",
   "block.gocurrency.vending.income": "Income $",
   "block.gocurrency.vending.slotpricing": "Slot Pricing",
-  "block.gocurrency.vending.tooltip.mode0_0": "Switch to%1$s Selling Mode %2$s",
+  "block.gocurrency.vending.slotpricing.$": "$ ",
+  "block.gocurrency.vending.tooltip.mode0_0": "Selling Mode",
   "block.gocurrency.vending.tooltip.mode0_1": "%1$sBuy items on sale",
-  "block.gocurrency.vending.tooltip.mode1_0": "Switch to%1$s Stocking Mode %2$s",
+  "block.gocurrency.vending.tooltip.mode1_0": "Stocking Mode",
   "block.gocurrency.vending.tooltip.mode1_1": "%1$sSet items for sale and pricing",
   "block.gocurrency.vending.tooltip.cash0": "Extract%1$s cash",
   "block.gocurrency.vending.tooltip.cash1": "Extract machine%1$s income",
   "block.gocurrency.vending.tooltip.guiswitch": "Switch location of admin tabs",
-  "block.gocurrency.vending.tooltip.pricesetting": "Edit the pricing of items"
+  "block.gocurrency.vending.tooltip.pricesetting_0": "Edit Prices",
+  "block.gocurrency.vending.tooltip.pricesetting_1": "Change slot selected with "
 }

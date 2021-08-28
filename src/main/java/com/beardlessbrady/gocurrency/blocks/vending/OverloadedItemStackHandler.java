@@ -18,9 +18,9 @@ import javax.annotation.Nonnull;
  * https://github.com/Beardlessbrady/Currency-Mod
  */
 public class OverloadedItemStackHandler implements IItemHandler, IItemHandlerModifiable, INBTSerializable<CompoundNBT> {
-    private NonNullList<ItemStack> stacks;
-    private StackSizeIntArray stackSize;
-    private int stackSizeLimit = 256;
+    protected NonNullList<ItemStack> stacks;
+    protected StackSizeIntArray stackSize;
+    protected int stackSizeLimit = 256;
 
     public OverloadedItemStackHandler() {
         this(1);

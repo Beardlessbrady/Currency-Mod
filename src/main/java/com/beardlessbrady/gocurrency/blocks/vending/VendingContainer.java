@@ -1,6 +1,9 @@
 package com.beardlessbrady.gocurrency.blocks.vending;
 
 import com.beardlessbrady.gocurrency.init.CommonRegistry;
+import net.minecraft.client.GameSettings;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
@@ -11,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.world.World;
 
+import javax.swing.text.JTextComponent;
 import java.util.LinkedList;
 
 /**
@@ -246,7 +250,13 @@ public class VendingContainer extends Container {
         if (vendingStateData.get(VendingStateData.MODE_INDEX) == 0) { // Sell
             //TODO
         } else { // Restock
-            if (clickTypeIn == ClickType.PICKUP_ALL ) {
+            // If EDIT PRICE is open, right click changes slot selected, left acts as usual
+            if (vendingStateData.get(VendingStateData.EDITPRICE_INDEX) == 1 && (dragType == 1)) { // RIGHT
+                vendingStateData.set(VendingStateData.SELECTEDSLOT_INDEX, index);
+                return ItemStack.EMPTY;
+            }
+
+            if (clickTypeIn == ClickType.PICKUP_ALL) {
                 if (!playerStack.isEmpty() && (slotStack.isEmpty())) {
                     for (int k = 0; k < this.stockContents.getSizeInventory(); k++) {
                         if (!stockContents.getStackInSlot(k).isEmpty() && areItemsAndTagsEqual(stockContents.getStackInSlot(k), playerStack)) {
@@ -272,27 +282,27 @@ public class VendingContainer extends Container {
 
             if (clickTypeIn == ClickType.PICKUP) { // Regular Click = Place all/Pickup all
                 if (playerStack.isEmpty()) { // Player Stack empty, PICKUP
-                    if(!slotStack.isEmpty()) { //TODO In creative allow opening Creative menu to place item here if both empty
+                    if (!slotStack.isEmpty()) { //TODO In creative allow opening Creative menu to place item here if both empty
                         int toExtract;
-                       if(dragType == 0) { // LEFT Click: Grab Full Stack
-                           int extractMax = slotStack.getMaxStackSize();
-                           toExtract = extractMax - slotCount;
+                        if (dragType == 0) { // LEFT Click: Grab Full Stack
+                            int extractMax = slotStack.getMaxStackSize();
+                            toExtract = extractMax - slotCount;
 
-                           if (toExtract <= 0) { // Equal to VANILLA Max Stack Size or OVERLOADED past it
-                               toExtract = extractMax;
-                           } else { // under VANILLA Max Stack Size
-                               toExtract = extractMax - toExtract;
-                           }
-                       } else { // RIGHT Click: Grab half of full stack or half of whats left
-                           toExtract = slotCount / 2;
+                            if (toExtract <= 0) { // Equal to VANILLA Max Stack Size or OVERLOADED past it
+                                toExtract = extractMax;
+                            } else { // under VANILLA Max Stack Size
+                                toExtract = extractMax - toExtract;
+                            }
+                        } else { // RIGHT Click: Grab half of full stack or half of whats left
+                            toExtract = slotCount / 2;
 
-                           if(toExtract > slotStack.getMaxStackSize()) // Half of Stack is more than VANILLA stack limit
-                               toExtract = slotStack.getMaxStackSize() / 2;
+                            if (toExtract > slotStack.getMaxStackSize()) // Half of Stack is more than VANILLA stack limit
+                                toExtract = slotStack.getMaxStackSize() / 2;
 
-                           if(toExtract == 0)
-                               toExtract = 1;
-                       }
-                       player.inventory.setItemStack(stockContents.decrStackSize(index, toExtract));
+                            if (toExtract == 0)
+                                toExtract = 1;
+                        }
+                        player.inventory.setItemStack(stockContents.decrStackSize(index, toExtract));
                     }
                 } else { // Player Stack: PLACE STACK
                     if (dragType == 0) { // LEFT Click: Place full stack
@@ -310,7 +320,7 @@ public class VendingContainer extends Container {
                             player.inventory.getItemStack().shrink(1);
                         } else { // Slot NOT EMPTY, try to merge or don't place if incompatible
                             // If return is 0, shrink by 1, if return is not don't shrink
-                            player.inventory.getItemStack().shrink((stockContents.growInventorySlotSize(index, copyOne).getCount() == 0)? 1 : 0);
+                            player.inventory.getItemStack().shrink((stockContents.growInventorySlotSize(index, copyOne).getCount() == 0) ? 1 : 0);
                         }
                     }
                 }
@@ -324,7 +334,7 @@ public class VendingContainer extends Container {
         ItemStack playerStack = player.inventory.getItemStack();
         ItemStack slotStack = this.stockContents.getStackInSlot(index);
         int slotCount = this.stockContents.getSizeInSlot(index);
-        if(!playerStack.isEmpty()) {
+        if (!playerStack.isEmpty()) {
             if (playerStack.getItem().equals(CommonRegistry.ITEM_CURRENCY.get())) {
                 return super.slotClick(slotId, dragType, clickTypeIn, player);
             }
