@@ -58,6 +58,8 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
         outputContents = new VendingContents(OUTPUT_SLOTS_COUNT, this::canPlayerUse, this::markDirty);
     }
 
+    // ----- VANILLA -----
+
     @Override
     public void tick() {
         if (!world.isRemote) { // Server
@@ -67,6 +69,95 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
             }
         }
     }
+
+    @Override
+    public ITextComponent getDisplayName() {
+        return new TranslationTextComponent("container.gocurrency.vending");
+    }
+
+    public boolean canPlayerUse(PlayerEntity player) {
+        if (this.world.getTileEntity(this.pos) != this) return false;
+        final double X_CENTRE_OFFSET = 0.5;
+        final double Y_CENTRE_OFFSET = 0.5;
+        final double Z_CENTRE_OFFSET = 0.5;
+        final double MAXIMUM_DISTANCE_SQ = 8.0 * 8.0;
+        return player.getDistanceSq(pos.getX() + X_CENTRE_OFFSET, pos.getY() + Y_CENTRE_OFFSET, pos.getZ() + Z_CENTRE_OFFSET) < MAXIMUM_DISTANCE_SQ;
+    }
+
+    public void dropStockContents() {
+        for (int i = 0; i < stockContents.getSizeInventory(); i++) {
+            while (stockContents.getStackSize(i) != 0) {
+                ItemStack dropStack = stockContents.getStackInSlot(i);
+                int dropSize = stockContents.getSizeInSlot(i);
+
+                // If stack size larger than regular stack limit
+                if (dropSize > dropStack.getMaxStackSize())
+                    dropSize = dropStack.getMaxStackSize();
+
+                dropStack.setCount(dropSize);
+                stockContents.decrStackSize(i, dropSize);
+
+                InventoryHelper.spawnItemStack(world, pos.getX(), pos.getY(), pos.getZ(), dropStack);
+            }
+        }
+    }
+
+    public void dropAllContents(World world, BlockPos blockPos) {
+        dropStockContents();
+        InventoryHelper.dropInventoryItems(world, blockPos, inputContents);
+        InventoryHelper.dropInventoryItems(world, blockPos, outputContents);
+
+        // Get Cash Items
+        NonNullList<ItemStack> cashList = NonNullList.create();
+        for(ItemStack item: extractCurrency(0)) {
+            if(!item.isEmpty()) {
+                cashList.add(item);
+            }
+        }
+
+        // Get Income Items
+        NonNullList<ItemStack> incomeList = NonNullList.create();
+        for(ItemStack item: extractCurrency(1)) {
+            if(!item.isEmpty()) {
+                incomeList.add(item);
+            }
+        }
+
+        InventoryHelper.dropItems(world, blockPos, cashList);
+        InventoryHelper.dropItems(world, blockPos, incomeList);
+    }
+
+    @Nullable
+    @Override
+    // Server side creation of Container
+    public Container createMenu(int windowID, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+        this.container = VendingContainer.createContainerServer(windowID, playerInventory, stockContents, inputContents, outputContents, vendingStateData, this);
+        return this.container;
+    }
+
+    public int getVendingStateData(int index) {
+        return vendingStateData.get(index);
+    }
+
+    public int[] getVendingStateDataAsArray() {
+        int[] array = new int[vendingStateData.size()];
+
+        for (int i = 0; i < vendingStateData.size(); i++) {
+            array[i] = vendingStateData.get(i);
+        }
+
+        return array;
+    }
+
+    public void setVendingStateData(int index, int value) {
+        this.vendingStateData.set(index, value);
+
+        if(index == VendingStateData.MODE_INDEX){
+            container.updateModeSlots();
+        }
+    }
+
+    // ---- CURRENCY ------
 
     /**
      * Goes through currency and outputs a list of currency item stacks
@@ -190,81 +281,12 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
         container.setVendingStateData(CENT_INDEX, cent);
     }
 
-    public boolean canPlayerUse(PlayerEntity player) {
-        if (this.world.getTileEntity(this.pos) != this) return false;
-        final double X_CENTRE_OFFSET = 0.5;
-        final double Y_CENTRE_OFFSET = 0.5;
-        final double Z_CENTRE_OFFSET = 0.5;
-        final double MAXIMUM_DISTANCE_SQ = 8.0 * 8.0;
-        return player.getDistanceSq(pos.getX() + X_CENTRE_OFFSET, pos.getY() + Y_CENTRE_OFFSET, pos.getZ() + Z_CENTRE_OFFSET) < MAXIMUM_DISTANCE_SQ;
-    }
-
-    public void dropAllContents(World world, BlockPos blockPos) {
-        InventoryHelper.dropInventoryItems(world, blockPos, stockContents);
-        InventoryHelper.dropInventoryItems(world, blockPos, inputContents);
-        InventoryHelper.dropInventoryItems(world, blockPos, outputContents);
-
-        // Get Cash Items
-        NonNullList<ItemStack> cashList = NonNullList.create();
-        for(ItemStack item: extractCurrency(0)) {
-            if(!item.isEmpty()) {
-                cashList.add(item);
-            }
-        }
-
-        // Get Income Items
-        NonNullList<ItemStack> incomeList = NonNullList.create();
-        for(ItemStack item: extractCurrency(1)) {
-            if(!item.isEmpty()) {
-                incomeList.add(item);
-            }
-        }
-
-        InventoryHelper.dropItems(world, blockPos, cashList);
-        InventoryHelper.dropItems(world, blockPos, incomeList);
-    }
-
     public void setPrice(int index, String price) {
         stockContents.setPriceInSlot(index, price);
     }
 
     public String getPrice(int index){
         return stockContents.getPriceInSlot(index);
-    }
-
-    @Override
-    public ITextComponent getDisplayName() {
-        return new TranslationTextComponent("container.gocurrency.vending");
-    }
-
-    @Nullable
-    @Override
-    // Server side creation of Container
-    public Container createMenu(int windowID, PlayerInventory playerInventory, PlayerEntity playerEntity) {
-        this.container = VendingContainer.createContainerServer(windowID, playerInventory, stockContents, inputContents, outputContents, vendingStateData, this);
-        return this.container;
-    }
-
-    public int getVendingStateData(int index) {
-        return vendingStateData.get(index);
-    }
-
-    public int[] getVendingStateDataAsArray() {
-        int[] array = new int[vendingStateData.size()];
-
-        for (int i = 0; i < vendingStateData.size(); i++) {
-            array[i] = vendingStateData.get(i);
-        }
-
-        return array;
-    }
-
-    public void setVendingStateData(int index, int value) {
-        this.vendingStateData.set(index, value);
-
-        if(index == VendingStateData.MODE_INDEX){
-            container.updateModeSlots();
-        }
     }
 
     // ---- NBT Stuff ----
