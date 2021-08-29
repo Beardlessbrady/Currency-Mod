@@ -277,8 +277,8 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
                     this.fieldPrice.setMaxStringLength(outText.length());
                 }
 
-                if (!outText.equals(container.getStockContents().getPriceInSlot(container.getVendingStateData(VendingStateData.SELECTEDSLOT_INDEX)))) {
-                    container.getStockContents().setPriceInSlot(container.getVendingStateData(VendingStateData.SELECTEDSLOT_INDEX), outText);
+                if (!outText.equals(container.getTile().getPrice(container.getVendingStateData(VendingStateData.SELECTEDSLOT_INDEX)))) {
+                    container.getTile().setPrice(container.getVendingStateData(VendingStateData.SELECTEDSLOT_INDEX), outText);
                     GOCurrency.NETWORK_HANDLER.sendToServer(new MessageSetPrice(container.getTile().getPos(), container.getVendingStateData(VendingStateData.SELECTEDSLOT_INDEX), outText));
                 }
                 return true;
@@ -293,7 +293,7 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
         boolean isEmpty = !container.getStockContents().getStackInSlot(container.getVendingStateData(VendingStateData.SELECTEDSLOT_INDEX)).isEmpty();
 
         fieldPrice.setEnabled(isEmpty);
-        this.fieldPrice.setText(container.getStockContents().getPriceInSlot(container.getVendingStateData(VendingStateData.SELECTEDSLOT_INDEX)));
+        this.fieldPrice.setText(container.getTile().getPrice(container.getVendingStateData(VendingStateData.SELECTEDSLOT_INDEX)));
     }
 
     // ------------- RENDERS --------------------
@@ -335,11 +335,12 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
             //Adding Vending Strings
             TextFormatting color = TextFormatting.RED;
             if (container.getVendingStateData(VendingStateData.MODE_INDEX) == 0) { // SELL MODE
-                if (true /*te.canAfford(slot, 1)*/) {
+                if (container.canAfford(slot)) {
                     color = TextFormatting.GREEN;
                 }
 
-                String cost = container.getStockContents().getPriceInSlot(slot);
+                String cost = container.getTile().getPrice(slot);
+                int stock = container.getStockContents().getSizeInSlot(slot);
                 int amount = 1;//te.getItemVendor(slot).getAmount();
 
                 //If Sneak button held down, show a full stack (or as close to it)
@@ -354,7 +355,16 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
                 }
                  */
 
-                list.add(ITextComponent.getTextComponentOrEmpty(TextFormatting.GOLD + "Price " + color + "$" + cost));
+                list.add(ITextComponent.getTextComponentOrEmpty(TextFormatting.GOLD +
+                        I18n.format("block.gocurrency.vending.buy.price") + color +
+                        I18n.format("block.gocurrency.vending.slotpricing.$") + cost));
+
+                if(stock > 0) {
+                    list.add(ITextComponent.getTextComponentOrEmpty(TextFormatting.GOLD +
+                            I18n.format("block.gocurrency.vending.buy.stock") + TextFormatting.BLUE + stock));
+                } else {
+                    list.add(ITextComponent.getTextComponentOrEmpty(TextFormatting.RED + I18n.format("block.gocurrency.vending.buy.out")));
+                }
 
                 /*
                 if (te.getField(FIELD_FINITE) == 1) {
@@ -537,41 +547,45 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
      * Draw item slot stack size
      */
     private void drawBufferSize(MatrixStack matrixStack) {
-        GL12.glDisable(GL12.GL_DEPTH_TEST);
-        GL12.glPushMatrix();
-        GL12.glScalef(0.7F, 0.7F, 0.8F);
+        if (container.getVendingStateData(VendingStateData.MODE_INDEX) == 0) {
+            // TODO draw amount being bought
+        } else {
+            GL12.glDisable(GL12.GL_DEPTH_TEST);
+            GL12.glPushMatrix();
+            GL12.glScalef(0.7F, 0.7F, 0.8F);
 
-        matrixStack.push();
-        matrixStack.translate(0, 0, 350);
+            matrixStack.push();
+            matrixStack.translate(0, 0, 350);
 
-        String num;
-        int startY = -30;
-        int startX = 59;
-        int columnCount = 4;
-        int rowCount = 4;
+            String num;
+            int startY = -30;
+            int startX = 59;
+            int columnCount = 4;
+            int rowCount = 4;
 
-        for (int j = 0; j < columnCount; j++) {
-            for (int i = 0; i < rowCount; i++) {
-                int index = (i + (rowCount * j));
-                int count = container.getStockContents().getStackSize(index);
+            for (int j = 0; j < columnCount; j++) {
+                for (int i = 0; i < rowCount; i++) {
+                    int index = (i + (rowCount * j));
+                    int count = container.getStockContents().getStackSize(index);
 
-                if (count > 0) {
-                    num = TextFormatting.WHITE + Integer.toString(count);
-                } else if (count == 0) {
-                    num = TextFormatting.RED + "Out";
-                } else {
-                    num = " ";
+                    if (count > 0) {
+                        num = TextFormatting.WHITE + Integer.toString(count);
+                    } else if (count == 0) {
+                        num = TextFormatting.RED + I18n.format("block.gocurrency.vending.buy.out");
+                    } else {
+                        num = " ";
+                    }
+
+                    if (count < 10 && count > 0) num = "  " + num;
+                    if (count >= 10 && count < 100) num = " " + num;
+
+                    if (count != 1 && !container.getStockContents().getStackInSlot(index).isEmpty())
+                        this.font.drawStringWithShadow(matrixStack, num, startX + (i * 26), startY + (j * 31), 1); //Inventory Title
                 }
-
-                if (count < 10 && count > 0) num = "  " + num;
-                if (count >= 10 && count < 100) num = " " + num;
-
-                if (count != 1 && !container.getStockContents().getStackInSlot(index).isEmpty())
-                    this.font.drawStringWithShadow(matrixStack, num, startX + (i * 26), startY + (j * 31), 1); //Inventory Title
             }
+            matrixStack.pop();
+            GL12.glPopMatrix();
+            GL12.glDisable(GL12.GL_DEPTH_TEST);
         }
-        matrixStack.pop();
-        GL12.glPopMatrix();
-        GL12.glDisable(GL12.GL_DEPTH_TEST);
     }
 }

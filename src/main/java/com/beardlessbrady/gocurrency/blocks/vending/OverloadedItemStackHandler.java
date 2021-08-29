@@ -240,6 +240,14 @@ public class OverloadedItemStackHandler implements IItemHandler, IItemHandlerMod
     }
 
     protected void onContentsChanged(int slot) {
+        isDirty = true;
+    }
+
+    private boolean isDirty = true;
+    public boolean isDirty() {
+        boolean currentState = isDirty;
+        isDirty = false;
+        return currentState;
     }
 
     public StackSizeIntArray getStackSizeIntArray(){

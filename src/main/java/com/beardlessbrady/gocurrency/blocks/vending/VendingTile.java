@@ -62,7 +62,7 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
 
     @Override
     public void tick() {
-        if (!world.isRemote) { // Server
+          if (!world.isRemote) { // Server
            if (!inputContents.getStackInSlot(0).isEmpty()) {
                addCurrency(CurrencyItem.getCurrencyValue(inputContents.getStackInSlot(0)), container.getVendingStateData(VendingStateData.MODE_INDEX));
                inputContents.getStackInSlot(0).setCount(0);
@@ -176,11 +176,11 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
             DOLLAR_INDEX = VendingStateData.INCOMEDOLLAR_INDEX;
             CENT_INDEX = VendingStateData.INCOMECENT_INDEX;
         }
-        int dollar = container.getVendingStateData(DOLLAR_INDEX);
-        int cent = container.getVendingStateData(CENT_INDEX);
+        int dollar = getVendingStateData(DOLLAR_INDEX);
+        int cent = getVendingStateData(CENT_INDEX);
 
-        container.setVendingStateData(DOLLAR_INDEX, 0);
-        container.setVendingStateData(CENT_INDEX, 0);
+        setVendingStateData(DOLLAR_INDEX, 0);
+        setVendingStateData(CENT_INDEX, 0);
 
         // List of Currency Itemstacks to drop
         LinkedList<ItemStack> currencyDrop = new LinkedList<ItemStack>();
@@ -224,7 +224,7 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
                     ItemStack outStack = currency[i];
                     currency[i] = ItemStack.EMPTY;
 
-                    outputContents.setInventorySlotContents(j, outStack);
+                //    outputContents.setInventorySlotContents(j, outStack);
                 }
             }
         }
@@ -282,7 +282,7 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
     }
 
     public void setPrice(int index, String price) {
-        stockContents.setPriceInSlot(index, price);
+       stockContents.setPriceInSlot(index, price);
     }
 
     public String getPrice(int index){

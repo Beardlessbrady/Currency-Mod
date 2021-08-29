@@ -1,18 +1,24 @@
 package com.beardlessbrady.gocurrency.blocks.vending;
 
 import com.beardlessbrady.gocurrency.init.CommonRegistry;
+import com.beardlessbrady.gocurrency.items.CurrencyItem;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.client.util.InputMappings;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.container.ClickType;
 import net.minecraft.inventory.container.Container;
+import net.minecraft.inventory.container.IContainerListener;
 import net.minecraft.inventory.container.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.NonNullList;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.GuiScreenEvent;
 
 import javax.swing.text.JTextComponent;
 import java.util.LinkedList;
@@ -71,6 +77,8 @@ public class VendingContainer extends Container {
     private VendingStateData vendingStateData;
     private VendingTile tile;
 
+    // --- VANILLA
+
     public static VendingContainer createContainerClient(int windowID, PlayerInventory playerInventory, PacketBuffer extraData) {
         VendingStateData vendingStateData = new VendingStateData(extraData.readVarIntArray());
         VendingContents input = new VendingContents(INPUT_SLOTS_COUNT);
@@ -105,7 +113,6 @@ public class VendingContainer extends Container {
 
         vendingStateData.set(VendingStateData.MODE_INDEX, 0);
         vendingStateData.set(VendingStateData.EDITPRICE_INDEX, 0);
-
     }
 
     public VendingTile getTile(){
@@ -158,13 +165,14 @@ public class VendingContainer extends Container {
         return stockContents.isUsableByPlayer(playerIn) && inputContents.isUsableByPlayer(playerIn) && outputContents.isUsableByPlayer(playerIn);
     }
 
+
     // ---- Slot manipulation ----
     private boolean dragging = false;
     private LinkedList<Integer> dragSlots = new LinkedList<Integer>();
 
     @Override
     public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
-        // System.out.println(slotId + " " + dragType + " " + clickTypeIn);
+        //System.out.println(slotId + " " + dragType + " " + clickTypeIn);
 
         try {
             // Quick Crafting
@@ -248,7 +256,53 @@ public class VendingContainer extends Container {
         int slotCount = this.stockContents.getSizeInSlot(index);
 
         if (vendingStateData.get(VendingStateData.MODE_INDEX) == 0) { // Sell
-            //TODO
+            if (clickTypeIn == ClickType.PICKUP || clickTypeIn == ClickType.QUICK_MOVE) {
+                String[] priceText = tile.getPrice(index).split("[.]");
+
+                int priceCount = 1;
+                int priceD = Integer.parseInt(priceText[0]) * priceCount;
+                int priceC = Integer.parseInt(priceText[1]) * priceCount;
+                int[]roundCents = CurrencyItem.roundCents(priceC);
+                priceD += roundCents[0];
+                priceC = roundCents[1];
+                int cashD = vendingStateData.get(VendingStateData.CASHDOLLAR_INDEX);
+                int cashC = vendingStateData.get(VendingStateData.CASHCENT_INDEX);
+
+                if (canAfford(index)) {
+                    ItemStack buyStack = slotStack.copy();
+                    buyStack.setCount(priceCount);
+
+                    // Check for room in output
+                    for (int i = FIRST_OUTPUT_SLOT_INDEX; i < FIRST_OUTPUT_SLOT_INDEX + OUTPUT_SLOTS_COUNT; i++) {
+                        boolean success = false;
+                        if (getSlot(i).getStack().isEmpty()) { // EMPTY SLOT
+                            getSlot(i).putStack(buyStack);
+                            success = true;
+                        } else { // Not Empty
+                            if (canAddItemToSlot(getSlot(i), buyStack, false)) {
+                                getSlot(i).getStack().grow(buyStack.getCount());
+                                success = true;
+                            }
+                        }
+
+                        if (success) {
+                            // Reduce Price and Stock
+                            stockContents.decrStackSize(index, buyStack.getCount());
+
+                            cashD -= priceD;
+                            cashC -= priceC;
+                            int[]roundCents2 = CurrencyItem.roundCents(cashC); // If cents are negative, roundCents will deduct from dollar
+                            cashD += roundCents2[0];
+                            cashC = roundCents2[1];
+
+                            vendingStateData.set(VendingStateData.CASHDOLLAR_INDEX, cashD);
+                            vendingStateData.set(VendingStateData.CASHCENT_INDEX, cashC);
+                            return ItemStack.EMPTY;
+                        }
+                    }
+                }
+            }
+            return ItemStack.EMPTY;
         } else { // Restock
             // If EDIT PRICE is open, right click changes slot selected, left acts as usual
             if (vendingStateData.get(VendingStateData.EDITPRICE_INDEX) == 1 && (dragType == 1)) { // RIGHT
@@ -550,6 +604,8 @@ public class VendingContainer extends Container {
         return super.canMergeSlot(stack, slotIn);
     }
 
+    // ---- GETTERS AND SETTERS
+
     /**
      * Regular Stack -> Overloaded Stack Slot
      */
@@ -617,6 +673,27 @@ public class VendingContainer extends Container {
         }
     }
 
+    public boolean canAfford(int index) {
+        String[] priceText = tile.getPrice(index).split("[.]");
+
+        int priceCount = 1;
+        int priceD = Integer.parseInt(priceText[0]) * priceCount;
+        int priceC = Integer.parseInt(priceText[1]) * priceCount;
+        int[]roundCents = CurrencyItem.roundCents(priceC);
+        priceD += roundCents[0];
+        priceC = roundCents[1];
+
+        int cashD = vendingStateData.get(VendingStateData.CASHDOLLAR_INDEX);
+        int cashC = vendingStateData.get(VendingStateData.CASHCENT_INDEX);
+
+        boolean canAfford = cashC >= priceC;
+        canAfford = cashD >= (priceD + (canAfford? 0 : 1)); // If Not enough cents then must check for price Dollar + 1
+
+        boolean enoughStock = stockContents.getSizeInSlot(index) >= priceCount;
+
+        return canAfford && enoughStock;
+    }
+
     // --- Slot customization ----
     public class StockSlot extends Slot {
         public StockSlot(IInventory inventoryIn, int index, int xPosition, int yPosition) {
@@ -636,37 +713,8 @@ public class VendingContainer extends Container {
         }
     }
 
-    // ---- Get Slot Index ----
-    public int getFirstInputSlotIndex(){
-        return FIRST_INPUT_SLOT_INDEX;
-    }
-
-    public int getFirstOutputSlotIndex(){
-        return FIRST_OUTPUT_SLOT_INDEX;
-    }
-
-    private enum SlotZones {
-        STOCK_ZONE(FIRST_STOCK_SLOT_INDEX, STOCK_SLOT_COUNT),
-        INPUT_ZONE(FIRST_INPUT_SLOT_INDEX, INPUT_SLOTS_COUNT),
-        OUTPUT_ZONE(FIRST_OUTPUT_SLOT_INDEX, OUTPUT_SLOTS_COUNT),
-        PLAYER_MAIN(PLAYER_INVENTORY_FIRST_SLOT_INDEX, PLAYER_INVENTORY_SLOT_COUNT),
-        PLAYER_HOT(HOTBAR_FIRST_SLOT_INDEX, HOTBAR_SLOT_COUNT);
-
-        public final int firstIndex;
-        public final int slotCount;
-        public final int lastIndexPlus1;
-
-        SlotZones(int startIndex, int slotsCount) {
-            this.firstIndex = startIndex;
-            this.slotCount = slotsCount;
-            this.lastIndexPlus1 = firstIndex + slotsCount;
-        }
-
-        public static SlotZones getZoneFromIndex(int slotIndex){
-            for (SlotZones slotZone : SlotZones.values()){
-                if (slotIndex >= slotZone.firstIndex && slotIndex < slotZone.lastIndexPlus1) return slotZone;
-            }
-            throw new IndexOutOfBoundsException("Unexpected slotIndex");
-        }
+    @Override
+    public void detectAndSendChanges() {
+        super.detectAndSendChanges();
     }
 }

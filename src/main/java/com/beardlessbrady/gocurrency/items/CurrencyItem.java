@@ -120,13 +120,17 @@ public class CurrencyItem extends Item {
     }
 
     public static int[] roundCents(int cents){
-        if(cents > 99) {
+        if (cents > 99) {
             int c = cents;
             int d = 0;
             while(c > 99){
                 d++;
                 c=-99;
             }
+            return new int[]{d, c};
+        } else if (cents < 0) {
+            int c = 100 + cents;
+            int d = -1;
             return new int[]{d, c};
         }
         return new int[]{0, cents};

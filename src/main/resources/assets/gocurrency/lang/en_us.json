@@ -14,5 +14,8 @@
   "block.gocurrency.vending.tooltip.cash1": "Extract machine%1$s income",
   "block.gocurrency.vending.tooltip.guiswitch": "Switch location of admin tabs",
   "block.gocurrency.vending.tooltip.pricesetting_0": "Edit Prices",
-  "block.gocurrency.vending.tooltip.pricesetting_1": "Change slot selected with "
+  "block.gocurrency.vending.tooltip.pricesetting_1": "Change slot selected with ",
+  "block.gocurrency.vending.buy.price": "Price: ",
+  "block.gocurrency.vending.buy.stock": "Stock: ",
+  "block.gocurrency.vending.buy.out": "OUT"
 }

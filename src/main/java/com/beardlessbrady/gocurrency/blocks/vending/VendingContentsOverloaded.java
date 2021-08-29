@@ -160,4 +160,8 @@ public class VendingContentsOverloaded implements IInventory {
             vendingComponentContents.setStackInSlot(i, ItemStack.EMPTY);
         }
     }
+
+    public boolean isDirty(){
+       return vendingComponentContents.isDirty();
+    }
 }
