@@ -8,7 +8,6 @@ import com.beardlessbrady.gocurrency.network.MessageVendingStateData;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.Widget;
@@ -308,6 +307,78 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
     }
 
     @Override
+    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
+        // Draw Background
+        int edgeSpacingX = (this.width - this.xSize) / 2;
+        int edgeSpacingY = (this.height - this.ySize) / 2;
+
+        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+
+        //Player Inventory
+        this.minecraft.getTextureManager().bindTexture(PLAYER);
+        this.blit(matrixStack, edgeSpacingX, edgeSpacingY + 111, 0, 157, 176, 99);
+
+        if (container.getVendingStateData(VendingStateData.MODE_INDEX) == 0) { // Sell
+            // CLOSED Vending Machine
+            this.minecraft.getTextureManager().bindTexture(TEXTURE);
+            this.blit(matrixStack, edgeSpacingX + 32, edgeSpacingY - 53, 0, 0, 125, 163);
+        } else {
+            // OPEN Vending Machine
+            this.minecraft.getTextureManager().bindTexture(TEXTURE2);
+            this.blit(matrixStack, edgeSpacingX - 78, edgeSpacingY - 53, 0, 0, 235, 163);
+            this.minecraft.getTextureManager().bindTexture(TEXTURE);
+        }
+    }
+
+    @Override
+    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
+        int i = (width - xSize) / 2;
+        int j = (height - ySize) / 2;
+
+        drawBufferSize(matrixStack);
+
+        this.font.func_243248_b(matrixStack, this.title, 40, -48, 4210752); //Block Title
+        this.font.func_243248_b(matrixStack, this.playerInventory.getDisplayName(), (float) this.playerInventoryTitleX, 117, 4210752); //Inventory Title
+
+        if (container.getVendingStateData(VendingStateData.MODE_INDEX) == 0) { // Sell
+            this.fieldPrice.setVisible(false);
+            this.fieldPrice.setFocused2(false);
+
+            GL12.glDisable(GL12.GL_DEPTH_TEST);
+            GL12.glPushMatrix();
+            GL12.glScalef(0.7F, 0.7F, 0.8F);
+            this.font.drawStringWithShadow(matrixStack, TextFormatting.WHITE + I18n.format("block.gocurrency.vending.cash"), 56, -55, 0);
+            this.font.drawString(matrixStack, TextFormatting.DARK_GREEN + container.currencyToString(container.getVendingStateData(VendingStateData.MODE_INDEX)), 94, -55, 0);
+            GL12.glPopMatrix();
+            GL12.glDisable(GL12.GL_DEPTH_TEST);
+
+            this.minecraft.getTextureManager().bindTexture(TEXTURE);
+
+            // Sell Mode Button icon
+            this.blit(matrixStack, 117, -28, 144, 67, 16, 16);
+
+            // Draw Top tips of outer machine to cover items inside
+            this.blit(matrixStack, 98, -31, 176, 245, 11, 11);
+            this.blit(matrixStack, 39, -31, 187, 245, 11, 11);
+        } else {
+            GL12.glDisable(GL12.GL_DEPTH_TEST);
+            GL12.glPushMatrix();
+            GL12.glScalef(0.7F, 0.7F, 0.8F);
+            this.font.drawStringWithShadow(matrixStack, TextFormatting.WHITE + I18n.format("block.gocurrency.vending.income"), 56, -55, 0);
+            this.font.drawString(matrixStack, TextFormatting.AQUA + container.currencyToString(container.getVendingStateData(VendingStateData.MODE_INDEX)), 104, -55, 0);
+            GL12.glPopMatrix();
+            GL12.glDisable(GL12.GL_DEPTH_TEST);
+
+            this.minecraft.getTextureManager().bindTexture(TEXTURE);
+            // Stock Mode Button icon
+            this.blit(matrixStack, 117, -28, 127, 67, 16, 16);
+
+            // Price Editing
+            this.drawItemSelector(matrixStack, x, y);
+        }
+    }
+
+    @Override
     protected void renderTooltip(MatrixStack matrixStack, ItemStack itemStack, int mouseX, int mouseY) {
         int x = (mouseX - (width - xSize) / 2);
         int y = (mouseY - (height - ySize) / 2);
@@ -385,78 +456,6 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
             }
         } else {
             super.renderTooltip(matrixStack, itemStack, mouseX, mouseY);
-        }
-    }
-
-    @Override
-    protected void drawGuiContainerBackgroundLayer(MatrixStack matrixStack, float partialTicks, int x, int y) {
-        // Draw Background
-        int edgeSpacingX = (this.width - this.xSize) / 2;
-        int edgeSpacingY = (this.height - this.ySize) / 2;
-
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-
-        //Player Inventory
-        this.minecraft.getTextureManager().bindTexture(PLAYER);
-        this.blit(matrixStack, edgeSpacingX, edgeSpacingY + 111, 0, 157, 176, 99);
-
-        if (container.getVendingStateData(VendingStateData.MODE_INDEX) == 0) { // Sell
-            // CLOSED Vending Machine
-            this.minecraft.getTextureManager().bindTexture(TEXTURE);
-            this.blit(matrixStack, edgeSpacingX + 32, edgeSpacingY - 53, 0, 0, 125, 163);
-        } else {
-            // OPEN Vending Machine
-            this.minecraft.getTextureManager().bindTexture(TEXTURE2);
-            this.blit(matrixStack, edgeSpacingX - 78, edgeSpacingY - 53, 0, 0, 235, 163);
-            this.minecraft.getTextureManager().bindTexture(TEXTURE);
-        }
-    }
-
-    @Override
-    protected void drawGuiContainerForegroundLayer(MatrixStack matrixStack, int x, int y) {
-        int i = (width - xSize) / 2;
-        int j = (height - ySize) / 2;
-
-        drawBufferSize(matrixStack);
-
-        this.font.func_243248_b(matrixStack, this.title, 40, -48, 4210752); //Block Title
-        this.font.func_243248_b(matrixStack, this.playerInventory.getDisplayName(), (float) this.playerInventoryTitleX, 117, 4210752); //Inventory Title
-
-        if (container.getVendingStateData(VendingStateData.MODE_INDEX) == 0) { // Sell
-            this.fieldPrice.setVisible(false);
-            this.fieldPrice.setFocused2(false);
-
-            GL12.glDisable(GL12.GL_DEPTH_TEST);
-            GL12.glPushMatrix();
-            GL12.glScalef(0.7F, 0.7F, 0.8F);
-            this.font.drawStringWithShadow(matrixStack, TextFormatting.WHITE + I18n.format("block.gocurrency.vending.cash"), 56, -55, 0);
-            this.font.drawString(matrixStack, TextFormatting.DARK_GREEN + container.currencyToString(container.getVendingStateData(VendingStateData.MODE_INDEX)), 94, -55, 0);
-            GL12.glPopMatrix();
-            GL12.glDisable(GL12.GL_DEPTH_TEST);
-
-            this.minecraft.getTextureManager().bindTexture(TEXTURE);
-
-            // Sell Mode Button icon
-            this.blit(matrixStack, 117, -28, 144, 67, 16, 16);
-
-            // Draw Top tips of outer machine to cover items inside
-            this.blit(matrixStack, 98, -31, 176, 245, 11, 11);
-            this.blit(matrixStack, 39, -31, 187, 245, 11, 11);
-        } else {
-            GL12.glDisable(GL12.GL_DEPTH_TEST);
-            GL12.glPushMatrix();
-            GL12.glScalef(0.7F, 0.7F, 0.8F);
-            this.font.drawStringWithShadow(matrixStack, TextFormatting.WHITE + I18n.format("block.gocurrency.vending.income"), 56, -55, 0);
-            this.font.drawString(matrixStack, TextFormatting.AQUA + container.currencyToString(container.getVendingStateData(VendingStateData.MODE_INDEX)), 104, -55, 0);
-            GL12.glPopMatrix();
-            GL12.glDisable(GL12.GL_DEPTH_TEST);
-
-            this.minecraft.getTextureManager().bindTexture(TEXTURE);
-            // Stock Mode Button icon
-            this.blit(matrixStack, 117, -28, 127, 67, 16, 16);
-
-            // Price Editing
-            this.drawItemSelector(matrixStack, x, y);
         }
     }
 
@@ -547,45 +546,51 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
      * Draw item slot stack size
      */
     private void drawBufferSize(MatrixStack matrixStack) {
-        if (container.getVendingStateData(VendingStateData.MODE_INDEX) == 0) {
-            // TODO draw amount being bought
-        } else {
-            GL12.glDisable(GL12.GL_DEPTH_TEST);
-            GL12.glPushMatrix();
-            GL12.glScalef(0.7F, 0.7F, 0.8F);
+        GL12.glDisable(GL12.GL_DEPTH_TEST);
+        GL12.glPushMatrix();
+        GL12.glScalef(0.7F, 0.7F, 0.8F);
 
-            matrixStack.push();
-            matrixStack.translate(0, 0, 350);
+        matrixStack.push();
+        matrixStack.translate(0, 0, 350);
 
-            String num;
-            int startY = -30;
-            int startX = 59;
-            int columnCount = 4;
-            int rowCount = 4;
+        String num;
+        int startY = -30;
+        int startX = 59;
+        int columnCount = 4;
+        int rowCount = 4;
 
-            for (int j = 0; j < columnCount; j++) {
-                for (int i = 0; i < rowCount; i++) {
-                    int index = (i + (rowCount * j));
-                    int count = container.getStockContents().getStackSize(index);
+        for (int j = 0; j < columnCount; j++) {
+            for (int i = 0; i < rowCount; i++) {
+                int index = (i + (rowCount * j));
 
-                    if (count > 0) {
-                        num = TextFormatting.WHITE + Integer.toString(count);
-                    } else if (count == 0) {
-                        num = TextFormatting.RED + I18n.format("block.gocurrency.vending.buy.out");
+                int count = container.getStockContents().getStackSize(index);
+                TextFormatting color = TextFormatting.WHITE;
+                if (container.getVendingStateData(VendingStateData.MODE_INDEX) == 0) { // SELL
+                    if (count == 0) {
+                        count = 0;
                     } else {
-                        num = " ";
+                        count = 1;
+                        color = TextFormatting.DARK_GREEN;
                     }
-
-                    if (count < 10 && count > 0) num = "  " + num;
-                    if (count >= 10 && count < 100) num = " " + num;
-
-                    if (count != 1 && !container.getStockContents().getStackInSlot(index).isEmpty())
-                        this.font.drawStringWithShadow(matrixStack, num, startX + (i * 26), startY + (j * 31), 1); //Inventory Title
                 }
+
+                if (count > 0) {
+                    num = color + Integer.toString(count);
+                } else if (count == 0) {
+                    num = TextFormatting.RED + I18n.format("block.gocurrency.vending.buy.out");
+                } else {
+                    num = " ";
+                }
+
+                if (count < 10 && count > 0) num = "  " + num;
+                if (count >= 10 && count < 100) num = " " + num;
+
+                if (!container.getStockContents().getStackInSlot(index).isEmpty())
+                    this.font.drawStringWithShadow(matrixStack, num, startX + (i * 26), startY + (j * 31), 1); //Inventory Title
             }
-            matrixStack.pop();
-            GL12.glPopMatrix();
-            GL12.glDisable(GL12.GL_DEPTH_TEST);
         }
+        matrixStack.pop();
+        GL12.glPopMatrix();
+        GL12.glDisable(GL12.GL_DEPTH_TEST);
     }
 }

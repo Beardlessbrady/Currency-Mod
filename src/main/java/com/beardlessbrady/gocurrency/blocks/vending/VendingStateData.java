@@ -18,6 +18,7 @@ public class VendingStateData implements IIntArray {
     private int editPrice = 0;
     private int selectedSlot = 0;
     private int guiSide = 0; // 0 = Left 1 = Right
+    private int buyMode = 0; // 0=1, 1=Half Stack (ALT), 2=Full Stack (SHIFT)
 
     public VendingStateData(){
     }

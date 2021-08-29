@@ -337,30 +337,34 @@ public class VendingContainer extends Container {
             if (clickTypeIn == ClickType.PICKUP) { // Regular Click = Place all/Pickup all
                 if (playerStack.isEmpty()) { // Player Stack empty, PICKUP
                     if (!slotStack.isEmpty()) { //TODO In creative allow opening Creative menu to place item here if both empty
-                        int toExtract;
-                        if (dragType == 0) { // LEFT Click: Grab Full Stack
-                            int extractMax = slotStack.getMaxStackSize();
-                            toExtract = extractMax - slotCount;
+                        if (slotCount == 0) { // If Empty clear slot
+                            stockContents.setStackAndSize(index, ItemStack.EMPTY);
+                        } else {
+                            int toExtract;
+                            if (dragType == 0) { // LEFT Click: Grab Full Stack
+                                int extractMax = slotStack.getMaxStackSize();
+                                toExtract = extractMax - slotCount;
 
-                            if (toExtract <= 0) { // Equal to VANILLA Max Stack Size or OVERLOADED past it
-                                toExtract = extractMax;
-                            } else { // under VANILLA Max Stack Size
-                                toExtract = extractMax - toExtract;
+                                if (toExtract <= 0) { // Equal to VANILLA Max Stack Size or OVERLOADED past it
+                                    toExtract = extractMax;
+                                } else { // under VANILLA Max Stack Size
+                                    toExtract = extractMax - toExtract;
+                                }
+                            } else { // RIGHT Click: Grab half of full stack or half of whats left
+                                toExtract = slotCount / 2;
+
+                                if (toExtract > slotStack.getMaxStackSize()) // Half of Stack is more than VANILLA stack limit
+                                    toExtract = slotStack.getMaxStackSize() / 2;
+
+                                if (toExtract == 0)
+                                    toExtract = 1;
                             }
-                        } else { // RIGHT Click: Grab half of full stack or half of whats left
-                            toExtract = slotCount / 2;
-
-                            if (toExtract > slotStack.getMaxStackSize()) // Half of Stack is more than VANILLA stack limit
-                                toExtract = slotStack.getMaxStackSize() / 2;
-
-                            if (toExtract == 0)
-                                toExtract = 1;
+                            player.inventory.setItemStack(stockContents.decrStackSize(index, toExtract));
                         }
-                        player.inventory.setItemStack(stockContents.decrStackSize(index, toExtract));
                     }
                 } else { // Player Stack: PLACE STACK
                     if (dragType == 0) { // LEFT Click: Place full stack
-                        if (slotStack.isEmpty()) { // Slot EMPTY, place without issue
+                        if (slotStack.isEmpty() || slotCount == 0) { // Slot EMPTY, place without issue
                             stockContents.setStackAndSize(index, playerStack);
                             player.inventory.setItemStack(ItemStack.EMPTY);
                         } else { // Slot NOT EMPTY, try to merge or don't place if incompatible

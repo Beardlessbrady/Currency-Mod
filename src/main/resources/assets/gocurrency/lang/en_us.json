@@ -1,11 +1,16 @@
 {
+  "key.gocurrency.category": "Good Ol' Currency",
+  "key.gocurrency.half": "Buy Half-Stack",
+  "key.gocurrency.full": "Buy Full-Stack",
   "itemGroup.gocurrency": "Good Ol' Currency",
+
+
   "block.gocurrency.vending": "Vending Machine",
   "container.gocurrency.vending": "Vending Machine",
   "block.gocurrency.vending.cash": "Cash $",
   "block.gocurrency.vending.income": "Income $",
   "block.gocurrency.vending.slotpricing": "Slot Pricing",
-  "block.gocurrency.vending.slotpricing.$": "$ ",
+  "block.gocurrency.vending.slotpricing.$": "$",
   "block.gocurrency.vending.tooltip.mode0_0": "Selling Mode",
   "block.gocurrency.vending.tooltip.mode0_1": "%1$sBuy items on sale",
   "block.gocurrency.vending.tooltip.mode1_0": "Stocking Mode",
