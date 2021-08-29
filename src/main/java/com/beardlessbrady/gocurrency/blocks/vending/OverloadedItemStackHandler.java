@@ -50,10 +50,15 @@ public class OverloadedItemStackHandler implements IItemHandler, IItemHandlerMod
     @Override
     public void setStackInSlot(int slot, @Nonnull ItemStack stack) {
         validateSlotIndex(slot);
-        this.stackSize.set(slot, stack.getCount());
+      //  this.stackSize.set(slot, stack.getCount());
 
         stack.setCount(1);
         this.stacks.set(slot, stack);
+        onContentsChanged(slot);
+    }
+
+    public void setSizeInSlot(int slot, int value) {
+        this.stackSize.set(slot, value);
         onContentsChanged(slot);
     }
 
@@ -153,7 +158,7 @@ public class OverloadedItemStackHandler implements IItemHandler, IItemHandlerMod
 
         if (existing.getCount() <= toExtract) {
             if (!simulate) {
-                this.stacks.set(slot, ItemStack.EMPTY);
+              //  this.stacks.set(slot, ItemStack.EMPTY);
                 this.stackSize.set(slot, 0);
                 onContentsChanged(slot);
                 return existing;

@@ -361,7 +361,7 @@ public class VendingContainer extends Container {
                 } else { // Player Stack: PLACE STACK
                     if (dragType == 0) { // LEFT Click: Place full stack
                         if (slotStack.isEmpty()) { // Slot EMPTY, place without issue
-                            stockContents.setInventorySlotContents(index, playerStack);
+                            stockContents.setStackAndSize(index, playerStack);
                             player.inventory.setItemStack(ItemStack.EMPTY);
                         } else { // Slot NOT EMPTY, try to merge or don't place if incompatible
                             player.inventory.setItemStack(stockContents.growInventorySlotSize(index, playerStack));
@@ -370,7 +370,7 @@ public class VendingContainer extends Container {
                         ItemStack copyOne = playerStack.copy();
                         copyOne.setCount(1);
                         if (slotStack.isEmpty()) { // Slot EMPTY, place without issue
-                            stockContents.setInventorySlotContents(index, copyOne);
+                            stockContents.setStackAndSize(index, copyOne);
                             player.inventory.getItemStack().shrink(1);
                         } else { // Slot NOT EMPTY, try to merge or don't place if incompatible
                             // If return is 0, shrink by 1, if return is not don't shrink
@@ -463,7 +463,7 @@ public class VendingContainer extends Container {
                         // Enough room for whole divisor stack
                         if (canAddStackToOverloadedStack(slotStack, slotCount, stockContents.getStackLimit(stockIndex), divStack.copy(), true)) {
                             if (stockContents.getStackInSlot(stockIndex).isEmpty()) {
-                                stockContents.setInventorySlotContents(stockIndex, divStack.copy());
+                                stockContents.setStackAndSize(stockIndex, divStack.copy());
                             } else {
                                 stockContents.growInventorySlotSize(stockIndex, divStack.copy());
                             }
@@ -528,7 +528,7 @@ public class VendingContainer extends Container {
             for (int i = 0; i < stockContents.getSizeInventory(); i++) {
                 if (stockContents.getStackInSlot(i).isEmpty() &&
                         canAddStackToOverloadedStack(stockContents.getStackInSlot(i), stockContents.getStackSize(i), stockContents.getStackLimit(i), slot.getStack(), false)) {
-                    stockContents.setInventorySlotContents(i, slot.getStack().copy());
+                    stockContents.setStackAndSize(i, slot.getStack().copy());
                     slot.decrStackSize(slot.getStack().getCount());
                     return ItemStack.EMPTY;
                 }

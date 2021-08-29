@@ -132,7 +132,20 @@ public class VendingContentsOverloaded implements IInventory {
 
     @Override
     public void setInventorySlotContents(int index, ItemStack stack) {
+        // Vanilla, try to use the SetStackAndSize when possible!!!
         vendingComponentContents.setStackInSlot(index, stack);
+    }
+
+    public void setStackAndSize(int index, ItemStack stack, int size) {
+        stack.setCount(1);
+        vendingComponentContents.setStackInSlot(index, stack);
+        vendingComponentContents.setSizeInSlot(index, size);
+    }
+
+    public void setStackAndSize(int index, ItemStack stack) {
+        int count = stack.getCount();
+        stack.setCount(1);
+        setStackAndSize(index, stack, count);
     }
 
     public ItemStack growInventorySlotSize(int index, ItemStack stack){
