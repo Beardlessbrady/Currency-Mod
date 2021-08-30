@@ -119,13 +119,13 @@ public class CurrencyItem extends Item {
         return new int[]{dollar, cent};
     }
 
-    public static int[] roundCents(int cents){
+    public static int[] roundCents(int cents) {
         if (cents > 99) {
             int c = cents;
             int d = 0;
             while(c > 99){
                 d++;
-                c=-99;
+                c-=100;
             }
             return new int[]{d, c};
         } else if (cents < 0) {
@@ -134,6 +134,21 @@ public class CurrencyItem extends Item {
             return new int[]{d, c};
         }
         return new int[]{0, cents};
+    }
+
+    public static int[] multiplyPrice(int dollar, int cents, int multiplier) {
+        dollar = dollar * multiplier;
+
+        if(Integer.toString(cents).length() == 1) {
+            cents = Integer.parseInt(Integer.toString(cents) + '0');
+        }
+        cents = cents * multiplier;
+
+        int[] roundCents = roundCents(cents);
+        dollar += roundCents[0];
+        cents = roundCents[1];
+
+        return new int[] {dollar, cents};
     }
 
     /**

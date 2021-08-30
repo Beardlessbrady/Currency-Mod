@@ -58,7 +58,8 @@ public class VendingStateData implements IIntArray {
     public static final int EDITPRICE_INDEX = 5;
     public static final int GUISIDE_INDEX = 6;
     public static final int SELECTEDSLOT_INDEX = 7;
-    public static final int END_OF_INDEX_PLUS_ONE = 7 + 1;
+    public static final int BUYMODE_INDEX = 8;
+    public static final int END_OF_INDEX_PLUS_ONE = 8 + 1;
 
     @Override
     public int get(int index) {
@@ -80,6 +81,8 @@ public class VendingStateData implements IIntArray {
                 return guiSide;
             case SELECTEDSLOT_INDEX:
                 return selectedSlot;
+            case BUYMODE_INDEX:
+                return buyMode;
             default:
                 return -1;
         }
@@ -111,6 +114,9 @@ public class VendingStateData implements IIntArray {
                 break;
             case GUISIDE_INDEX:
                 guiSide = value;
+                break;
+            case BUYMODE_INDEX:
+                buyMode = value;
                 break;
             case SELECTEDSLOT_INDEX:
                 selectedSlot = value;

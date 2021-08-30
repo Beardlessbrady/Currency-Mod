@@ -2,6 +2,7 @@ package com.beardlessbrady.gocurrency.blocks.vending;
 
 import com.beardlessbrady.gocurrency.CustomButton;
 import com.beardlessbrady.gocurrency.GOCurrency;
+import com.beardlessbrady.gocurrency.init.ClientRegistry;
 import com.beardlessbrady.gocurrency.network.MessageSetPrice;
 import com.beardlessbrady.gocurrency.network.MessageVendingCashButton;
 import com.beardlessbrady.gocurrency.network.MessageVendingStateData;
@@ -176,7 +177,8 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
                     })));
                 }
                 container.updateModeSlots();
-                GOCurrency.NETWORK_HANDLER.sendToServer(new MessageVendingStateData(container.getTile().getPos(), VendingStateData.MODE_INDEX));
+                GOCurrency.NETWORK_HANDLER.sendToServer(new MessageVendingStateData(container.getTile().getPos(), VendingStateData.MODE_INDEX,
+                        container.getVendingStateData(VendingStateData.MODE_INDEX) == 0? 1 : 0));
                 break;
             case HANDLE_EDITPRICE: //VendingStateData.EDITPRICE_INDEX:
                 if (container.getVendingStateData(VendingStateData.EDITPRICE_INDEX) == 1) { // PRICE EDIT ON (Reverse since has not changed yet)
@@ -194,7 +196,8 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
                     }));
                     this.children.add(this.buttons.get(BUTTONID_PRICE));
                 }
-                GOCurrency.NETWORK_HANDLER.sendToServer(new MessageVendingStateData(container.getTile().getPos(), VendingStateData.EDITPRICE_INDEX));
+                GOCurrency.NETWORK_HANDLER.sendToServer(new MessageVendingStateData(container.getTile().getPos(), VendingStateData.EDITPRICE_INDEX,
+                        container.getVendingStateData(VendingStateData.EDITPRICE_INDEX) == 0? 1 : 0));
                 break;
             case HANDLE_CASH: //CASH BUTTON
                 GOCurrency.NETWORK_HANDLER.sendToServer(new MessageVendingCashButton(container.getTile().getPos(), container.getVendingStateData(VendingStateData.MODE_INDEX)));
@@ -219,6 +222,18 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
 
     @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+        if(container.getVendingStateData(VendingStateData.MODE_INDEX) == 0 ) { // SELL
+            if (keyCode == ClientRegistry.keyBindings[0].getKey().getKeyCode()) { // FULL STACK
+                if (container.getVendingStateData(VendingStateData.BUYMODE_INDEX) != 2) {
+                    GOCurrency.NETWORK_HANDLER.sendToServer(new MessageVendingStateData(container.getTile().getPos(), VendingStateData.BUYMODE_INDEX, 2));
+                }
+            } else if (keyCode == ClientRegistry.keyBindings[1].getKey().getKeyCode()) { // HALF STACK
+                if (container.getVendingStateData(VendingStateData.BUYMODE_INDEX) != 1) {
+                    GOCurrency.NETWORK_HANDLER.sendToServer(new MessageVendingStateData(container.getTile().getPos(), VendingStateData.BUYMODE_INDEX, 1));
+                }
+            }
+        }
+
         if(fieldPrice.isFocused()) {
             char typedChar = (char)keyCode;
             int numChar = Character.getNumericValue(typedChar);
@@ -286,6 +301,21 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
             }
         }
         return super.keyPressed(keyCode, scanCode, modifiers);
+    }
+
+    @Override
+    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+        if (keyCode == ClientRegistry.keyBindings[0].getKey().getKeyCode()) { // FULL STACK
+            if (container.getVendingStateData(VendingStateData.BUYMODE_INDEX) == 2) {
+                GOCurrency.NETWORK_HANDLER.sendToServer(new MessageVendingStateData(container.getTile().getPos(), VendingStateData.BUYMODE_INDEX, 0));
+            }
+        } else if (keyCode == ClientRegistry.keyBindings[1].getKey().getKeyCode()) { // HALF STACK
+            if (container.getVendingStateData(VendingStateData.BUYMODE_INDEX) == 1) {
+                GOCurrency.NETWORK_HANDLER.sendToServer(new MessageVendingStateData(container.getTile().getPos(), VendingStateData.BUYMODE_INDEX, 0));
+            }
+        }
+
+        return super.keyReleased(keyCode, scanCode, modifiers);
     }
 
     private void updateTextField() {
@@ -382,7 +412,7 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
     protected void renderTooltip(MatrixStack matrixStack, ItemStack itemStack, int mouseX, int mouseY) {
         int x = (mouseX - (width - xSize) / 2);
         int y = (mouseY - (height - ySize) / 2);
-        if(x >= 38 && y >= -32 && x <= 109 && y <= 51) {
+        if (x >= 38 && y >= -32 && x <= 109 && y <= 51) {
             int startX = 38;
             int startY = -32;
             int row = ((x - startX) / 18);
@@ -410,40 +440,23 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
                     color = TextFormatting.GREEN;
                 }
 
-                String cost = container.getTile().getPrice(slot);
-                int stock = container.getStockContents().getSizeInSlot(slot);
-                int amount = 1;//te.getItemVendor(slot).getAmount();
-
-                //If Sneak button held down, show a full stack (or as close to it)
-                //If Jump button held down, show half a stack (or as close to it)
-                /*
-                if (Keyboard.isKeyDown(keyBindings[0].getKeyCode())) {
-                    amount = te.sneakFullStack(slot, amount);
-                    cost = cost * (amount / te.getItemVendor(slot).getAmount());
-                } else if (Keyboard.isKeyDown(keyBindings[1].getKeyCode())) {
-                    amount = te.jumpHalfStack(slot, amount);
-                    cost = cost * (amount / te.getItemVendor(slot).getAmount());
+                int stock = container.getStockContents().getStackSize(slot);
+                int[] price = container.priceFromBuyMode(slot);
+                String cost = price[0] + "." + price[1];
+                if (price[1] < 10) {
+                    cost = price[0] + "." + price[1] + '0';
                 }
-                 */
 
                 list.add(ITextComponent.getTextComponentOrEmpty(TextFormatting.GOLD +
                         I18n.format("block.gocurrency.vending.buy.price") + color +
                         I18n.format("block.gocurrency.vending.slotpricing.$") + cost));
 
-                if(stock > 0) {
+                if (stock > 0) {
                     list.add(ITextComponent.getTextComponentOrEmpty(TextFormatting.GOLD +
                             I18n.format("block.gocurrency.vending.buy.stock") + TextFormatting.BLUE + stock));
                 } else {
                     list.add(ITextComponent.getTextComponentOrEmpty(TextFormatting.RED + I18n.format("block.gocurrency.vending.buy.out")));
                 }
-
-                /*
-                if (te.getField(FIELD_FINITE) == 1) {
-                    list.add("Stock: " + TextFormatting.BLUE + te.getItemVendor(slot).getSize());
-                } else {
-                    list.add("Stock: " + TextFormatting.BLUE + "Infinite");
-                }
-                 */
 
                 //adding original extra stuff AFTER price and such
                 for (; tooltipStart < ogTooltip.size(); tooltipStart++) {
@@ -563,18 +576,41 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
             for (int i = 0; i < rowCount; i++) {
                 int index = (i + (rowCount * j));
 
+                int stackMax = container.getStockContents().getStackInSlot(index).getMaxStackSize();
                 int count = container.getStockContents().getStackSize(index);
                 TextFormatting color = TextFormatting.WHITE;
                 if (container.getVendingStateData(VendingStateData.MODE_INDEX) == 0) { // SELL
                     if (count == 0) {
                         count = 0;
-                    } else {
-                        count = 1;
                         color = TextFormatting.DARK_GREEN;
+                    } else {
+                        switch(container.getVendingStateData(VendingStateData.BUYMODE_INDEX)) {
+                            case 0: // ONE
+                                count = 1;
+                                break;
+                            case 1: // HALF
+                                int half = (int)Math.ceil(stackMax / 2);
+                                if (half == 0) half = 1;
+                                if (count > half) {
+                                    count = half;
+                                }
+                                color = TextFormatting.YELLOW;
+                                break;
+                            case 2: // FULL
+                                if (count > stackMax) {
+                                    count = stackMax;
+                                }
+                                color = TextFormatting.GOLD;
+                                break;
+                        }
+                    }
+
+                    if (!container.canAfford(index)) {
+                        color = TextFormatting.RED;
                     }
                 }
 
-                if (count > 0) {
+                if (count > 1) {
                     num = color + Integer.toString(count);
                 } else if (count == 0) {
                     num = TextFormatting.RED + I18n.format("block.gocurrency.vending.buy.out");

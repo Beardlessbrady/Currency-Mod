@@ -1,6 +1,5 @@
 package com.beardlessbrady.gocurrency.network;
 
-import com.beardlessbrady.gocurrency.blocks.vending.VendingContainer;
 import com.beardlessbrady.gocurrency.blocks.vending.VendingStateData;
 import com.beardlessbrady.gocurrency.blocks.vending.VendingTile;
 import net.minecraft.entity.player.PlayerEntity;
@@ -19,22 +18,26 @@ import java.util.function.Supplier;
 public class MessageVendingStateData{
     private final BlockPos pos;
     private final int id;
+    private final int value;
 
-    public MessageVendingStateData(BlockPos pos, int id){
+    public MessageVendingStateData(BlockPos pos, int id, int value){
         this.pos = pos;
         this.id = id;
+        this.value = value;
     }
 
     public static MessageVendingStateData decode(PacketBuffer buf){
         BlockPos pos = buf.readBlockPos();
         int id = buf.readInt();
+        int value = buf.readInt();
 
-        return new MessageVendingStateData(pos, id);
+        return new MessageVendingStateData(pos, id, value);
     }
 
     public static void encode(MessageVendingStateData message, PacketBuffer buf){
         buf.writeBlockPos(message.pos);
         buf.writeInt(message.id);
+        buf.writeInt(message.value);
     }
 
     public static void handle(MessageVendingStateData message, Supplier<NetworkEvent.Context> ctx){
@@ -45,12 +48,7 @@ public class MessageVendingStateData{
                 TileEntity tile = playerEntity.getEntityWorld().getTileEntity(message.pos);
 
                 if (tile instanceof VendingTile) {
-                    switch (message.id) {
-                        case VendingStateData.MODE_INDEX:
-                        case VendingStateData.EDITPRICE_INDEX:
-                            ((VendingTile) tile).setVendingStateData(message.id, ((VendingTile) tile).getVendingStateData(message.id) == 0 ? 1 : 0);
-                            break;
-                    }
+                  ((VendingTile) tile).setVendingStateData(message.id, message.value);
                 }
             });
         }

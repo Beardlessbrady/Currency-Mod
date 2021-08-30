@@ -113,6 +113,7 @@ public class VendingContainer extends Container {
 
         vendingStateData.set(VendingStateData.MODE_INDEX, 0);
         vendingStateData.set(VendingStateData.EDITPRICE_INDEX, 0);
+        vendingStateData.set(VendingStateData.BUYMODE_INDEX, 0);
     }
 
     public VendingTile getTile(){
@@ -257,14 +258,10 @@ public class VendingContainer extends Container {
 
         if (vendingStateData.get(VendingStateData.MODE_INDEX) == 0) { // Sell
             if (clickTypeIn == ClickType.PICKUP || clickTypeIn == ClickType.QUICK_MOVE) {
-                String[] priceText = tile.getPrice(index).split("[.]");
-
-                int priceCount = 1;
-                int priceD = Integer.parseInt(priceText[0]) * priceCount;
-                int priceC = Integer.parseInt(priceText[1]) * priceCount;
-                int[]roundCents = CurrencyItem.roundCents(priceC);
-                priceD += roundCents[0];
-                priceC = roundCents[1];
+                int[] price = priceFromBuyMode(index);
+                int priceD = price[0];
+                int priceC = price[1];
+                int priceCount = price[2];
                 int cashD = vendingStateData.get(VendingStateData.CASHDOLLAR_INDEX);
                 int cashC = vendingStateData.get(VendingStateData.CASHCENT_INDEX);
 
@@ -295,8 +292,18 @@ public class VendingContainer extends Container {
                             cashD += roundCents2[0];
                             cashC = roundCents2[1];
 
+                            int incomeD = vendingStateData.get(VendingStateData.INCOMEDOLLAR_INDEX);
+                            int incomeC = vendingStateData.get(VendingStateData.INCOMECENT_INDEX);
+                            incomeD += priceD;
+                            incomeC += priceC;
+                            int[]roundCents3 = CurrencyItem.roundCents(incomeC);
+                            incomeD += roundCents3[0];
+                            incomeC = roundCents3[1];
+
                             vendingStateData.set(VendingStateData.CASHDOLLAR_INDEX, cashD);
                             vendingStateData.set(VendingStateData.CASHCENT_INDEX, cashC);
+                            vendingStateData.set(VendingStateData.INCOMEDOLLAR_INDEX, incomeD);
+                            vendingStateData.set(VendingStateData.INCOMECENT_INDEX, incomeC);
                             return ItemStack.EMPTY;
                         }
                     }
@@ -634,6 +641,39 @@ public class VendingContainer extends Container {
         vendingStateData.set(index, value);
     }
 
+    public int[] priceFromBuyMode(int index) {
+        int stackMax = stockContents.getStackInSlot(index).getMaxStackSize();
+        int stackSize = stockContents.getStackSize(index);
+
+        String[] priceText = tile.getPrice(index).split("[.]");
+        int priceD = Integer.parseInt(priceText[0]);
+        int priceC = Integer.parseInt(priceText[1]);
+
+        int amount = stackSize;
+        switch(getVendingStateData(VendingStateData.BUYMODE_INDEX)) {
+            case 0: // ONE
+                amount = 1;
+                break;
+            case 1: // HALF
+                int half = (int)Math.ceil(stackMax / 2);
+                if (half == 0) half = 1;
+                if (amount > half) {
+                    amount = half;
+                }
+                break;
+            case 2: // FULL
+                if (amount > stackMax) {
+                    amount = stackMax;
+                }
+                break;
+        }
+        int[] priceInt = CurrencyItem.multiplyPrice(priceD, priceC, amount);
+        priceD += priceInt[0];
+        priceC = priceInt[1];
+
+        return new int[] {priceD,priceC, amount};
+    }
+
     public String currencyToString(int mode){
         int INDEX_DOLLAR = VendingStateData.CASHDOLLAR_INDEX;
         int INDEX_CENT = VendingStateData.CASHCENT_INDEX;
@@ -678,14 +718,10 @@ public class VendingContainer extends Container {
     }
 
     public boolean canAfford(int index) {
-        String[] priceText = tile.getPrice(index).split("[.]");
-
-        int priceCount = 1;
-        int priceD = Integer.parseInt(priceText[0]) * priceCount;
-        int priceC = Integer.parseInt(priceText[1]) * priceCount;
-        int[]roundCents = CurrencyItem.roundCents(priceC);
-        priceD += roundCents[0];
-        priceC = roundCents[1];
+        int[] price = priceFromBuyMode(index);
+        int priceD = price[0];
+        int priceC = price[1];
+        int amount = price[2];
 
         int cashD = vendingStateData.get(VendingStateData.CASHDOLLAR_INDEX);
         int cashC = vendingStateData.get(VendingStateData.CASHCENT_INDEX);
@@ -693,7 +729,7 @@ public class VendingContainer extends Container {
         boolean canAfford = cashC >= priceC;
         canAfford = cashD >= (priceD + (canAfford? 0 : 1)); // If Not enough cents then must check for price Dollar + 1
 
-        boolean enoughStock = stockContents.getSizeInSlot(index) >= priceCount;
+        boolean enoughStock = stockContents.getSizeInSlot(index) >= amount;
 
         return canAfford && enoughStock;
     }

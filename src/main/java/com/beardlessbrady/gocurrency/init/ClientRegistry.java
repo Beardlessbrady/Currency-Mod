@@ -24,7 +24,7 @@ import java.security.Key;
  */
 public class ClientRegistry {
     private final IEventBus eventBus;
-    private static KeyBinding[] keyBindings;
+    public static KeyBinding[] keyBindings;
 
     public ClientRegistry(IEventBus eventBus) {
         this.eventBus = eventBus;

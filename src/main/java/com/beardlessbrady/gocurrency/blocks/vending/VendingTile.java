@@ -1,15 +1,16 @@
 package com.beardlessbrady.gocurrency.blocks.vending;
 
 import com.beardlessbrady.gocurrency.GOCurrency;
+import com.beardlessbrady.gocurrency.init.ClientRegistry;
 import com.beardlessbrady.gocurrency.init.CommonRegistry;
 import com.beardlessbrady.gocurrency.items.CurrencyItem;
+import net.java.games.input.Keyboard;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.inventory.container.Container;
 import net.minecraft.inventory.container.INamedContainerProvider;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.NetworkManager;
@@ -21,6 +22,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.InputEvent;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -62,10 +64,10 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
 
     @Override
     public void tick() {
-          if (!world.isRemote) { // Server
-           if (!inputContents.getStackInSlot(0).isEmpty()) {
-               addCurrency(CurrencyItem.getCurrencyValue(inputContents.getStackInSlot(0)), container.getVendingStateData(VendingStateData.MODE_INDEX));
-               inputContents.getStackInSlot(0).setCount(0);
+        if (!world.isRemote) { // Server
+            if (!inputContents.getStackInSlot(0).isEmpty()) {
+                addCurrency(CurrencyItem.getCurrencyValue(inputContents.getStackInSlot(0)), container.getVendingStateData(VendingStateData.MODE_INDEX));
+                inputContents.getStackInSlot(0).setCount(0);
             }
         }
     }
@@ -224,7 +226,7 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
                     ItemStack outStack = currency[i];
                     currency[i] = ItemStack.EMPTY;
 
-                //    outputContents.setInventorySlotContents(j, outStack);
+                    outputContents.setInventorySlotContents(j, outStack);
                 }
             }
         }
