@@ -519,29 +519,60 @@ public class VendingContainer extends Container {
     public ItemStack transferStackInSlot(PlayerEntity playerIn, int index) {
         Slot slot = this.inventorySlots.get(index);
         if (vendingStateData.get(VendingStateData.MODE_INDEX) == 1) { // Stock
-            // Stack has same item and can fit stack being shifted
-            for (int i = 0; i < stockContents.getSizeInventory(); i++) {
-                // Has same item and can fit stack size
-                if (!stockContents.getStackInSlot(i).isEmpty() &&
-                        canAddStackToOverloadedStack(stockContents.getStackInSlot(i), stockContents.getStackSize(i), stockContents.getStackLimit(i), slot.getStack(), true)) {
-                    stockContents.growInventorySlotSize(i, slot.getStack());
-                    slot.decrStackSize(slot.getStack().getCount());
-                    return ItemStack.EMPTY;
+            if ((index >= HOTBAR_FIRST_SLOT_INDEX && //PLAYER INVENTORY
+                    index < PLAYER_INVENTORY_FIRST_SLOT_INDEX + PLAYER_INVENTORY_SLOT_COUNT)) {
+                // Stack has same item and can fit stack being shifted
+                for (int i = 0; i < stockContents.getSizeInventory(); i++) {
+                    // Has same item and can fit stack size
+                    if (!stockContents.getStackInSlot(i).isEmpty() &&
+                            canAddStackToOverloadedStack(stockContents.getStackInSlot(i), stockContents.getStackSize(i), stockContents.getStackLimit(i), slot.getStack(), true)) {
+                        stockContents.growInventorySlotSize(i, slot.getStack());
+                        slot.decrStackSize(slot.getStack().getCount());
+                        return ItemStack.EMPTY;
 
-                    // Has same item and CANNOT fit stack size
-                } else  if (!stockContents.getStackInSlot(i).isEmpty() &&
-                        canAddStackToOverloadedStack(stockContents.getStackInSlot(i), stockContents.getStackSize(i), stockContents.getStackLimit(i), slot.getStack(), false)) {
-                    slot.getStack().setCount(stockContents.growInventorySlotSize(i, slot.getStack()).getCount());
+                        // Has same item and CANNOT fit stack size
+                    } else if (!stockContents.getStackInSlot(i).isEmpty() &&
+                            canAddStackToOverloadedStack(stockContents.getStackInSlot(i), stockContents.getStackSize(i), stockContents.getStackLimit(i), slot.getStack(), false)) {
+                        slot.getStack().setCount(stockContents.growInventorySlotSize(i, slot.getStack()).getCount());
+                    }
                 }
-            }
 
-            // Since no matching items with room place in EMPTY slot if possible
-            for (int i = 0; i < stockContents.getSizeInventory(); i++) {
-                if (stockContents.getStackInSlot(i).isEmpty() &&
-                        canAddStackToOverloadedStack(stockContents.getStackInSlot(i), stockContents.getStackSize(i), stockContents.getStackLimit(i), slot.getStack(), false)) {
-                    stockContents.setStackAndSize(i, slot.getStack().copy());
-                    slot.decrStackSize(slot.getStack().getCount());
-                    return ItemStack.EMPTY;
+                // Since no matching items with room place in EMPTY slot if possible
+                for (int i = 0; i < stockContents.getSizeInventory(); i++) {
+                    if (stockContents.getStackInSlot(i).isEmpty() &&
+                            canAddStackToOverloadedStack(stockContents.getStackInSlot(i), stockContents.getStackSize(i), stockContents.getStackLimit(i), slot.getStack(), false)) {
+                        stockContents.setStackAndSize(i, slot.getStack().copy());
+                        slot.decrStackSize(slot.getStack().getCount());
+                        return ItemStack.EMPTY;
+                    }
+                }
+            } else {
+                // Stack has same item and can fit stack being shifted
+                for (int i = VANILLA_FIRST_SLOT_INDEX; i < VANILLA_SLOT_COUNT; i++) {
+                    // Has same item and can fit stack size
+                    if (!getSlot(i).getStack().isEmpty() &&
+                            canAddStackToOverloadedStack(getSlot(i).getStack(), getSlot(i).getStack().getCount(), getSlot(i).getStack().getMaxStackSize(), slot.getStack(), true)) {
+                        getSlot(i).getStack().grow(slot.getStack().getCount());
+                        slot.decrStackSize(slot.getStack().getCount());
+                        return ItemStack.EMPTY;
+
+                        // Has same item and CANNOT fit stack size
+                    } else if (!getSlot(i).getStack().isEmpty() &&
+                            canAddStackToOverloadedStack(getSlot(i).getStack(), getSlot(i).getStack().getCount(), getSlot(i).getStack().getMaxStackSize(), slot.getStack(), false)) {
+                        int amount = slot.getStack().getMaxStackSize() - slot.getStack().getCount();
+                        slot.getStack().grow(amount);
+                        getSlot(i).getStack().shrink(amount);
+                    }
+                }
+
+                // Since no matching items with room place in EMPTY slot if possible
+                for (int i = VANILLA_FIRST_SLOT_INDEX; i < VANILLA_SLOT_COUNT; i++) {
+                    if (getSlot(i).getStack().isEmpty() &&
+                            canAddStackToOverloadedStack(getSlot(i).getStack(), getSlot(i).getStack().getCount(), getSlot(i).getStack().getMaxStackSize(), slot.getStack(), false)) {
+                        getSlot(i).putStack(slot.getStack().copy());
+                        slot.decrStackSize(slot.getStack().getCount());
+                        return ItemStack.EMPTY;
+                    }
                 }
             }
         } else if (vendingStateData.get(VendingStateData.MODE_INDEX) == 0) { // Sell
@@ -709,10 +740,14 @@ public class VendingContainer extends Container {
             inventorySlots.get(FIRST_INPUT_SLOT_INDEX).xPos = -10000;
             inventorySlots.get(FIRST_INPUT_SLOT_INDEX).yPos = -10000;
 
+
+            // First Output
+            inventorySlots.get(FIRST_OUTPUT_SLOT_INDEX).xPos = 117;
+            inventorySlots.get(FIRST_OUTPUT_SLOT_INDEX).yPos = 10;
             // Outputs
-            for (int x = 0; x < OUTPUT_SLOTS_COUNT; x++) { // x is slot num
-                inventorySlots.get(FIRST_OUTPUT_SLOT_INDEX + x).xPos = -10000;
-                inventorySlots.get(FIRST_OUTPUT_SLOT_INDEX + x).yPos = -10000;
+            for (int x = 1; x < OUTPUT_SLOTS_COUNT; x++) { // x is slot num
+                inventorySlots.get(FIRST_OUTPUT_SLOT_INDEX + x).xPos = -1000;
+                inventorySlots.get(FIRST_OUTPUT_SLOT_INDEX + x).yPos = -1000;
             }
         }
     }

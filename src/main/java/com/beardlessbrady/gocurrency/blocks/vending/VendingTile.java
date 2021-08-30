@@ -221,7 +221,7 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
 
         // Fill Output Slots
         for (int i = 0; i < currency.length; i++) {
-            for (int j = 0; j < outputContents.getSizeInventory(); j++) {
+          for (int j = 0; j < (vendingStateData.get(VendingStateData.MODE_INDEX) == 0 ? outputContents.getSizeInventory() : 1); j++) {
                 if (outputContents.getStackInSlot(j).isEmpty()) {
                     ItemStack outStack = currency[i];
                     currency[i] = ItemStack.EMPTY;
