@@ -65,21 +65,28 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
     }
 
     // ----- VANILLA -----
-
     @Override
     public void tick() {
         if (!world.isRemote) { // Server
             if (isPlayerUsing()) {
-                if (!inputContents.getStackInSlot(0).isEmpty()) {
-                    addCurrency(CurrencyItem.getCurrencyValue(inputContents.getStackInSlot(0)), container.getVendingStateData(VendingStateData.MODE_INDEX));
-                    inputContents.getStackInSlot(0).setCount(0);
+                if (vendingStateData.get(VendingStateData.MODE_INDEX) == 0) {
+                    if (!inputContents.getStackInSlot(0).isEmpty()) {
+                        addCurrency(CurrencyItem.getCurrencyValue(inputContents.getStackInSlot(0)), container.getVendingStateData(VendingStateData.MODE_INDEX));
+                        inputContents.getStackInSlot(0).setCount(0);
+                    }
                 }
             }
         }
     }
 
     public boolean isPlayerUsing() {
-        return !playerUsing.equals(EMPTYID);
+        PlayerEntity player = world.getPlayerByUuid(playerUsing);
+
+     boolean stillOpen = false;
+        if (player != null) {
+           stillOpen = player.openContainer != player.container;
+        };
+        return !playerUsing.equals(EMPTYID) && stillOpen;
     }
 
     public void setPlayerUsing(UUID uuid) {
@@ -256,14 +263,28 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
     public void cashButton(int mode) {
         ItemStack[] currency = extractCurrency(mode);
 
-        // Fill Output Slots
-        for (int i = 0; i < currency.length; i++) {
-          for (int j = 0; j < (vendingStateData.get(VendingStateData.MODE_INDEX) == 0 ? outputContents.getSizeInventory() : 1); j++) {
-                if (outputContents.getStackInSlot(j).isEmpty()) {
-                    ItemStack outStack = currency[i];
-                    currency[i] = ItemStack.EMPTY;
+        if (vendingStateData.get(VendingStateData.MODE_INDEX) == 0) { // SELL
+            // Fill Output Slots
+            for (int i = 0; i < currency.length; i++) {
+                for (int j = 0; j < outputContents.getSizeInventory(); j++) {
+                    if (outputContents.getStackInSlot(j).isEmpty()) {
+                        ItemStack outStack = currency[i];
+                        currency[i] = ItemStack.EMPTY;
 
-                    outputContents.setInventorySlotContents(j, outStack);
+                        outputContents.setInventorySlotContents(j, outStack);
+                    }
+                }
+            }
+        } else { // STOCK
+            // Fill Input Slots
+            for (int i = 0; i < currency.length; i++) {
+                for (int j = 0; j < inputContents.getSizeInventory(); j++) {
+                    if (inputContents.getStackInSlot(j).isEmpty()) {
+                        ItemStack outStack = currency[i];
+                        currency[i] = ItemStack.EMPTY;
+
+                        inputContents.setInventorySlotContents(j, outStack);
+                    }
                 }
             }
         }

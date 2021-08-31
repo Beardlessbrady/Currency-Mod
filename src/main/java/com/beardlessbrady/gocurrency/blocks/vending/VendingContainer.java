@@ -177,7 +177,6 @@ public class VendingContainer extends Container {
         return stockContents.isUsableByPlayer(playerIn) && inputContents.isUsableByPlayer(playerIn) && outputContents.isUsableByPlayer(playerIn);
     }
 
-
     // ---- Slot manipulation ----
     private boolean dragging = false;
     private LinkedList<Integer> dragSlots = new LinkedList<Integer>();
@@ -739,8 +738,8 @@ public class VendingContainer extends Container {
     public void updateModeSlots() {
         if (vendingStateData.get(VendingStateData.MODE_INDEX) == 1) { // SELL (NOT CHANGED YET SO OPPOSITE)
             // Inputs
-            inventorySlots.get(FIRST_INPUT_SLOT_INDEX).xPos = INPUT_SLOTS_XPOS;
-            inventorySlots.get(FIRST_INPUT_SLOT_INDEX).yPos = INPUT_SLOTS_YPOS;
+         //   inventorySlots.get(FIRST_INPUT_SLOT_INDEX).xPos = INPUT_SLOTS_XPOS;
+         //   inventorySlots.get(FIRST_INPUT_SLOT_INDEX).yPos = INPUT_SLOTS_YPOS;
 
             // Outputs
             for (int x = 0; x < OUTPUT_SLOTS_COUNT; x++) { // x is slot num
@@ -749,15 +748,11 @@ public class VendingContainer extends Container {
             }
         } else {
             // Inputs
-            inventorySlots.get(FIRST_INPUT_SLOT_INDEX).xPos = -10000;
-            inventorySlots.get(FIRST_INPUT_SLOT_INDEX).yPos = -10000;
+         //   inventorySlots.get(FIRST_INPUT_SLOT_INDEX).xPos = -10000;
+         //  inventorySlots.get(FIRST_INPUT_SLOT_INDEX).yPos = -10000;
 
-
-            // First Output
-            inventorySlots.get(FIRST_OUTPUT_SLOT_INDEX).xPos = 117;
-            inventorySlots.get(FIRST_OUTPUT_SLOT_INDEX).yPos = 10;
             // Outputs
-            for (int x = 1; x < OUTPUT_SLOTS_COUNT; x++) { // x is slot num
+            for (int x = 0; x < OUTPUT_SLOTS_COUNT; x++) { // x is slot num
                 inventorySlots.get(FIRST_OUTPUT_SLOT_INDEX + x).xPos = -1000;
                 inventorySlots.get(FIRST_OUTPUT_SLOT_INDEX + x).yPos = -1000;
             }

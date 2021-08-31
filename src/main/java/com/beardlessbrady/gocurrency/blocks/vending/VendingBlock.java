@@ -52,10 +52,6 @@ public class VendingBlock extends ContainerBlock {
     @Override
     public ActionResultType onBlockActivated(BlockState state, World worldIn, BlockPos pos, PlayerEntity player, Hand handIn, BlockRayTraceResult hit) {
         if (worldIn.isRemote) return ActionResultType.SUCCESS; // Client do nothing
-
-
-        System.out.println(((VendingTile) Objects.requireNonNull(worldIn.getTileEntity(pos))).isPlayerUsing());
-
         if(!((VendingTile) Objects.requireNonNull(worldIn.getTileEntity(pos))).isPlayerUsing()) {
 
             INamedContainerProvider namedContainerProvider = this.getContainer(state, worldIn, pos);

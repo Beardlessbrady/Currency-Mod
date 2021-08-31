@@ -17,7 +17,7 @@ public class VendingStateData implements IIntArray {
     private int cashCent = 0;
     private int editPrice = 0;
     private int selectedSlot = 0;
-    private int guiSide = 0; // 0 = Left 1 = Right
+    private int guiSide = 1; // 0 = Left 1 = Right
     private int buyMode = 0; // 0=1, 1=Half Stack (ALT), 2=Full Stack (SHIFT)
 
     public VendingStateData(){
@@ -37,6 +37,8 @@ public class VendingStateData implements IIntArray {
         compoundNBT.putInt("cashCent", cashCent);
         compoundNBT.putInt("editPrice", editPrice);
         compoundNBT.putInt("selectedSlot", selectedSlot);
+        compoundNBT.putInt("guiSide", guiSide);
+        compoundNBT.putInt("buyMode", buyMode);
     }
 
     public void readFromNBT(CompoundNBT compoundNBT){
@@ -47,6 +49,8 @@ public class VendingStateData implements IIntArray {
         cashCent = compoundNBT.getInt("cashCent");
         editPrice = compoundNBT.getInt("editPrice");
         selectedSlot = compoundNBT.getInt("selectedSlot");
+        guiSide = compoundNBT.getInt("guiSide");
+        buyMode = compoundNBT.getInt("buyMode");
     }
 
     // Vanilla Stuff, NO TOUCH
