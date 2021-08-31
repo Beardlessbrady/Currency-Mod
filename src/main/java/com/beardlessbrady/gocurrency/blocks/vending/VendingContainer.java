@@ -108,6 +108,8 @@ public class VendingContainer extends Container {
 
         trackIntArray(this.vendingStateData);
         trackIntArray(this.stockContents.getStackSizeIntArray());
+        trackIntArray(this.stockContents.getPriceCentIntArray());
+        trackIntArray(this.stockContents.getPriceDollarIntArray());
 
         generateSlots(playerInventory, stock, input, output);
 
@@ -685,9 +687,9 @@ public class VendingContainer extends Container {
         int stackMax = stockContents.getStackInSlot(index).getMaxStackSize();
         int stackSize = stockContents.getStackSize(index);
 
-        String[] priceText = tile.getPrice(index).split("[.]");
-        int priceD = Integer.parseInt(priceText[0]);
-        int priceC = Integer.parseInt(priceText[1]);
+        int[] price = stockContents.getPriceInSlotInt(index);
+        int priceD = price[0];
+        int priceC = price[1];
 
         int amount = stackSize;
         switch(getVendingStateData(VendingStateData.BUYMODE_INDEX)) {
@@ -707,8 +709,9 @@ public class VendingContainer extends Container {
                 }
                 break;
         }
+
         int[] priceInt = CurrencyItem.multiplyPrice(priceD, priceC, amount);
-        priceD += priceInt[0];
+        priceD = priceInt[0];
         priceC = priceInt[1];
 
         return new int[] {priceD,priceC, amount};

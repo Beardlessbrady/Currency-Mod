@@ -17,26 +17,40 @@ import java.util.function.Supplier;
 public class MessageSetPrice {
     private final BlockPos pos;
     private final int index;
-    private final String price;
+    private final int priceD;
+    private final int priceC;
+
+    public MessageSetPrice(BlockPos pos, int index, int priceD, int priceC){
+        this.pos = pos;
+        this.index = index;
+        this.priceD = priceD;
+        this.priceC = priceC;
+    }
 
     public MessageSetPrice(BlockPos pos, int index, String price){
         this.pos = pos;
         this.index = index;
-        this.price = price;
+
+        String[] prices = price.split("[.]");
+
+        this.priceD = Integer.parseInt(prices[0]);
+        this.priceC = Integer.parseInt(prices[1]);
     }
 
     public static MessageSetPrice decode(PacketBuffer buf){
         BlockPos pos = buf.readBlockPos();
         int index = buf.readInt();
-        String price = buf.readString(20);
+        int priceD = buf.readInt();
+        int priceC = buf.readInt();
 
-        return new MessageSetPrice(pos, index, price);
+        return new MessageSetPrice(pos, index, priceD, priceC);
     }
 
     public static void encode(MessageSetPrice message, PacketBuffer buf){
         buf.writeBlockPos(message.pos);
         buf.writeInt(message.index);
-        buf.writeString(message.price, 20);
+        buf.writeInt(message.priceD);
+        buf.writeInt(message.priceC);
     }
 
     public static void handle(MessageSetPrice message, Supplier<NetworkEvent.Context> ctx) {
@@ -46,7 +60,7 @@ public class MessageSetPrice {
                 TileEntity tile = playerEntity.getEntityWorld().getTileEntity(message.pos);
 
                 if (tile instanceof VendingTile) {
-                    ((VendingTile) tile).setPrice(message.index, message.price);
+                    ((VendingTile) tile).setPrice(message.index, new int[] {message.priceD, message.priceC});
                 }
             });
         }

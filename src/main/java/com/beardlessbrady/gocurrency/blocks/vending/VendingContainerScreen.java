@@ -291,8 +291,8 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
                     this.fieldPrice.setMaxStringLength(outText.length());
                 }
 
-                if (!outText.equals(container.getTile().getPrice(container.getVendingStateData(VendingStateData.SELECTEDSLOT_INDEX)))) {
-                    container.getTile().setPrice(container.getVendingStateData(VendingStateData.SELECTEDSLOT_INDEX), outText);
+                if (!outText.equals(container.getStockContents().getPriceInSlot(container.getVendingStateData(VendingStateData.SELECTEDSLOT_INDEX)))) {
+                  //  container.getStockContents().setPriceInSlot(container.getVendingStateData(VendingStateData.SELECTEDSLOT_INDEX), outText);
                     GOCurrency.NETWORK_HANDLER.sendToServer(new MessageSetPrice(container.getTile().getPos(), container.getVendingStateData(VendingStateData.SELECTEDSLOT_INDEX), outText));
                 }
                 return true;
@@ -322,7 +322,7 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
         boolean isEmpty = !container.getStockContents().getStackInSlot(container.getVendingStateData(VendingStateData.SELECTEDSLOT_INDEX)).isEmpty();
 
         fieldPrice.setEnabled(isEmpty);
-        this.fieldPrice.setText(container.getTile().getPrice(container.getVendingStateData(VendingStateData.SELECTEDSLOT_INDEX)));
+        this.fieldPrice.setText(container.getStockContents().getPriceInSlot(container.getVendingStateData(VendingStateData.SELECTEDSLOT_INDEX)));
     }
 
     // ------------- RENDERS --------------------
@@ -449,6 +449,7 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
 
                 int stock = container.getStockContents().getStackSize(slot);
                 int[] price = container.priceFromBuyMode(slot);
+
                 String cost = price[0] + "." + price[1];
                 if (price[1] < 10) {
                     cost = price[0] + "." + price[1] + '0';

@@ -3,6 +3,7 @@ package com.beardlessbrady.gocurrency.blocks.vending;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
+import net.minecraft.util.IntArray;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -19,7 +20,7 @@ import javax.annotation.Nonnull;
  */
 public class OverloadedItemStackHandler implements IItemHandler, IItemHandlerModifiable, INBTSerializable<CompoundNBT> {
     protected NonNullList<ItemStack> stacks;
-    protected StackSizeIntArray stackSize;
+    protected IntArray stackSize;
     protected int stackSizeLimit = 256;
 
     public OverloadedItemStackHandler() {
@@ -28,12 +29,12 @@ public class OverloadedItemStackHandler implements IItemHandler, IItemHandlerMod
 
     public OverloadedItemStackHandler(int size) {
         stacks = NonNullList.withSize(size, ItemStack.EMPTY);
-        stackSize = new StackSizeIntArray(size);
+        stackSize = new IntArray(size);
     }
 
     public OverloadedItemStackHandler(NonNullList<ItemStack> add) {
         stacks = NonNullList.withSize(add.size(), ItemStack.EMPTY);
-        stackSize = new StackSizeIntArray(add.size());
+        stackSize = new IntArray(add.size());
 
         for (int i = 0; i < add.size(); i++) {
             stackSize.set(i, add.get(i).getCount());
@@ -44,7 +45,7 @@ public class OverloadedItemStackHandler implements IItemHandler, IItemHandlerMod
 
     public void setSize(int size) {
         stacks = NonNullList.withSize(size, ItemStack.EMPTY);
-        stackSize = new StackSizeIntArray(size);
+        stackSize = new IntArray(size);
     }
 
     @Override
@@ -255,7 +256,7 @@ public class OverloadedItemStackHandler implements IItemHandler, IItemHandlerMod
         return currentState;
     }
 
-    public StackSizeIntArray getStackSizeIntArray(){
+    public IntArray getStackSizeIntArray(){
         return stackSize;
     }
 }

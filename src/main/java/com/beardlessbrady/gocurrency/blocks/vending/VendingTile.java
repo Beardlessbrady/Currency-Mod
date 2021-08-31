@@ -189,6 +189,10 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
         }
     }
 
+    public void setPrice(int index, int[] price) {
+        stockContents.setPriceInSlot(index, price);
+    }
+
     // ---- CURRENCY ------
 
     /**
@@ -233,6 +237,9 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
                     break;
                 }
             }
+
+            vendingStateData.set(DOLLAR_INDEX, dollar);
+            vendingStateData.set(CENT_INDEX, cent);
 
             ItemStack stack = new ItemStack(CommonRegistry.ITEM_CURRENCY.get(), count);
             CurrencyItem.putIntoNBT(stack, currencyList[currencyIndex]);
@@ -311,14 +318,6 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
 
         container.setVendingStateData(DOLLAR_INDEX, dollar);
         container.setVendingStateData(CENT_INDEX, cent);
-    }
-
-    public void setPrice(int index, String price) {
-       stockContents.setPriceInSlot(index, price);
-    }
-
-    public String getPrice(int index){
-        return stockContents.getPriceInSlot(index);
     }
 
     // ---- NBT Stuff ----

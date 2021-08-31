@@ -6,6 +6,7 @@ import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.IntArray;
 import net.minecraft.util.NonNullList;
 import net.minecraftforge.items.ItemHandlerHelper;
 import net.minecraftforge.items.ItemStackHandler;
@@ -46,12 +47,22 @@ public class VendingContentsOverloaded implements IInventory {
         this.canPlayerAccess = canPlayerAccess;
     }
 
-    public String getPriceInSlot(int index){
+    public int[] getPriceInSlotInt(int index){
         return vendingComponentContents.getPriceInSlot(index);
     }
 
-    public void setPriceInSlot(int index, String price){
+    public String getPriceInSlot(int index){
+        int[] price = vendingComponentContents.getPriceInSlot(index);
+        return price[0] + "." + price[1];
+    }
+
+    public void setPriceInSlot(int index, int[] price){
         vendingComponentContents.setPriceInSlot(index, price);
+    }
+
+    public void setPriceInSlot(int index, String price){
+        String[] prices = price.split("[.]");
+        setPriceInSlot(index, new int[] {Integer.parseInt(prices[0]), Integer.parseInt(prices[1])});
     }
 
     @Override
@@ -114,8 +125,16 @@ public class VendingContentsOverloaded implements IInventory {
         return vendingComponentContents.getSizeInSlot(slot);
     }
 
-    public StackSizeIntArray getStackSizeIntArray(){
+    public IntArray getStackSizeIntArray(){
         return vendingComponentContents.getStackSizeIntArray();
+    }
+
+    public IntArray getPriceDollarIntArray(){
+        return vendingComponentContents.getPriceDollarArray();
+    }
+
+    public IntArray getPriceCentIntArray(){
+        return vendingComponentContents.getPriceCentArray();
     }
 
     @Override
