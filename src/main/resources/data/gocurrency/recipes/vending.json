@@ -1,0 +1,17 @@
+{
+  "_comment": [],
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+     "xxx",
+     "xax",
+     "xbx"
+   ],
+  "key": {
+    "x": {"item": "minecraft:iron_ingot"},
+    "a": {"item": "minecraft:glass"},
+    "b": {"item": "minecraft:repeater"}
+  },
+  "result": {
+    "item": "gocurrency:vending"
+  }
+}

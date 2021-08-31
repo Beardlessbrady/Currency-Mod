@@ -106,6 +106,7 @@ public class CurrencyItem extends Item {
         return getValuefromID(currencyID);
     }
 
+    // Utility Methods
     public static int[] getCurrencyValue(ItemStack item) {
         CurrencyItem.CurrencyObject currency = CurrencyItem.fromNBT(item);
 

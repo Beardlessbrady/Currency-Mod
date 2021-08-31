@@ -71,8 +71,13 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
             if (isPlayerUsing()) {
                 if (vendingStateData.get(VendingStateData.MODE_INDEX) == 0) {
                     if (!inputContents.getStackInSlot(0).isEmpty()) {
-                        addCurrency(CurrencyItem.getCurrencyValue(inputContents.getStackInSlot(0)), container.getVendingStateData(VendingStateData.MODE_INDEX));
-                        inputContents.getStackInSlot(0).setCount(0);
+                        long maxTest = (long)CurrencyItem.getCurrencyValue(inputContents.getStackInSlot(0))[0] + (long)vendingStateData.get(VendingStateData.CASHDOLLAR_INDEX);
+                        boolean OVERMAXINT = maxTest >= Integer.MAX_VALUE;
+
+                        if(!OVERMAXINT) {
+                            addCurrency(CurrencyItem.getCurrencyValue(inputContents.getStackInSlot(0)), container.getVendingStateData(VendingStateData.MODE_INDEX));
+                            inputContents.getStackInSlot(0).setCount(0);
+                        }
                     }
                 }
             }

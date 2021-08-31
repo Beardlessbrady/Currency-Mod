@@ -19,6 +19,7 @@ public class VendingStateData implements IIntArray {
     private int selectedSlot = 0;
     private int guiSide = 1; // 0 = Left 1 = Right
     private int buyMode = 0; // 0=1, 1=Half Stack (ALT), 2=Full Stack (SHIFT)
+    private int creative = 0;
 
     public VendingStateData(){
     }
@@ -39,6 +40,7 @@ public class VendingStateData implements IIntArray {
         compoundNBT.putInt("selectedSlot", selectedSlot);
         compoundNBT.putInt("guiSide", guiSide);
         compoundNBT.putInt("buyMode", buyMode);
+        compoundNBT.putInt("creative", creative);
     }
 
     public void readFromNBT(CompoundNBT compoundNBT){
@@ -51,6 +53,7 @@ public class VendingStateData implements IIntArray {
         selectedSlot = compoundNBT.getInt("selectedSlot");
         guiSide = compoundNBT.getInt("guiSide");
         buyMode = compoundNBT.getInt("buyMode");
+        creative = compoundNBT.getInt("creative");
     }
 
     // Vanilla Stuff, NO TOUCH
@@ -63,7 +66,8 @@ public class VendingStateData implements IIntArray {
     public static final int GUISIDE_INDEX = 6;
     public static final int SELECTEDSLOT_INDEX = 7;
     public static final int BUYMODE_INDEX = 8;
-    public static final int END_OF_INDEX_PLUS_ONE = 8 + 1;
+    public static final int CREATIVE_INDEX = 9;
+    public static final int END_OF_INDEX_PLUS_ONE = 9 + 1;
 
     @Override
     public int get(int index) {
@@ -87,6 +91,8 @@ public class VendingStateData implements IIntArray {
                 return selectedSlot;
             case BUYMODE_INDEX:
                 return buyMode;
+            case CREATIVE_INDEX:
+                return creative;
             default:
                 return -1;
         }
@@ -124,6 +130,9 @@ public class VendingStateData implements IIntArray {
                 break;
             case SELECTEDSLOT_INDEX:
                 selectedSlot = value;
+                break;
+            case CREATIVE_INDEX:
+                creative = value;
                 break;
         }
     }

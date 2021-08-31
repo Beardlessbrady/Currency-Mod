@@ -24,6 +24,7 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.lwjgl.opengl.GL12;
 
+import javax.xml.soap.Text;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -432,6 +433,12 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
             this.blit(matrixStack, 98, -31, 176, 245, 11, 11);
             this.blit(matrixStack, 39, -31, 187, 245, 11, 11);
         } else {
+            if(container.getVendingStateData(VendingStateData.CREATIVE_INDEX) == 1) {
+                this.font.func_243248_b(matrixStack, ITextComponent.getTextComponentOrEmpty(TextFormatting.DARK_PURPLE + I18n.format("key.gocurrency.creative")), -40, -48, 4210752); //Block Title CREATIVE
+
+            }
+
+
             GL12.glDisable(GL12.GL_DEPTH_TEST);
             GL12.glPushMatrix();
             GL12.glScalef(0.7F, 0.7F, 0.8F);

@@ -21,6 +21,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.GuiScreenEvent;
 
 import javax.swing.text.JTextComponent;
+import java.math.BigInteger;
 import java.util.LinkedList;
 
 /**
@@ -261,6 +262,8 @@ public class VendingContainer extends Container {
     }
 
     private ItemStack stockSlotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+        boolean creative = vendingStateData.get(VendingStateData.CREATIVE_INDEX) == 1;
+
         int index = slotId - FIRST_STOCK_SLOT_INDEX;
         ItemStack playerStack = player.inventory.getItemStack();
         ItemStack slotStack = this.stockContents.getStackInSlot(index);
@@ -275,7 +278,10 @@ public class VendingContainer extends Container {
                 int cashD = vendingStateData.get(VendingStateData.CASHDOLLAR_INDEX);
                 int cashC = vendingStateData.get(VendingStateData.CASHCENT_INDEX);
 
-                if (canAfford(index)) {
+                long priceTest = (long)priceD + (long)vendingStateData.get(VendingStateData.INCOMEDOLLAR_INDEX);
+                boolean OVERMAXINT = priceTest >= Integer.MAX_VALUE;
+
+                if (canAfford(index) && (!OVERMAXINT)) {
                     ItemStack buyStack = slotStack.copy();
                     buyStack.setCount(priceCount);
 
@@ -294,7 +300,9 @@ public class VendingContainer extends Container {
 
                         if (success) {
                             // Reduce Price and Stock
-                            stockContents.decrStackSize(index, buyStack.getCount());
+                            if(!creative) {
+                                stockContents.decrStackSize(index, buyStack.getCount());
+                            }
 
                             cashD -= priceD;
                             cashC -= priceC;
@@ -312,8 +320,10 @@ public class VendingContainer extends Container {
 
                             vendingStateData.set(VendingStateData.CASHDOLLAR_INDEX, cashD);
                             vendingStateData.set(VendingStateData.CASHCENT_INDEX, cashC);
-                            vendingStateData.set(VendingStateData.INCOMEDOLLAR_INDEX, incomeD);
-                            vendingStateData.set(VendingStateData.INCOMECENT_INDEX, incomeC);
+                            if(!creative) {
+                                vendingStateData.set(VendingStateData.INCOMEDOLLAR_INDEX, incomeD);
+                                vendingStateData.set(VendingStateData.INCOMECENT_INDEX, incomeC);
+                            }
                             return ItemStack.EMPTY;
                         }
                     }
