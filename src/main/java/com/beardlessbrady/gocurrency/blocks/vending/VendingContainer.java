@@ -114,6 +114,15 @@ public class VendingContainer extends Container {
         vendingStateData.set(VendingStateData.MODE_INDEX, 0);
         vendingStateData.set(VendingStateData.EDITPRICE_INDEX, 0);
         vendingStateData.set(VendingStateData.BUYMODE_INDEX, 0);
+
+        tile.setPlayerUsing(playerInventory.player.getUniqueID());
+    }
+
+    @Override
+    public void onContainerClosed(PlayerEntity playerIn) {
+        super.onContainerClosed(playerIn);
+
+        tile.voidPlayerUsing();
     }
 
     public VendingTile getTile(){

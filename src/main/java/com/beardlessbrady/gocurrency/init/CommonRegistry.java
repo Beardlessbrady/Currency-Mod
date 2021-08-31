@@ -1,5 +1,6 @@
 package com.beardlessbrady.gocurrency.init;
 
+import com.beardlessbrady.gocurrency.EventHandler;
 import com.beardlessbrady.gocurrency.GOCurrency;
 import com.beardlessbrady.gocurrency.blocks.vending.VendingBlock;
 import com.beardlessbrady.gocurrency.blocks.vending.VendingContainer;
@@ -11,6 +12,7 @@ import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.extensions.IForgeContainerType;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -56,5 +58,7 @@ public class CommonRegistry {
         BLOCKS.register(FMLJavaModLoadingContext.get().getModEventBus());
         TILES.register(FMLJavaModLoadingContext.get().getModEventBus());
         CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
+
+        MinecraftForge.EVENT_BUS.register(new EventHandler());
     }
 }

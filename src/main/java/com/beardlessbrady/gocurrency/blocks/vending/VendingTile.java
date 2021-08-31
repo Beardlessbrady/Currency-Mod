@@ -28,6 +28,7 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.LinkedList;
+import java.util.UUID;
 
 /**
  * Created by BeardlessBrady on 2021-03-01 for Currency-Mod
@@ -52,6 +53,9 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
     private VendingContainer container;
 
     private final VendingStateData vendingStateData = new VendingStateData();
+    private UUID owner;
+    private UUID playerUsing = new UUID(0L, 0L);
+    public static UUID EMPTYID = new UUID(0L, 0L);
 
     public VendingTile() {
         super(CommonRegistry.TILE_VENDING.get());
@@ -65,11 +69,37 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
     @Override
     public void tick() {
         if (!world.isRemote) { // Server
-            if (!inputContents.getStackInSlot(0).isEmpty()) {
-                addCurrency(CurrencyItem.getCurrencyValue(inputContents.getStackInSlot(0)), container.getVendingStateData(VendingStateData.MODE_INDEX));
-                inputContents.getStackInSlot(0).setCount(0);
+            if (isPlayerUsing()) {
+                if (!inputContents.getStackInSlot(0).isEmpty()) {
+                    addCurrency(CurrencyItem.getCurrencyValue(inputContents.getStackInSlot(0)), container.getVendingStateData(VendingStateData.MODE_INDEX));
+                    inputContents.getStackInSlot(0).setCount(0);
+                }
             }
         }
+    }
+
+    public boolean isPlayerUsing() {
+        return !playerUsing.equals(EMPTYID);
+    }
+
+    public void setPlayerUsing(UUID uuid) {
+        playerUsing = uuid;
+    }
+
+    public void voidPlayerUsing() {
+        playerUsing = EMPTYID;
+    }
+
+    public boolean isOwner() {
+        return playerUsing.equals(owner);
+    }
+
+    public UUID getOwner() {
+        return owner;
+    }
+
+    public void setOwner(UUID uuid) {
+        owner = uuid;
     }
 
     @Override
@@ -302,6 +332,11 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
         compound.put(STOCK_SLOTS_NBT, stockContents.serializeNBT());
         compound.put(INPUT_SLOTS_NBT, inputContents.serializeNBT());
         compound.put(OUTPUT_SLOTS_NBT, outputContents.serializeNBT());
+
+
+        compound.putUniqueId("owner", owner);
+        compound.putUniqueId("player", playerUsing);
+
         vendingStateData.putIntoNBT(compound);
         return compound;
     }
@@ -319,6 +354,9 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
         outputContents.deserializeNBT(outputNBT);
 
         vendingStateData.readFromNBT(nbt);
+
+        owner = nbt.getUniqueId("owner");
+        playerUsing = nbt.getUniqueId("player");
 
         if (stockContents.getSizeInventory() != STOCK_SLOT_COUNT || inputContents.getSizeInventory() != INPUT_SLOTS_COUNT
                 || outputContents.getSizeInventory() != OUTPUT_SLOTS_COUNT)

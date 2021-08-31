@@ -28,7 +28,7 @@ public class MessageSetPrice {
     public static MessageSetPrice decode(PacketBuffer buf){
         BlockPos pos = buf.readBlockPos();
         int index = buf.readInt();
-        String price = buf.readString();
+        String price = buf.readString(20);
 
         return new MessageSetPrice(pos, index, price);
     }
@@ -36,7 +36,7 @@ public class MessageSetPrice {
     public static void encode(MessageSetPrice message, PacketBuffer buf){
         buf.writeBlockPos(message.pos);
         buf.writeInt(message.index);
-        buf.writeString(message.price);
+        buf.writeString(message.price, 20);
     }
 
     public static void handle(MessageSetPrice message, Supplier<NetworkEvent.Context> ctx) {

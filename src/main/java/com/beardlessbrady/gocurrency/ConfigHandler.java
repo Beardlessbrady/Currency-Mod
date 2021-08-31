@@ -56,10 +56,6 @@ public class ConfigHandler {
                                 currency[0] = currency[0].replaceAll("[^0-9]", "");
                                 currency[1] = currency[1].replaceAll("[^0-9]", "");
 
-
-                                System.out.println("HEEE");
-                                System.out.println(currency[0]);
-
                                 if(Long.parseLong(currency[0]) <= (long)Integer.MAX_VALUE) {
 
                                     int d = Integer.parseInt(currency[0]);

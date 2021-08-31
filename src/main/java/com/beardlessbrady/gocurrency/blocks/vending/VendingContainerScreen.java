@@ -329,6 +329,11 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
 
     @Override
     public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        if(!container.getTile().isOwner()) {
+            buttons.get(BUTTONID_MODE).active = false;
+            buttons.get(BUTTONID_MODE).visible = false;
+        }
+
         super.render(matrixStack, mouseX, mouseY, partialTicks);
         this.renderHoveredTooltip(matrixStack, mouseX, mouseY);
         this.drawCustomTooltips(matrixStack, mouseX, mouseY);
@@ -384,8 +389,10 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
 
             this.minecraft.getTextureManager().bindTexture(TEXTURE);
 
-            // Sell Mode Button icon
-            this.blit(matrixStack, 117, -28, 144, 67, 16, 16);
+            if(container.getTile().isOwner()) {
+                // Sell Mode Button icon
+                this.blit(matrixStack, 117, -28, 144, 67, 16, 16);
+            }
 
             // Draw Top tips of outer machine to cover items inside
             this.blit(matrixStack, 98, -31, 176, 245, 11, 11);
@@ -485,8 +492,10 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
 
                 switch (i) {
                     case BUTTONID_MODE:
-                        listText.add(ITextComponent.getTextComponentOrEmpty(TextFormatting.DARK_PURPLE + I18n.format("block.gocurrency.vending.tooltip.mode" + mode + "_0")));
-                        listText.add(ITextComponent.getTextComponentOrEmpty(I18n.format("block.gocurrency.vending.tooltip.mode" + mode + "_1", TextFormatting.GRAY)));
+                        if(container.getTile().isOwner()) {
+                            listText.add(ITextComponent.getTextComponentOrEmpty(TextFormatting.DARK_PURPLE + I18n.format("block.gocurrency.vending.tooltip.mode" + mode + "_0")));
+                            listText.add(ITextComponent.getTextComponentOrEmpty(I18n.format("block.gocurrency.vending.tooltip.mode" + mode + "_1", TextFormatting.GRAY)));
+                        }
                         break;
                     case BUTTONID_CASH:
                         listText.add(ITextComponent.getTextComponentOrEmpty(I18n.format("block.gocurrency.vending.tooltip.cash" + mode, mode == 0 ? TextFormatting.GREEN : TextFormatting.AQUA)));
