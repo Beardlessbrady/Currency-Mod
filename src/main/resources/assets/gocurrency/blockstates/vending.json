@@ -1,7 +1,8 @@
 {
   "variants": {
-    "": {
-      "model": "gocurrency:block/vending"
-    }
+    "facing=north": { "model": "gocurrency:block/vending", "y": 180 },
+    "facing=east": { "model": "gocurrency:block/vending", "y": 270 },
+    "facing=south": { "model": "gocurrency:block/vending"},
+    "facing=west": { "model": "gocurrency:block/vending", "y": 90 }
   }
 }

@@ -1,10 +1,13 @@
 package com.beardlessbrady.gocurrency.init;
 
 import com.beardlessbrady.gocurrency.GOCurrency;
+import com.beardlessbrady.gocurrency.blocks.vending.VendingBlock;
 import com.beardlessbrady.gocurrency.items.CurrencyItem;
 import net.java.games.input.Keyboard;
 import net.minecraft.client.GameSettings;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.inventory.container.ContainerType;
 import net.minecraft.item.ItemModelsProperties;
@@ -33,6 +36,8 @@ public class ClientRegistry {
     public static void doClientStuff() {
         ItemModelsProperties.registerProperty(CommonRegistry.ITEM_CURRENCY.get(), new ResourceLocation("currency"), CurrencyItem::getPropertyOverride);
         registerKeyBindings();
+
+        RenderTypeLookup.setRenderLayer(CommonRegistry.BLOCK_VENDING.get(), RenderType.getTranslucent());
     }
 
     public void registerClientOnlyEvents() {
