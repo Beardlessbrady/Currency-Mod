@@ -145,7 +145,7 @@ public class VendingBlock extends ContainerBlock {
 
         // Creative Machine in Creative Menu
         ItemStack creativeStack = new ItemStack(this, 1);
-        creativeStack.addEnchantment(Objects.requireNonNull(Enchantment.getEnchantmentByID(12)), 1);
+        // TODO Differentiate creative machine
         creativeStack.setDisplayName(ITextComponent.getTextComponentOrEmpty(I18n.format("block.gocurrency.vending.creative")));
 
         // Add NBT for creative
