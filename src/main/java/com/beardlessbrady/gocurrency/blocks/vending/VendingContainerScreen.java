@@ -575,7 +575,7 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
                         listText.add(ITextComponent.getTextComponentOrEmpty(I18n.format("block.gocurrency.vending.tooltip.pricesetting_0")));
                         if (container.getVendingStateData(VendingStateData.EDITPRICE_INDEX) == 1)
                             listText.add(ITextComponent.getTextComponentOrEmpty(TextFormatting.GRAY + I18n.format("block.gocurrency.vending.tooltip.pricesetting_1") +
-                                    TextFormatting.YELLOW + I18n.format(Minecraft.getInstance().gameSettings.keyBindAttack.getTranslationKey())));
+                                    TextFormatting.YELLOW + I18n.format(Minecraft.getInstance().gameSettings.keyBindUseItem.getTranslationKey())));
                         break;
                 }
 
