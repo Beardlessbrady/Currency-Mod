@@ -8,6 +8,7 @@ import com.beardlessbrady.gocurrency.network.MessageVendingCashButton;
 import com.beardlessbrady.gocurrency.network.MessageVendingStateData;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import javafx.scene.input.KeyCode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.inventory.ContainerScreen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
@@ -274,7 +275,22 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
 
         if(fieldPrice.isFocused()) {
             char typedChar = (char)keyCode;
+
+            // Converts keypad numbers to numbers
+            if(keyCode >= 320 && keyCode <= 329){
+                keyCode = keyCode - 272;
+                typedChar = (char)keyCode;
+            }
+            // Keypad period (.)
+            if(keyCode == 330) {
+                keyCode = 46;
+                typedChar = (char)keyCode;
+            }
+
             int numChar = Character.getNumericValue(typedChar);
+
+
+            System.out.println("KEY: " + keyCode + " TYPE: " + typedChar + " num: " + numChar);
 
             //key inputs are only numbers, ., or backspace
             if ((container.getVendingStateData(VendingStateData.MODE_INDEX) == 1) && (container.getVendingStateData(VendingStateData.EDITPRICE_INDEX) == 1) &&
