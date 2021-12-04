@@ -13,8 +13,10 @@ import java.util.List;
  * https://github.com/Beardlessbrady/Currency-Mod
  */
 public class SaleItemStackHandler extends OverloadedItemStackHandler{
-    private IntArray priceDollar;
-    private IntArray priceCent;
+    private IntArray priceMillion; // 9999
+    private IntArray priceThousand; // 9999
+    private IntArray priceCent; // .99
+    // 99'999'999.99
 
     public SaleItemStackHandler() {
         super();
@@ -22,44 +24,54 @@ public class SaleItemStackHandler extends OverloadedItemStackHandler{
 
     public SaleItemStackHandler(int size) {
         super(size);
-        priceDollar = new IntArray(size);
+        priceMillion = new IntArray(size);
+        priceThousand = new IntArray(size);
         priceCent = new IntArray(size);
     }
 
     public SaleItemStackHandler(NonNullList<ItemStack> add) {
-        super(add);
-        priceDollar = new IntArray(add.size());
+        priceMillion = new IntArray(add.size());
+        priceThousand = new IntArray(add.size());
         priceCent = new IntArray(add.size());
     }
 
     @Override
     public void setSize(int size) {
         super.setSize(size);
-        priceDollar = new IntArray(size);
+        priceMillion = new IntArray(size);
+        priceThousand = new IntArray(size);
         priceCent = new IntArray(size);
     }
 
-    public int[] getPriceInSlot(int index){
-        return new int[] {priceDollar.get(index), priceCent.get(index)};
+    public int[] getPriceInt(int index){
+        return new int[] {priceMillion.get(index), priceThousand.get(index), priceCent.get(index)};
     }
 
-    public void setPriceInSlot(int index, int[] price){
-        this.priceDollar.set(index, price[0]);
-        this.priceCent.set(index, price[1]);
+    public String getPriceString(int index){
+        return String.valueOf(priceMillion.get(index)) + String.valueOf(priceThousand.get(index)) + "." + String.valueOf(priceCent.get(index));
+    }
+
+    public void setPrice(int index, int[] price){
+        this.priceMillion.set(index, price[0]);
+        this.priceThousand.set(index, price[1]);
+        this.priceCent.set(index, price[2]);
     }
 
     @Override
     public CompoundNBT serializeNBT() {
         CompoundNBT nbt = super.serializeNBT();
 
-        int[] tempDollar = new int[priceDollar.size()];
+        int[] tempMillion = new int[priceMillion.size()];
+        int[] tempThousand = new int[priceThousand.size()];
         int[] tempCent = new int[priceCent.size()];
-        for (int i = 0; i < tempDollar.length; i++) {
-            tempDollar[i] = priceDollar.get(i);
+        for (int i = 0; i < tempMillion.length; i++) {
+            tempMillion[i] = priceMillion.get(i);
+            tempThousand[i] = priceThousand.get(i);
             tempCent[i] = priceCent.get(i);
         }
 
-        nbt.putIntArray("priceDollar", tempDollar);
+        nbt.putIntArray("priceMillion", tempMillion);
+        nbt.putIntArray("priceThousand", tempThousand);
         nbt.putIntArray("priceCent", tempCent);
         return nbt;
     }
@@ -68,17 +80,23 @@ public class SaleItemStackHandler extends OverloadedItemStackHandler{
     public void deserializeNBT(CompoundNBT nbt) {
         super.deserializeNBT(nbt);
 
-        int[] tempDollar = nbt.getIntArray("priceDollar");
+        int[] tempMillion = nbt.getIntArray("priceMillion");
+        int[] tempThousand = nbt.getIntArray("priceThousand");
         int[] tempCent = nbt.getIntArray("priceCent");
-        priceDollar = new IntArray(tempDollar.length);
-        for (int i = 0; i < tempDollar.length; i++) {
-            priceDollar.set(i, tempDollar[i]);
+        priceMillion = new IntArray(tempMillion.length);
+        for (int i = 0; i < tempMillion.length; i++) {
+            priceMillion.set(i, tempMillion[i]);
+            priceThousand.set(i, tempThousand[i]);
             priceCent.set(i, tempCent[i]);
         }
     }
 
-    public IntArray getPriceDollarArray(){
-        return priceDollar;
+    public IntArray getPriceMillionArray(){
+        return priceMillion;
+    }
+
+    public IntArray getPriceThousandArray(){
+        return priceThousand;
     }
 
     public IntArray getPriceCentArray(){

@@ -47,22 +47,33 @@ public class VendingContentsOverloaded implements IInventory {
         this.canPlayerAccess = canPlayerAccess;
     }
 
-    public int[] getPriceInSlotInt(int index){
-        return vendingComponentContents.getPriceInSlot(index);
+    public int[] getPriceInt(int index){
+        return vendingComponentContents.getPriceInt(index);
     }
 
-    public String getPriceInSlot(int index){
-        int[] price = vendingComponentContents.getPriceInSlot(index);
-        return price[0] + "." + price[1];
+    public String getPriceString(int index){
+        return vendingComponentContents.getPriceString(index);
     }
 
-    public void setPriceInSlot(int index, int[] price){
-        vendingComponentContents.setPriceInSlot(index, price);
+    public void setPrice(int index, int[] price){
+        vendingComponentContents.setPrice(index, price);
     }
 
-    public void setPriceInSlot(int index, String price){
+    public void setPrice(int index, String price){
         String[] prices = price.split("[.]");
-        setPriceInSlot(index, new int[] {Integer.parseInt(prices[0]), Integer.parseInt(prices[1])});
+
+        int priceM;
+        int priceT;
+
+        if(prices[0].length() > 4) {
+            priceM = Integer.parseInt(prices[0].substring(0, prices[0].length() - 4));
+            priceT = Integer.parseInt(prices[0].substring(prices[0].length() - 4));
+        } else {
+            priceM = 0;
+            priceT = Integer.parseInt(prices[0]);
+        }
+
+        setPrice(index, new int[] {priceM, priceT, Integer.parseInt(prices[1])});
     }
 
     @Override
@@ -129,11 +140,15 @@ public class VendingContentsOverloaded implements IInventory {
         return vendingComponentContents.getStackSizeIntArray();
     }
 
-    public IntArray getPriceDollarIntArray(){
-        return vendingComponentContents.getPriceDollarArray();
+    public IntArray getIntArrayMillion(){
+        return vendingComponentContents.getPriceMillionArray();
     }
 
-    public IntArray getPriceCentIntArray(){
+    public IntArray getIntArrayThousand(){
+        return vendingComponentContents.getPriceThousandArray();
+    }
+
+    public IntArray getIntArrayCent(){
         return vendingComponentContents.getPriceCentArray();
     }
 

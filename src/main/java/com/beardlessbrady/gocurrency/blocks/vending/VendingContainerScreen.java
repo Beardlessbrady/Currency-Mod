@@ -23,8 +23,6 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import org.lwjgl.opengl.GL12;
-
-import javax.xml.soap.Text;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -41,7 +39,7 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
 
     final static int FONT_Y_SPACING = 10;
 
-    private TextFieldWidget fieldPrice;
+    private TextFieldWidget fieldPrice; // MAX PRICE is 99999999.99
 
     final static byte BUTTONID_MODE = 0;
     final static byte BUTTONID_PRICE = 1;
@@ -91,7 +89,7 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
         this.fieldPrice.setTextColor(Integer.parseInt("80C45C", 16));
         this.fieldPrice.setFocused2(true);
         this.fieldPrice.setVisible(false);
-        this.fieldPrice.setMaxStringLength(13);
+        this.fieldPrice.setMaxStringLength(9);
     }
 
     @Override
@@ -139,14 +137,6 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
         switch (k) {
             case HANDLE_MODE: //VendingStateData.MODE_INDEX:
                 if (container.getVendingStateData(VendingStateData.MODE_INDEX) == 1) { // MODE SELL (Reverse since hase not changed yet)
-                    // Hide Price Settings Tab
-                    this.children.remove(this.buttons.get(BUTTONID_PRICE));
-                    this.buttons.set(BUTTONID_PRICE, new CustomButton(i + 1000, j + 1000, 18, 23, 176, 24, 176, 24,
-                            new TranslationTextComponent(""), (button) -> {
-                        handle(HANDLE_EDITPRICE);
-                    }));
-                    this.children.add(this.buttons.get(BUTTONID_PRICE));
-
                     // Hide GUI_SWITCH BUTTON
                     this.children.remove(this.buttons.get(BUTTONID_GUISWITCH));
                     this.buttons.set(BUTTONID_GUISWITCH, new CustomButton(i + 1000, j + 1000, 10, 10, 217, 218, 217, 228,
@@ -156,6 +146,18 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
                     // Button Cash to GREEN
                     this.buttons.set(BUTTONID_CASH, (new CustomButton(i + 116, j + 29, 20, 13, 177, 218, 177, 231,
                             new TranslationTextComponent(""), (button) -> {handle(HANDLE_CASH); })));
+
+                    // Fixes issue where Gear tab is messed up when going back to STOCK MODE
+                    setEditPriceButtonLocation(container.getVendingStateData(VendingStateData.GUISIDE_INDEX), 0);
+                    GOCurrency.NETWORK_HANDLER.sendToServer(new MessageVendingStateData(container.getTile().getPos(), VendingStateData.EDITPRICE_INDEX, 0));
+                    // Hide Price Settings Tab
+                    this.children.remove(this.buttons.get(BUTTONID_PRICE));
+                    this.buttons.set(BUTTONID_PRICE, new CustomButton(i + 1000, j + 1000, 18, 23, 176, 24, 176, 24,
+                            new TranslationTextComponent(""), (button) -> {
+                        handle(HANDLE_EDITPRICE);
+                    }));
+                    this.children.add(this.buttons.get(BUTTONID_PRICE));
+
                 } else { // Mode STOCK
                     // Show Price Settings Tab
                     setEditPriceButtonLocation(container.getVendingStateData(VendingStateData.GUISIDE_INDEX), container.getVendingStateData(VendingStateData.EDITPRICE_INDEX));
@@ -276,7 +278,8 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
 
             //key inputs are only numbers, ., or backspace
             if ((container.getVendingStateData(VendingStateData.MODE_INDEX) == 1) && (container.getVendingStateData(VendingStateData.EDITPRICE_INDEX) == 1) &&
-                    ((numChar >= 0 && numChar <= 9) || (keyCode == 46 && !this.fieldPrice.getText().contains(".")) ||  (keyCode == 259))) {
+                    ((numChar >= 0 && numChar <= 9 && (this.fieldPrice.getText().length() < 8 || this.fieldPrice.getText().length() > 8))
+                            || (keyCode == 46 && !this.fieldPrice.getText().contains(".")) ||  (keyCode == 259))) {
 
                 // Not backspace and less than 12 chars OR if more than 12 MUST BE A '.'
                 if(keyCode != 259) {
@@ -297,10 +300,10 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
                             this.fieldPrice.setMaxStringLength(this.fieldPrice.getText().length() + 2);
                         }
                     } else if (!priceText.contains(".")){
-                        this.fieldPrice.setMaxStringLength(13);
+                        this.fieldPrice.setMaxStringLength(9);
                     }
                 } else {
-                  this.fieldPrice.setMaxStringLength(13);
+                  this.fieldPrice.setMaxStringLength(9);
                 }
 
                 // Get Out text
@@ -327,7 +330,7 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
                     this.fieldPrice.setMaxStringLength(outText.length());
                 }
 
-                if (!outText.equals(container.getStockContents().getPriceInSlot(container.getVendingStateData(VendingStateData.SELECTEDSLOT_INDEX)))) {
+                if (!outText.equals(container.getStockContents().getPriceString(container.getVendingStateData(VendingStateData.SELECTEDSLOT_INDEX)))) {
                     GOCurrency.NETWORK_HANDLER.sendToServer(new MessageSetPrice(container.getTile().getPos(), container.getVendingStateData(VendingStateData.SELECTEDSLOT_INDEX), outText));
                 }
                 return true;
@@ -357,7 +360,14 @@ public class VendingContainerScreen extends ContainerScreen<VendingContainer> {
         boolean isEmpty = !container.getStockContents().getStackInSlot(container.getVendingStateData(VendingStateData.SELECTEDSLOT_INDEX)).isEmpty();
 
         fieldPrice.setEnabled(isEmpty);
-        this.fieldPrice.setText(container.getStockContents().getPriceInSlot(container.getVendingStateData(VendingStateData.SELECTEDSLOT_INDEX)));
+
+        String newPrice = container.getStockContents().getPriceString(container.getVendingStateData(VendingStateData.SELECTEDSLOT_INDEX));
+        if(newPrice.substring(0, 1).equals("0")) {
+            newPrice = newPrice.substring(1);
+        }
+
+        this.fieldPrice.setMaxStringLength(newPrice.length());
+        this.fieldPrice.setText(newPrice);
     }
 
     // ------------- RENDERS --------------------

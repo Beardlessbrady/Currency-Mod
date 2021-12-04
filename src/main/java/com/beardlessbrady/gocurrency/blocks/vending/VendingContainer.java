@@ -109,8 +109,9 @@ public class VendingContainer extends Container {
 
         trackIntArray(this.vendingStateData);
         trackIntArray(this.stockContents.getStackSizeIntArray());
-        trackIntArray(this.stockContents.getPriceCentIntArray());
-        trackIntArray(this.stockContents.getPriceDollarIntArray());
+        trackIntArray(this.stockContents.vendingComponentContents.getPriceMillionArray());
+        trackIntArray(this.stockContents.vendingComponentContents.getPriceThousandArray());
+        trackIntArray(this.stockContents.vendingComponentContents.getPriceCentArray());
 
         generateSlots(playerInventory, stock, input, output);
 
@@ -261,7 +262,7 @@ public class VendingContainer extends Container {
         return super.slotClick(slotId, dragType, clickTypeIn, player);
     }
 
-    private ItemStack stockSlotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player) {
+    private ItemStack stockSlotClick(int slotId, int dragType, ClickType clickTypeIn, PlayerEntity player){
         boolean creative = vendingStateData.get(VendingStateData.CREATIVE_INDEX) == 1;
 
         int index = slotId - FIRST_STOCK_SLOT_INDEX;
@@ -696,9 +697,10 @@ public class VendingContainer extends Container {
         int stackMax = stockContents.getStackInSlot(index).getMaxStackSize();
         int stackSize = stockContents.getStackSize(index);
 
-        int[] price = stockContents.getPriceInSlotInt(index);
-        int priceD = price[0];
-        int priceC = price[1];
+        int[] price = stockContents.getPriceInt(index);
+        int priceM = price[0];
+        int priceT = price[1];
+        int priceC = price[2];
 
         int amount = stackSize;
         switch(getVendingStateData(VendingStateData.BUYMODE_INDEX)) {
@@ -719,11 +721,11 @@ public class VendingContainer extends Container {
                 break;
         }
 
-        int[] priceInt = CurrencyItem.multiplyPrice(priceD, priceC, amount);
-        priceD = priceInt[0];
+        int[] priceInt = CurrencyItem.multiplyPrice(Integer.parseInt(String.valueOf(priceM) + String.valueOf(priceT)), priceC, amount);
+        int priceD = priceInt[0];
         priceC = priceInt[1];
 
-        return new int[] {priceD,priceC, amount};
+        return new int[] {priceD, priceC, amount};
     }
 
     public String currencyToString(int mode){

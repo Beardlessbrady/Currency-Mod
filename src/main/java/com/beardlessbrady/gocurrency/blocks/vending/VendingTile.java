@@ -201,8 +201,8 @@ public class VendingTile extends TileEntity implements INamedContainerProvider, 
         }
     }
 
-    public void setPrice(int index, int[] price) {
-        stockContents.setPriceInSlot(index, price);
+    public void setStockPrice(int index, int[] price) {
+        stockContents.setPrice(index, price);
     }
 
     // ---- CURRENCY ------
