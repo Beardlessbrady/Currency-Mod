@@ -3,21 +3,17 @@ Welcome to the Good Ol' Currency github repository!
 
 I've created this mod because I've always wanted some sort of base economy for minecraft. If you have any critisms, feature requests, or anything to say at all you can contact me on the 'Issues Tab' or through various places listed below.
 
-[![](https://img.shields.io/badge/1.16.4-release-green.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
-[![](https://img.shields.io/badge/Latest%20Version-ALPHA-red.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
+[![](https://img.shields.io/badge/1.18.-release-green.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
+[![](https://img.shields.io/badge/Latest%20Version-BETA:0.0.1-blue.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
 [![](https://img.shields.io/badge/Supported-Fully-green.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
 
-[![](https://img.shields.io/badge/1.12-release-green.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
-[![](https://img.shields.io/badge/Latest%20Version-1.3.6-blue.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
-[![](https://img.shields.io/badge/Unsupported-Closed-red.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
+[![](https://img.shields.io/badge/1.17.1-release-green.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
+[![](https://img.shields.io/badge/Latest%20Version-BETA:0.0.1-blue.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
+[![](https://img.shields.io/badge/Supported-Bugfixes-yellow.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
 
-[![](https://img.shields.io/badge/1.11.2-release-green.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
-[![](https://img.shields.io/badge/Latest%20Version-1.2.2-blue.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
-[![](https://img.shields.io/badge/Unsupported-Closed-red.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
-
-[![](https://img.shields.io/badge/1.10.2-release-green.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
-[![](https://img.shields.io/badge/Latest%20Version-1.2.2-blue.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
-[![](https://img.shields.io/badge/Unsupported-Closed-red.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
+[![](https://img.shields.io/badge/1.16.5-release-green.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
+[![](https://img.shields.io/badge/Latest%20Version-BETA:0.0.1-blue.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
+[![](https://img.shields.io/badge/Supported-Bugfixes-yellow.svg)](https://minecraft.curseforge.com/projects/good-ol-currency/files)
 
 #Contacts
 

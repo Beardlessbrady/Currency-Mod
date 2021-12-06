@@ -1,10 +1,10 @@
 package com.beardlessbrady.gocurrency.blocks.vending;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.ListNBT;
-import net.minecraft.util.IntArray;
-import net.minecraft.util.NonNullList;
+import net.minecraft.core.NonNullList;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.util.valueproviders.IntProvider;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.Constants;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.items.IItemHandler;
@@ -18,9 +18,9 @@ import javax.annotation.Nonnull;
  * All Rights Reserved
  * https://github.com/Beardlessbrady/Currency-Mod
  */
-public class OverloadedItemStackHandler implements IItemHandler, IItemHandlerModifiable, INBTSerializable<CompoundNBT> {
+public class OverloadedItemStackHandler implements IItemHandler, IItemHandlerModifiable, INBTSerializable<CompoundTag> {
     protected NonNullList<ItemStack> stacks;
-    protected IntArray stackSize;
+    protected IntProvider stackSize;
     protected int stackSizeLimit = 256;
 
     public OverloadedItemStackHandler() {
@@ -29,7 +29,7 @@ public class OverloadedItemStackHandler implements IItemHandler, IItemHandlerMod
 
     public OverloadedItemStackHandler(int size) {
         stacks = NonNullList.withSize(size, ItemStack.EMPTY);
-        stackSize = new IntArray(size);
+        stackSize = new IntArray
     }
 
     public OverloadedItemStackHandler(NonNullList<ItemStack> add) {
@@ -193,17 +193,17 @@ public class OverloadedItemStackHandler implements IItemHandler, IItemHandlerMod
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
-        ListNBT nbtTagList = new ListNBT();
+    public CompoundTag serializeNBT() {
+        ListTag nbtTagList = new ListTag();
         for (int i = 0; i < stacks.size(); i++) {
             if (!stacks.get(i).isEmpty()) {
-                CompoundNBT itemTag = new CompoundNBT();
+                CompoundTag itemTag = new CompoundTag();
                 itemTag.putInt("Slot", i);
                 stacks.get(i).write(itemTag);
                 nbtTagList.add(itemTag);
             }
         }
-        CompoundNBT nbt = new CompoundNBT();
+        CompoundTag nbt = new CompoundTag();
         nbt.put("Items", nbtTagList);
         nbt.putInt("Size", stacks.size());
 
@@ -217,11 +217,11 @@ public class OverloadedItemStackHandler implements IItemHandler, IItemHandlerMod
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         setSize(nbt.contains("Size", Constants.NBT.TAG_INT) ? nbt.getInt("Size") : stacks.size());
-        ListNBT tagList = nbt.getList("Items", Constants.NBT.TAG_COMPOUND);
+        ListTag tagList = nbt.getList("Items", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < tagList.size(); i++) {
-            CompoundNBT itemTags = tagList.getCompound(i);
+            CompoundTag itemTags = tagList.getCompound(i);
             int slot = itemTags.getInt("Slot");
 
             if (slot >= 0 && slot < stacks.size()) {
