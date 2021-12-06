@@ -59,6 +59,7 @@ public class CommonRegistry {
         TILES.register(FMLJavaModLoadingContext.get().getModEventBus());
         CONTAINERS.register(FMLJavaModLoadingContext.get().getModEventBus());
 
+
         MinecraftForge.EVENT_BUS.register(new EventHandler());
     }
 }
